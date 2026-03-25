@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BoundaryCheck UK — Garden Boundary Discrepancy Checker</title>
+  <meta name="description" content="Estimate boundary discrepancies from title plan vs fence measurements and generate a surveyor brief." />
+  <style>
+    :root { --bg:#0b0f19; --card:#111827; --text:#f9fafb; --muted:#9ca3af; --accent:#60a5fa; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:980px; margin:0 auto; padding:32px; }
+    .card { background:var(--card); border:1px solid #1f2937; border-radius:14px; padding:18px; }
+    h1 { margin:0 0 6px; }
+    label { display:block; font-weight:600; margin:12px 0 6px; }
+    input { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0f172a; color:#e5e7eb; }
+    button { background:var(--accent); border:none; color:#07121f; font-weight:700; padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    .muted { color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>BoundaryCheck UK</h1>
+      <p class="muted">Quickly estimate how much garden area you may be missing versus your title plan. Generates a surveyor brief you can send today.</p>
+
+      <div class="row">
+        <div style="flex:1">
+          <label>Title plan width (m)</label>
+          <input id="tpw" type="number" step="0.01" placeholder="8.15" />
+        </div>
+        <div style="flex:1">
+          <label>Title plan depth (m)</label>
+          <input id="tpd" type="number" step="0.01" placeholder="12.00" />
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1">
+          <label>Measured fence width (m)</label>
+          <input id="mw" type="number" step="0.01" placeholder="7.20" />
+        </div>
+        <div style="flex:1">
+          <label>Measured fence depth (m)</label>
+          <input id="md" type="number" step="0.01" placeholder="10.80" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button onclick="calc()">Calculate discrepancy</button>
+      </div>
+
+      <div id="output" style="margin-top:14px"></div>
+
+      <label style="margin-top:18px">Email capture</label>
+      <input placeholder="you@email.com" />
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Pricing</h3>
+      <div class="row">
+        <div class="card" style="flex:1">Free: single calc</div>
+        <div class="card" style="flex:1">£19 report: surveyor brief + checklist</div>
+        <div class="card" style="flex:1">£49: template letters + evidence pack</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calc() {
+      const tpw = parseFloat(document.getElementById('tpw').value);
+      const tpd = parseFloat(document.getElementById('tpd').value);
+      const mw = parseFloat(document.getElementById('mw').value);
+      const md = parseFloat(document.getElementById('md').value);
+      if ([tpw,tpd,mw,md].some(isNaN)) return alert('Please fill all measurements.');
+      const titleArea = tpw * tpd;
+      const measuredArea = mw * md;
+      const diff = titleArea - measuredArea;
+      const pct = (diff / titleArea) * 100;
+      const output = `
+        <h3>Result</h3>
+        <p><strong>Title plan area:</strong> ${titleArea.toFixed(2)} m²</p>
+        <p><strong>Measured area:</strong> ${measuredArea.toFixed(2)} m²</p>
+        <p><strong>Estimated missing area:</strong> ${diff.toFixed(2)} m² (${pct.toFixed(1)}%)</p>
+        <h3>Next steps</h3>
+        <ol>
+          <li>Order official title plan + register from HM Land Registry.</li>
+          <li>Hire a RICS surveyor for a boundary report.</li>
+          <li>Document fence line with dated photos + measurements.</li>
+        </ol>
+        <h3>Surveyor brief (copy/paste)</h3>
+        <textarea rows="5">Hello, I’m requesting a boundary survey for [address]. Title plan indicates approx ${tpw}m x ${tpd}m. Current fence measures approx ${mw}m x ${md}m. Please confirm actual boundary and provide a report suitable for council/neighbor discussion.</textarea>
+      `;
+      document.getElementById('output').innerHTML = output;
+    }
+  </script>
+</body>
+</html>
