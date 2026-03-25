@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Track competitor prices fast. Generate alerts and pricing actions from a simple list." />
+  <meta name="keywords" content="price monitoring, competitor pricing, ecommerce, alerts" />
+  <title>PricePulse – Competitor Price Tracker</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; background:#0f172a; color:#e2e8f0; }
+    header { padding: 28px; background:#111827; border-bottom:1px solid #1f2937; }
+    h1 { margin:0 0 8px; font-size: 28px; }
+    .container { max-width: 980px; margin: 0 auto; padding: 24px; }
+    .card { background:#0b1220; border:1px solid #1e293b; border-radius:12px; padding:18px; margin-bottom:16px; }
+    label { display:block; font-size: 13px; color:#94a3b8; margin-bottom:6px; }
+    input, select, button, textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#e2e8f0; }
+    .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .grid-2 { display:grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    button { background:#22c55e; border:none; color:#0b1220; font-weight:700; cursor:pointer; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { border-bottom:1px solid #1e293b; padding:8px; text-align:left; font-size: 13px; }
+    .pill { display:inline-block; padding:4px 8px; border-radius:999px; background:#1f2937; font-size:12px; }
+    .cta { display:flex; gap:10px; }
+    footer { padding:20px; text-align:center; color:#64748b; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>PricePulse – Competitor Price Tracker</h1>
+      <p>Stop manual checks. Add competitor prices, get instant pricing actions and export alerts.</p>
+      <div class="cta">
+        <button onclick="document.getElementById('product-name').focus()">Start Tracking</button>
+        <span class="pill">£29/mo after beta</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h3>Add a product</h3>
+      <div class="grid">
+        <div>
+          <label>Product name</label>
+          <input id="product-name" placeholder="e.g. Bamboo Cutting Board" />
+        </div>
+        <div>
+          <label>Competitor price (£)</label>
+          <input id="competitor-price" type="number" step="0.01" />
+        </div>
+        <div>
+          <label>Your cost (£)</label>
+          <input id="cost" type="number" step="0.01" />
+        </div>
+        <div>
+          <label>Target margin (%)</label>
+          <input id="margin" type="number" step="0.1" value="30" />
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div>
+          <label>Your current price (£)</label>
+          <input id="current-price" type="number" step="0.01" />
+        </div>
+        <div>
+          <label>Alert threshold (%)</label>
+          <input id="alert" type="number" step="0.1" value="5" />
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <button onclick="addProduct()">Add to tracker</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Tracker list</h3>
+      <table id="table">
+        <thead>
+          <tr>
+            <th>Product</th><th>Competitor</th><th>Cost</th><th>Current</th><th>Recommended</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="cta" style="margin-top:12px;">
+        <button onclick="exportCSV()">Export CSV</button>
+        <button onclick="clearAll()" style="background:#ef4444;color:white;">Clear</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Waitlist</h3>
+      <p>Get early access to automated monitoring + alerts.</p>
+      <div class="grid-2">
+        <input id="email" type="email" placeholder="you@shop.com" />
+        <button onclick="joinWaitlist()">Join waitlist</button>
+      </div>
+      <small id="waitlist-msg"></small>
+    </div>
+
+    <div class="card">
+      <h3>Pricing</h3>
+      <ul>
+        <li><strong>Starter £29/mo</strong> — 50 products, weekly checks</li>
+        <li><strong>Growth £79/mo</strong> — 200 products, daily checks</li>
+        <li><strong>Pro £149/mo</strong> — 500 products, hourly checks</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>© 2026 PricePulse. Built for small ecommerce teams.</footer>
+
+<script>
+  const state = JSON.parse(localStorage.getItem('pricepulse') || '[]');
+  const tbody = document.querySelector('#table tbody');
+
+  function recommendedPrice(cost, margin) {
+    return +(cost / (1 - (margin/100))).toFixed(2);
+  }
+
+  function addProduct() {
+    const name = document.getElementById('product-name').value.trim();
+    const competitor = parseFloat(document.getElementById('competitor-price').value);
+    const cost = parseFloat(document.getElementById('cost').value);
+    const margin = parseFloat(document.getElementById('margin').value);
+    const current = parseFloat(document.getElementById('current-price').value);
+    const alert = parseFloat(document.getElementById('alert').value);
+    if (!name || isNaN(competitor) || isNaN(cost) || isNaN(margin) || isNaN(current)) return alertUser();
+
+    const rec = recommendedPrice(cost, margin);
+    const action = (competitor < current - (current * (alert/100))) ? 'Undercut' : (competitor > current ? 'Hold' : 'Monitor');
+
+    state.push({ name, competitor, cost, current, rec, action });
+    persist();
+    render();
+  }
+
+  function render() {
+    tbody.innerHTML = '';
+    state.forEach((p, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${p.name}</td><td>£${p.competitor}</td><td>£${p.cost}</td><td>£${p.current}</td><td>£${p.rec}</td><td>${p.action}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function exportCSV() {
+    const rows = [['Product','Competitor','Cost','Current','Recommended','Action']].concat(state.map(p=>[p.name,p.competitor,p.cost,p.current,p.rec,p.action]));
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'pricepulse-tracker.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function clearAll() { localStorage.removeItem('pricepulse'); state.length = 0; render(); }
+  function persist() { localStorage.setItem('pricepulse', JSON.stringify(state)); }
+  function alertUser() { alert('Please fill all fields'); }
+
+  function joinWaitlist() {
+    const email = document.getElementById('email').value.trim();
+    const msg = document.getElementById('waitlist-msg');
+    if (!email.includes('@')) { msg.textContent = 'Enter a valid email.'; return; }
+    msg.textContent = 'Added! We will email you when alerts go live.';
+  }
+
+  render();
+</script>
+</body>
+</html>
