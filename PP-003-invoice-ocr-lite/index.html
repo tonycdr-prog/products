@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Invoice OCR Lite — extract totals in seconds</title>
+  <meta name="description" content="Upload an invoice image and extract key fields (vendor, date, total) in the browser." />
+  <meta property="og:title" content="Invoice OCR Lite" />
+  <meta property="og:description" content="Fast invoice OCR for small businesses." />
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; background:#f6f8f6; color:#111; }
+    header, section { padding: 28px 18px; max-width: 900px; margin: 0 auto; }
+    .card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+    .grid { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); }
+    .btn { background:#2f855a; color:#fff; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; }
+    input, textarea { width:100%; padding:8px; margin-top:6px; border:1px solid #ccc; border-radius:6px; }
+    .muted { color:#666; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Invoice OCR Lite</h1>
+    <p>Upload an invoice image and extract totals in seconds — no uploads to a server.</p>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <h3>What it does</h3>
+      <ul>
+        <li>Runs OCR in your browser</li>
+        <li>Extracts vendor, date, and total</li>
+        <li>Exports to CSV</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Pricing</h3>
+      <p><strong>£25/mo</strong> — 200 invoices</p>
+      <p><strong>£59/mo</strong> — unlimited + bulk upload</p>
+      <p class="muted">Stripe‑ready checkout coming soon.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Try it</h2>
+    <input type="file" id="file" accept="image/*" />
+    <button class="btn" style="margin-top:12px;" onclick="runOCR()">Run OCR</button>
+    <p id="status" class="muted"></p>
+    <textarea id="raw" rows="8" placeholder="Raw OCR text..."></textarea>
+    <div class="grid" style="margin-top:12px;">
+      <div>
+        <label>Vendor</label>
+        <input id="vendor" />
+      </div>
+      <div>
+        <label>Date</label>
+        <input id="date" />
+      </div>
+      <div>
+        <label>Total</label>
+        <input id="total" />
+      </div>
+    </div>
+    <button class="btn" style="margin-top:12px;" onclick="exportCSV()">Export CSV</button>
+    <textarea id="csv" rows="3" placeholder="CSV output..."></textarea>
+  </section>
+
+  <section class="card">
+    <h3>Join the waitlist</h3>
+    <div class="grid">
+      <input id="email" placeholder="you@company.com" />
+      <button class="btn" onclick="saveEmail()">Join waitlist</button>
+    </div>
+    <p id="waitlistMsg" class="muted"></p>
+  </section>
+
+  <script>
+    function extractFields(text){
+      const totalMatch = text.match(/(total|amount due|grand total)[^\d]{0,10}([£$€]?\s?\d+[\.,]?\d{0,2})/i);
+      const dateMatch = text.match(/(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4})/);
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+      const vendor = lines[0] || '';
+      return {
+        vendor,
+        date: dateMatch ? dateMatch[1] : '',
+        total: totalMatch ? totalMatch[2] : ''
+      };
+    }
+
+    async function runOCR(){
+      const file = document.getElementById('file').files[0];
+      if(!file){ return; }
+      document.getElementById('status').textContent = 'Running OCR...';
+      const { data } = await Tesseract.recognize(file, 'eng');
+      document.getElementById('raw').value = data.text;
+      const fields = extractFields(data.text);
+      document.getElementById('vendor').value = fields.vendor;
+      document.getElementById('date').value = fields.date;
+      document.getElementById('total').value = fields.total;
+      document.getElementById('status').textContent = 'Done.';
+    }
+
+    function exportCSV(){
+      const vendor = document.getElementById('vendor').value || '';
+      const date = document.getElementById('date').value || '';
+      const total = document.getElementById('total').value || '';
+      const csv = `vendor,date,total\n"${vendor}","${date}","${total}"`;
+      document.getElementById('csv').value = csv;
+    }
+
+    function saveEmail(){
+      const email = document.getElementById('email').value.trim();
+      if(!email){ return; }
+      const list = JSON.parse(localStorage.getItem('waitlist') || '[]');
+      list.push({ email, ts: new Date().toISOString() });
+      localStorage.setItem('waitlist', JSON.stringify(list));
+      document.getElementById('waitlistMsg').textContent = 'Thanks — you’re on the list.';
+      document.getElementById('email').value = '';
+    }
+  </script>
+</body>
+</html>
