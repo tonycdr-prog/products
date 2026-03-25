@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Paste invoice text and instantly extract totals, dates, VAT, and invoice number. Built for small businesses who need accuracy." />
+  <meta property="og:title" content="Invoice Preflight Extractor" />
+  <meta property="og:description" content="Fast, accurate invoice field extraction from pasted OCR text." />
+  <title>Invoice Preflight Extractor</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; background:#0f1115; color:#f4f5f7; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 32px; }
+    .card { background:#171a21; border:1px solid #2a2f3a; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    textarea, input, button { width:100%; padding:12px; border-radius:10px; border:1px solid #333a47; background:#0f1115; color:#f4f5f7; }
+    button { background:#3b82f6; border:none; font-weight:600; cursor:pointer; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+    .pill { display:inline-block; background:#1f2430; padding:6px 10px; border-radius:999px; font-size:12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Invoice Preflight Extractor</h1>
+      <p>Paste OCR’d invoice text and get structured fields instantly. Built for small retailers who need accuracy before posting to accounting.</p>
+      <div class="pill">No integrations • Works offline • UK VAT-ready</div>
+    </div>
+
+    <div class="card">
+      <h2>1) Paste invoice text</h2>
+      <textarea id="invoiceText" rows="10" placeholder="Paste OCR text here..."></textarea>
+      <button onclick="extractFields()">Extract fields</button>
+    </div>
+
+    <div class="card">
+      <h2>2) Extracted fields</h2>
+      <div class="grid">
+        <div><strong>Vendor</strong><div id="vendor">—</div></div>
+        <div><strong>Invoice #</strong><div id="invoiceNo">—</div></div>
+        <div><strong>Date</strong><div id="date">—</div></div>
+        <div><strong>Subtotal</strong><div id="subtotal">—</div></div>
+        <div><strong>VAT</strong><div id="vat">—</div></div>
+        <div><strong>Total</strong><div id="total">—</div></div>
+      </div>
+      <p id="confidence" style="margin-top:12px;color:#9ca3af;"></p>
+    </div>
+
+    <div class="card">
+      <h2>Pricing</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Starter — £19/mo</h3>
+          <p>Up to 200 invoices/month. Email support.</p>
+        </div>
+        <div class="card">
+          <h3>Growth — £49/mo</h3>
+          <p>1,000 invoices/month. VAT checks + exports.</p>
+        </div>
+        <div class="card">
+          <h3>Pro — £99/mo</h3>
+          <p>Unlimited. Team roles + audit log.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Waitlist</h2>
+      <input id="email" type="email" placeholder="you@business.co.uk" />
+      <button onclick="joinWaitlist()">Join waitlist</button>
+      <p id="waitlistMsg" style="color:#9ca3af;"></p>
+    </div>
+  </div>
+
+  <script>
+    function pick(regex, text) {
+      const m = text.match(regex);
+      return m ? m[1].trim() : "—";
+    }
+
+    function extractFields() {
+      const text = document.getElementById('invoiceText').value;
+      const lower = text.toLowerCase();
+
+      const vendor = pick(/from\s*[:\-]?\s*(.+)/i, text);
+      const invoiceNo = pick(/invoice\s*(number|no\.?|#)\s*[:\-]?\s*([A-Z0-9\-]+)/i, text);
+      const date = pick(/date\s*[:\-]?\s*([0-9]{1,2}[\/\-][0-9]{1,2}[\/\-][0-9]{2,4})/i, text);
+      const subtotal = pick(/sub\s*total\s*[:\-]?\s*£?([0-9,\.]+)/i, text);
+      const vat = pick(/vat\s*[:\-]?\s*£?([0-9,\.]+)/i, text);
+      const total = pick(/total\s*(due|amount)?\s*[:\-]?\s*£?([0-9,\.]+)/i, text);
+
+      document.getElementById('vendor').textContent = vendor;
+      document.getElementById('invoiceNo').textContent = invoiceNo === "—" ? "—" : invoiceNo;
+      document.getElementById('date').textContent = date;
+      document.getElementById('subtotal').textContent = subtotal;
+      document.getElementById('vat').textContent = vat;
+      document.getElementById('total').textContent = total === "—" ? pick(/total\s*£?([0-9,\.]+)/i, text) : total;
+
+      const found = [vendor, invoiceNo, date, subtotal, vat, total].filter(v => v !== "—").length;
+      document.getElementById('confidence').textContent = `Confidence: ${Math.round((found/6)*100)}% (fields found)`;
+    }
+
+    function joinWaitlist() {
+      const email = document.getElementById('email').value.trim();
+      if (!email.includes('@')) {
+        document.getElementById('waitlistMsg').textContent = 'Please enter a valid email.';
+        return;
+      }
+      localStorage.setItem('invoice_preflight_waitlist', email);
+      document.getElementById('waitlistMsg').textContent = 'Thanks — you’re on the list.';
+    }
+  </script>
+</body>
+</html>
