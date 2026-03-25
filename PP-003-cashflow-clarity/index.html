@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Simple cash flow planner for small businesses. No fluff." />
+  <meta name="keywords" content="cash flow, p&l, small business finance" />
+  <title>Cashflow Clarity – Simple P&L Tracker</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; background:#0f172a; color:#e2e8f0; }
+    header { padding:28px; background:#111827; border-bottom:1px solid #1f2937; }
+    h1 { margin:0 0 8px; font-size:28px; }
+    .container { max-width: 980px; margin: 0 auto; padding: 24px; }
+    .card { background:#0b1220; border:1px solid #1e293b; border-radius:12px; padding:18px; margin-bottom:16px; }
+    label { display:block; font-size:13px; color:#94a3b8; margin-bottom:6px; }
+    input, select, button { width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#e2e8f0; }
+    .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { border-bottom:1px solid #1e293b; padding:8px; text-align:left; font-size:13px; }
+    button { background:#22c55e; border:none; color:#0b1220; font-weight:700; cursor:pointer; }
+    canvas { width:100%; height:220px; background:#0f172a; border:1px solid #1e293b; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Cashflow Clarity – Simple P&L Tracker</h1>
+      <p>Lightweight cash flow planner for owners who hate accounting software.</p>
+      <strong>Starter £15/mo</strong>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h3>Add transaction</h3>
+      <div class="grid">
+        <div>
+          <label>Type</label>
+          <select id="type">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+        <div>
+          <label>Category</label>
+          <input id="category" placeholder="e.g. Sales" />
+        </div>
+        <div>
+          <label>Month</label>
+          <input id="month" placeholder="2026-03" />
+        </div>
+        <div>
+          <label>Amount (£)</label>
+          <input id="amount" type="number" step="0.01" />
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <button onclick="addTxn()">Add</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Summary</h3>
+      <table id="table">
+        <thead><tr><th>Month</th><th>Income</th><th>Expenses</th><th>Net</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <canvas id="chart" width="920" height="220"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Export</h3>
+      <button onclick="exportCSV()">Download CSV</button>
+      <button onclick="clearAll()" style="background:#ef4444;color:white;">Clear</button>
+    </div>
+
+    <div class="card">
+      <h3>Waitlist</h3>
+      <div class="grid">
+        <input id="email" type="email" placeholder="you@business.co.uk" />
+        <button onclick="joinWaitlist()">Join waitlist</button>
+      </div>
+      <small id="waitlist-msg"></small>
+    </div>
+
+    <div class="card">
+      <h3>Pricing</h3>
+      <ul>
+        <li><strong>Starter £15/mo</strong> — monthly cashflow</li>
+        <li><strong>Growth £49/mo</strong> — scenarios + VAT</li>
+        <li><strong>Pro £89/mo</strong> — bank sync + accountant view</li>
+      </ul>
+    </div>
+  </div>
+
+<script>
+  const txns = JSON.parse(localStorage.getItem('cashflow') || '[]');
+  const tbody = document.querySelector('#table tbody');
+
+  function addTxn() {
+    const type = document.getElementById('type').value;
+    const category = document.getElementById('category').value.trim();
+    const month = document.getElementById('month').value.trim();
+    const amount = parseFloat(document.getElementById('amount').value);
+    if (!category || !month || isNaN(amount)) return;
+    txns.push({ type, category, month, amount });
+    persist();
+    render();
+  }
+
+  function summarize() {
+    const map = {};
+    txns.forEach(t => {
+      map[t.month] = map[t.month] || { income:0, expense:0 };
+      map[t.month][t.type] += t.amount;
+    });
+    return map;
+  }
+
+  function render() {
+    const summary = summarize();
+    const months = Object.keys(summary).sort();
+    tbody.innerHTML = '';
+    months.forEach(m => {
+      const income = summary[m].income || 0;
+      const expense = summary[m].expense || 0;
+      const net = income - expense;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${m}</td><td>£${income.toFixed(2)}</td><td>£${expense.toFixed(2)}</td><td>£${net.toFixed(2)}</td>`;
+      tbody.appendChild(tr);
+    });
+    drawChart(months, summary);
+  }
+
+  function drawChart(months, summary) {
+    const canvas = document.getElementById('chart');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if (!months.length) return;
+    const nets = months.map(m => (summary[m].income || 0) - (summary[m].expense || 0));
+    const max = Math.max(...nets, 1);
+    const min = Math.min(...nets, -1);
+    const range = max - min;
+    months.forEach((m, i) => {
+      const x = (i/(months.length-1 || 1)) * (canvas.width-40) + 20;
+      const y = canvas.height - 20 - ((nets[i]-min)/range) * (canvas.height-40);
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI*2); ctx.fill();
+      if (i>0) {
+        const prevX = ((i-1)/(months.length-1 || 1)) * (canvas.width-40) + 20;
+        const prevY = canvas.height - 20 - ((nets[i-1]-min)/range) * (canvas.height-40);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.beginPath(); ctx.moveTo(prevX, prevY); ctx.lineTo(x, y); ctx.stroke();
+      }
+    });
+  }
+
+  function exportCSV() {
+    const rows = [['Type','Category','Month','Amount']].concat(txns.map(t=>[t.type,t.category,t.month,t.amount]));
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='cashflow.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function clearAll() { localStorage.removeItem('cashflow'); txns.length=0; render(); }
+  function persist() { localStorage.setItem('cashflow', JSON.stringify(txns)); }
+  function joinWaitlist() {
+    const email = document.getElementById('email').value.trim();
+    const msg = document.getElementById('waitlist-msg');
+    if (!email.includes('@')) { msg.textContent = 'Enter a valid email.'; return; }
+    msg.textContent = 'Added! We will email you with the full version.';
+  }
+
+  render();
+</script>
+</body>
+</html>
