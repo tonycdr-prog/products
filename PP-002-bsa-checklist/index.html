@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BSA Checklist — Building Safety Act Tracker</title>
+    <meta name="description" content="A UK Building Safety Act checklist and document tracker for landlords and property managers." />
+    <meta property="og:title" content="BSA Checklist" />
+    <meta property="og:description" content="Track landlord certificates, safety case reports, and key compliance tasks." />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-950 text-slate-100">
+    <div class="max-w-5xl mx-auto px-6 py-12">
+      <header class="mb-10">
+        <h1 class="text-4xl font-bold">BSA Checklist</h1>
+        <p class="text-lg text-slate-300 mt-3">Track Building Safety Act tasks and documents in one place.</p>
+      </header>
+
+      <section class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Compliance Checklist</h2>
+          <span id="progress" class="text-sm text-slate-300">0% complete</span>
+        </div>
+        <ul id="checklist" class="space-y-3">
+          <li><label class="flex items-start gap-3"><input type="checkbox" class="mt-1" />Identify Accountable Person(s)</label></li>
+          <li><label class="flex items-start gap-3"><input type="checkbox" class="mt-1" />Create resident engagement strategy</label></li>
+          <li><label class="flex items-start gap-3"><input type="checkbox" class="mt-1" />Prepare Safety Case Report</label></li>
+          <li><label class="flex items-start gap-3"><input type="checkbox" class="mt-1" />Gather Fire Risk Assessment evidence</label></li>
+          <li><label class="flex items-start gap-3"><input type="checkbox" class="mt-1" />Landlord Certificate request + follow‑up</label></li>
+          <li><label class="flex items-start gap-3"><input type="checkbox" class="mt-1" />Building Assessment Certificate readiness</label></li>
+          <li><label class="flex items-start gap-3"><input type="checkbox" class="mt-1" />Document retention & resident comms log</label></li>
+        </ul>
+      </section>
+
+      <section class="mt-10 grid md:grid-cols-2 gap-6">
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+          <h3 class="text-lg font-semibold">Document Tracker</h3>
+          <p class="text-slate-300 text-sm mt-2">Record which documents are outstanding and their target dates.</p>
+          <div class="mt-4 space-y-3">
+            <input class="w-full rounded bg-slate-800 border border-slate-700 px-3 py-2" placeholder="Document name" />
+            <input type="date" class="w-full rounded bg-slate-800 border border-slate-700 px-3 py-2" />
+            <button class="w-full bg-emerald-500 text-slate-900 font-semibold py-2 rounded">Add to tracker</button>
+          </div>
+        </div>
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+          <h3 class="text-lg font-semibold">Pricing</h3>
+          <p class="text-slate-300 text-sm mt-2">Per building, per month.</p>
+          <div class="mt-4 space-y-2">
+            <p class="text-2xl font-bold">£25/mo</p>
+            <p class="text-slate-300 text-sm">Includes audit log, reminders, and document export.</p>
+            <button class="mt-4 bg-emerald-500 text-slate-900 font-semibold px-4 py-2 rounded">Join waitlist</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const checklist = document.getElementById('checklist');
+      const progress = document.getElementById('progress');
+      checklist.addEventListener('change', () => {
+        const boxes = checklist.querySelectorAll('input[type="checkbox"]');
+        const checked = [...boxes].filter((b) => b.checked).length;
+        const pct = Math.round((checked / boxes.length) * 100);
+        progress.textContent = `${pct}% complete`;
+      });
+    </script>
+  </body>
+</html>
