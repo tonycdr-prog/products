@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Invoice Chaser Lite — polite, automated follow‑ups that get paid</title>
+  <meta name="description" content="Generate polite, firm invoice reminder emails and track follow‑ups. Stop losing cash to awkward chasing." />
+  <meta property="og:title" content="Invoice Chaser Lite" />
+  <meta property="og:description" content="Polite, automated invoice follow‑ups for small businesses." />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; color:#111; background:#f7f7fb; }
+    header, section { padding: 28px 18px; max-width: 900px; margin: 0 auto; }
+    .card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+    .grid { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); }
+    .btn { background:#1b5cff; color:#fff; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; }
+    input, select, textarea { width:100%; padding:8px; margin-top:6px; border:1px solid #ccc; border-radius:6px; }
+    .muted { color:#666; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Invoice Chaser Lite</h1>
+    <p>Polite, automated follow‑ups that get you paid without the awkwardness.</p>
+    <button class="btn" onclick="document.getElementById('tool').scrollIntoView({behavior:'smooth'})">Try the reminder generator</button>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <h3>What it does</h3>
+      <ul>
+        <li>Generate smart reminder emails (friendly → firm)</li>
+        <li>Track who’s overdue and by how long</li>
+        <li>Store follow‑up history locally</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Pricing</h3>
+      <p><strong>£20/mo</strong> — up to 50 invoices</p>
+      <p><strong>£49/mo</strong> — unlimited invoices + templates</p>
+      <p class="muted">Stripe‑ready checkout coming soon.</p>
+    </div>
+  </section>
+
+  <section id="tool" class="card">
+    <h2>Reminder Generator</h2>
+    <div class="grid">
+      <div>
+        <label>Client name</label>
+        <input id="client" placeholder="Acme Ltd" />
+      </div>
+      <div>
+        <label>Invoice amount</label>
+        <input id="amount" placeholder="£850" />
+      </div>
+      <div>
+        <label>Due date</label>
+        <input id="due" type="date" />
+      </div>
+      <div>
+        <label>Reminder tone</label>
+        <select id="tone">
+          <option value="friendly">Friendly (3 days overdue)</option>
+          <option value="nudge">Nudge (7 days overdue)</option>
+          <option value="firm">Firm (14+ days overdue)</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <button class="btn" onclick="generate()">Generate reminder</button>
+    </div>
+    <textarea id="output" rows="8" style="margin-top:12px;" placeholder="Your reminder email will appear here..."></textarea>
+  </section>
+
+  <section class="card">
+    <h3>Join the waitlist</h3>
+    <div class="grid">
+      <input id="email" placeholder="you@company.com" />
+      <button class="btn" onclick="saveEmail()">Join waitlist</button>
+    </div>
+    <p id="waitlistMsg" class="muted"></p>
+  </section>
+
+  <script>
+    function generate(){
+      const client = document.getElementById('client').value || 'there';
+      const amount = document.getElementById('amount').value || 'the outstanding amount';
+      const due = document.getElementById('due').value || 'the due date';
+      const tone = document.getElementById('tone').value;
+
+      let body = '';
+      if(tone === 'friendly'){
+        body = `Hi ${client},\n\nJust a friendly reminder that invoice for ${amount} was due on ${due}. If payment has already been sent, please ignore this.\n\nThanks so much!`;
+      } else if(tone === 'nudge'){
+        body = `Hi ${client},\n\nA quick nudge on the invoice for ${amount} (due ${due}). Could you let me know if payment is scheduled?\n\nAppreciate it.`;
+      } else {
+        body = `Hi ${client},\n\nThis is a final reminder that invoice for ${amount} (due ${due}) remains unpaid. Please confirm when payment will be made.\n\nThank you.`;
+      }
+      document.getElementById('output').value = body;
+    }
+
+    function saveEmail(){
+      const email = document.getElementById('email').value.trim();
+      if(!email){ return; }
+      const list = JSON.parse(localStorage.getItem('waitlist') || '[]');
+      list.push({ email, ts: new Date().toISOString() });
+      localStorage.setItem('waitlist', JSON.stringify(list));
+      document.getElementById('waitlistMsg').textContent = 'Thanks — you’re on the list.';
+      document.getElementById('email').value = '';
+    }
+  </script>
+</body>
+</html>
