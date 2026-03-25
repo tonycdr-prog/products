@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Organic Waitlist Planner — get signups without ads</title>
+  <meta name="description" content="Generate a week‑one outreach plan with compliant communities, message angles, and a launch checklist. Export to CSV and start outreach today." />
+  <meta name="keywords" content="waitlist, organic growth, outreach, launch plan, communities" />
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#0f1117;color:#eef2f7}
+    header{padding:32px 24px;border-bottom:1px solid #1f2937;background:#111827}
+    h1{margin:0 0 8px 0;font-size:28px}
+    .container{max-width:980px;margin:0 auto;padding:24px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    input,select,textarea,button{width:100%;padding:10px;border-radius:8px;border:1px solid #374151;background:#111827;color:#eef2f7}
+    button{cursor:pointer;background:#10b981;border-color:#10b981;font-weight:600}
+    .card{background:#111827;border:1px solid #374151;border-radius:12px;padding:16px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#1f2937;font-size:12px}
+    ul{padding-left:18px}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .price{font-size:28px;font-weight:700}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <span class="badge">Launch ops</span>
+      <h1>Organic Waitlist Planner</h1>
+      <p>Turn “our posts get removed” into a compliant outreach plan with community targets, messaging angles, and a launch checklist.</p>
+      <div class="cta">
+        <div class="price">£29/mo</div>
+        <button onclick="document.getElementById('email').focus()">Join early access</button>
+        <span class="badge">Stripe-ready pricing</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <div class="card">
+        <h3>Plan inputs</h3>
+        <label>Product category</label>
+        <input id="category" value="Pet product" />
+        <label>Target audience</label>
+        <input id="audience" value="Dog parents in the UK" />
+        <label>Launch goal (signups)</label>
+        <input id="goal" type="number" value="200" />
+        <label>Timeline</label>
+        <select id="timeline">
+          <option value="7">7 days</option>
+          <option value="14">14 days</option>
+          <option value="30">30 days</option>
+        </select>
+        <button style="margin-top:12px" onclick="generatePlan()">Generate plan</button>
+      </div>
+
+      <div class="card">
+        <h3>Outreach plan</h3>
+        <div id="plan"></div>
+        <button style="margin-top:10px" onclick="exportCSV()">Export tasks CSV</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h3>Waitlist</h3>
+      <p>Hosted version includes compliant community database, message templates, and tracking.</p>
+      <input id="email" type="email" placeholder="you@company.com" />
+      <button style="margin-top:10px" onclick="joinWaitlist()">Join waitlist</button>
+      <div id="waitlistMsg" style="margin-top:8px;color:#9fb0c7"></div>
+    </div>
+  </main>
+
+<script>
+const baseChannels = [
+  {type:'Reddit', example:'Find 3 subreddits with weekly promo threads; post value-first case study.'},
+  {type:'Facebook Groups', example:'Ask admins for posting rules; share tips checklist.'},
+  {type:'Quora/StackExchange', example:'Answer 5 questions related to the problem; link waitlist in profile.'},
+  {type:'Partnerships', example:'Offer co-branded giveaway with niche bloggers.'},
+  {type:'Local communities', example:'Meetup/Slack communities; request speaker slot.'}
+];
+
+function generatePlan(){
+  const category = document.getElementById('category').value.trim();
+  const audience = document.getElementById('audience').value.trim();
+  const goal = document.getElementById('goal').value.trim();
+  const timeline = parseInt(document.getElementById('timeline').value,10);
+
+  const perDay = Math.ceil(goal / timeline);
+  let html = `<p><strong>Target:</strong> ${goal} signups in ${timeline} days (~${perDay}/day)</p>`;
+  html += '<ul>';
+  baseChannels.forEach((c,i)=>{
+    html += `<li><strong>${c.type}:</strong> ${c.example} (angle: ${category} for ${audience})</li>`;
+  });
+  html += '</ul>';
+  html += '<h4>Checklist</h4><ul>';
+  html += `<li>Create a 1‑page waitlist with benefits and proof.</li>`;
+  html += `<li>Draft 3 non‑promo value posts (tips, checklist, story).</li>`;
+  html += `<li>Track replies and DM opt‑ins daily.</li>`;
+  html += '</ul>';
+  document.getElementById('plan').innerHTML = html;
+}
+
+function exportCSV(){
+  const rows = [
+    ['channel','task'],
+    ['Reddit','Post value-first case study in weekly promo thread'],
+    ['Facebook','Ask admins for rules + share checklist'],
+    ['Quora','Answer 5 related questions'],
+    ['Partnerships','Pitch 5 niche partners'],
+    ['Local','Request 1 community talk slot']
+  ];
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'waitlist-plan.csv';
+  a.click();
+}
+
+function joinWaitlist(){
+  const email = document.getElementById('email').value.trim();
+  document.getElementById('waitlistMsg').textContent = email ? `Thanks — ${email} is on the list.` : 'Enter a valid email.';
+}
+
+generatePlan();
+</script>
+</body>
+</html>
