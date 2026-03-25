@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FieldKit — Lightweight CRM for Local Services</title>
+  <meta name="description" content="A simple CRM + scheduling + billing hub for small local service teams." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <header class="max-w-5xl mx-auto px-6 py-10">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold">FieldKit</h1>
+        <p class="text-slate-600">Lightweight CRM + scheduling + billing for small crews.</p>
+      </div>
+      <a class="px-4 py-2 rounded bg-slate-900 text-white" href="#waitlist">Join Waitlist</a>
+    </div>
+    <div class="mt-8 grid md:grid-cols-2 gap-8">
+      <div>
+        <h2 class="text-2xl font-semibold">Everything you need, nothing you don’t.</h2>
+        <p class="mt-3 text-slate-600">Built for local service businesses that want simple scheduling, client tracking, and invoices without enterprise CRM pricing.</p>
+        <div class="mt-6 p-4 bg-white rounded shadow-sm">
+          <p class="font-semibold">Pricing</p>
+          <p class="text-slate-600">Solo £39/mo · Team £79/mo · Pro £129/mo</p>
+        </div>
+      </div>
+      <div class="bg-white rounded shadow-sm p-6">
+        <h3 class="font-semibold text-lg">Quick Job Card</h3>
+        <p class="text-sm text-slate-500">Create a client + job in seconds.</p>
+        <div class="mt-4 space-y-3">
+          <input id="client" class="w-full border rounded px-3 py-2" placeholder="Client name" />
+          <input id="service" class="w-full border rounded px-3 py-2" placeholder="Service (e.g., boiler service)" />
+          <input id="date" class="w-full border rounded px-3 py-2" type="date" />
+          <input id="price" class="w-full border rounded px-3 py-2" type="number" placeholder="Price (£)" />
+          <button id="add" class="w-full bg-slate-900 text-white rounded px-3 py-2">Add Job</button>
+        </div>
+        <div id="jobs" class="mt-4 text-sm text-slate-700 bg-slate-50 p-3 rounded min-h-[80px]"></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="max-w-5xl mx-auto px-6 pb-12">
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white p-4 rounded shadow-sm">
+        <h4 class="font-semibold">Client history</h4>
+        <p class="text-slate-600 text-sm">See every visit and invoice.</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow-sm">
+        <h4 class="font-semibold">Simple scheduling</h4>
+        <p class="text-slate-600 text-sm">No complex dispatch tools.</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow-sm">
+        <h4 class="font-semibold">Invoice ready</h4>
+        <p class="text-slate-600 text-sm">Create an invoice from a job.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="waitlist" class="max-w-3xl mx-auto px-6 pb-16">
+    <div class="bg-white rounded shadow-sm p-6">
+      <h3 class="text-xl font-semibold">Get early access</h3>
+      <p class="text-slate-600 text-sm">Join the waitlist for launch updates.</p>
+      <div class="mt-4 flex gap-3">
+        <input class="flex-1 border rounded px-3 py-2" placeholder="you@company.com" />
+        <button class="bg-slate-900 text-white rounded px-4 py-2">Notify me</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const jobsEl = document.getElementById('jobs');
+    const render = () => {
+      const jobs = JSON.parse(localStorage.getItem('fieldkit_jobs') || '[]');
+      jobsEl.innerHTML = jobs.length
+        ? jobs.map(j => `• ${j.date} — ${j.client} — ${j.service} — £${j.price}`).join('<br/>')
+        : 'No jobs yet.';
+    };
+    document.getElementById('add').addEventListener('click', () => {
+      const job = {
+        client: document.getElementById('client').value || 'Client',
+        service: document.getElementById('service').value || 'Service',
+        date: document.getElementById('date').value || 'Today',
+        price: document.getElementById('price').value || '0'
+      };
+      const jobs = JSON.parse(localStorage.getItem('fieldkit_jobs') || '[]');
+      jobs.unshift(job);
+      localStorage.setItem('fieldkit_jobs', JSON.stringify(jobs));
+      render();
+    });
+    render();
+  </script>
+</body>
+</html>
