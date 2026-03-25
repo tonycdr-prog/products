@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>COD Commission Tracker — Track marketplace commissions when orders are cash-on-delivery</title>
+  <meta name="description" content="Track commissions and payouts for cash-on-delivery marketplaces. Paste your order list, compute commission due, and flag unpaid items instantly." />
+  <meta name="keywords" content="cash on delivery, commission tracker, marketplace, payout, reconciliation" />
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#0b0f14;color:#e9eef5}
+    header{padding:32px 24px;border-bottom:1px solid #1f2a37;background:#0f1621}
+    h1{margin:0 0 8px 0;font-size:28px}
+    .container{max-width:980px;margin:0 auto;padding:24px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    textarea,input,select,button{width:100%;padding:10px;border-radius:8px;border:1px solid #243244;background:#0f1621;color:#e9eef5}
+    button{cursor:pointer;background:#2d6cdf;border-color:#2d6cdf;font-weight:600}
+    .card{background:#0f1621;border:1px solid #243244;border-radius:12px;padding:16px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#1f2a37;font-size:12px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{border-bottom:1px solid #243244;padding:8px;text-align:left;font-size:13px}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .price{font-size:28px;font-weight:700}
+    footer{padding:24px;color:#9fb0c7}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <span class="badge">Marketplace ops</span>
+      <h1>COD Commission Tracker</h1>
+      <p>Stop guessing how much commission you’re owed when customers pay cash. Paste order data, calculate commission due, and flag unpaid items in seconds.</p>
+      <div class="cta">
+        <div class="price">£19/mo</div>
+        <button onclick="document.getElementById('email').focus()">Join early access</button>
+        <span class="badge">Stripe-ready pricing</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <div class="card">
+        <h3>1) Configure commission</h3>
+        <label>Commission rate (%)</label>
+        <input id="rate" type="number" value="8" step="0.1" />
+        <label>COD fee per order (optional)</label>
+        <input id="codFee" type="number" value="0" step="0.01" />
+        <label>Currency</label>
+        <select id="currency">
+          <option value="£">£ GBP</option>
+          <option value="$">$ USD</option>
+          <option value="€">€ EUR</option>
+        </select>
+
+        <h3 style="margin-top:16px;">2) Paste orders CSV</h3>
+        <p style="font-size:13px;color:#9fb0c7">Columns: order_id, order_value, paid (yes/no)</p>
+        <textarea id="orders" rows="10">A001,120,yes
+A002,75,no
+A003,190,yes
+A004,55,no</textarea>
+        <button style="margin-top:12px" onclick="calculate()">Calculate commissions</button>
+      </div>
+
+      <div class="card">
+        <h3>Results</h3>
+        <div id="summary"></div>
+        <table id="table"></table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h3>Waitlist</h3>
+      <p>Get the hosted dashboard with CSV uploads, payout reminders, and monthly invoices.</p>
+      <input id="email" type="email" placeholder="you@company.com" />
+      <button style="margin-top:10px" onclick="joinWaitlist()">Join waitlist</button>
+      <div id="waitlistMsg" style="margin-top:8px;color:#9fb0c7"></div>
+    </div>
+  </main>
+
+  <footer class="container">
+    Built for marketplace operators, resellers, and multi-brand platforms using cash-on-delivery.
+  </footer>
+
+<script>
+function parseCSV(text){
+  return text.split(/\n+/).map(r=>r.trim()).filter(Boolean).map(row=>{
+    const [order_id, order_value, paid] = row.split(',').map(c=>c.trim());
+    return {order_id, order_value: parseFloat(order_value||0), paid: (paid||'').toLowerCase()==='yes'};
+  });
+}
+
+function calculate(){
+  const rate = parseFloat(document.getElementById('rate').value||0)/100;
+  const codFee = parseFloat(document.getElementById('codFee').value||0);
+  const currency = document.getElementById('currency').value;
+  const rows = parseCSV(document.getElementById('orders').value);
+
+  let totalValue = 0, totalCommission = 0, unpaidCommission = 0;
+  const table = document.getElementById('table');
+  table.innerHTML = '<tr><th>Order</th><th>Value</th><th>Paid</th><th>Commission Due</th><th>Status</th></tr>';
+
+  rows.forEach(r=>{
+    const commission = (r.order_value * rate) + codFee;
+    totalValue += r.order_value;
+    totalCommission += commission;
+    if(!r.paid) unpaidCommission += commission;
+    const status = r.paid ? 'Received' : 'Outstanding';
+    table.innerHTML += `<tr><td>${r.order_id}</td><td>${currency}${r.order_value.toFixed(2)}</td><td>${r.paid?'Yes':'No'}</td><td>${currency}${commission.toFixed(2)}</td><td>${status}</td></tr>`;
+  });
+
+  document.getElementById('summary').innerHTML = `
+    <p><strong>Total order value:</strong> ${currency}${totalValue.toFixed(2)}</p>
+    <p><strong>Total commission due:</strong> ${currency}${totalCommission.toFixed(2)}</p>
+    <p><strong>Outstanding commission:</strong> ${currency}${unpaidCommission.toFixed(2)}</p>
+  `;
+}
+
+function joinWaitlist(){
+  const email = document.getElementById('email').value.trim();
+  document.getElementById('waitlistMsg').textContent = email ? `Thanks — ${email} is on the list.` : 'Enter a valid email.';
+}
+
+calculate();
+</script>
+</body>
+</html>
