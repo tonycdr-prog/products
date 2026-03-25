@@ -1,19 +1,21 @@
-# DNS + Email Deliverability Mini‑Audit
+# DNS + Email Deliverability Pre‑Flight — Product Brief
 
 ## What it does
-A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report. Built for fast pre‑flight checks during DNS migrations (especially Google Domains → Squarespace).
+A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report. Built for fast pre‑flight checks during DNS migrations and nameserver changes.
 
-## Target customer
-- Small business owners and agencies migrating domains
-- Freelance web/dev shops doing DNS cutovers
-- IT admins who need a quick deliverability sanity check
+## Target customer (refined)
+- UK web agencies and freelance developers migrating client domains
+- IT contractors doing email cutovers for SMEs
+- Small businesses moving providers (Google Domains → Squarespace, 123‑reg → Cloudflare)
 
-## Pricing model
-- $9 one‑off report download
-- $5/month monitoring add‑on (daily checks + alert email)
+## Core value
+- Prevents mail outages during migrations
+- Gives a clear handover checklist clients can act on
+- Creates an exportable audit trail for sign‑off
 
-## Competitive advantage
-- Zero login, zero tracking
-- Works entirely in the browser with DNS‑over‑HTTPS
-- Fast: under 30 seconds to get a usable report
-- Focused on migration errors (missing DKIM/DMARC, broken SPF)
+## Pricing model (refined)
+- **Free:** unlimited one‑off audits in the browser
+- **Pro:** £9/mo for up to 25 domains, daily monitoring, and alert emails when records drift
+
+## Distribution tactic (realistic)
+Publish a “DNS migration pre‑flight checklist (UK)” post on the r/webdev and r/sysadmin subreddits and share the tool as the free audit step.

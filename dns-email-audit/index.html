@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DNS + Email Deliverability Mini‑Audit</title>
+  <title>Email Deliverability Pre‑Flight — Fix DNS mistakes before they cost you mail</title>
+  <meta name="description" content="Run a no‑login DNS audit for MX, SPF, DKIM, and DMARC before you migrate or change nameservers. Get a clear score, fix checklist, and exportable report in under 30 seconds." />
+  <meta property="og:title" content="Email Deliverability Pre‑Flight" />
+  <meta property="og:description" content="Run a no‑login DNS audit for MX, SPF, DKIM, and DMARC before you migrate or change nameservers. Get a clear score, fix checklist, and exportable report in under 30 seconds." />
   <style>
     :root {
       --bg: #0b0f14;
@@ -24,7 +27,8 @@
       line-height: 1.45;
     }
     .container { max-width: 980px; margin: 0 auto; }
-    h1 { margin: 0 0 6px; font-size: 28px; }
+    h1 { margin: 0 0 8px; font-size: 30px; }
+    h2 { margin: 0 0 10px; font-size: 22px; }
     p.lead { color: var(--muted); margin-top: 0; }
     .panel {
       background: var(--panel);
@@ -61,18 +65,30 @@
       background: #0c121c; border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px;
     }
     .footer { color: var(--muted); font-size: 12px; margin-top: 20px; }
+    .btn-pay { display: inline-block; padding: 10px 14px; border-radius: 8px; background: var(--accent); color: #00131f; font-weight: 800; text-decoration: none; }
+    ul.benefits { margin: 8px 0 0 18px; }
+    .price { font-size: 26px; font-weight: 800; }
+    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .note { color: var(--muted); font-size: 13px; }
+    .waitlist { display: flex; gap: 10px; flex-wrap: wrap; }
+    .waitlist input { flex: 1; min-width: 240px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>DNS + Email Deliverability Mini‑Audit</h1>
-    <p class="lead">Run a no‑login audit for MX, SPF, DKIM, and DMARC. Designed for Google Domains → Squarespace migrations.</p>
+    <h1>Fix email deliverability before your DNS change breaks it</h1>
+    <p class="lead">Run a no‑login pre‑flight audit for MX, SPF, DKIM, and DMARC. Built for UK agencies and operators doing domain migrations, host moves, or nameserver changes.</p>
+    <ul class="benefits">
+      <li>Spot missing records before mail stops landing.</li>
+      <li>Get a clean checklist you can hand to clients or IT.</li>
+      <li>Export a JSON report for documentation and sign‑off.</li>
+    </ul>
 
     <div class="panel">
       <div class="row">
         <div>
           <label for="domain">Domain</label>
-          <input id="domain" placeholder="example.com" />
+          <input id="domain" placeholder="example.co.uk" />
         </div>
         <div>
           <label for="selectors">DKIM selectors (comma‑separated)</label>
@@ -81,7 +97,7 @@
       </div>
       <div style="margin-top: 12px;">
         <label for="notes">Optional notes (saved in report)</label>
-        <textarea id="notes" rows="2" placeholder="e.g., moved from Google Domains on 2026‑03‑15"></textarea>
+        <textarea id="notes" rows="2" placeholder="e.g., moving from Google Domains to Squarespace on 2026‑03‑29"></textarea>
       </div>
       <div class="actions" style="margin-top: 12px;">
         <button id="runBtn">Run audit</button>
@@ -128,6 +144,43 @@
         <strong>Raw DNS Output</strong>
         <pre id="rawOutput">Waiting…</pre>
       </div>
+    </div>
+
+    <div class="panel">
+      <h2>Pricing</h2>
+      <div class="pricing-grid">
+        <div class="panel" style="margin:0;">
+          <div class="muted">Free</div>
+          <div class="price">£0</div>
+          <ul>
+            <li>Unlimited one‑off audits</li>
+            <li>Fix checklist + JSON export</li>
+            <li>No login required</li>
+          </ul>
+        </div>
+        <div class="panel" style="margin:0;">
+          <div class="muted">Pro Monitoring</div>
+          <div class="price">£9/mo</div>
+          <ul>
+            <li>Daily monitoring for up to 25 domains</li>
+            <li>Email alerts when records drift</li>
+            <li>Change log for client handover</li>
+          </ul>
+          <a href="#stripe-coming-soon" class="btn-pay">Get Pro — £9/mo</a>
+          <div class="note">Payment coming soon — join the waitlist</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Join the waitlist</h2>
+      <form id="waitlistForm">
+        <div class="waitlist">
+          <input type="email" id="waitlistEmail" placeholder="you@agency.co.uk" required />
+          <button type="submit">Notify me</button>
+        </div>
+        <div class="note" id="waitlistNote">We’ll only email you about launch updates.</div>
+      </form>
     </div>
   </div>
 
@@ -190,10 +243,6 @@
 
     function setText(id, text) {
       document.getElementById(id).textContent = text;
-    }
-
-    function setHTML(id, html) {
-      document.getElementById(id).innerHTML = html;
     }
 
     function normalizeDomain(domain) {
@@ -325,8 +374,9 @@
 
         setText('score', score);
         const [kind, label] = scoreLabel(score);
-        document.getElementById('scoreBadge').textContent = label;
-        document.getElementById('scoreBadge').className = `pill badge ${kind}`;
+        const scoreBadge = document.getElementById('scoreBadge');
+        scoreBadge.textContent = label;
+        scoreBadge.className = `pill badge ${kind}`;
         rawOutput.textContent = JSON.stringify(raw, null, 2);
 
         const checklist = document.getElementById('checklist');
@@ -375,6 +425,16 @@
       } catch (err) {
         alert('Clipboard access failed.');
       }
+    });
+
+    const waitlistForm = document.getElementById('waitlistForm');
+    const waitlistNote = document.getElementById('waitlistNote');
+    waitlistForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('waitlistEmail').value.trim();
+      if (!email) return;
+      waitlistNote.textContent = 'Thanks — we’ll be in touch.';
+      waitlistForm.reset();
     });
   </script>
 </body>
