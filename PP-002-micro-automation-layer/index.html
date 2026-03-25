@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Micro‑Automation Layer — kill copy‑paste between apps</title>
+  <meta name="description" content="Turn your most painful manual task into a simple automation recipe in seconds." />
+  <meta property="og:title" content="Micro‑Automation Layer" />
+  <meta property="og:description" content="Lightweight automation recipes for small businesses." />
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; background:#f7fbff; color:#111; }
+    header, section { padding: 28px 18px; max-width: 900px; margin: 0 auto; }
+    .card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+    .grid { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); }
+    .btn { background:#0f766e; color:#fff; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; }
+    input, select, textarea { width:100%; padding:8px; margin-top:6px; border:1px solid #ccc; border-radius:6px; }
+    .muted { color:#666; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Micro‑Automation Layer</h1>
+    <p>Describe the painful manual task → get a ready‑to‑run automation recipe and checklist.</p>
+    <button class="btn" onclick="document.getElementById('builder').scrollIntoView({behavior:'smooth'})">Build a recipe</button>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <h3>What it does</h3>
+      <ul>
+        <li>Creates a simple workflow map (trigger → action)</li>
+        <li>Generates a checklist to implement in any tool</li>
+        <li>Saves recipes locally</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Pricing</h3>
+      <p><strong>£15/mo</strong> — 10 recipes</p>
+      <p><strong>£39/mo</strong> — unlimited recipes + templates</p>
+      <p class="muted">Stripe‑ready checkout coming soon.</p>
+    </div>
+  </section>
+
+  <section id="builder" class="card">
+    <h2>Automation Recipe Builder</h2>
+    <div class="grid">
+      <div>
+        <label>Trigger app</label>
+        <input id="triggerApp" placeholder="Gmail" />
+      </div>
+      <div>
+        <label>Trigger event</label>
+        <input id="triggerEvent" placeholder="New lead email" />
+      </div>
+      <div>
+        <label>Action app</label>
+        <input id="actionApp" placeholder="Google Sheets" />
+      </div>
+      <div>
+        <label>Action event</label>
+        <input id="actionEvent" placeholder="Add new row" />
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <button class="btn" onclick="buildRecipe()">Generate recipe</button>
+    </div>
+    <textarea id="recipeOutput" rows="8" style="margin-top:12px;" placeholder="Your automation recipe will appear here..."></textarea>
+  </section>
+
+  <section class="card">
+    <h3>Join the waitlist</h3>
+    <div class="grid">
+      <input id="email" placeholder="you@company.com" />
+      <button class="btn" onclick="saveEmail()">Join waitlist</button>
+    </div>
+    <p id="waitlistMsg" class="muted"></p>
+  </section>
+
+  <script>
+    function buildRecipe(){
+      const tApp = document.getElementById('triggerApp').value || 'Trigger App';
+      const tEvent = document.getElementById('triggerEvent').value || 'Trigger Event';
+      const aApp = document.getElementById('actionApp').value || 'Action App';
+      const aEvent = document.getElementById('actionEvent').value || 'Action Event';
+
+      const output = `Recipe:\n1) When ${tApp} detects: ${tEvent}\n2) Then in ${aApp}: ${aEvent}\n\nChecklist:\n- Confirm auth for ${tApp} and ${aApp}\n- Map required fields\n- Test with 3 real samples\n- Turn on + monitor for 48h`;
+      document.getElementById('recipeOutput').value = output;
+
+      const list = JSON.parse(localStorage.getItem('recipes') || '[]');
+      list.push({ tApp, tEvent, aApp, aEvent, ts: new Date().toISOString() });
+      localStorage.setItem('recipes', JSON.stringify(list));
+    }
+
+    function saveEmail(){
+      const email = document.getElementById('email').value.trim();
+      if(!email){ return; }
+      const list = JSON.parse(localStorage.getItem('waitlist') || '[]');
+      list.push({ email, ts: new Date().toISOString() });
+      localStorage.setItem('waitlist', JSON.stringify(list));
+      document.getElementById('waitlistMsg').textContent = 'Thanks — you’re on the list.';
+      document.getElementById('email').value = '';
+    }
+  </script>
+</body>
+</html>
