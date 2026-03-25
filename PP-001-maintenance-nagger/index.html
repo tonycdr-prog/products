@@ -3,137 +3,189 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Maintainly — Landlord Maintenance Nagger</title>
-  <meta name="description" content="A lightweight maintenance scheduler that nags until you mark tasks done. Built for small landlords." />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Maintainly — Never miss a landlord maintenance deadline</title>
+  <meta name="description" content="Maintainly keeps small landlords compliant with recurring maintenance reminders, overdue nags, and a simple completion log." />
+  <meta property="og:title" content="Maintainly — Never miss a landlord maintenance deadline" />
+  <meta property="og:description" content="Recurring maintenance reminders, overdue nags, and a simple completion log for UK landlords." />
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #111827;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --accent: #60a5fa;
+      --accent-2: #34d399;
+      --border: #1f2937;
+      --danger: #f87171;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 60px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .grid { display: grid; gap: 18px; }
+    .hero { display: grid; gap: 18px; grid-template-columns: 1.15fr 1fr; }
+    @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } }
+    h1 { margin: 0 0 8px; font-size: 34px; line-height: 1.2; }
+    h2 { margin: 0 0 10px; font-size: 22px; }
+    p { margin: 0 0 12px; }
+    ul { margin: 10px 0 0 18px; }
+    label { display: block; font-weight: 600; margin: 10px 0 6px; }
+    input, select, button {
+      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #334155;
+      background: #0f172a; color: #e5e7eb; font-size: 14px;
+    }
+    button { background: var(--accent); border: none; color: #081121; font-weight: 700; cursor: pointer; }
+    .btn-pay { display: inline-block; padding: 12px 16px; border-radius: 10px; background: var(--accent-2); color: #05110b; font-weight: 800; text-decoration: none; }
+    .muted { color: var(--muted); }
+    .row { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .task {
+      border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; gap: 10px;
+    }
+    .task.overdue { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .task button { width: auto; padding: 8px 10px; background: transparent; color: var(--text); border: 1px solid #334155; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #0f172a; border: 1px solid #334155; font-size: 12px; color: var(--muted); }
+    .pricing { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .pricing .card { padding: 16px; }
+    footer { margin-top: 24px; font-size: 12px; color: var(--muted); }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
-  <header class="max-w-6xl mx-auto px-6 py-10">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold">Maintainly</h1>
-      <a class="text-sm text-slate-600" href="#pricing">Pricing</a>
-    </div>
-    <div class="mt-10 grid md:grid-cols-2 gap-8 items-center">
-      <div>
-        <h2 class="text-4xl font-extrabold leading-tight">Never miss a filter change again.</h2>
-        <p class="mt-4 text-lg text-slate-600">A lightweight maintenance scheduler that nags you until tasks are done — built for small landlords who don’t want a full property management suite.</p>
-        <div class="mt-6 flex gap-3">
-          <input class="border rounded px-3 py-2 w-64" placeholder="Email for early access" />
-          <button class="bg-slate-900 text-white px-4 py-2 rounded">Join waitlist</button>
-        </div>
-        <p class="mt-3 text-sm text-slate-500">No spam. One email when we launch.</p>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="card">
+        <span class="badge">Built for UK landlords</span>
+        <h1>Stay compliant and never miss a maintenance deadline.</h1>
+        <p class="muted">Maintainly keeps recurring safety tasks (boiler service, PAT tests, smoke alarms) on track — with overdue nags and a clean audit log.</p>
+        <ul>
+          <li>See every property task in one place with due dates.</li>
+          <li>Overdue items stay highlighted until completed.</li>
+          <li>Export a simple completion log for compliance checks.</li>
+        </ul>
       </div>
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="text-lg font-semibold">Quick demo</h3>
-        <p class="text-sm text-slate-500">Add a maintenance task and watch overdue items glow red.</p>
-        <div class="mt-4 space-y-2">
-          <input id="taskTitle" class="border rounded px-3 py-2 w-full" placeholder="e.g., Boiler service" />
-          <input id="taskDue" type="date" class="border rounded px-3 py-2 w-full" />
-          <button id="addTask" class="bg-emerald-600 text-white px-4 py-2 rounded w-full">Add task</button>
-        </div>
-        <ul id="taskList" class="mt-4 space-y-2"></ul>
-      </div>
-    </div>
-  </header>
 
-  <section class="max-w-6xl mx-auto px-6 py-10">
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="bg-white p-5 rounded-xl shadow">
-        <h4 class="font-semibold">Recurring reminders</h4>
-        <p class="text-sm text-slate-600">Set monthly/annual schedules for HVAC, inspections, PAT tests.</p>
-      </div>
-      <div class="bg-white p-5 rounded-xl shadow">
-        <h4 class="font-semibold">Compliance logs</h4>
-        <p class="text-sm text-slate-600">Store photos, receipts, and completion notes per task.</p>
-      </div>
-      <div class="bg-white p-5 rounded-xl shadow">
-        <h4 class="font-semibold">Nag mode</h4>
-        <p class="text-sm text-slate-600">Overdue tasks stay highlighted until you close them.</p>
+      <div class="card">
+        <h2>Quick demo</h2>
+        <p class="muted">Add a task, set the due date, and see how overdue items are flagged.</p>
+        <label for="taskTitle">Task name</label>
+        <input id="taskTitle" placeholder="Boiler service" />
+        <div class="row">
+          <div>
+            <label for="taskDue">Due date</label>
+            <input id="taskDue" type="date" />
+          </div>
+          <div>
+            <label for="taskRepeat">Repeat</label>
+            <select id="taskRepeat">
+              <option value="once">One-off</option>
+              <option value="monthly">Monthly</option>
+              <option value="annual">Annual</option>
+            </select>
+          </div>
+        </div>
+        <button id="addTask" style="margin-top:12px;">Add task</button>
+        <div id="taskList" class="grid" style="margin-top:12px;"></div>
       </div>
     </div>
-  </section>
 
-  <section id="pricing" class="bg-white border-t">
-    <div class="max-w-6xl mx-auto px-6 py-10">
-      <h3 class="text-2xl font-bold">Simple pricing</h3>
-      <div class="mt-6 grid md:grid-cols-3 gap-6">
-        <div class="border rounded-xl p-5">
-          <h4 class="font-semibold">Starter</h4>
-          <p class="text-3xl font-bold">£12<span class="text-sm font-normal">/mo</span></p>
-          <ul class="mt-3 text-sm text-slate-600 list-disc ml-4">
-            <li>Up to 10 units</li>
-            <li>Unlimited tasks</li>
-            <li>Email reminders</li>
-          </ul>
+    <div class="card" style="margin-top:18px;">
+      <h2>Pricing</h2>
+      <div class="pricing">
+        <div class="card">
+          <h3>Free</h3>
+          <p class="muted">Single property, 10 active tasks.</p>
+          <p><strong>£0</strong> forever</p>
         </div>
-        <div class="border rounded-xl p-5">
-          <h4 class="font-semibold">Pro</h4>
-          <p class="text-3xl font-bold">£29<span class="text-sm font-normal">/mo</span></p>
-          <ul class="mt-3 text-sm text-slate-600 list-disc ml-4">
-            <li>Up to 50 units</li>
-            <li>SMS reminders</li>
-            <li>Compliance exports</li>
-          </ul>
-        </div>
-        <div class="border rounded-xl p-5">
-          <h4 class="font-semibold">Agency</h4>
-          <p class="text-3xl font-bold">£79<span class="text-sm font-normal">/mo</span></p>
-          <ul class="mt-3 text-sm text-slate-600 list-disc ml-4">
-            <li>Unlimited units</li>
-            <li>Multi‑user access</li>
-            <li>API + webhooks</li>
-          </ul>
+        <div class="card">
+          <h3>Pro</h3>
+          <p class="muted">Unlimited properties + compliance export.</p>
+          <p><strong>£9/mo</strong></p>
+          <a href="#stripe-coming-soon" class="btn-pay">Get Pro — £9/mo</a>
+          <p class="muted" style="margin-top:8px;">Payment coming soon — join the waitlist.</p>
         </div>
       </div>
     </div>
-  </section>
 
-  <footer class="max-w-6xl mx-auto px-6 py-10 text-sm text-slate-500">
-    Built for small landlords who want peace of mind.
-  </footer>
+    <div class="card" style="margin-top:18px;">
+      <h2>Join the waitlist</h2>
+      <p class="muted">We’ll email you when Pro payments are live.</p>
+      <form id="waitlistForm">
+        <div class="row">
+          <input id="waitlistEmail" type="email" placeholder="you@email.com" required />
+          <button type="submit">Join waitlist</button>
+        </div>
+        <p id="waitlistMessage" class="muted" style="margin-top:8px;"></p>
+      </form>
+    </div>
+
+    <footer>Maintainly is a lightweight tool — no logins yet, everything stays in your browser.</footer>
+  </div>
 
   <script>
     const taskList = document.getElementById('taskList');
     const taskTitle = document.getElementById('taskTitle');
     const taskDue = document.getElementById('taskDue');
+    const taskRepeat = document.getElementById('taskRepeat');
     const addTask = document.getElementById('addTask');
+    const waitlistForm = document.getElementById('waitlistForm');
+    const waitlistMessage = document.getElementById('waitlistMessage');
 
     const loadTasks = () => JSON.parse(localStorage.getItem('maintainly_tasks') || '[]');
     const saveTasks = (tasks) => localStorage.setItem('maintainly_tasks', JSON.stringify(tasks));
 
+    const formatRepeat = (repeat) => {
+      if (repeat === 'monthly') return 'Monthly';
+      if (repeat === 'annual') return 'Annual';
+      return 'One-off';
+    };
+
     const render = () => {
       const tasks = loadTasks();
       taskList.innerHTML = '';
-      const today = new Date().toISOString().slice(0,10);
+      const today = new Date().toISOString().slice(0, 10);
       tasks.forEach((task, idx) => {
-        const li = document.createElement('li');
         const overdue = task.due && task.due < today && !task.done;
-        li.className = `border rounded p-3 flex items-center justify-between ${overdue ? 'border-red-500 bg-red-50' : 'border-slate-200'}`;
-        li.innerHTML = `
+        const div = document.createElement('div');
+        div.className = `task ${overdue ? 'overdue' : ''}`;
+        div.innerHTML = `
           <div>
-            <p class="font-medium">${task.title}</p>
-            <p class="text-xs text-slate-500">Due: ${task.due || 'n/a'}</p>
+            <strong>${task.title}</strong>
+            <div class="muted">Due: ${task.due || 'n/a'} • ${formatRepeat(task.repeat)}</div>
           </div>
-          <button class="text-sm ${task.done ? 'text-emerald-600' : 'text-slate-600'}">${task.done ? 'Completed' : 'Mark done'}</button>
+          <button>${task.done ? 'Completed' : 'Mark done'}</button>
         `;
-        li.querySelector('button').onclick = () => {
+        div.querySelector('button').onclick = () => {
           tasks[idx].done = !tasks[idx].done;
           saveTasks(tasks);
           render();
         };
-        taskList.appendChild(li);
+        taskList.appendChild(div);
       });
     };
 
     addTask.onclick = () => {
-      if (!taskTitle.value.trim()) return;
+      if (!taskTitle.value.trim()) return alert('Add a task name.');
       const tasks = loadTasks();
-      tasks.push({ title: taskTitle.value.trim(), due: taskDue.value, done: false });
+      tasks.push({
+        title: taskTitle.value.trim(),
+        due: taskDue.value,
+        repeat: taskRepeat.value,
+        done: false
+      });
       saveTasks(tasks);
       taskTitle.value = '';
       taskDue.value = '';
+      taskRepeat.value = 'once';
       render();
     };
+
+    waitlistForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      waitlistMessage.textContent = `Thanks — we’ll be in touch at ${document.getElementById('waitlistEmail').value}.`;
+      waitlistForm.reset();
+    });
 
     render();
   </script>
