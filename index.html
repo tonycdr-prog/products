@@ -1,27 +1,118 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products — tonycdr-prog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Products</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: #0d0d0d; color: #e5e5e5; padding: 2rem; }
-    h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.25rem; }
-    p.sub { color: #666; font-size: 0.85rem; margin-bottom: 2rem; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
-    .card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; display: block; transition: border-color 0.15s; }
-    .card:hover { border-color: #555; }
-    .card h2 { font-size: 1rem; margin-bottom: 0.4rem; }
-    .card p { font-size: 0.8rem; color: #888; }
-    .empty { color: #555; font-size: 0.9rem; }
+    :root { color-scheme: dark; }
+    body {
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: #0b0f14; color: #e6edf3;
+    }
+    .wrap { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+    h1 { font-size: 28px; margin: 0 0 20px; font-weight: 700; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .card {
+      background: #121826; border: 1px solid #1f2937; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit;
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+    }
+    .card:hover { transform: translateY(-2px); border-color: #2d3b52; box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
+    .title { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+    .desc { font-size: 13px; color: #a9b4c2; line-height: 1.4; margin: 0; }
+    .footer { margin-top: 24px; font-size: 12px; color: #6b7280; }
   </style>
 </head>
 <body>
-  <h1>Products</h1>
-  <p class="sub">Autonomous builds — shipped nightly by the Scout.</p>
-  <div class="grid" id="grid">
-    <p class="empty">No builds deployed yet.</p>
+  <div class="wrap">
+    <h1>Products</h1>
+    <div class="grid">
+      <a class="card" href="/products/PP-001-carousel-maker/">
+        <div class="title">Pp 001 Carousel Maker</div>
+        <p class="desc">Creates LinkedIn-ready carousel slides with correct 4:5 sizing, simple themes, and one-click PNG exports.</p>
+      </a>
+      <a class="card" href="/products/PP-001-cod-commission-tracker/">
+        <div class="title">Pp 001 Cod Commission Tracker</div>
+        <p class="desc"># Product Brief — COD Commission Tracker</p>
+      </a>
+      <a class="card" href="/products/PP-001-competitor-price-tracker/">
+        <div class="title">Pp 001 Competitor Price Tracker</div>
+        <p class="desc">Quickly turns a competitor price list into clear pricing actions and alert-ready exports.</p>
+      </a>
+      <a class="card" href="/products/PP-001-docstack/">
+        <div class="title">Pp 001 Docstack</div>
+        <p class="desc">DocStack combines proposals, contracts, and invoices into a single workflow for small businesses.</p>
+      </a>
+      <a class="card" href="/products/PP-001-invoice-chaser-lite/">
+        <div class="title">Pp 001 Invoice Chaser Lite</div>
+        <p class="desc"># Product Brief — Invoice Chaser Lite</p>
+      </a>
+      <a class="card" href="/products/PP-001-invoice-preflight/">
+        <div class="title">Pp 001 Invoice Preflight</div>
+        <p class="desc">Turns messy OCR/pasted invoice text into structured fields (vendor, invoice number, date, subtotal, VAT, total).</p>
+      </a>
+      <a class="card" href="/products/PP-001-maintenance-nagger/">
+        <div class="title">Pp 001 Maintenance Nagger</div>
+        <p class="desc">Maintainly is a lightweight maintenance scheduler for small landlords.</p>
+      </a>
+      <a class="card" href="/products/PP-002-bsa-checklist/">
+        <div class="title">Pp 002 Bsa Checklist</div>
+        <p class="desc">A UK‑specific Building Safety Act checklist and document tracker for landlords, managing agents, and leaseholders.</p>
+      </a>
+      <a class="card" href="/products/PP-002-fee-link-optimizer/">
+        <div class="title">Pp 002 Fee Link Optimizer</div>
+        <p class="desc">Calculates true payment fees and generates a payment link + QR so clients can pay with the lowest overhead.</p>
+      </a>
+      <a class="card" href="/products/PP-002-fieldkit/">
+        <div class="title">Pp 002 Fieldkit</div>
+        <p class="desc">FieldKit is a lightweight CRM and job scheduler for local service businesses (plumbers, cleaners, electricians).</p>
+      </a>
+      <a class="card" href="/products/PP-002-micro-automation-layer/">
+        <div class="title">Pp 002 Micro Automation Layer</div>
+        <p class="desc"># Product Brief — Micro‑Automation Layer</p>
+      </a>
+      <a class="card" href="/products/PP-002-safe-lead-scout/">
+        <div class="title">Pp 002 Safe Lead Scout</div>
+        <p class="desc">Builds compliant lead discovery workflows without auto‑DM spam.</p>
+      </a>
+      <a class="card" href="/products/PP-002-waitlist-outreach-planner/">
+        <div class="title">Pp 002 Waitlist Outreach Planner</div>
+        <p class="desc"># Product Brief — Organic Waitlist Planner</p>
+      </a>
+      <a class="card" href="/products/PP-002-whatsapp-booking/">
+        <div class="title">Pp 002 Whatsapp Booking</div>
+        <p class="desc">Simple slot manager for small tour operators to prevent overbooking and speed up WhatsApp replies.</p>
+      </a>
+      <a class="card" href="/products/PP-003-arxiv-quality-ranker/">
+        <div class="title">Pp 003 Arxiv Quality Ranker</div>
+        <p class="desc"># Product Brief — arXiv Quality Ranker</p>
+      </a>
+      <a class="card" href="/products/PP-003-cashflow-clarity/">
+        <div class="title">Pp 003 Cashflow Clarity</div>
+        <p class="desc">A simple monthly cashflow + P&amp;L tracker built for owners who want clarity without accounting fluff.</p>
+      </a>
+      <a class="card" href="/products/PP-003-invoice-ocr-lite/">
+        <div class="title">Pp 003 Invoice Ocr Lite</div>
+        <p class="desc"># Product Brief — Invoice OCR Lite</p>
+      </a>
+      <a class="card" href="/products/PP-003-uk-boundary-checker/">
+        <div class="title">Pp 003 Uk Boundary Checker</div>
+        <p class="desc">Estimates boundary discrepancies from title plan vs on‑site measurements and produces a surveyor brief + next‑steps checklist.</p>
+      </a>
+      <a class="card" href="/products/PP-003-workflow-health/">
+        <div class="title">Pp 003 Workflow Health</div>
+        <p class="desc">Scores automation workflows for breakage risk and generates a self-healing checklist.</p>
+      </a>
+      <a class="card" href="/products/PP-004-planpulse/">
+        <div class="title">Pp 004 Planpulse</div>
+        <p class="desc">PlanPulse tracks AI subscription plans and shows daily comparisons across vendors.</p>
+      </a>
+      <a class="card" href="/products/dns-email-audit/">
+        <div class="title">Dns Email Audit</div>
+        <p class="desc">A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report.</p>
+      </a>
+    </div>
+    <div class="footer">Last updated automatically.</div>
   </div>
 </body>
 </html>
