@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CarouselKit — LinkedIn Carousel Generator</title>
+  <meta name="description" content="Generate LinkedIn-ready carousel slides with correct dimensions, branding, and one-click downloads." />
+  <meta name="keywords" content="LinkedIn carousel, social carousel generator, content marketing" />
+  <style>
+    :root { --bg:#0b0f19; --card:#121826; --text:#f8fafc; --muted:#94a3b8; --accent:#22c55e; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:1100px; margin:0 auto; padding:32px; }
+    .hero { display:grid; grid-template-columns: 1.2fr 1fr; gap:24px; }
+    .card { background:var(--card); border:1px solid #1f2937; border-radius:16px; padding:20px; }
+    h1 { font-size:32px; margin:0 0 8px; }
+    .muted { color:var(--muted); }
+    label { display:block; font-weight:600; margin:12px 0 6px; }
+    input, textarea, select { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0f172a; color:#e2e8f0; }
+    button { background:var(--accent); border:none; color:#04210f; font-weight:700; padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; }
+    .slide-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:16px; margin-top:16px; }
+    .slide { width:100%; aspect-ratio: 4 / 5; background:#fff; color:#111827; border-radius:12px; padding:16px; box-shadow:0 6px 18px rgba(0,0,0,.25); display:flex; flex-direction:column; justify-content:space-between; }
+    .badge { font-size:12px; font-weight:700; text-transform:uppercase; color:#16a34a; }
+    .footer { font-size:12px; color:#475569; }
+    .pricing { display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; margin-top:16px; }
+    .cta { display:flex; gap:10px; align-items:center; }
+    .waitlist { margin-top:8px; }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .pricing { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="card">
+        <h1>CarouselKit</h1>
+        <p class="muted">LinkedIn-ready carousels without the Canva resize pain. Generate clean, on-brand slides and download in seconds.</p>
+        <div class="row">
+          <div style="flex:1">
+            <label>Carousel Title</label>
+            <input id="title" placeholder="e.g. 7 Mistakes in SaaS Onboarding" />
+          </div>
+          <div style="width:160px">
+            <label>Theme</label>
+            <select id="theme">
+              <option value="clean">Clean</option>
+              <option value="bold">Bold</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+        </div>
+        <label>Slide Points (one per line)</label>
+        <textarea id="points" rows="6" placeholder="1) The one-time onboarding email\n2) No empty-state guidance\n3) Hidden upgrade CTAs"></textarea>
+        <div class="row" style="margin-top:10px">
+          <button onclick="generateSlides()">Generate Slides</button>
+          <button onclick="downloadAll()" style="background:#38bdf8;color:#0c1927">Download PNGs</button>
+        </div>
+        <div class="waitlist">
+          <label>Email capture</label>
+          <input placeholder="you@company.com" />
+        </div>
+      </div>
+      <div class="card">
+        <h3>Pricing</h3>
+        <div class="pricing">
+          <div class="card">
+            <strong>Starter</strong>
+            <p>£9/mo · 10 carousels</p>
+          </div>
+          <div class="card">
+            <strong>Growth</strong>
+            <p>£29/mo · unlimited</p>
+          </div>
+          <div class="card">
+            <strong>Team</strong>
+            <p>£79/mo · brand kit</p>
+          </div>
+        </div>
+        <p class="muted">Stripe-ready checkout placeholder. Connect billing later.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <h3>Preview</h3>
+      <div id="slides" class="slide-grid"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    function generateSlides() {
+      const title = document.getElementById('title').value || 'Your Carousel Title';
+      const points = document.getElementById('points').value.split('\n').filter(Boolean);
+      const theme = document.getElementById('theme').value;
+      const slides = document.getElementById('slides');
+      slides.innerHTML = '';
+
+      const cover = makeSlide(theme, ` ${title} `, 'Swipe →', true);
+      slides.appendChild(cover);
+
+      points.forEach((p, idx) => {
+        slides.appendChild(makeSlide(theme, p, `Slide ${idx + 2}/${points.length + 1}`, false));
+      });
+    }
+
+    function makeSlide(theme, bodyText, footerText, isCover) {
+      const slide = document.createElement('div');
+      slide.className = 'slide';
+      if (theme === 'bold') { slide.style.background = '#ecfeff'; slide.style.border = '3px solid #0ea5e9'; }
+      if (theme === 'dark') { slide.style.background = '#0f172a'; slide.style.color = '#f8fafc'; }
+      slide.innerHTML = `
+        <div class="badge">${isCover ? 'CarouselKit' : 'Tip'}</div>
+        <div style="font-size:22px;font-weight:700;line-height:1.2">${bodyText}</div>
+        <div class="footer">${footerText}</div>
+      `;
+      return slide;
+    }
+
+    async function downloadAll() {
+      const nodes = Array.from(document.querySelectorAll('.slide'));
+      if (!nodes.length) return alert('Generate slides first.');
+      for (let i = 0; i < nodes.length; i++) {
+        const canvas = await html2canvas(nodes[i]);
+        const link = document.createElement('a');
+        link.download = `carousel-slide-${i+1}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
+    }
+  </script>
+</body>
+</html>
