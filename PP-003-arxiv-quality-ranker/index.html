@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>arXiv Quality Ranker — filter by impact, not just relevance</title>
+  <meta name="description" content="Paste arXiv IDs, pull OpenAlex citation data, and rank papers by quality score. Built for researchers drowning in relevance-only search results." />
+  <meta name="keywords" content="arxiv, citation, openalex, quality score, research" />
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#0b0f14;color:#e9eef5}
+    header{padding:32px 24px;border-bottom:1px solid #1f2a37;background:#0f1621}
+    h1{margin:0 0 8px 0;font-size:28px}
+    .container{max-width:980px;margin:0 auto;padding:24px}
+    textarea,input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #243244;background:#0f1621;color:#e9eef5}
+    button{cursor:pointer;background:#7c3aed;border-color:#7c3aed;font-weight:600}
+    .card{background:#0f1621;border:1px solid #243244;border-radius:12px;padding:16px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{border-bottom:1px solid #243244;padding:8px;text-align:left;font-size:13px}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .price{font-size:28px;font-weight:700}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>arXiv Quality Ranker</h1>
+      <p>Rank papers by impact using OpenAlex citation counts. Paste arXiv IDs and get a quality‑weighted list.</p>
+      <div class="cta">
+        <div class="price">£9/mo</div>
+        <button onclick="document.getElementById('email').focus()">Join early access</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <label>arXiv IDs (comma or newline separated)</label>
+      <textarea id="ids" rows="6">2307.01234
+2401.09876</textarea>
+      <button style="margin-top:12px" onclick="rankPapers()">Rank papers</button>
+      <div id="status" style="margin-top:8px;color:#9fb0c7"></div>
+      <table id="results"></table>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h3>Waitlist</h3>
+      <p>Hosted version adds keyword search, alerts, and team sharing.</p>
+      <input id="email" type="email" placeholder="you@lab.edu" />
+      <button style="margin-top:10px" onclick="joinWaitlist()">Join waitlist</button>
+      <div id="waitlistMsg" style="margin-top:8px;color:#9fb0c7"></div>
+    </div>
+  </main>
+
+<script>
+async function fetchOpenAlex(arxivId){
+  const url = `https://api.openalex.org/works?filter=ids.arxiv:${arxivId}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('OpenAlex error');
+  const data = await res.json();
+  return data.results && data.results[0];
+}
+
+function scorePaper(citations, year){
+  const now = new Date().getFullYear();
+  const recency = Math.max(0, 10 - (now - year));
+  return Math.round((citations * 0.7) + (recency * 2));
+}
+
+async function rankPapers(){
+  const ids = document.getElementById('ids').value.split(/[,\n]+/).map(s=>s.trim()).filter(Boolean);
+  const status = document.getElementById('status');
+  const table = document.getElementById('results');
+  table.innerHTML = '<tr><th>arXiv ID</th><th>Title</th><th>Citations</th><th>Year</th><th>Quality Score</th></tr>';
+  status.textContent = 'Fetching OpenAlex data…';
+
+  const results = [];
+  for(const id of ids){
+    try{
+      const paper = await fetchOpenAlex(id);
+      if(!paper){
+        results.push({id, title:'Not found', citations:0, year:'—', score:0});
+        continue;
+      }
+      const citations = paper.cited_by_count || 0;
+      const year = paper.publication_year || new Date().getFullYear();
+      const score = scorePaper(citations, year);
+      results.push({id, title:paper.display_name || 'Untitled', citations, year, score});
+    } catch(e){
+      results.push({id, title:'Error fetching data', citations:0, year:'—', score:0});
+    }
+  }
+
+  results.sort((a,b)=>b.score - a.score).forEach(r=>{
+    table.innerHTML += `<tr><td>${r.id}</td><td>${r.title}</td><td>${r.citations}</td><td>${r.year}</td><td>${r.score}</td></tr>`;
+  });
+  status.textContent = 'Done.';
+}
+
+function joinWaitlist(){
+  const email = document.getElementById('email').value.trim();
+  document.getElementById('waitlistMsg').textContent = email ? `Thanks — ${email} is on the list.` : 'Enter a valid email.';
+}
+</script>
+</body>
+</html>
