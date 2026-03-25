@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DNS + Email Deliverability Mini‑Audit</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #111824;
+      --muted: #8ea0b8;
+      --text: #e7eef7;
+      --accent: #4cc2ff;
+      --good: #35d07f;
+      --warn: #f7b500;
+      --bad: #ff5d5d;
+      --border: #223044;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 32px;
+      background: var(--bg); color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      line-height: 1.45;
+    }
+    .container { max-width: 980px; margin: 0 auto; }
+    h1 { margin: 0 0 6px; font-size: 28px; }
+    p.lead { color: var(--muted); margin-top: 0; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    input, textarea, button, select {
+      width: 100%; padding: 10px 12px; border-radius: 8px;
+      border: 1px solid var(--border); background: #0f1622; color: var(--text);
+      font-size: 14px;
+    }
+    input::placeholder, textarea::placeholder { color: #6d7f98; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    button {
+      background: var(--accent); color: #00131f; font-weight: 700; border: none; cursor: pointer;
+    }
+    button.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .badge.good { background: rgba(53,208,127,0.15); color: var(--good); }
+    .badge.warn { background: rgba(247,181,0,0.15); color: var(--warn); }
+    .badge.bad { background: rgba(255,93,93,0.15); color: var(--bad); }
+    .grid { display: grid; gap: 12px; }
+    .result-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .muted { color: var(--muted); }
+    pre { background: #0c121c; border: 1px solid var(--border); padding: 10px; border-radius: 8px; overflow: auto; }
+    .score {
+      font-size: 40px; font-weight: 800; color: var(--accent);
+    }
+    .pill {
+      background: #0c121c; border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px;
+    }
+    .footer { color: var(--muted); font-size: 12px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DNS + Email Deliverability Mini‑Audit</h1>
+    <p class="lead">Run a no‑login audit for MX, SPF, DKIM, and DMARC. Designed for Google Domains → Squarespace migrations.</p>
+
+    <div class="panel">
+      <div class="row">
+        <div>
+          <label for="domain">Domain</label>
+          <input id="domain" placeholder="example.com" />
+        </div>
+        <div>
+          <label for="selectors">DKIM selectors (comma‑separated)</label>
+          <input id="selectors" placeholder="google, selector1, selector2" value="google" />
+        </div>
+      </div>
+      <div style="margin-top: 12px;">
+        <label for="notes">Optional notes (saved in report)</label>
+        <textarea id="notes" rows="2" placeholder="e.g., moved from Google Domains on 2026‑03‑15"></textarea>
+      </div>
+      <div class="actions" style="margin-top: 12px;">
+        <button id="runBtn">Run audit</button>
+        <button class="secondary" id="downloadBtn" disabled>Download report</button>
+        <button class="secondary" id="copyBtn" disabled>Copy summary</button>
+      </div>
+      <div class="footer">Uses DNS‑over‑HTTPS (Google + Cloudflare). No tracking, no storage.</div>
+    </div>
+
+    <div class="panel" id="results" style="display:none;">
+      <div class="result-row">
+        <div>
+          <div class="muted">Deliverability Score</div>
+          <div class="score" id="score">—</div>
+        </div>
+        <div class="pill" id="scoreBadge">Waiting…</div>
+      </div>
+
+      <div class="grid" style="margin-top: 16px;">
+        <div class="panel" style="margin:0;">
+          <div class="result-row"><strong>MX Records</strong><span id="mxBadge"></span></div>
+          <div id="mxDetails" class="muted"></div>
+        </div>
+        <div class="panel" style="margin:0;">
+          <div class="result-row"><strong>SPF</strong><span id="spfBadge"></span></div>
+          <div id="spfDetails" class="muted"></div>
+        </div>
+        <div class="panel" style="margin:0;">
+          <div class="result-row"><strong>DKIM</strong><span id="dkimBadge"></span></div>
+          <div id="dkimDetails" class="muted"></div>
+        </div>
+        <div class="panel" style="margin:0;">
+          <div class="result-row"><strong>DMARC</strong><span id="dmarcBadge"></span></div>
+          <div id="dmarcDetails" class="muted"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 16px;">
+        <strong>Fix Checklist</strong>
+        <ul id="checklist"></ul>
+      </div>
+
+      <div class="panel" style="margin-top: 16px;">
+        <strong>Raw DNS Output</strong>
+        <pre id="rawOutput">Waiting…</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const runBtn = document.getElementById('runBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const results = document.getElementById('results');
+    const rawOutput = document.getElementById('rawOutput');
+    let lastReport = null;
+
+    const dohProviders = [
+      {
+        name: 'Google',
+        buildUrl: (name, type) => `https://dns.google/resolve?name=${encodeURIComponent(name)}&type=${type}`,
+        headers: {}
+      },
+      {
+        name: 'Cloudflare',
+        buildUrl: (name, type) => `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`,
+        headers: { 'accept': 'application/dns-json' }
+      }
+    ];
+
+    async function resolveDNS(name, type) {
+      let lastError = null;
+      for (const provider of dohProviders) {
+        try {
+          const res = await fetch(provider.buildUrl(name, type), { headers: provider.headers });
+          if (!res.ok) throw new Error(`${provider.name} ${res.status}`);
+          const data = await res.json();
+          return { provider: provider.name, data };
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error('DNS lookup failed');
+    }
+
+    function parseAnswers(data) {
+      return (data.Answer || []).map(a => a.data);
+    }
+
+    function badge(kind, label) {
+      const span = document.createElement('span');
+      span.className = `badge ${kind}`;
+      span.textContent = label;
+      return span.outerHTML;
+    }
+
+    function setBadge(el, kind, label) {
+      el.innerHTML = badge(kind, label);
+    }
+
+    function scoreLabel(score) {
+      if (score >= 85) return ['good', 'Excellent'];
+      if (score >= 65) return ['warn', 'Needs work'];
+      return ['bad', 'Risky'];
+    }
+
+    function setText(id, text) {
+      document.getElementById(id).textContent = text;
+    }
+
+    function setHTML(id, html) {
+      document.getElementById(id).innerHTML = html;
+    }
+
+    function normalizeDomain(domain) {
+      return domain.trim().replace(/^https?:\/\//i, '').replace(/\/$/, '');
+    }
+
+    function extractTag(txt, tag) {
+      const match = txt.match(new RegExp(`${tag}=([^;\s]+)`));
+      return match ? match[1] : null;
+    }
+
+    async function runAudit() {
+      const domainInput = document.getElementById('domain').value;
+      const selectorsInput = document.getElementById('selectors').value;
+      const notes = document.getElementById('notes').value;
+      const domain = normalizeDomain(domainInput);
+      const selectors = selectorsInput.split(',').map(s => s.trim()).filter(Boolean);
+
+      if (!domain) {
+        alert('Please enter a domain.');
+        return;
+      }
+
+      results.style.display = 'block';
+      rawOutput.textContent = 'Running audit...';
+      downloadBtn.disabled = true;
+      copyBtn.disabled = true;
+      lastReport = null;
+
+      const report = {
+        domain,
+        selectors,
+        notes,
+        timestamp: new Date().toISOString(),
+        checks: {},
+        checklist: []
+      };
+
+      let score = 100;
+      const raw = {};
+
+      try {
+        // MX
+        const mxRes = await resolveDNS(domain, 'MX');
+        raw.mx = mxRes;
+        const mxRecords = parseAnswers(mxRes.data);
+        report.checks.mx = mxRecords;
+        if (mxRecords.length === 0) {
+          score -= 35;
+          report.checklist.push('Add MX records for your mail provider.');
+          setBadge(document.getElementById('mxBadge'), 'bad', 'Missing');
+          setText('mxDetails', 'No MX records found. Email delivery will fail.');
+        } else {
+          const mxSummary = mxRecords.join(', ');
+          setBadge(document.getElementById('mxBadge'), 'good', 'Found');
+          setText('mxDetails', mxSummary);
+        }
+
+        // SPF
+        const spfRes = await resolveDNS(domain, 'TXT');
+        raw.spf = spfRes;
+        const txtRecords = parseAnswers(spfRes.data);
+        const spf = txtRecords.find(t => t.toLowerCase().includes('v=spf1')) || null;
+        report.checks.spf = spf;
+        if (!spf) {
+          score -= 25;
+          report.checklist.push('Publish an SPF record (v=spf1).');
+          setBadge(document.getElementById('spfBadge'), 'bad', 'Missing');
+          setText('spfDetails', 'No SPF record found.');
+        } else {
+          const hardFail = spf.includes(' -all');
+          setBadge(document.getElementById('spfBadge'), hardFail ? 'good' : 'warn', hardFail ? 'Strict' : 'Soft');
+          setText('spfDetails', spf);
+          if (!hardFail) {
+            score -= 5;
+            report.checklist.push('Consider switching SPF to “-all” once verified.');
+          }
+        }
+
+        // DKIM
+        const dkimResults = [];
+        for (const selector of selectors) {
+          const name = `${selector}._domainkey.${domain}`;
+          try {
+            const dkimRes = await resolveDNS(name, 'TXT');
+            raw[`dkim_${selector}`] = dkimRes;
+            const dkimTxt = parseAnswers(dkimRes.data).find(t => t.toLowerCase().includes('v=dkim1')) || null;
+            dkimResults.push({ selector, value: dkimTxt });
+          } catch (err) {
+            dkimResults.push({ selector, value: null, error: String(err) });
+          }
+        }
+        report.checks.dkim = dkimResults;
+        const missingSelectors = dkimResults.filter(d => !d.value);
+        if (missingSelectors.length) {
+          score -= 20;
+          report.checklist.push(`Fix DKIM: missing for selectors ${missingSelectors.map(d => d.selector).join(', ')}.`);
+          setBadge(document.getElementById('dkimBadge'), 'warn', 'Partial');
+        } else {
+          setBadge(document.getElementById('dkimBadge'), 'good', 'Found');
+        }
+        setText('dkimDetails', dkimResults.map(d => `${d.selector}: ${d.value ? 'OK' : 'Missing'}`).join(' • '));
+
+        // DMARC
+        const dmarcName = `_dmarc.${domain}`;
+        const dmarcRes = await resolveDNS(dmarcName, 'TXT');
+        raw.dmarc = dmarcRes;
+        const dmarcTxt = parseAnswers(dmarcRes.data).find(t => t.toLowerCase().includes('v=dmarc1')) || null;
+        report.checks.dmarc = dmarcTxt;
+        if (!dmarcTxt) {
+          score -= 15;
+          report.checklist.push('Add a DMARC policy (v=DMARC1).');
+          setBadge(document.getElementById('dmarcBadge'), 'bad', 'Missing');
+          setText('dmarcDetails', 'No DMARC record found.');
+        } else {
+          const policy = extractTag(dmarcTxt, 'p') || 'none';
+          const kind = policy === 'reject' || policy === 'quarantine' ? 'good' : 'warn';
+          setBadge(document.getElementById('dmarcBadge'), kind, `p=${policy}`);
+          setText('dmarcDetails', dmarcTxt);
+          if (policy === 'none') {
+            score -= 5;
+            report.checklist.push('Move DMARC from p=none to quarantine/reject once monitoring looks good.');
+          }
+        }
+
+        score = Math.max(0, Math.round(score));
+        report.score = score;
+        report.raw = raw;
+
+        setText('score', score);
+        const [kind, label] = scoreLabel(score);
+        document.getElementById('scoreBadge').textContent = label;
+        document.getElementById('scoreBadge').className = `pill badge ${kind}`;
+        rawOutput.textContent = JSON.stringify(raw, null, 2);
+
+        const checklist = document.getElementById('checklist');
+        checklist.innerHTML = '';
+        if (report.checklist.length === 0) {
+          const li = document.createElement('li');
+          li.textContent = 'All core records detected. Consider monitoring for changes.';
+          checklist.appendChild(li);
+        } else {
+          report.checklist.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            checklist.appendChild(li);
+          });
+        }
+
+        lastReport = report;
+        downloadBtn.disabled = false;
+        copyBtn.disabled = false;
+      } catch (err) {
+        rawOutput.textContent = `Audit failed: ${err}`;
+      }
+    }
+
+    runBtn.addEventListener('click', runAudit);
+
+    downloadBtn.addEventListener('click', () => {
+      if (!lastReport) return;
+      const blob = new Blob([JSON.stringify(lastReport, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${lastReport.domain}-deliverability-audit.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (!lastReport) return;
+      const summary = `Deliverability audit for ${lastReport.domain}\nScore: ${lastReport.score}\nSPF: ${lastReport.checks.spf ? 'OK' : 'Missing'}\nDKIM: ${lastReport.checks.dkim.filter(d => d.value).length}/${lastReport.checks.dkim.length} selectors\nDMARC: ${lastReport.checks.dmarc ? 'OK' : 'Missing'}\nChecklist: ${lastReport.checklist.join(' | ') || 'None'}`;
+      try {
+        await navigator.clipboard.writeText(summary);
+        alert('Summary copied to clipboard.');
+      } catch (err) {
+        alert('Clipboard access failed.');
+      }
+    });
+  </script>
+</body>
+</html>
