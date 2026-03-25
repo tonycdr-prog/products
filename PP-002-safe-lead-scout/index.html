@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Safe Lead Scout — Compliant Social Lead Finder</title>
+  <meta name="description" content="Find high-intent leads without risky auto-DMs. Build search links, qualify prospects, and draft outreach safely." />
+  <style>
+    :root { --bg:#0b0f19; --card:#111827; --text:#f9fafb; --muted:#9ca3af; --accent:#f59e0b; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:980px; margin:0 auto; padding:32px; }
+    .card { background:var(--card); border:1px solid #1f2937; border-radius:14px; padding:18px; }
+    h1 { margin:0 0 6px; }
+    label { display:block; font-weight:600; margin:12px 0 6px; }
+    input, textarea { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0f172a; color:#e5e7eb; }
+    button { background:var(--accent); border:none; color:#1f1300; font-weight:700; padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    .muted { color:var(--muted); }
+    .results a { color:#93c5fd; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Safe Lead Scout</h1>
+      <p class="muted">Find leads without risky auto‑DMs. Generate search links + qualifying checklists + polite outreach templates.</p>
+      <label>What do you sell?</label>
+      <input id="offer" placeholder="e.g. Webflow landing page redesigns" />
+      <label>Target keywords (comma‑separated)</label>
+      <input id="keywords" placeholder="looking for, need help, frustrated with, hiring" />
+      <label>Target communities</label>
+      <input id="communities" placeholder="r/startups, r/freelance, r/SaaS" />
+      <div class="row" style="margin-top:12px">
+        <button onclick="buildLinks()">Generate Links</button>
+      </div>
+      <div class="results" id="results"></div>
+      <label style="margin-top:18px">Email capture</label>
+      <input placeholder="you@agency.com" />
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Pricing</h3>
+      <div class="row">
+        <div class="card" style="flex:1">Starter · £12/mo (50 searches)</div>
+        <div class="card" style="flex:1">Pro · £39/mo (unlimited + templates)</div>
+        <div class="card" style="flex:1">Team · £99/mo (shared inbox)</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function buildLinks() {
+      const offer = document.getElementById('offer').value || 'your service';
+      const keywords = (document.getElementById('keywords').value || 'looking for,need help').split(',').map(s => s.trim()).filter(Boolean);
+      const communities = (document.getElementById('communities').value || 'r/SaaS,r/startups').split(',').map(s => s.trim()).filter(Boolean);
+      const q = encodeURIComponent(`${offer} (${keywords.join(' OR ')})`);
+
+      const reddit = communities.map(c => `https://www.reddit.com/${c}/search/?q=${q}&restrict_sr=1&sort=new&t=month`);
+      const hn = `https://hn.algolia.com/?query=${q}&tags=story`;
+      const indie = `https://www.indiehackers.com/search?query=${q}`;
+
+      document.getElementById('results').innerHTML = `
+        <h3>Search links</h3>
+        <ul>
+          ${reddit.map(r => `<li><a href="${r}" target="_blank">${r}</a></li>`).join('')}
+          <li><a href="${hn}" target="_blank">${hn}</a></li>
+          <li><a href="${indie}" target="_blank">${indie}</a></li>
+        </ul>
+        <h3>Qualifying checklist</h3>
+        <ul>
+          <li>Budget signal in post/comments?</li>
+          <li>Timeline stated?</li>
+          <li>Decision maker present?</li>
+          <li>Problem is specific and urgent?</li>
+        </ul>
+        <h3>Polite outreach template</h3>
+        <textarea rows="5">Hey [Name] — saw your post about [problem]. I help teams with ${offer}. If you want, I can share a quick 3‑step plan tailored to your situation. No pitch unless it’s useful.</textarea>
+      `;
+    }
+  </script>
+</body>
+</html>
