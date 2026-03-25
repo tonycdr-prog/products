@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PlanPulse — AI Subscription Comparison</title>
+  <meta name="description" content="Always‑updated AI subscription plan comparison with daily change logs." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <header class="max-w-5xl mx-auto px-6 py-10">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold">PlanPulse</h1>
+        <p class="text-slate-600">Daily‑updated comparison of AI subscription plans.</p>
+      </div>
+      <a class="px-4 py-2 rounded bg-slate-900 text-white" href="#waitlist">Join Waitlist</a>
+    </div>
+    <div class="mt-8 grid md:grid-cols-2 gap-8">
+      <div>
+        <h2 class="text-2xl font-semibold">Know what you’re paying for — today.</h2>
+        <p class="mt-3 text-slate-600">PlanPulse tracks plan changes daily and highlights differences across ChatGPT, Claude, Gemini, and more.</p>
+        <div class="mt-6 p-4 bg-white rounded shadow-sm">
+          <p class="font-semibold">Pricing</p>
+          <p class="text-slate-600">Free (public view) · Pro £12/mo · Teams £39/mo</p>
+        </div>
+      </div>
+      <div class="bg-white rounded shadow-sm p-6">
+        <h3 class="font-semibold text-lg">Quick Compare</h3>
+        <p class="text-sm text-slate-500">Paste a simple plan list to see differences.</p>
+        <textarea id="plans" class="w-full border rounded px-3 py-2 h-28" placeholder="Plan, Price, Context\nChatGPT Plus, £20, 128k\nClaude Pro, £20, 200k"></textarea>
+        <button id="compare" class="mt-3 w-full bg-slate-900 text-white rounded px-3 py-2">Compare</button>
+        <div id="output" class="mt-4 text-sm text-slate-700 bg-slate-50 p-3 rounded min-h-[80px]"></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="max-w-5xl mx-auto px-6 pb-12">
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white p-4 rounded shadow-sm">
+        <h4 class="font-semibold">Daily change log</h4>
+        <p class="text-slate-600 text-sm">See what changed in the last 24h.</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow-sm">
+        <h4 class="font-semibold">Feature matrix</h4>
+        <p class="text-slate-600 text-sm">Context window, model access, limits.</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow-sm">
+        <h4 class="font-semibold">Alerts</h4>
+        <p class="text-slate-600 text-sm">Get notified when a plan shifts.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="waitlist" class="max-w-3xl mx-auto px-6 pb-16">
+    <div class="bg-white rounded shadow-sm p-6">
+      <h3 class="text-xl font-semibold">Get early access</h3>
+      <p class="text-slate-600 text-sm">Join the waitlist for launch updates.</p>
+      <div class="mt-4 flex gap-3">
+        <input class="flex-1 border rounded px-3 py-2" placeholder="you@company.com" />
+        <button class="bg-slate-900 text-white rounded px-4 py-2">Notify me</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('compare').addEventListener('click', () => {
+      const text = document.getElementById('plans').value.trim();
+      if (!text) {
+        document.getElementById('output').textContent = 'Add some plans to compare.';
+        return;
+      }
+      const lines = text.split('\n').map(l => l.split(',').map(s => s.trim()));
+      const [header, ...rows] = lines;
+      const table = rows.map(r => `${r[0]} — ${r[1]} — ${r[2] || 'n/a'}`).join('\n');
+      document.getElementById('output').textContent = `Comparison (today):\n${table}`;
+    });
+  </script>
+</body>
+</html>
