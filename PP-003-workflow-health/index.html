@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Score automation workflows for breakage risk and generate a self-healing checklist." />
+  <meta property="og:title" content="Workflow Health Checker" />
+  <meta property="og:description" content="Identify which automations are most likely to break and how to harden them." />
+  <title>Workflow Health Checker</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; background:#111827; color:#f9fafb; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 32px; }
+    .card { background:#1f2937; border:1px solid #374151; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    input, select, button { width:100%; padding:12px; border-radius:10px; border:1px solid #374151; background:#111827; color:#f9fafb; }
+    button { background:#f59e0b; border:none; font-weight:600; cursor:pointer; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+    .item { padding:10px; border:1px solid #374151; border-radius:10px; margin-bottom:8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Workflow Health Checker</h1>
+      <p>Score automation workflows for breakage risk and generate a self-healing checklist.</p>
+    </div>
+
+    <div class="card">
+      <h2>1) Add workflow</h2>
+      <div class="grid">
+        <input id="wfName" placeholder="Workflow name" />
+        <input id="wfTrigger" placeholder="Trigger (e.g., new order)" />
+        <input id="wfDestination" placeholder="Destination (e.g., CRM)" />
+        <select id="wfCritical">
+          <option value="low">Low criticality</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <button onclick="addWorkflow()">Add workflow</button>
+    </div>
+
+    <div class="card">
+      <h2>2) Workflows</h2>
+      <div id="wfList"></div>
+    </div>
+
+    <div class="card">
+      <h2>3) Self-healing checklist</h2>
+      <button onclick="generateChecklist()">Generate checklist</button>
+      <div id="checklist"></div>
+      <p id="riskScore" style="color:#9ca3af;"></p>
+    </div>
+
+    <div class="card">
+      <h2>Pricing</h2>
+      <div class="grid">
+        <div class="card"><h3>Starter — £29/mo</h3><p>Up to 10 workflows + monthly report.</p></div>
+        <div class="card"><h3>Growth — £79/mo</h3><p>Unlimited workflows + alerts.</p></div>
+        <div class="card"><h3>Managed — £299/mo</h3><p>We build & maintain workflows for you.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Waitlist</h2>
+      <input id="email" type="email" placeholder="you@business.co.uk" />
+      <button onclick="joinWaitlist()">Join waitlist</button>
+      <p id="waitlistMsg" style="color:#9ca3af;"></p>
+    </div>
+  </div>
+
+  <script>
+    const key = 'workflow_health_items';
+    function loadItems() { return JSON.parse(localStorage.getItem(key) || '[]'); }
+    function saveItems(items) { localStorage.setItem(key, JSON.stringify(items)); }
+
+    function addWorkflow() {
+      const name = document.getElementById('wfName').value.trim();
+      const trigger = document.getElementById('wfTrigger').value.trim();
+      const dest = document.getElementById('wfDestination').value.trim();
+      const critical = document.getElementById('wfCritical').value;
+      if (!name || !trigger || !dest) return alert('Fill in all fields.');
+      const items = loadItems();
+      items.push({ id: Date.now(), name, trigger, dest, critical });
+      saveItems(items); renderItems();
+    }
+
+    function renderItems() {
+      const items = loadItems();
+      const el = document.getElementById('wfList');
+      if (!items.length) { el.innerHTML = '<p>No workflows yet.</p>'; return; }
+      el.innerHTML = items.map(i => `
+        <div class="item"><strong>${i.name}</strong><div>${i.trigger} → ${i.dest}</div><div>Criticality: ${i.critical}</div></div>
+      `).join('');
+    }
+
+    function generateChecklist() {
+      const items = loadItems();
+      if (!items.length) return alert('Add at least one workflow.');
+      const high = items.filter(i => i.critical === 'high').length;
+      const risk = Math.min(100, 40 + high * 15 + items.length * 5);
+
+      const list = [
+        'Add input validation for every trigger payload',
+        'Add retry + backoff for each API call',
+        'Log all failures to a single inbox',
+        'Add weekly health check report',
+        'Set alert when error rate > 2%'
+      ];
+      document.getElementById('checklist').innerHTML = '<ul>' + list.map(l => `<li>${l}</li>`).join('') + '</ul>';
+      document.getElementById('riskScore').textContent = `Estimated breakage risk: ${risk}% (higher means more likely to fail).`;
+    }
+
+    function joinWaitlist() {
+      const email = document.getElementById('email').value.trim();
+      if (!email.includes('@')) { document.getElementById('waitlistMsg').textContent = 'Please enter a valid email.'; return; }
+      localStorage.setItem('workflow_health_waitlist', email);
+      document.getElementById('waitlistMsg').textContent = 'Thanks — you’re on the list.';
+    }
+
+    renderItems();
+  </script>
+</body>
+</html>
