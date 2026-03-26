@@ -1,118 +1,171 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Products</title>
   <style>
-    :root { color-scheme: dark; }
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f14;
+      --card: #111825;
+      --card-hover: #162133;
+      --text: #e6edf3;
+      --muted: #9fb0c3;
+      --border: #1f2a3a;
+      --accent: #7cc4ff;
+    }
+    * { box-sizing: border-box; }
     body {
-      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
-      background: #0b0f14; color: #e6edf3;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
-    .wrap { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-    h1 { font-size: 28px; margin: 0 0 20px; font-weight: 700; }
-    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: 0.3px;
+    }
+    p.sub {
+      margin: 0 0 24px;
+      color: var(--muted);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
     .card {
-      background: #121826; border: 1px solid #1f2937; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit;
-      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 18px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: all .15s ease;
+      min-height: 120px;
     }
-    .card:hover { transform: translateY(-2px); border-color: #2d3b52; box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
-    .title { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
-    .desc { font-size: 13px; color: #a9b4c2; line-height: 1.4; margin: 0; }
-    .footer { margin-top: 24px; font-size: 12px; color: #6b7280; }
+    .card:hover {
+      background: var(--card-hover);
+      border-color: #2a3a52;
+      transform: translateY(-1px);
+    }
+    .title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .desc {
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+    .footer {
+      margin-top: 28px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Products</h1>
+    <p class="sub">Live builds hosted on GitHub Pages.</p>
     <div class="grid">
       <a class="card" href="/products/PP-001-carousel-maker/">
-        <div class="title">Carousel Maker</div>
-        <p class="desc">Creates LinkedIn-ready carousel slides with correct 4:5 sizing, simple themes, and one-click PNG exports.</p>
+        <div class="title">Pp 001 Carousel Maker</div>
+        <div class="desc">Creates LinkedIn-ready carousel slides with correct 4:5 sizing, simple themes, and one-click PNG exports.</div>
       </a>
       <a class="card" href="/products/PP-001-cod-commission-tracker/">
-        <div class="title">COD Commission Tracker</div>
-        <p class="desc">Calculates commissions owed on cash‑on‑delivery orders, flags unpaid commission, and creates a monthly summary for marketplace operators.</p>
+        <div class="title">Pp 001 Cod Commission Tracker</div>
+        <div class="desc">Calculates commissions owed on cash‑on‑delivery orders, flags unpaid commission, and creates a monthly summary for marketplace operators.</div>
       </a>
       <a class="card" href="/products/PP-001-competitor-price-tracker/">
-        <div class="title">Competitor Price Tracker</div>
-        <p class="desc">Quickly turns a competitor price list into clear pricing actions and alert-ready exports.</p>
+        <div class="title">Pp 001 Competitor Price Tracker</div>
+        <div class="desc">Quickly turns a competitor price list into clear pricing actions and alert-ready exports.</div>
       </a>
       <a class="card" href="/products/PP-001-docstack/">
-        <div class="title">DocStack</div>
-        <p class="desc">DocStack combines proposals, contracts, and invoices into a single workflow for small businesses.</p>
+        <div class="title">Pp 001 Docstack</div>
+        <div class="desc">DocStack combines proposals, contracts, and invoices into a single workflow for small businesses.</div>
       </a>
       <a class="card" href="/products/PP-001-invoice-chaser-lite/">
-        <div class="title">Invoice Chaser Lite</div>
-        <p class="desc">Automates polite invoice follow‑ups. Generates reminder emails and keeps a simple log so owners stop losing cash to awkward chasing.</p>
+        <div class="title">Pp 001 Invoice Chaser Lite</div>
+        <div class="desc">Automates polite invoice follow‑ups.</div>
       </a>
       <a class="card" href="/products/PP-001-invoice-preflight/">
-        <div class="title">Invoice Preflight</div>
-        <p class="desc">Turns messy OCR/pasted invoice text into structured fields (vendor, invoice number, date, subtotal, VAT, total).</p>
+        <div class="title">Pp 001 Invoice Preflight</div>
+        <div class="desc">Turns messy OCR/pasted invoice text into structured fields (vendor, invoice number, date, subtotal, VAT, total).</div>
       </a>
       <a class="card" href="/products/PP-001-maintenance-nagger/">
-        <div class="title">Maintenance Nagger</div>
-        <p class="desc">Maintainly is a lightweight maintenance scheduler for small landlords.</p>
+        <div class="title">Pp 001 Maintenance Nagger</div>
+        <div class="desc">Maintainly is a lightweight maintenance scheduler for small UK landlords.</div>
       </a>
       <a class="card" href="/products/PP-002-bsa-checklist/">
-        <div class="title">BSA Checklist</div>
-        <p class="desc">A UK‑specific Building Safety Act checklist and document tracker for landlords, managing agents, and leaseholders.</p>
+        <div class="title">Pp 002 Bsa Checklist</div>
+        <div class="desc">A UK‑specific Building Safety Act checklist and document tracker for landlords, managing agents, and leaseholders.</div>
       </a>
       <a class="card" href="/products/PP-002-fee-link-optimizer/">
-        <div class="title">FeeLink Optimizer</div>
-        <p class="desc">Calculates true payment fees and generates a payment link + QR so clients can pay with the lowest overhead.</p>
+        <div class="title">Pp 002 Fee Link Optimizer</div>
+        <div class="desc">Calculates true payment fees and generates a payment link + QR so clients can pay with the lowest overhead.</div>
       </a>
       <a class="card" href="/products/PP-002-fieldkit/">
-        <div class="title">FieldKit</div>
-        <p class="desc">FieldKit is a lightweight CRM and job scheduler for local service businesses (plumbers, cleaners, electricians).</p>
+        <div class="title">Pp 002 Fieldkit</div>
+        <div class="desc">FieldKit is a lightweight CRM and job scheduler for local service businesses (plumbers, cleaners, electricians).</div>
       </a>
       <a class="card" href="/products/PP-002-micro-automation-layer/">
-        <div class="title">Micro‑Automation Layer</div>
-        <p class="desc">Turns manual copy‑paste workflows into a simple automation recipe + checklist that non‑technical owners can implement.</p>
+        <div class="title">Pp 002 Micro Automation Layer</div>
+        <div class="desc">Turns manual copy‑paste workflows into a simple automation recipe + checklist that non‑technical owners can implement.</div>
       </a>
       <a class="card" href="/products/PP-002-safe-lead-scout/">
-        <div class="title">Safe Lead Scout</div>
-        <p class="desc">Builds compliant lead discovery workflows without auto‑DM spam.</p>
+        <div class="title">Pp 002 Safe Lead Scout</div>
+        <div class="desc">Builds compliant lead discovery workflows without auto‑DM spam.</div>
       </a>
       <a class="card" href="/products/PP-002-waitlist-outreach-planner/">
-        <div class="title">Organic Waitlist Planner</div>
-        <p class="desc">Generates a compliant, organic outreach plan for founders who can’t post promo content in communities. Includes channel suggestions, messaging angles, and a task checklist.</p>
+        <div class="title">Pp 002 Waitlist Outreach Planner</div>
+        <div class="desc">Generates a compliant, organic outreach plan for founders who can’t post promo content in communities.</div>
       </a>
       <a class="card" href="/products/PP-002-whatsapp-booking/">
-        <div class="title">WhatsApp Booking</div>
-        <p class="desc">Simple slot manager for small tour operators to prevent overbooking and speed up WhatsApp replies.</p>
+        <div class="title">Pp 002 Whatsapp Booking</div>
+        <div class="desc">Simple slot manager for small tour operators to prevent overbooking and speed up WhatsApp replies.</div>
       </a>
       <a class="card" href="/products/PP-003-arxiv-quality-ranker/">
-        <div class="title">arXiv Quality Ranker</div>
-        <p class="desc">Pulls citation data from OpenAlex for arXiv IDs and ranks papers by a simple quality score (citations + recency).</p>
+        <div class="title">Pp 003 Arxiv Quality Ranker</div>
+        <div class="desc">Pulls citation data from OpenAlex for arXiv IDs and ranks papers by a simple quality score (citations + recency).</div>
       </a>
       <a class="card" href="/products/PP-003-cashflow-clarity/">
-        <div class="title">Cashflow Clarity</div>
-        <p class="desc">A simple monthly cashflow + P&amp;L tracker built for owners who want clarity without accounting fluff.</p>
+        <div class="title">Pp 003 Cashflow Clarity</div>
+        <div class="desc">A simple monthly cashflow + P&amp;L tracker built for owners who want clarity without accounting fluff.</div>
       </a>
       <a class="card" href="/products/PP-003-invoice-ocr-lite/">
-        <div class="title">Invoice OCR Lite</div>
-        <p class="desc">In‑browser OCR for invoices. Extracts vendor, date, and total, then exports CSV.</p>
+        <div class="title">Pp 003 Invoice Ocr Lite</div>
+        <div class="desc">In‑browser OCR for invoices.</div>
       </a>
       <a class="card" href="/products/PP-003-uk-boundary-checker/">
-        <div class="title">UK Boundary Checker</div>
-        <p class="desc">Estimates boundary discrepancies from title plan vs on‑site measurements and produces a surveyor brief + next‑steps checklist.</p>
+        <div class="title">Pp 003 Uk Boundary Checker</div>
+        <div class="desc">Estimates boundary discrepancies from title plan vs on‑site measurements and produces a surveyor brief + next‑steps checklist.</div>
       </a>
       <a class="card" href="/products/PP-003-workflow-health/">
-        <div class="title">Workflow Health</div>
-        <p class="desc">Scores automation workflows for breakage risk and generates a self-healing checklist.</p>
+        <div class="title">Pp 003 Workflow Health</div>
+        <div class="desc">Scores automation workflows for breakage risk and generates a self-healing checklist.</div>
       </a>
       <a class="card" href="/products/PP-004-planpulse/">
-        <div class="title">PlanPulse</div>
-        <p class="desc">PlanPulse tracks AI subscription plans and shows daily comparisons across vendors.</p>
+        <div class="title">Pp 004 Planpulse</div>
+        <div class="desc">PlanPulse tracks AI subscription plans and shows daily comparisons across vendors.</div>
       </a>
       <a class="card" href="/products/dns-email-audit/">
-        <div class="title">DNS Email Audit</div>
-        <p class="desc">A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report.</p>
+        <div class="title">Dns Email Audit</div>
+        <div class="desc">A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report.</div>
       </a>
     </div>
-    <div class="footer">Last updated automatically.</div>
+    <div class="footer">Updated automatically by Auto Deployer.</div>
   </div>
 </body>
 </html>
