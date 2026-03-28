@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WhatsApp Business Setup Wizard</title>
+  <meta name="description" content="Set up WhatsApp Business properly with a 10‑minute checklist and ready‑to‑paste auto‑replies." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    :root{--primary:#6366F1;--on-primary:#FFFFFF;--secondary:#818CF8;--on-secondary:#0F172A;--accent:#059669;--on-accent:#FFFFFF;--bg:#F5F3FF;--fg:#1E1B4B;--card:#FFFFFF;--card-fg:#1E1B4B;--muted:#EBEFF9;--muted-fg:#64748B;--border:#E0E7FF;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--fg)}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+    .btn{background:var(--accent);color:var(--on-accent);padding:12px 18px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+    .btn.secondary{background:var(--primary);color:var(--on-primary)}
+    .hero{display:grid;grid-template-columns:1.1fr 0.9fr;gap:24px;align-items:center}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 6px 20px rgba(30,27,75,0.06)}
+    .section{padding:28px 0}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-family:inherit}
+    @media(max-width:900px){.hero,.grid-2,.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div style="font-weight:700">✅ WhatsApp Business Setup Wizard</div>
+      <a class="btn" href="#waitlist">Get checklist</a>
+    </div>
+
+    <section class="hero section">
+      <div>
+        <h1 style="font-size:38px;margin:0 0 10px">Most businesses install WhatsApp Business and stop there.</h1>
+        <p style="color:var(--muted-fg)">Fix your setup in 10 minutes. Get greeting/away messages, quick replies, and a response‑time playbook.</p>
+        <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn secondary" href="#wizard">Run the wizard</a>
+          <a class="btn" href="#pricing">Pricing</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Setup score</h3>
+        <p>Track your WhatsApp Business maturity and unlock templates.</p>
+        <div style="font-size:28px;font-weight:700" id="score">0%</div>
+      </div>
+    </section>
+
+    <section id="wizard" class="section">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Checklist</h3>
+          <label><input type="checkbox" class="item" /> Greeting message set</label><br/>
+          <label><input type="checkbox" class="item" /> Away message set</label><br/>
+          <label><input type="checkbox" class="item" /> Quick replies created</label><br/>
+          <label><input type="checkbox" class="item" /> Business hours configured</label><br/>
+          <label><input type="checkbox" class="item" /> Catalogue or service list added</label><br/>
+          <label><input type="checkbox" class="item" /> Labels for lead stages</label><br/>
+          <div style="margin-top:10px"><button class="btn" onclick="updateScore()">Update score</button></div>
+        </div>
+        <div class="card">
+          <h3>Auto‑reply generator</h3>
+          <div class="row">
+            <input id="biz" placeholder="Business name" />
+            <input id="hours" placeholder="Hours (e.g., Mon–Fri 9–6)" />
+            <input id="cta" placeholder="Primary CTA (e.g., Book a slot)" />
+            <input id="phone" placeholder="Alt contact" />
+          </div>
+          <div style="margin-top:10px"><button class="btn secondary" onclick="generateReplies()">Generate replies</button></div>
+          <textarea id="replies" rows="6" placeholder="Replies appear here" style="margin-top:10px"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="card">
+        <h3>Pricing</h3>
+        <p><strong>£15/mo</strong> for templates + audits. <strong>£79</strong> one‑time setup service.</p>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section">
+      <div class="card">
+        <h3>Get the checklist</h3>
+        <div class="row">
+          <input placeholder="Name" />
+          <input placeholder="Email" />
+        </div>
+        <div style="margin-top:12px"><button class="btn">Send me the checklist</button></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function updateScore(){
+      const items = document.querySelectorAll('.item');
+      const checked = Array.from(items).filter(i=>i.checked).length;
+      const score = Math.round((checked / items.length) * 100);
+      document.getElementById('score').textContent = score + '%';
+    }
+    function generateReplies(){
+      const biz = document.getElementById('biz').value || '[Business]';
+      const hours = document.getElementById('hours').value || '[hours]';
+      const cta = document.getElementById('cta').value || 'book a slot';
+      const phone = document.getElementById('phone').value || '[phone]';
+      const text = `Greeting: Hi! Thanks for messaging ${biz}. We reply within ${hours}. Reply with your name + request and we’ll confirm.\n\nAway: Thanks for contacting ${biz}! We’re closed right now (${hours}). We’ll get back to you ASAP. In the meantime, you can ${cta}.\n\nQuick reply: “Hi! Please share your preferred time, service, and phone number. We’ll confirm within 1 hour.”\n\nFallback: If urgent, call ${phone}.`;
+      document.getElementById('replies').value = text;
+    }
+  </script>
+</body>
+</html>
