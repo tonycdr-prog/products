@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WhatsApp Booking Bot — Self‑serve appointments</title>
+  <meta name="description" content="Let customers book appointments via WhatsApp with a guided bot flow." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    :root{--primary:#F59E0B;--on-primary:#0F172A;--secondary:#FBBF24;--on-secondary:#0F172A;--accent:#2563EB;--on-accent:#FFFFFF;--bg:#FFFBEB;--fg:#78350F;--card:#FFFFFF;--card-fg:#78350F;--muted:#F1F2EF;--muted-fg:#64748B;--border:#FDE68A;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--fg)}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+    .btn{display:inline-flex;align-items:center;background:var(--accent);color:var(--on-accent);padding:12px 18px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+    .btn.secondary{background:var(--primary);color:var(--on-primary)}
+    .hero{display:grid;grid-template-columns:1.1fr 0.9fr;gap:24px;align-items:center}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 6px 20px rgba(15,23,42,0.06)}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .section{padding:28px 0}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-family:inherit}
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    @media(max-width:900px){.hero,.grid-3,.row,.pricing{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div style="font-weight:700">💬 WhatsApp Booking Bot</div>
+      <a class="btn" href="#waitlist">Join waitlist</a>
+    </div>
+
+    <section class="hero section">
+      <div>
+        <h1 style="font-size:40px;margin:0 0 10px">Let customers book via WhatsApp, without lifting a finger.</h1>
+        <p style="color:var(--muted-fg)">A guided chat flow that handles services, times, and confirmations while you sleep.</p>
+        <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn" href="#builder">Build your flow</a>
+          <a class="btn secondary" href="#pricing">Pricing</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Instant booking flow</h3>
+        <ol>
+          <li>Customer messages “book”</li>
+          <li>Bot offers services + times</li>
+          <li>Confirmation + reminder sent</li>
+        </ol>
+        <p><strong>Avg. response time:</strong> 10 seconds</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid-3">
+        <div class="card"><h4>Service menus</h4><p>Prebuilt menu for clinics, tours, salons, trades.</p></div>
+        <div class="card"><h4>Calendar slots</h4><p>Connect your available hours and max capacity.</p></div>
+        <div class="card"><h4>Auto‑reminders</h4><p>24h + 2h reminders reduce no‑shows.</p></div>
+      </div>
+    </section>
+
+    <section id="builder" class="section">
+      <div class="card">
+        <h3>Flow Builder (demo)</h3>
+        <div class="row">
+          <div>
+            <label>Business type</label>
+            <select id="biz">
+              <option>Tour operator</option>
+              <option>Hair & beauty</option>
+              <option>Clinic</option>
+              <option>Trades / home services</option>
+            </select>
+          </div>
+          <div>
+            <label>Opening hours</label>
+            <input id="hours" placeholder="Mon–Fri 9am–6pm" />
+          </div>
+          <div>
+            <label>Services (comma‑separated)</label>
+            <input id="services" placeholder="History Walk, Private Tour" />
+          </div>
+          <div>
+            <label>Booking link</label>
+            <input id="link" placeholder="https://yoursite.com/book" />
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <button class="btn" onclick="buildFlow()">Generate bot script</button>
+        </div>
+        <div style="margin-top:12px">
+          <label>Bot script</label>
+          <textarea id="script" rows="6" placeholder="Bot script appears here"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <h3>Pricing</h3>
+      <div class="pricing">
+        <div class="card"><h4>Starter</h4><p><strong>£25/mo</strong></p><ul><li>1 location</li><li>1 staff inbox</li><li>1,000 chats</li></ul><a class="btn secondary" href="#waitlist">Start</a></div>
+        <div class="card" style="border:2px solid var(--accent)"><h4>Pro</h4><p><strong>£49/mo</strong></p><ul><li>3 staff inboxes</li><li>Unlimited chats</li><li>SMS fallback</li></ul><a class="btn" href="#waitlist">Get Pro</a></div>
+        <div class="card"><h4>Team</h4><p><strong>£99/mo</strong></p><ul><li>5 locations</li><li>Routing rules</li><li>Priority support</li></ul><a class="btn secondary" href="#waitlist">Talk to us</a></div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section">
+      <div class="card">
+        <h3>Join the beta</h3>
+        <div class="row">
+          <input placeholder="Name" />
+          <input placeholder="Email" />
+        </div>
+        <div style="margin-top:12px"><button class="btn">Join waitlist</button></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function buildFlow(){
+      const biz = document.getElementById('biz').value;
+      const hours = document.getElementById('hours').value || '[hours]';
+      const services = document.getElementById('services').value || '[services]';
+      const link = document.getElementById('link').value || '[booking link]';
+      const script = `Hi! 👋 Thanks for messaging ${biz}.\n\n1) Choose a service: ${services}.\n2) Choose a time within ${hours}.\n3) Confirm your name + phone.\n\nTo book instantly: ${link}\n\nReply “HUMAN” to speak to a person.`;
+      document.getElementById('script').value = script;
+    }
+  </script>
+</body>
+</html>
