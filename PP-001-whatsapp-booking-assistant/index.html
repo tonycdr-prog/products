@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WhatsApp Booking Assistant — Stop manual confirmations</title>
+  <meta name="description" content="Automate WhatsApp bookings and vouchers for tours and service businesses. Lightweight booking flow + WhatsApp templates in minutes." />
+  <meta property="og:title" content="WhatsApp Booking Assistant" />
+  <meta property="og:description" content="Turn WhatsApp enquiries into confirmed bookings without enterprise software." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    :root{
+      --primary:#F59E0B;--on-primary:#0F172A;--secondary:#FBBF24;--on-secondary:#0F172A;--accent:#2563EB;--on-accent:#FFFFFF;
+      --bg:#FFFBEB;--fg:#78350F;--card:#FFFFFF;--card-fg:#78350F;--muted:#F1F2EF;--muted-fg:#64748B;--border:#FDE68A;
+      --ring:#F59E0B;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--fg);line-height:1.5}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+    .logo{font-weight:700;font-size:20px}
+    .btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--on-accent);padding:12px 18px;border-radius:10px;font-weight:600;border:0;cursor:pointer}
+    .btn.secondary{background:var(--primary);color:var(--on-primary)}
+    .hero{display:grid;grid-template-columns:1.1fr 0.9fr;gap:24px;align-items:center;padding:32px 0}
+    .hero h1{font-size:42px;line-height:1.1;margin:0 0 12px}
+    .hero p{font-size:18px;color:var(--muted-fg)}
+    .card{background:var(--card);color:var(--card-fg);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 6px 20px rgba(15,23,42,0.06)}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .section{padding:32px 0}
+    .badge{display:inline-flex;background:var(--secondary);color:var(--on-secondary);padding:6px 10px;border-radius:999px;font-weight:600;font-size:12px}
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .price-card{border:2px solid transparent}
+    .price-card.featured{border-color:var(--accent);transform:translateY(-4px)}
+    .label{font-size:12px;color:var(--muted-fg);margin-bottom:6px}
+    input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-family:inherit}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .footer{padding:32px 0;color:var(--muted-fg)}
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .grid-3,.pricing,.row{grid-template-columns:1fr}
+      .hero h1{font-size:34px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="logo">🟢 WhatsApp Booking Assistant</div>
+      <a class="btn" href="#waitlist">Join waitlist</a>
+    </div>
+
+    <section class="hero">
+      <div>
+        <span class="badge">Made for tours & service businesses</span>
+        <h1>Stop spending hours confirming WhatsApp bookings.</h1>
+        <p>Turn chaotic WhatsApp chats into confirmed bookings, vouchers, and sold‑out replies — without enterprise software.</p>
+        <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn" href="#demo">Try booking flow</a>
+          <a class="btn secondary" href="#pricing">See pricing</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Tonight’s workload, automated</h3>
+        <ul>
+          <li>✅ Auto-confirm date/time + headcount</li>
+          <li>✅ Voucher + payment instructions</li>
+          <li>✅ Sold-out reply in one tap</li>
+        </ul>
+        <p class="label">Average time saved</p>
+        <strong>3–5 hours/week per location</strong>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid-3">
+        <div class="card">
+          <h4>Booking intake</h4>
+          <p>Collect date, time, headcount, and notes via a clean micro‑form.</p>
+        </div>
+        <div class="card">
+          <h4>WhatsApp templates</h4>
+          <p>Auto-generate confirmations, vouchers, and sold‑out replies.</p>
+        </div>
+        <div class="card">
+          <h4>Daily digest</h4>
+          <p>Export bookings to CSV or Google Sheets for simple ops.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section">
+      <div class="card">
+        <h3>Live booking flow (demo)</h3>
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label class="label">Customer name</label>
+            <input id="name" placeholder="Priya Patel" />
+          </div>
+          <div>
+            <label class="label">Phone (WhatsApp)</label>
+            <input id="phone" placeholder="+44 7xxx xxx xxx" />
+          </div>
+          <div>
+            <label class="label">Date</label>
+            <input id="date" type="date" />
+          </div>
+          <div>
+            <label class="label">Time</label>
+            <input id="time" type="time" />
+          </div>
+          <div>
+            <label class="label">Headcount</label>
+            <input id="headcount" type="number" min="1" value="2" />
+          </div>
+          <div>
+            <label class="label">Tour type</label>
+            <select id="tour">
+              <option>History Walk</option>
+              <option>Food Tour</option>
+              <option>Private Group</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <button class="btn" onclick="generateMessage()">Generate WhatsApp confirmation</button>
+        </div>
+        <div style="margin-top:12px">
+          <label class="label">Message preview</label>
+          <textarea id="message" rows="5" placeholder="Your WhatsApp message will appear here..."></textarea>
+          <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn secondary" onclick="copyMessage()">Copy message</button>
+            <button class="btn" onclick="downloadCSV()">Download CSV</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <h3>Pricing</h3>
+      <div class="pricing">
+        <div class="card price-card">
+          <h4>Starter</h4>
+          <p><strong>£19/mo</strong></p>
+          <ul>
+            <li>100 bookings/month</li>
+            <li>WhatsApp templates</li>
+            <li>CSV export</li>
+          </ul>
+          <a class="btn secondary" href="#waitlist">Start trial</a>
+        </div>
+        <div class="card price-card featured">
+          <h4>Pro</h4>
+          <p><strong>£39/mo</strong></p>
+          <ul>
+            <li>Unlimited bookings</li>
+            <li>Multi‑staff</li>
+            <li>Auto‑sold‑out replies</li>
+          </ul>
+          <a class="btn" href="#waitlist">Get Pro</a>
+        </div>
+        <div class="card price-card">
+          <h4>Agency</h4>
+          <p><strong>£99/mo</strong></p>
+          <ul>
+            <li>5 locations</li>
+            <li>White‑label</li>
+            <li>Priority support</li>
+          </ul>
+          <a class="btn secondary" href="#waitlist">Talk to us</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section">
+      <div class="card">
+        <h3>Get early access</h3>
+        <p>We’re onboarding 10 UK tour operators this month.</p>
+        <div class="row">
+          <input placeholder="Name" />
+          <input placeholder="Email" />
+        </div>
+        <div style="margin-top:12px">
+          <button class="btn">Join waitlist</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">© 2026 WhatsApp Booking Assistant. Built for UK service businesses.</div>
+  </div>
+
+  <script>
+    function generateMessage(){
+      const name = document.getElementById('name').value || 'there';
+      const phone = document.getElementById('phone').value || '[WhatsApp]';
+      const date = document.getElementById('date').value || '[date]';
+      const time = document.getElementById('time').value || '[time]';
+      const headcount = document.getElementById('headcount').value || '2';
+      const tour = document.getElementById('tour').value;
+      const msg = `Hi ${name}! ✅ Your ${tour} booking is confirmed for ${date} at ${time} for ${headcount} people.\n\nVoucher: Bring this message as your voucher.\nPayment link: [add link]\nMeeting point: [add location]\n\nReply here if you need to reschedule.`;
+      document.getElementById('message').value = msg;
+    }
+    function copyMessage(){
+      const textarea = document.getElementById('message');
+      textarea.select();
+      document.execCommand('copy');
+    }
+    function downloadCSV(){
+      const fields = [
+        ['name','phone','date','time','headcount','tour'],
+        [
+          document.getElementById('name').value,
+          document.getElementById('phone').value,
+          document.getElementById('date').value,
+          document.getElementById('time').value,
+          document.getElementById('headcount').value,
+          document.getElementById('tour').value
+        ]
+      ];
+      const csv = fields.map(r=>r.map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'booking.csv';
+      a.click();
+    }
+  </script>
+</body>
+</html>
