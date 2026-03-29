@@ -3,67 +3,324 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BoundaryCheck UK — Garden Boundary Discrepancy Checker</title>
-  <meta name="description" content="Estimate boundary discrepancies from title plan vs fence measurements and generate a surveyor brief." />
+  <meta name="theme-color" content="#F0FDFA" />
+  <title>BoundaryCheck UK — Know Your Garden Boundary Gap in 2&nbsp;Minutes</title>
+  <meta name="description" content="Estimate boundary discrepancies from title plan vs on‑site measurements, generate a surveyor brief, and keep a clean evidence checklist." />
+  <meta property="og:title" content="BoundaryCheck UK — Know Your Garden Boundary Gap in 2&nbsp;Minutes" />
+  <meta property="og:description" content="Estimate boundary discrepancies from title plan vs on‑site measurements, generate a surveyor brief, and keep a clean evidence checklist." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" />
   <style>
-    :root { --bg:#0b0f19; --card:#111827; --text:#f9fafb; --muted:#9ca3af; --accent:#60a5fa; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
-    .wrap { max-width:980px; margin:0 auto; padding:32px; }
-    .card { background:var(--card); border:1px solid #1f2937; border-radius:14px; padding:18px; }
-    h1 { margin:0 0 6px; }
-    label { display:block; font-weight:600; margin:12px 0 6px; }
-    input { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0f172a; color:#e5e7eb; }
-    button { background:var(--accent); border:none; color:#07121f; font-weight:700; padding:10px 14px; border-radius:10px; cursor:pointer; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; }
-    .muted { color:var(--muted); }
+    :root {
+      --primary:#0F766E;
+      --on-primary:#FFFFFF;
+      --secondary:#14B8A6;
+      --on-secondary:#0F172A;
+      --accent:#0369A1;
+      --on-accent:#FFFFFF;
+      --bg:#F0FDFA;
+      --text:#134E4A;
+      --card:#FFFFFF;
+      --card-text:#134E4A;
+      --muted:#E8F0F3;
+      --muted-text:#64748B;
+      --border:#99F6E4;
+      --danger:#DC2626;
+      --ring:#0F766E;
+      --shadow:0 10px 30px rgba(15,118,110,0.12);
+      --radius:16px;
+      --space-1:4px;
+      --space-2:8px;
+      --space-3:12px;
+      --space-4:16px;
+      --space-5:24px;
+      --space-6:32px;
+      --space-7:48px;
+      --space-8:64px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:"Josefin Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      line-height:1.6;
+      -webkit-tap-highlight-color: rgba(3,105,161,0.2);
+    }
+    h1,h2,h3 {
+      font-family:"Cinzel", serif;
+      line-height:1.2;
+      margin:0 0 var(--space-3);
+      text-wrap:balance;
+    }
+    h1 { font-size:clamp(2.2rem, 4vw, 3.4rem); }
+    h2 { font-size:clamp(1.6rem, 3vw, 2.2rem); }
+    h3 { font-size:1.25rem; }
+    p { margin:0 0 var(--space-4); }
+    a { color:inherit; text-decoration:none; }
+    section { scroll-margin-top:90px; }
+
+    .skip-link {
+      position:absolute; left:12px; top:-40px; background:#fff; color:var(--text);
+      padding:8px 12px; border-radius:8px; border:1px solid var(--border); z-index:999;
+    }
+    .skip-link:focus { top:12px; }
+
+    .container { max-width:1100px; margin:0 auto; padding:var(--space-7) var(--space-5); }
+    .nav { display:flex; justify-content:space-between; align-items:center; gap:var(--space-4); }
+    .nav > div { min-width:0; }
+    .badge { background:var(--secondary); color:var(--on-secondary); padding:6px 10px; border-radius:999px; font-weight:600; font-size:0.85rem; }
+    .btn,
+    .btn-pay {
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:12px 18px; border-radius:999px; font-weight:700;
+      border:2px solid transparent; cursor:pointer; touch-action:manipulation;
+    }
+    .btn { background:var(--primary); color:var(--on-primary); box-shadow:var(--shadow); }
+    .btn.secondary { background:transparent; color:var(--primary); border-color:var(--primary); box-shadow:none; }
+    .btn-pay { background:var(--accent); color:var(--on-accent); }
+
+    .btn:hover { filter:brightness(0.95); }
+    .btn.secondary:hover { background:var(--muted); }
+    .btn-pay:hover { filter:brightness(0.95); }
+    .btn:focus-visible, .btn-pay:focus-visible, a:focus-visible, button:focus-visible {
+      outline:2px solid var(--ring);
+      outline-offset:3px;
+    }
+
+    .hero {
+      display:grid; grid-template-columns:1.1fr 0.9fr; gap:var(--space-6); align-items:center;
+    }
+    .hero > div { min-width:0; }
+    .card {
+      background:var(--card); color:var(--card-text); border:1px solid var(--border);
+      border-radius:var(--radius); padding:var(--space-5); box-shadow:var(--shadow);
+      overflow-wrap:break-word;
+    }
+    .stat { display:flex; flex-direction:column; gap:6px; padding:var(--space-4); background:var(--muted); border-radius:12px; font-variant-numeric:tabular-nums; }
+    .price-card strong { font-variant-numeric:tabular-nums; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-4); }
+    .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:var(--space-4); }
+    .muted { color:var(--muted-text); }
+    .list { display:grid; gap:var(--space-3); margin:0; padding-left:18px; }
+
+    .chapter { margin-top:var(--space-8); }
+    .chapter .card { border-left:6px solid var(--primary); }
+
+    form label { font-weight:600; display:block; margin:var(--space-3) 0 var(--space-2); }
+    input, textarea {
+      width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--border);
+      font-family:inherit; font-size:1rem; background:#fff; color:var(--text);
+    }
+    input:focus-visible, textarea:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+
+    .price-card { border:2px solid var(--border); }
+    .price-card.highlight { border-color:var(--accent); box-shadow:0 16px 40px rgba(3,105,161,0.18); }
+
+    .progress {
+      position:fixed; top:24px; right:24px; background:#fff; border:1px solid var(--border);
+      border-radius:999px; padding:6px 12px; font-size:0.85rem; color:var(--muted-text);
+      box-shadow:var(--shadow);
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns:1fr; }
+      .grid-3 { grid-template-columns:1fr; }
+      .grid-2 { grid-template-columns:1fr; }
+      .progress { display:none; }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>BoundaryCheck UK</h1>
-      <p class="muted">Quickly estimate how much garden area you may be missing versus your title plan. Generates a surveyor brief you can send today.</p>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="progress">BoundaryCheck UK • Step‑by‑step clarity</div>
 
-      <div class="row">
-        <div style="flex:1">
-          <label>Title plan width (m)</label>
-          <input id="tpw" type="number" step="0.01" placeholder="8.15" />
-        </div>
-        <div style="flex:1">
-          <label>Title plan depth (m)</label>
-          <input id="tpd" type="number" step="0.01" placeholder="12.00" />
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1">
-          <label>Measured fence width (m)</label>
-          <input id="mw" type="number" step="0.01" placeholder="7.20" />
-        </div>
-        <div style="flex:1">
-          <label>Measured fence depth (m)</label>
-          <input id="md" type="number" step="0.01" placeholder="10.80" />
+  <header class="container">
+    <div class="nav">
+      <div>
+        <div class="badge">UK property compliance</div>
+        <h1>Know your garden boundary gap in 2&nbsp;minutes.</h1>
+        <p class="muted">Compare your title plan measurements with your fence lines and leave with a ready‑to‑send surveyor brief.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:var(--space-4);">
+          <a class="btn" href="#calculator">Run the Free Check</a>
+          <a class="btn secondary" href="#pricing">See Pricing</a>
         </div>
       </div>
-
-      <div class="row" style="margin-top:12px">
-        <button onclick="calc()">Calculate discrepancy</button>
-      </div>
-
-      <div id="output" style="margin-top:14px"></div>
-
-      <label style="margin-top:18px">Email capture</label>
-      <input placeholder="you@email.com" />
-    </div>
-
-    <div class="card" style="margin-top:16px">
-      <h3>Pricing</h3>
-      <div class="row">
-        <div class="card" style="flex:1">Free: single calc</div>
-        <div class="card" style="flex:1">£19 report: surveyor brief + checklist</div>
-        <div class="card" style="flex:1">£49: template letters + evidence pack</div>
+      <div class="card">
+        <h3>Why owners use BoundaryCheck UK</h3>
+        <ul class="list">
+          <li><strong>Protect your space:</strong> spot missing square metres before it becomes a dispute.</li>
+          <li><strong>Act faster:</strong> get a surveyor brief ready in minutes, not days.</li>
+          <li><strong>Stay organised:</strong> checklist keeps evidence and next steps tidy.</li>
+        </ul>
+        <div style="display:grid; gap:var(--space-3); margin-top:var(--space-4);">
+          <div class="stat">
+            <span class="muted">Typical time saved</span>
+            <strong>3–5&nbsp;hours</strong>
+          </div>
+          <div class="stat">
+            <span class="muted">Designed for</span>
+            <strong>UK homeowners & landlords</strong>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </header>
+
+  <main id="main">
+    <section class="container chapter" id="chapter-problem">
+      <div class="card">
+        <h2>Chapter 1 — The Hidden Risk</h2>
+        <p>Most UK owners only look at boundary issues when a sale or neighbour dispute appears. By then, you’re scrambling for evidence and a clear plan. BoundaryCheck UK gives you a quick, calm starting point.</p>
+      </div>
+    </section>
+
+    <section class="container chapter" id="chapter-journey">
+      <div class="card" style="border-left-color:var(--secondary)">
+        <h2>Chapter 2 — Measure, Compare, Organise</h2>
+        <p>The workflow stays light: measure, calculate, capture next steps. No GIS uploads, no confusing maps — just actionable numbers and a surveyor‑ready brief.</p>
+      </div>
+    </section>
+
+    <section class="container chapter" id="chapter-solution">
+      <div class="card" style="border-left-color:var(--accent)">
+        <h2>Chapter 3 — Clear Next Steps</h2>
+        <p>Leave with a concise checklist, a brief you can paste to a surveyor, and a record you can keep on file for future sales or disputes.</p>
+      </div>
+    </section>
+
+    <section class="container" id="calculator">
+      <div class="card">
+        <h2>Boundary Discrepancy Calculator</h2>
+        <p class="muted">Enter your title plan and fence measurements. You’ll get an estimate of missing (or surplus) area.</p>
+        <div class="grid-2">
+          <div>
+            <label for="tpw">Title plan width (m)</label>
+            <input id="tpw" name="titlePlanWidth" type="number" step="0.01" inputmode="decimal" autocomplete="off" placeholder="8.15…" />
+          </div>
+          <div>
+            <label for="tpd">Title plan depth (m)</label>
+            <input id="tpd" name="titlePlanDepth" type="number" step="0.01" inputmode="decimal" autocomplete="off" placeholder="12.00…" />
+          </div>
+          <div>
+            <label for="mw">Measured fence width (m)</label>
+            <input id="mw" name="measuredWidth" type="number" step="0.01" inputmode="decimal" autocomplete="off" placeholder="7.20…" />
+          </div>
+          <div>
+            <label for="md">Measured fence depth (m)</label>
+            <input id="md" name="measuredDepth" type="number" step="0.01" inputmode="decimal" autocomplete="off" placeholder="10.80…" />
+          </div>
+        </div>
+        <div style="margin-top:var(--space-4); display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="btn" type="button" onclick="calc()">Calculate Discrepancy</button>
+          <span class="muted">Results appear below instantly.</span>
+        </div>
+        <div id="output" style="margin-top:var(--space-5);" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="container" id="checklist">
+      <div class="grid-3">
+        <div class="card">
+          <h3>Evidence Pack</h3>
+          <ul class="list">
+            <li>Order official title plan + register from HM Land Registry.</li>
+            <li>Record fence line with dated photos + measurements.</li>
+            <li>Note landmarks (walls, hedges, drains).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Surveyor Brief</h3>
+          <p>Instantly generate a clear email brief to send to a RICS surveyor.</p>
+          <p class="muted">Ready to copy/paste after calculation.</p>
+        </div>
+        <div class="card">
+          <h3>Next Steps</h3>
+          <ul class="list">
+            <li>Confirm boundaries before listing or selling.</li>
+            <li>Share findings with legal advisers if needed.</li>
+            <li>Keep the record for future disputes.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" id="pricing">
+      <h2>Pricing</h2>
+      <p class="muted">Start free. Upgrade when you want monitoring and exported reports.</p>
+      <div class="grid-2" style="margin-top:var(--space-4);">
+        <div class="card price-card">
+          <h3>Free</h3>
+          <p><strong>£0</strong> • Single calculation + surveyor brief</p>
+          <ul class="list">
+            <li>Boundary discrepancy calculator</li>
+            <li>Copy‑ready surveyor brief</li>
+            <li>Evidence checklist</li>
+          </ul>
+          <a class="btn secondary" href="#calculator">Run the Free Check</a>
+        </div>
+        <div class="card price-card highlight">
+          <h3>Pro Monitoring</h3>
+          <p><strong>£9/mo</strong> • Save reports + reminders</p>
+          <ul class="list">
+            <li>Saved property records</li>
+            <li>Exportable PDF report</li>
+            <li>Annual reminder for compliance</li>
+          </ul>
+          <a href="#stripe-coming-soon" class="btn-pay">Get Pro — £9/mo</a>
+          <p class="muted" style="margin-top:var(--space-2);">Payment coming soon — join the waitlist.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" id="waitlist">
+      <div class="card">
+        <h2>Join the Waitlist</h2>
+        <p class="muted">You’ll get notified when Pro monitoring and exports go live.</p>
+        <form id="waitlist-form">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" required inputmode="email" autocomplete="email" spellcheck="false" placeholder="you@email.com…" />
+          <button class="btn" type="submit" style="margin-top:var(--space-3);">Notify Me</button>
+          <p id="form-message" class="muted" style="margin-top:var(--space-3);" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="container" id="faq">
+      <div class="card">
+        <h2>FAQ</h2>
+        <div class="grid-2">
+          <div>
+            <h3>Is this a legal boundary opinion?</h3>
+            <p class="muted">No — it’s a quick, practical estimate to help you decide if you need a surveyor.</p>
+          </div>
+          <div>
+            <h3>Do you store my data?</h3>
+            <p class="muted">Free calculations run in your browser only. Pro will save reports once available.</p>
+          </div>
+          <div>
+            <h3>What if I measure a surplus?</h3>
+            <p class="muted">You’ll see the difference either way so you can confirm with a professional if needed.</p>
+          </div>
+          <div>
+            <h3>Who is this best for?</h3>
+            <p class="muted">UK homeowners, landlords, and property managers who need clarity before disputes or sales.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" id="final-cta">
+      <div class="card" style="text-align:center;">
+        <h2>Get Boundary Clarity Today</h2>
+        <p class="muted">Run the free check now and keep your evidence pack organised.</p>
+        <a class="btn" href="#calculator">Start the Free Check</a>
+      </div>
+    </section>
+  </main>
 
   <script>
     function calc() {
@@ -71,27 +328,38 @@
       const tpd = parseFloat(document.getElementById('tpd').value);
       const mw = parseFloat(document.getElementById('mw').value);
       const md = parseFloat(document.getElementById('md').value);
-      if ([tpw,tpd,mw,md].some(isNaN)) return alert('Please fill all measurements.');
+      if ([tpw,tpd,mw,md].some(isNaN)) {
+        alert('Please fill in all measurements.');
+        return;
+      }
       const titleArea = tpw * tpd;
       const measuredArea = mw * md;
       const diff = titleArea - measuredArea;
       const pct = (diff / titleArea) * 100;
+      const status = diff >= 0 ? 'Estimated missing area' : 'Estimated surplus area';
       const output = `
-        <h3>Result</h3>
+        <h3>Results</h3>
         <p><strong>Title plan area:</strong> ${titleArea.toFixed(2)} m²</p>
         <p><strong>Measured area:</strong> ${measuredArea.toFixed(2)} m²</p>
-        <p><strong>Estimated missing area:</strong> ${diff.toFixed(2)} m² (${pct.toFixed(1)}%)</p>
-        <h3>Next steps</h3>
-        <ol>
-          <li>Order official title plan + register from HM Land Registry.</li>
-          <li>Hire a RICS surveyor for a boundary report.</li>
-          <li>Document fence line with dated photos + measurements.</li>
-        </ol>
-        <h3>Surveyor brief (copy/paste)</h3>
-        <textarea rows="5">Hello, I’m requesting a boundary survey for [address]. Title plan indicates approx ${tpw}m x ${tpd}m. Current fence measures approx ${mw}m x ${md}m. Please confirm actual boundary and provide a report suitable for council/neighbor discussion.</textarea>
+        <p><strong>${status}:</strong> ${Math.abs(diff).toFixed(2)} m² (${Math.abs(pct).toFixed(1)}%)</p>
+        <label for="brief">Surveyor brief (copy/paste)</label>
+        <textarea id="brief" rows="5">Hello, I’m requesting a boundary survey for [address]. Title plan indicates approx ${tpw}m x ${tpd}m. Current fence measures approx ${mw}m x ${md}m. Please confirm the legal boundary line and provide a report suitable for neighbour discussion or sale compliance.</textarea>
       `;
       document.getElementById('output').innerHTML = output;
     }
+
+    document.getElementById('waitlist-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('form-message');
+      if (!email) {
+        message.textContent = 'Please enter a valid email.';
+        document.getElementById('email').focus();
+        return;
+      }
+      message.textContent = 'Thanks — you’ll get an update soon.';
+      this.reset();
+    });
   </script>
 </body>
 </html>

@@ -46,3 +46,30 @@ Scores (Market / Completeness / Revenue / UK = Total)
 - PP-004-planpulse: 3/2/3/2 = 10
 - dns-email-audit: 4/5/4/3 = 16  <-- chosen
 ---
+---
+2026-03-29 06:00 Europe/London
+Scores (Market / Completeness / Revenue / UK = Total)
+- PP-001-carousel-maker: 4/2/3/2 = 11
+- PP-001-cod-commission-tracker: 3/2/3/1 = 9
+- PP-001-competitor-price-tracker: 4/2/4/2 = 12
+- PP-001-docstack: 3/2/3/2 = 10
+- PP-001-invoice-chaser-lite: 4/3/4/5 = 16
+- PP-001-invoice-preflight: 4/2/4/4 = 14
+- PP-001-maintenance-nagger: 4/4/4/5 = 17
+- PP-001-whatsapp-booking-assistant: 4/3/4/4 = 15
+- PP-002-bsa-checklist: 4/2/4/5 = 15
+- PP-002-fee-link-optimizer: 4/2/4/5 = 15
+- PP-002-fieldkit: 4/2/4/5 = 15
+- PP-002-micro-automation-layer: 3/2/3/4 = 12
+- PP-002-safe-lead-scout: 4/2/3/3 = 12
+- PP-002-waitlist-outreach-planner: 4/2/3/3 = 12
+- PP-002-whatsapp-booking: 4/2/4/4 = 14
+- PP-002-whatsapp-booking-bot: 4/2/4/4 = 14
+- PP-003-arxiv-quality-ranker: 3/2/3/1 = 9
+- PP-003-cashflow-clarity: 4/2/4/4 = 14
+- PP-003-invoice-ocr-lite: 4/2/4/3 = 13
+- PP-003-uk-boundary-checker: 4/4/3/5 = 16  <-- chosen
+- PP-003-whatsapp-business-setup: 4/3/4/4 = 15
+- PP-003-workflow-health: 3/2/4/2 = 11
+- PP-004-planpulse: 3/2/3/2 = 10
+- dns-email-audit: 4/5/4/3 = 16
