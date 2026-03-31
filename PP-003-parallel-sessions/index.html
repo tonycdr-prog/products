@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parallel Sessions Pilot — Run coding agents in focused lanes</title>
+  <meta name="description" content="Lightweight orchestration for parallel coding-agent sessions: focus slots, context summaries, and handoffs without mental overload." />
+  <meta property="og:title" content="Parallel Sessions Pilot" />
+  <meta property="og:description" content="Run multiple coding agents in focused lanes without losing context." />
+  <style>
+    :root {
+      --bg: #0F172A;
+      --fg: #F8FAFC;
+      --card: #1B2336;
+      --muted: #94A3B8;
+      --border: #475569;
+      --primary: #1E293B;
+      --accent: #22C55E;
+      --danger: #EF4444;
+      --warn: #F59E0B;
+      --ok: #38BDF8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--fg); line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 32px 20px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .logo { font-weight: 700; letter-spacing: -0.5px; }
+    .btn { background: var(--accent); color: #0F172A; padding: 10px 16px; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; }
+    .btn.secondary { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+    .btn.warning { background: var(--warn); color: #111827; }
+    .btn.danger { background: var(--danger); color: white; }
+    .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: center; margin-top: 32px; }
+    .hero h1 { font-size: 44px; line-height: 1.1; letter-spacing: -1px; margin: 0 0 12px; }
+    .hero p { color: var(--muted); font-size: 18px; }
+    .badge { display: inline-block; font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 12px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .section-title { font-size: 28px; margin: 0 0 8px; }
+    .section-sub { color: var(--muted); margin: 0 0 18px; }
+    .pill { padding: 4px 10px; background: #111827; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; color: var(--muted); }
+    .status-pill { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .status-planned { background: rgba(148,163,184,.1); color: var(--muted); border: 1px solid var(--border); }
+    .status-active { background: rgba(56,189,248,.12); color: var(--ok); border: 1px solid rgba(56,189,248,.4); }
+    .status-blocked { background: rgba(239,68,68,.12); color: #FCA5A5; border: 1px solid rgba(239,68,68,.4); }
+    .status-done { background: rgba(34,197,94,.12); color: #86EFAC; border: 1px solid rgba(34,197,94,.4); }
+    .pricing { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .pricing .card { position: relative; }
+    .pricing .highlight { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .list { display: grid; gap: 12px; }
+    .session { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+    .session small { color: var(--muted); }
+    .slot { font-size: 12px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); color: var(--muted); }
+    .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+    .footer { border-top: 1px solid var(--border); margin-top: 32px; padding-top: 18px; color: var(--muted); font-size: 13px; }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
+      background: #0b1220; color: var(--fg);
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .meta-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .timer { font-weight: 700; letter-spacing: .5px; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid-3, .pricing, .split { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="logo">Parallel Sessions Pilot</div>
+      <div class="cta">
+        <button class="btn secondary" onclick="exportSessions()">Export JSON</button>
+        <button class="btn">Join Waitlist</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div>
+        <div class="badge">Parallel coding lanes</div>
+        <h1>Run multiple coding agents without losing your place.</h1>
+        <p>Slot-based orchestration keeps each agent in a focused lane with handoff notes, context summaries, and priority timers. Ship faster without cognitive chaos.</p>
+        <div class="cta" style="margin-top:16px;">
+          <button class="btn" onclick="seedSample()">Load Sample Lanes</button>
+          <button class="btn secondary" onclick="scrollToFocus()">Jump to Focus Lane</button>
+        </div>
+        <div style="margin-top:12px; color: var(--muted); font-size: 13px;">Built for Claude Code, OpenCode, Pi, and terminal agents.</div>
+      </div>
+      <div class="card">
+        <div class="pill">Live Session Planner</div>
+        <h3 style="margin:10px 0 4px;">Create a session lane</h3>
+        <div class="list" id="session-form">
+          <div>
+            <label>Session name</label>
+            <input id="name" placeholder="Refactor billing flow" />
+          </div>
+          <div>
+            <label>Goal</label>
+            <input id="goal" placeholder="Ship tests + cut 30% runtime" />
+          </div>
+          <div class="split">
+            <div>
+              <label>Focus slot</label>
+              <select id="slot">
+                <option value="Slot A">Slot A (Primary)</option>
+                <option value="Slot B">Slot B (Secondary)</option>
+                <option value="Slot C">Slot C (Parking)</option>
+              </select>
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="status">
+                <option value="Planned">Planned</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Blocked">Blocked</option>
+                <option value="Done">Done</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label>Priority</label>
+            <select id="priority">
+              <option value="P0">P0 (Must ship)</option>
+              <option value="P1">P1 (High)</option>
+              <option value="P2">P2 (Medium)</option>
+              <option value="P3">P3 (Low)</option>
+            </select>
+          </div>
+          <button class="btn" onclick="addSession()">Add Session</button>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:32px;">
+      <h2 class="section-title">Your active lanes</h2>
+      <p class="section-sub">Switch focus with a single click. The tool keeps session notes and summaries in one place.</p>
+      <div class="list" id="session-list"></div>
+    </section>
+
+    <section id="focus-lane" style="margin-top:32px;" class="card">
+      <div class="meta-line" style="justify-content: space-between;">
+        <div>
+          <h2 class="section-title" style="margin-bottom:4px;">Focus lane</h2>
+          <div class="section-sub" style="margin:0;">Capture handoff notes, next steps, and timer-based focus blocks.</div>
+        </div>
+        <div class="meta-line">
+          <select id="focus-select" onchange="changeFocus()"></select>
+          <button class="btn secondary" onclick="markDone()">Mark Done</button>
+        </div>
+      </div>
+      <div id="focus-content" style="margin-top:16px;"></div>
+    </section>
+
+    <section style="margin-top:32px;">
+      <div class="grid-3">
+        <div class="card">
+          <h3>Focus Slots</h3>
+          <p>Limit parallel work to 2–3 cognitive lanes and reduce context switching.</p>
+        </div>
+        <div class="card">
+          <h3>Handoff Notes</h3>
+          <p>Capture “what’s next” and restore context instantly when you return.</p>
+        </div>
+        <div class="card">
+          <h3>Prompt Templates</h3>
+          <p>Start every agent with a pre-built command bundle and summary export.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:32px;">
+      <h2 class="section-title">Pricing</h2>
+      <p class="section-sub">Simple per-seat pricing. Annual plans save 25%.</p>
+      <div class="pricing">
+        <div class="card">
+          <h3>Starter</h3>
+          <div style="font-size:28px; font-weight:700;">£19/mo</div>
+          <ul>
+            <li>Up to 3 parallel lanes</li>
+            <li>Local-only storage</li>
+            <li>Agent command templates</li>
+          </ul>
+          <button class="btn secondary" style="width:100%;">Choose Starter</button>
+        </div>
+        <div class="card highlight">
+          <div class="pill">Recommended</div>
+          <h3>Pro</h3>
+          <div style="font-size:28px; font-weight:700;">£39/mo</div>
+          <ul>
+            <li>Unlimited lanes</li>
+            <li>Team handoff notes</li>
+            <li>Weekly focus analytics</li>
+          </ul>
+          <button class="btn" style="width:100%;">Choose Pro</button>
+        </div>
+        <div class="card">
+          <h3>Team</h3>
+          <div style="font-size:28px; font-weight:700;">£79/mo</div>
+          <ul>
+            <li>Shared agent workspaces</li>
+            <li>Audit trails</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="btn secondary" style="width:100%;">Talk to Us</button>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:32px;" class="card">
+      <h2 class="section-title">Join the pilot</h2>
+      <p class="section-sub">We’re onboarding 30 teams for early feedback.</p>
+      <div class="cta">
+        <input id="email" type="email" placeholder="you@company.com" />
+        <button class="btn" onclick="captureEmail()">Join Waitlist</button>
+      </div>
+      <div id="email-status" style="color: var(--muted); font-size: 12px; margin-top:8px;"></div>
+    </section>
+
+    <div class="footer">© 2026 Parallel Sessions Pilot. Built for fast-moving dev teams.</div>
+  </div>
+
+  <script>
+    const list = document.getElementById('session-list');
+    const focusSelect = document.getElementById('focus-select');
+    const focusContent = document.getElementById('focus-content');
+    const storageKey = 'psp_sessions_v2';
+    let focusIndex = null;
+    let timerInterval = null;
+
+    function statusClass(status) {
+      if (status === 'In Progress') return 'status-active';
+      if (status === 'Blocked') return 'status-blocked';
+      if (status === 'Done') return 'status-done';
+      return 'status-planned';
+    }
+
+    function loadSessions() {
+      return JSON.parse(localStorage.getItem(storageKey) || '[]');
+    }
+
+    function saveSessions(data) {
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    function formatTime(seconds) {
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = Math.floor(seconds % 60);
+      return [hrs, mins, secs].map(v => String(v).padStart(2, '0')).join(':');
+    }
+
+    function addSession() {
+      const name = document.getElementById('name').value.trim();
+      const goal = document.getElementById('goal').value.trim();
+      const slot = document.getElementById('slot').value;
+      const status = document.getElementById('status').value;
+      const priority = document.getElementById('priority').value;
+      if (!name || !goal) return alert('Add a session name and goal.');
+      const data = loadSessions();
+      data.push({
+        name, goal, slot, status, priority,
+        notes: '', nextSteps: '', prompt: 'Default',
+        timerSeconds: 0, timerRunning: false, timerStartedAt: null,
+        updatedAt: Date.now()
+      });
+      saveSessions(data);
+      document.getElementById('name').value = '';
+      document.getElementById('goal').value = '';
+      render();
+    }
+
+    function renderList(data) {
+      list.innerHTML = '';
+      if (!data.length) {
+        list.innerHTML = '<div class="card">No sessions yet. Add one above to see it here.</div>';
+        return;
+      }
+      data.forEach((s, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card session';
+        const updated = s.updatedAt ? new Date(s.updatedAt).toLocaleString() : '—';
+        card.innerHTML = `
+          <div>
+            <div class="meta-line">
+              <strong>${s.name}</strong>
+              <span class="status-pill ${statusClass(s.status)}">${s.status}</span>
+              <span class="slot">${s.slot}</span>
+              <span class="slot">${s.priority}</span>
+            </div>
+            <small>${s.goal}</small><br />
+            <small>Last update: ${updated}</small>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="btn secondary" onclick="focusSession(${idx})">Focus</button>
+            <button class="btn secondary" onclick="removeSession(${idx})">Remove</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function renderFocus(data) {
+      if (focusIndex === null || !data[focusIndex]) {
+        focusContent.innerHTML = '<div style="color: var(--muted);">Select a lane to see focus controls.</div>';
+        return;
+      }
+      const s = data[focusIndex];
+      const running = s.timerRunning;
+      const elapsed = s.timerSeconds + (running ? (Date.now() - s.timerStartedAt) / 1000 : 0);
+      focusContent.innerHTML = `
+        <div class="card" style="margin-bottom:16px;">
+          <div class="meta-line" style="justify-content: space-between;">
+            <div>
+              <strong style="font-size:18px;">${s.name}</strong>
+              <div class="section-sub" style="margin:4px 0 0;">${s.goal}</div>
+              <div class="meta-line" style="margin-top:6px;">
+                <span class="status-pill ${statusClass(s.status)}">${s.status}</span>
+                <span class="slot">${s.slot}</span>
+                <span class="slot">${s.priority}</span>
+              </div>
+            </div>
+            <div class="meta-line">
+              <div class="timer">${formatTime(elapsed)}</div>
+              <button class="btn ${running ? 'warning' : ''}" onclick="toggleTimer()">${running ? 'Stop' : 'Start'} Timer</button>
+            </div>
+          </div>
+        </div>
+        <div class="split">
+          <div>
+            <label>Handoff notes</label>
+            <textarea id="notes" placeholder="What matters before the next focus block?">${s.notes || ''}</textarea>
+          </div>
+          <div>
+            <label>Next steps</label>
+            <textarea id="nextSteps" placeholder="Next exact command or deliverable">${s.nextSteps || ''}</textarea>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <label>Prompt template</label>
+          <select id="prompt">
+            <option ${s.prompt === 'Default' ? 'selected' : ''}>Default</option>
+            <option ${s.prompt === 'Bug Fix' ? 'selected' : ''}>Bug Fix</option>
+            <option ${s.prompt === 'Refactor' ? 'selected' : ''}>Refactor</option>
+            <option ${s.prompt === 'Test Coverage' ? 'selected' : ''}>Test Coverage</option>
+            <option ${s.prompt === 'Docs & Handoff' ? 'selected' : ''}>Docs & Handoff</option>
+          </select>
+        </div>
+        <div class="meta-line" style="margin-top:16px;">
+          <button class="btn" onclick="saveFocus()">Save Notes</button>
+          <button class="btn secondary" onclick="copyHandoff()">Copy Handoff</button>
+          <button class="btn secondary" onclick="updateStatus()">Update Status</button>
+        </div>
+      `;
+    }
+
+    function renderFocusSelect(data) {
+      focusSelect.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = data.length ? 'Select lane' : 'No lanes yet';
+      focusSelect.appendChild(placeholder);
+      data.forEach((s, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${s.name} — ${s.slot}`;
+        focusSelect.appendChild(opt);
+      });
+      if (focusIndex !== null) focusSelect.value = String(focusIndex);
+    }
+
+    function render() {
+      const data = loadSessions();
+      renderList(data);
+      renderFocusSelect(data);
+      renderFocus(data);
+    }
+
+    function focusSession(idx) {
+      focusIndex = idx;
+      render();
+      document.getElementById('focus-lane').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function changeFocus() {
+      const val = focusSelect.value;
+      focusIndex = val === '' ? null : Number(val);
+      render();
+    }
+
+    function saveFocus() {
+      const data = loadSessions();
+      if (focusIndex === null || !data[focusIndex]) return;
+      data[focusIndex].notes = document.getElementById('notes').value.trim();
+      data[focusIndex].nextSteps = document.getElementById('nextSteps').value.trim();
+      data[focusIndex].prompt = document.getElementById('prompt').value;
+      data[focusIndex].updatedAt = Date.now();
+      saveSessions(data);
+      render();
+    }
+
+    function updateStatus() {
+      const data = loadSessions();
+      if (focusIndex === null || !data[focusIndex]) return;
+      const next = prompt('Status: Planned, In Progress, Blocked, Done', data[focusIndex].status);
+      if (!next) return;
+      data[focusIndex].status = next;
+      data[focusIndex].updatedAt = Date.now();
+      saveSessions(data);
+      render();
+    }
+
+    function markDone() {
+      const data = loadSessions();
+      if (focusIndex === null || !data[focusIndex]) return;
+      data[focusIndex].status = 'Done';
+      data[focusIndex].updatedAt = Date.now();
+      data[focusIndex].timerRunning = false;
+      saveSessions(data);
+      render();
+    }
+
+    function toggleTimer() {
+      const data = loadSessions();
+      if (focusIndex === null || !data[focusIndex]) return;
+      const s = data[focusIndex];
+      if (s.timerRunning) {
+        s.timerSeconds += (Date.now() - s.timerStartedAt) / 1000;
+        s.timerRunning = false;
+        s.timerStartedAt = null;
+      } else {
+        s.timerRunning = true;
+        s.timerStartedAt = Date.now();
+      }
+      s.updatedAt = Date.now();
+      saveSessions(data);
+      render();
+    }
+
+    function copyHandoff() {
+      const data = loadSessions();
+      if (focusIndex === null || !data[focusIndex]) return;
+      const s = data[focusIndex];
+      const summary = `Session: ${s.name}\nGoal: ${s.goal}\nSlot: ${s.slot}\nStatus: ${s.status}\nPriority: ${s.priority}\nPrompt: ${s.prompt}\nNext steps: ${s.nextSteps || '—'}\nNotes: ${s.notes || '—'}`;
+      navigator.clipboard.writeText(summary).then(() => alert('Handoff copied to clipboard.'));
+    }
+
+    function removeSession(idx) {
+      const data = loadSessions();
+      data.splice(idx, 1);
+      if (focusIndex === idx) focusIndex = null;
+      saveSessions(data);
+      render();
+    }
+
+    function captureEmail() {
+      const email = document.getElementById('email').value.trim();
+      if (!email.includes('@')) return alert('Enter a valid email.');
+      const list = JSON.parse(localStorage.getItem('psp_waitlist') || '[]');
+      list.push({ email, ts: Date.now() });
+      localStorage.setItem('psp_waitlist', JSON.stringify(list));
+      document.getElementById('email').value = '';
+      document.getElementById('email-status').textContent = 'You’re on the list. We’ll reach out with access.';
+    }
+
+    function exportSessions() {
+      const data = loadSessions();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'parallel-sessions.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function scrollToFocus() {
+      document.getElementById('focus-lane').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function seedSample() {
+      const sample = [
+        { name: 'Checkout refactor', goal: 'Split services + add tests', slot: 'Slot A', status: 'In Progress', priority: 'P0', notes: 'Keep stripe webhook handling intact.', nextSteps: 'Ask agent to extract billing module.', prompt: 'Refactor', timerSeconds: 960, timerRunning: false, timerStartedAt: null, updatedAt: Date.now() },
+        { name: 'Docs + onboarding', goal: 'Ship quickstart + GIF', slot: 'Slot B', status: 'Planned', priority: 'P2', notes: '', nextSteps: 'Draft README + usage flow.', prompt: 'Docs & Handoff', timerSeconds: 0, timerRunning: false, timerStartedAt: null, updatedAt: Date.now() }
+      ];
+      saveSessions(sample);
+      focusIndex = 0;
+      render();
+    }
+
+    function startTicker() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (focusIndex === null) return;
+        const data = loadSessions();
+        if (!data[focusIndex] || !data[focusIndex].timerRunning) return;
+        renderFocus(data);
+      }, 1000);
+    }
+
+    render();
+    startTicker();
+  </script>
+</body>
+</html>
