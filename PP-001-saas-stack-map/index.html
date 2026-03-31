@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SaaS Stack Map — Track every service behind your products</title>
+  <meta name="description" content="Inventory all SaaS dependencies, owners, renewals, and costs in one lightweight map." />
+  <meta property="og:title" content="SaaS Stack Map" />
+  <meta property="og:description" content="Track every service behind your products." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    :root {
+      --primary: #6366F1;
+      --accent: #059669;
+      --bg: #F5F3FF;
+      --fg: #1E1B4B;
+      --card: #FFFFFF;
+      --muted: #64748B;
+      --border: #E0E7FF;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+    .nav { display:flex; justify-content: space-between; align-items:center; }
+    .logo { font-family: Calistoga, serif; font-size: 22px; }
+    .btn { background: var(--accent); color: #fff; padding: 10px 16px; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; }
+    .btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--fg); }
+    .hero { display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 22px; align-items:center; margin-top: 30px; }
+    .hero h1 { font-family: Calistoga, serif; font-size: 40px; margin:0 0 10px; }
+    .hero p { color: var(--muted); font-size: 18px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    input, select { width: 100%; padding: 10px; border:1px solid var(--border); border-radius: 10px; }
+    .grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .table th, .table td { border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left; }
+    .pricing { display:grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .highlight { border: 2px solid var(--primary); }
+    .footer { border-top:1px solid var(--border); margin-top: 28px; padding-top: 16px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 900px) {
+      .hero, .grid-3, .pricing { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="logo">SaaS Stack Map</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn secondary">See Example</button>
+        <button class="btn">Start Mapping</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div>
+        <div style="text-transform:uppercase; letter-spacing:1.2px; color: var(--muted); font-size:12px;">SaaS operations toolkit</div>
+        <h1>Know every service, renewal, and owner behind your products.</h1>
+        <p>Stop the “where is this hosted?” scramble. Map every dependency — domains, email, analytics, payments — and track renewal dates and monthly costs.</p>
+        <div style="display:flex; gap:12px; margin-top:14px;">
+          <button class="btn">Start Free</button>
+          <button class="btn secondary">View Pricing</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Add a service</h3>
+        <label>Service name</label>
+        <input id="name" placeholder="SendGrid" />
+        <label>Category</label>
+        <select id="category">
+          <option>Email</option>
+          <option>Hosting</option>
+          <option>Database</option>
+          <option>Analytics</option>
+          <option>Payments</option>
+          <option>Monitoring</option>
+          <option>Other</option>
+        </select>
+        <label>Owner email</label>
+        <input id="owner" placeholder="ops@company.com" />
+        <label>Renewal date</label>
+        <input id="renewal" type="date" />
+        <label>Monthly cost (£)</label>
+        <input id="cost" type="number" min="0" step="0.01" placeholder="29" />
+        <button class="btn" style="margin-top:10px;" onclick="addService()">Add Service</button>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 style="margin:0 0 6px;">Your stack</h2>
+      <p style="color:var(--muted); margin-top:0;">Export to CSV and share with your team.</p>
+      <div class="card">
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+          <select id="filter" onchange="renderTable()">
+            <option value="All">All categories</option>
+            <option>Email</option>
+            <option>Hosting</option>
+            <option>Database</option>
+            <option>Analytics</option>
+            <option>Payments</option>
+            <option>Monitoring</option>
+            <option>Other</option>
+          </select>
+          <button class="btn secondary" onclick="exportCSV()">Export CSV</button>
+          <div id="total" style="margin-left:auto; font-weight:600;"></div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Category</th>
+              <th>Owner</th>
+              <th>Renewal</th>
+              <th>£/mo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <div class="grid-3">
+        <div class="card">
+          <h3>Dependency visibility</h3>
+          <p>Quickly answer “where does this live?” across products and client work.</p>
+        </div>
+        <div class="card">
+          <h3>Renewal alerts</h3>
+          <p>Track renewals and prevent surprise invoices.</p>
+        </div>
+        <div class="card">
+          <h3>Cost clarity</h3>
+          <p>Understand true monthly SaaS spend per product.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 style="margin:0 0 6px;">Pricing</h2>
+      <div class="pricing">
+        <div class="card">
+          <h3>Starter</h3>
+          <div style="font-size:26px; font-weight:700;">£15/mo</div>
+          <ul>
+            <li>1 workspace</li>
+            <li>50 services</li>
+            <li>CSV export</li>
+          </ul>
+          <button class="btn secondary" style="width:100%;">Choose Starter</button>
+        </div>
+        <div class="card highlight">
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted);">Recommended</div>
+          <h3>Pro</h3>
+          <div style="font-size:26px; font-weight:700;">£35/mo</div>
+          <ul>
+            <li>Unlimited services</li>
+            <li>Renewal reminders</li>
+            <li>Team sharing</li>
+          </ul>
+          <button class="btn" style="width:100%;">Choose Pro</button>
+        </div>
+        <div class="card">
+          <h3>Agency</h3>
+          <div style="font-size:26px; font-weight:700;">£79/mo</div>
+          <ul>
+            <li>Client workspaces</li>
+            <li>Shared ownership</li>
+            <li>Audit trails</li>
+          </ul>
+          <button class="btn secondary" style="width:100%;">Talk to Us</button>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;" class="card">
+      <h2 style="margin:0 0 6px;">Join the waitlist</h2>
+      <p style="color:var(--muted); margin-top:0;">We’re onboarding UK-first SaaS teams.</p>
+      <div style="display:flex; gap:10px;">
+        <input id="email" type="email" placeholder="you@company.com" />
+        <button class="btn" onclick="captureEmail()">Join Waitlist</button>
+      </div>
+      <div id="emailStatus" style="color:var(--muted); font-size:12px; margin-top:8px;"></div>
+    </section>
+
+    <div class="footer">© 2026 SaaS Stack Map</div>
+  </div>
+
+  <script>
+    const storageKey = 'saas_stack_map_v1';
+
+    function addService() {
+      const name = document.getElementById('name').value.trim();
+      const category = document.getElementById('category').value;
+      const owner = document.getElementById('owner').value.trim();
+      const renewal = document.getElementById('renewal').value;
+      const cost = parseFloat(document.getElementById('cost').value || '0');
+      if (!name || !owner) return alert('Add a service name and owner.');
+      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      data.push({ name, category, owner, renewal, cost });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      document.getElementById('name').value = '';
+      document.getElementById('owner').value = '';
+      document.getElementById('renewal').value = '';
+      document.getElementById('cost').value = '';
+      renderTable();
+    }
+
+    function removeService(idx) {
+      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      data.splice(idx, 1);
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      renderTable();
+    }
+
+    function renderTable() {
+      const filter = document.getElementById('filter').value;
+      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '';
+      let total = 0;
+      data.filter(d => filter === 'All' || d.category === filter).forEach((d, idx) => {
+        total += d.cost || 0;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${d.name}</td>
+          <td>${d.category}</td>
+          <td>${d.owner}</td>
+          <td>${d.renewal || '-'}</td>
+          <td>£${(d.cost || 0).toFixed(2)}</td>
+          <td><button class="btn secondary" onclick="removeService(${idx})">Remove</button></td>
+        `;
+        body.appendChild(row);
+      });
+      document.getElementById('total').textContent = `Total: £${total.toFixed(2)}/mo`;
+      if (!data.length) {
+        body.innerHTML = '<tr><td colspan="6">No services yet. Add one above.</td></tr>';
+        document.getElementById('total').textContent = 'Total: £0.00/mo';
+      }
+    }
+
+    function exportCSV() {
+      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const header = ['Service','Category','Owner','Renewal','MonthlyCost'];
+      const rows = data.map(d => [d.name, d.category, d.owner, d.renewal, d.cost]);
+      const csv = [header, ...rows].map(r => r.map(x => `"${String(x ?? '')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'saas-stack-map.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function captureEmail() {
+      const email = document.getElementById('email').value.trim();
+      if (!email.includes('@')) return alert('Enter a valid email.');
+      const list = JSON.parse(localStorage.getItem('saas_stack_waitlist') || '[]');
+      list.push({ email, ts: Date.now() });
+      localStorage.setItem('saas_stack_waitlist', JSON.stringify(list));
+      document.getElementById('email').value = '';
+      document.getElementById('emailStatus').textContent = 'You’re on the list. We’ll reach out soon.';
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
