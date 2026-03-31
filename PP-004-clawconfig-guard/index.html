@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClawConfig Guard — Safe settings.json management</title>
+  <meta name="description" content="Schema-aware editor with versioning and rollback for OpenClaw settings.json." />
+  <meta property="og:title" content="ClawConfig Guard" />
+  <meta property="og:description" content="Validate, version, and rollback settings.json safely." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    :root {
+      --bg: #0F172A;
+      --fg: #F8FAFC;
+      --card: #1B2336;
+      --muted: #94A3B8;
+      --border: #475569;
+      --accent: #22C55E;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+    .nav { display:flex; justify-content: space-between; align-items:center; }
+    .logo { font-weight: 700; letter-spacing: -0.5px; }
+    .btn { background: var(--accent); color: #0F172A; padding: 10px 16px; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; }
+    .btn.secondary { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+    .hero { display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: center; margin-top: 28px; }
+    .hero h1 { font-size: 40px; line-height: 1.1; margin: 0 0 10px; }
+    .hero p { color: var(--muted); font-size: 18px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    textarea, input, select { width: 100%; border:1px solid var(--border); background:#0b1220; color: var(--fg); padding: 10px; border-radius: 10px; }
+    label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .list { display:grid; gap: 12px; }
+    .pricing { display:grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .highlight { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .footer { border-top: 1px solid var(--border); margin-top: 28px; padding-top: 16px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 900px) {
+      .hero, .grid-3, .pricing { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="logo">ClawConfig Guard</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn secondary">Docs</button>
+        <button class="btn">Get Early Access</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div>
+        <div style="text-transform:uppercase; letter-spacing:1.2px; color: var(--muted); font-size:12px;">Safe config management</div>
+        <h1>Validate, version, and roll back settings.json in one place.</h1>
+        <p>Stop losing hours to broken configs. ClawConfig Guard adds schema validation, automatic backups, and one-click rollback for OpenClaw settings files.</p>
+        <div style="display:flex; gap:12px; margin-top:14px;">
+          <button class="btn">Start Free</button>
+          <button class="btn secondary">See Example</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Live settings.json validator</h3>
+        <label>Paste settings.json</label>
+        <textarea id="jsonInput" rows="10" placeholder='{"gatewayPort":18789,"memoryBackend":"builtin","profiles":[{"name":"default"}]}'></textarea>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button class="btn" onclick="validateJson()">Validate</button>
+          <button class="btn secondary" onclick="saveVersion()">Save Version</button>
+        </div>
+        <div id="status" style="margin-top:10px; color: var(--muted);"></div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 style="margin:0 0 6px;">Version history</h2>
+      <p style="color:var(--muted); margin-top:0;">Rollback safely if a plugin or agent corrupts your config.</p>
+      <div class="card">
+        <div class="list" id="versionList"></div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <div class="grid-3">
+        <div class="card">
+          <h3>Schema-aware</h3>
+          <p>Catch missing fields and invalid types before your gateway fails to restart.</p>
+        </div>
+        <div class="card">
+          <h3>Automatic backups</h3>
+          <p>Every saved change is versioned with a timestamp and diff preview.</p>
+        </div>
+        <div class="card">
+          <h3>Fast rollback</h3>
+          <p>Restore the last good config in one click.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 style="margin:0 0 8px;">Pricing</h2>
+      <div class="pricing">
+        <div class="card">
+          <h3>Solo</h3>
+          <div style="font-size:26px; font-weight:700;">£12/mo</div>
+          <ul>
+            <li>Local validation</li>
+            <li>10 saved versions</li>
+            <li>Manual backups</li>
+          </ul>
+          <button class="btn secondary" style="width:100%;">Choose Solo</button>
+        </div>
+        <div class="card highlight">
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted);">Recommended</div>
+          <h3>Pro</h3>
+          <div style="font-size:26px; font-weight:700;">£29/mo</div>
+          <ul>
+            <li>Unlimited versions</li>
+            <li>Schema sync updates</li>
+            <li>Rollback assistant</li>
+          </ul>
+          <button class="btn" style="width:100%;">Choose Pro</button>
+        </div>
+        <div class="card">
+          <h3>Team</h3>
+          <div style="font-size:26px; font-weight:700;">£59/mo</div>
+          <ul>
+            <li>Shared config vault</li>
+            <li>Audit trails</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="btn secondary" style="width:100%;">Talk to Us</button>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;" class="card">
+      <h2 style="margin:0 0 6px;">Get early access</h2>
+      <p style="color:var(--muted); margin-top:0;">Join the beta waitlist.</p>
+      <div style="display:flex; gap:10px;">
+        <input id="email" type="email" placeholder="you@company.com" />
+        <button class="btn" onclick="captureEmail()">Join Waitlist</button>
+      </div>
+      <div id="emailStatus" style="color:var(--muted); font-size:12px; margin-top:8px;"></div>
+    </section>
+
+    <div class="footer">© 2026 ClawConfig Guard</div>
+  </div>
+
+  <script>
+    const storageKey = 'clawconfig_versions_v1';
+    const schemaRequired = ['gatewayPort','memoryBackend','profiles'];
+
+    function validateJson() {
+      const input = document.getElementById('jsonInput').value.trim();
+      const status = document.getElementById('status');
+      if (!input) { status.textContent = 'Paste your settings.json first.'; return; }
+      try {
+        const parsed = JSON.parse(input);
+        const missing = schemaRequired.filter(k => !(k in parsed));
+        if (missing.length) {
+          status.textContent = `Missing required keys: ${missing.join(', ')}`;
+          status.style.color = '#FCA5A5';
+          return false;
+        }
+        status.textContent = 'Valid JSON + required keys present.';
+        status.style.color = '#86EFAC';
+        return true;
+      } catch (e) {
+        status.textContent = `Invalid JSON: ${e.message}`;
+        status.style.color = '#FCA5A5';
+        return false;
+      }
+    }
+
+    function saveVersion() {
+      if (!validateJson()) return;
+      const input = document.getElementById('jsonInput').value.trim();
+      const versions = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      versions.unshift({ ts: new Date().toISOString(), data: input });
+      localStorage.setItem(storageKey, JSON.stringify(versions.slice(0, 20)));
+      renderVersions();
+    }
+
+    function rollback(idx) {
+      const versions = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const v = versions[idx];
+      if (!v) return;
+      document.getElementById('jsonInput').value = v.data;
+      validateJson();
+    }
+
+    function renderVersions() {
+      const versions = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const list = document.getElementById('versionList');
+      list.innerHTML = '';
+      if (!versions.length) {
+        list.innerHTML = '<div>No versions saved yet.</div>';
+        return;
+      }
+      versions.forEach((v, idx) => {
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.innerHTML = `
+          <strong>Version ${versions.length - idx}</strong><br />
+          <small style="color:var(--muted)">${v.ts}</small><br />
+          <button class="btn secondary" onclick="rollback(${idx})">Rollback to this version</button>
+        `;
+        list.appendChild(el);
+      });
+    }
+
+    function captureEmail() {
+      const email = document.getElementById('email').value.trim();
+      if (!email.includes('@')) return alert('Enter a valid email.');
+      const list = JSON.parse(localStorage.getItem('clawconfig_waitlist') || '[]');
+      list.push({ email, ts: Date.now() });
+      localStorage.setItem('clawconfig_waitlist', JSON.stringify(list));
+      document.getElementById('email').value = '';
+      document.getElementById('emailStatus').textContent = 'You’re on the list. We’ll email access details.';
+    }
+
+    renderVersions();
+  </script>
+</body>
+</html>
