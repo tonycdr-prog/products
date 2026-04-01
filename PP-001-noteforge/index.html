@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NoteForge — Simple Notes with OCR Search</title>
+  <meta name="description" content="Affordable Evernote-style notes with OCR search. Capture notes, scan images, and find anything fast." />
+  <meta name="keywords" content="notes, OCR, Evernote alternative, second brain, searchable notes" />
+  <meta name="theme-color" content="#ECFEFF" />
+  <meta property="og:title" content="NoteForge — Simple Notes with OCR Search" />
+  <meta property="og:description" content="Capture notes and scan images. Search everything without the Evernote price." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    :root {
+      --primary: #0891B2;
+      --on-primary: #FFFFFF;
+      --secondary: #22D3EE;
+      --on-secondary: #0F172A;
+      --accent: #059669;
+      --on-accent: #FFFFFF;
+      --bg: #ECFEFF;
+      --fg: #164E63;
+      --card: #FFFFFF;
+      --card-fg: #164E63;
+      --muted: #E8F1F6;
+      --muted-fg: #64748B;
+      --border: #A5F3FC;
+      --ring: #0891B2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .skip-link {
+      position: absolute; left: -999px; top: 12px; background: #fff; color: #000; padding: 8px 12px; border-radius: 8px;
+    }
+    .skip-link:focus { left: 12px; z-index: 999; }
+    header {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(236, 254, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between; padding: 16px 0;
+    }
+    .logo { font-weight: 700; font-size: 20px; }
+    .nav-links { display: flex; gap: 18px; font-weight: 500; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 10px; padding: 12px 18px; font-weight: 600; border: 1px solid transparent;
+      cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      touch-action: manipulation;
+    }
+    .btn:focus-visible { outline: 3px solid rgba(8,145,178,0.35); outline-offset: 2px; }
+    .btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: 0 8px 24px rgba(8,145,178,0.25); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(8,145,178,0.3); }
+    .btn-secondary { background: var(--card); border-color: var(--border); color: var(--fg); }
+    .btn-secondary:hover { background: #f7feff; }
+    .hero { padding: 72px 0 48px; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 36px; align-items: center; }
+    .hero h1 { font-size: 44px; line-height: 1.1; margin: 0 0 16px; text-wrap: balance; }
+    .hero p { font-size: 18px; color: var(--muted-fg); margin-bottom: 24px; }
+    .hero-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    }
+    .badges { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 24px; }
+    .badge { background: var(--muted); color: var(--fg); padding: 6px 10px; border-radius: 999px; font-size: 12px; }
+    .section { padding: 64px 0; }
+    .section h2 { font-size: 32px; margin: 0 0 12px; text-wrap: balance; scroll-margin-top: 90px; }
+    .section p { color: var(--muted-fg); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 18px; }
+    .demo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .note-list { max-height: 280px; overflow: auto; border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: #fff; }
+    .note-item { padding: 10px; border-bottom: 1px solid var(--border); }
+    .note-item:last-child { border-bottom: none; }
+    .note-item small { color: var(--muted-fg); }
+    label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; }
+    .field { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; font-family: inherit; }
+    .field:focus-visible { outline: 3px solid rgba(8,145,178,0.35); outline-offset: 2px; }
+    .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .price-card { border: 2px solid var(--border); }
+    .price-card.featured { border-color: var(--primary); box-shadow: 0 16px 30px rgba(8,145,178,0.2); }
+    .price { font-size: 32px; font-weight: 700; }
+    .faq { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .waitlist { background: linear-gradient(120deg, #cffafe, #e0f2fe); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 16px; align-items: center; }
+    footer { padding: 40px 0; border-top: 1px solid var(--border); color: var(--muted-fg); }
+    @media (max-width: 900px) {
+      .hero-grid, .demo, .waitlist { grid-template-columns: 1fr; }
+      .grid-3, .pricing, .faq { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero h1 { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to Main Content</a>
+  <header>
+    <div class="container nav">
+      <div class="logo">NoteForge</div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#demo">Live Demo</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="btn btn-primary" href="#waitlist">Join Waitlist</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="badges">
+            <span class="badge">Evernote-style, without the price</span>
+            <span class="badge">OCR search built-in</span>
+            <span class="badge">Offline-first</span>
+          </div>
+          <h1>Your second brain — simple, searchable, affordable.</h1>
+          <p>NoteForge keeps notes lightweight while still letting you search inside images and PDFs. Capture, scan, and find anything in seconds.</p>
+          <div style="display:flex; gap:12px; flex-wrap: wrap;">
+            <a class="btn btn-primary" href="#demo">Try the Demo</a>
+            <a class="btn btn-secondary" href="#pricing">See Pricing</a>
+          </div>
+        </div>
+        <div class="hero-card">
+          <h3>Instant OCR Capture</h3>
+          <p style="margin-top:0;color:var(--muted-fg)">Drop in a screenshot or business card. NoteForge extracts the text and makes it searchable.</p>
+          <div style="background:var(--muted); border-radius:12px; padding:12px;">
+            <strong>Recent Scan</strong>
+            <div style="font-size:14px; margin-top:8px; color:var(--muted-fg)">“Call Sarah — 020 7946 0991 — Facilities Mgmt”</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container">
+        <h2>Everything you need — nothing you don’t</h2>
+        <p>Designed for light users who want speed, clarity, and real search.</p>
+        <div class="grid-3" style="margin-top:24px;">
+          <div class="card">
+            <h3>Fast Capture</h3>
+            <p>One-click notes, templates, and quick tags keep your brain clear.</p>
+          </div>
+          <div class="card">
+            <h3>OCR Search</h3>
+            <p>Find text inside images and PDFs without leaving your vault.</p>
+          </div>
+          <div class="card">
+            <h3>Private by Default</h3>
+            <p>Offline-first storage with optional cloud sync.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section">
+      <div class="container">
+        <h2>Live Demo — OCR + Notes</h2>
+        <p>Upload an image with text and watch OCR extract searchable content.</p>
+        <div class="demo" style="margin-top:20px;">
+          <div class="card">
+            <h3>Create a Note</h3>
+            <label for="noteTitle">Note Title</label>
+            <input class="field" id="noteTitle" name="noteTitle" autocomplete="off" placeholder="Note title…" />
+            <label for="noteBody">Note Body</label>
+            <textarea class="field" id="noteBody" name="noteBody" rows="4" autocomplete="off" placeholder="Write a note…"></textarea>
+            <label for="noteImage">Upload Image</label>
+            <input class="field" type="file" id="noteImage" name="noteImage" accept="image/*" />
+            <button class="btn btn-primary" id="saveNote" type="button">Save Note</button>
+            <p id="ocrStatus" style="margin-top:10px; color:var(--muted-fg)" aria-live="polite"></p>
+          </div>
+          <div class="card">
+            <h3>Your Notes</h3>
+            <label for="search">Search Notes</label>
+            <input class="field" id="search" name="search" autocomplete="off" placeholder="Search notes (including OCR text)…" />
+            <div class="note-list" id="noteList" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="container">
+        <h2>Simple Pricing</h2>
+        <p>Pay for what you use — not for bloated features.</p>
+        <div class="pricing" style="margin-top:20px;">
+          <div class="card price-card">
+            <h3>Free</h3>
+            <p class="price">£0</p>
+            <p>50 notes + basic search</p>
+            <button class="btn btn-secondary" type="button">Start Free</button>
+          </div>
+          <div class="card price-card featured">
+            <h3>Personal</h3>
+            <p class="price">£3/mo</p>
+            <p>Unlimited notes + OCR search</p>
+            <button class="btn btn-primary" type="button">Start Personal</button>
+          </div>
+          <div class="card price-card">
+            <h3>Team</h3>
+            <p class="price">£8/mo</p>
+            <p>Shared vaults + admin controls</p>
+            <button class="btn btn-secondary" type="button">Start Team</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="container">
+        <h2>FAQ</h2>
+        <div class="faq" style="margin-top:16px;">
+          <div class="card">
+            <h3>Is OCR included?</h3>
+            <p>Yes. OCR is included on Personal and Team plans for image + PDF search.</p>
+          </div>
+          <div class="card">
+            <h3>Can I export?</h3>
+            <p>Export to Markdown or PDF at any time. Your notes remain yours.</p>
+          </div>
+          <div class="card">
+            <h3>Offline-first?</h3>
+            <p>Notes are stored locally with optional sync to your own cloud.</p>
+          </div>
+          <div class="card">
+            <h3>Is this live?</h3>
+            <p>This is a functional MVP demo. Join the waitlist for beta access.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section">
+      <div class="container">
+        <div class="waitlist">
+          <div>
+            <h2>Get Early Access</h2>
+            <p>We’re onboarding the first 200 users. Leave your email and we’ll invite you.</p>
+          </div>
+          <form onsubmit="event.preventDefault(); alert('Thanks! You are on the waitlist.');">
+            <label for="email">Email Address</label>
+            <input class="field" id="email" name="email" required type="email" autocomplete="email" spellcheck="false" placeholder="you@company.com" />
+            <button class="btn btn-primary" type="submit">Join Waitlist</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">© 2026 NoteForge. Built for focused notes.</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script>
+    const noteList = document.getElementById('noteList');
+    const search = document.getElementById('search');
+    const notesKey = 'noteforge-notes';
+
+    function loadNotes() {
+      return JSON.parse(localStorage.getItem(notesKey) || '[]');
+    }
+
+    function saveNotes(notes) {
+      localStorage.setItem(notesKey, JSON.stringify(notes));
+    }
+
+    function renderNotes(filter = '') {
+      const notes = loadNotes();
+      noteList.innerHTML = '';
+      const filtered = notes.filter(n => (n.title + ' ' + n.body + ' ' + (n.ocrText || '')).toLowerCase().includes(filter.toLowerCase()));
+      if (!filtered.length) {
+        noteList.innerHTML = '<div class="note-item"><small>No notes yet.</small></div>';
+        return;
+      }
+      filtered.forEach(n => {
+        const div = document.createElement('div');
+        div.className = 'note-item';
+        div.innerHTML = `<strong>${n.title}</strong><br/><small>${n.body}</small>${n.ocrText ? `<div style="margin-top:6px;color:var(--muted-fg);font-size:12px;">OCR: ${n.ocrText.slice(0,120)}…</div>` : ''}`;
+        noteList.appendChild(div);
+      });
+    }
+
+    async function extractOCR(file) {
+      const status = document.getElementById('ocrStatus');
+      status.textContent = 'Running OCR…';
+      try {
+        const { data: { text } } = await Tesseract.recognize(file, 'eng');
+        status.textContent = 'OCR complete.';
+        return text.trim();
+      } catch (err) {
+        status.textContent = 'OCR failed. Try another image.';
+        return '';
+      }
+    }
+
+    document.getElementById('saveNote').addEventListener('click', async () => {
+      const title = document.getElementById('noteTitle').value.trim();
+      const body = document.getElementById('noteBody').value.trim();
+      const file = document.getElementById('noteImage').files[0];
+      if (!title && !body && !file) return alert('Add a title, body, or image.');
+      let ocrText = '';
+      if (file) ocrText = await extractOCR(file);
+      const notes = loadNotes();
+      notes.unshift({ title: title || 'Untitled', body, ocrText, createdAt: new Date().toISOString() });
+      saveNotes(notes);
+      document.getElementById('noteTitle').value = '';
+      document.getElementById('noteBody').value = '';
+      document.getElementById('noteImage').value = '';
+      renderNotes(search.value);
+    });
+
+    search.addEventListener('input', (e) => renderNotes(e.target.value));
+    renderNotes();
+  </script>
+</body>
+</html>
