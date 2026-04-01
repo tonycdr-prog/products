@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LeadBeam — Lightweight CRM + Lead Discovery</title>
+  <meta name="description" content="LeadBeam imports your curated leads, tracks follow-ups, and generates discovery plans for small teams." />
+  <meta name="theme-color" content="#F8FAFC" />
+  <style>
+    :root {
+      --primary: #2563EB;
+      --on-primary: #FFFFFF;
+      --secondary: #1E293B;
+      --accent: #059669;
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --card: #FFFFFF;
+      --muted: #EEF2FF;
+      --muted-fg: #64748B;
+      --border: #E2E8F0;
+      --danger: #DC2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .skip-link { position: absolute; left: -999px; top: 12px; background: #fff; padding: 8px 12px; border-radius: 8px; }
+    .skip-link:focus { left: 12px; z-index: 999; }
+    header { position: sticky; top: 0; z-index: 20; background: rgba(248, 250, 252, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 16px; }
+    .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.3px; }
+    .nav-links { display: flex; gap: 18px; font-weight: 600; color: var(--secondary); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 16px; border-radius: 10px; border: 1px solid transparent; font-weight: 600; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease; }
+    .btn:focus-visible { outline: 3px solid rgba(37,99,235,0.35); outline-offset: 2px; }
+    .btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: 0 10px 26px rgba(37,99,235,0.25); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 32px rgba(37,99,235,0.3); }
+    .btn-secondary { background: var(--card); border-color: var(--border); }
+    .btn-secondary:hover { background: #eff6ff; }
+    .btn-danger { background: #FEE2E2; color: var(--danger); border-color: #FCA5A5; }
+    .hero { padding: 72px 0 48px; }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 32px; align-items: center; }
+    .hero h1 { font-size: 42px; margin: 0 0 14px; text-wrap: balance; }
+    .hero p { color: var(--muted-fg); font-size: 18px; }
+    .badge { display: inline-block; background: var(--muted); padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .section { padding: 56px 0; }
+    .section h2 { font-size: 30px; margin-bottom: 12px; text-wrap: balance; scroll-margin-top: 90px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; }
+    .field { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; font-family: inherit; }
+    .field:focus-visible { outline: 3px solid rgba(37,99,235,0.35); outline-offset: 2px; }
+    .demo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: var(--muted); }
+    .pipeline { display: grid; grid-template-columns: repeat(6, minmax(160px, 1fr)); gap: 12px; overflow-x: auto; }
+    .pipeline-column { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; min-height: 140px; }
+    .lead-card { border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 8px; background: #fff; }
+    .lead-card small { color: var(--muted-fg); display: block; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 8px; border-radius: 999px; background: #ECFEFF; color: #0F766E; font-weight: 600; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .metric { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+    .metric strong { font-size: 22px; }
+    .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .price { font-size: 30px; font-weight: 700; }
+    .price-card.featured { border-color: var(--primary); box-shadow: 0 16px 30px rgba(37,99,235,0.2); }
+    .waitlist { background: linear-gradient(120deg, #e0e7ff, #f1f5ff); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; align-items: center; }
+    footer { padding: 40px 0; border-top: 1px solid var(--border); color: var(--muted-fg); }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
+    .muted { color: var(--muted-fg); }
+    @media (max-width: 980px) {
+      .hero-grid, .demo, .waitlist { grid-template-columns: 1fr; }
+      .grid-3, .pricing { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { display: none; }
+      .hero h1 { font-size: 34px; }
+      .pipeline { grid-template-columns: repeat(3, minmax(160px, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .metrics { grid-template-columns: 1fr; }
+      .pipeline { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to Main Content</a>
+  <header>
+    <div class="container nav">
+      <div class="logo">LeadBeam</div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#demo">Live CRM</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <a class="btn btn-primary" href="#waitlist">Join Waitlist</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="badge">Built for small teams & solo founders</span>
+          <h1>Import your leads. Automate discovery. Close faster.</h1>
+          <p>LeadBeam is a lightweight CRM that accepts curated leads, keeps follow-ups on track, and generates discovery steps — without enterprise bloat.</p>
+          <div style="display:flex; gap:12px; flex-wrap: wrap; margin-top:18px;">
+            <a class="btn btn-primary" href="#demo">Try the Live CRM</a>
+            <a class="btn btn-secondary" href="#pricing">See Pricing</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Sales ops in 15 minutes</h3>
+          <ul>
+            <li>CSV import or manual lead entry</li>
+            <li>Pipeline stages with next-action dates</li>
+            <li>Discovery playbooks by industry + region</li>
+          </ul>
+          <div class="pill">No login required for demo</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container">
+        <h2>Key Features</h2>
+        <div class="grid-3" style="margin-top:20px;">
+          <div class="card">
+            <h3>Lead Capture</h3>
+            <p>Paste CSV or add leads manually with email, company, and next-action reminders.</p>
+          </div>
+          <div class="card">
+            <h3>Pipeline Focus</h3>
+            <p>Move leads across stages, log notes, and keep the next step visible.</p>
+          </div>
+          <div class="card">
+            <h3>Discovery Engine</h3>
+            <p>Generate a tailored plan to source similar prospects in minutes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section">
+      <div class="container">
+        <h2>Live CRM — Import, Track, and Plan</h2>
+        <p class="muted">Everything below works locally in your browser (stored in your device only).</p>
+
+        <div class="demo" style="margin-top:20px;">
+          <div class="card">
+            <h3>Add a Lead</h3>
+            <label for="leadName">Name</label>
+            <input class="field" id="leadName" placeholder="Alex Morgan" />
+            <label for="leadEmail">Email</label>
+            <input class="field" id="leadEmail" type="email" placeholder="alex@acme.com" />
+            <label for="leadCompany">Company</label>
+            <input class="field" id="leadCompany" placeholder="Acme Ltd" />
+            <label for="leadNext">Next Action Date</label>
+            <input class="field" id="leadNext" type="date" />
+            <label for="leadNotes">Notes</label>
+            <textarea class="field" id="leadNotes" rows="3" placeholder="Key details, last contact, intent..."></textarea>
+            <button class="btn btn-primary" id="addLead" type="button">Add Lead</button>
+            <button class="btn btn-secondary" id="seedLeads" type="button">Load Sample Leads</button>
+          </div>
+          <div class="card">
+            <h3>Import Leads (CSV)</h3>
+            <label for="csvInput">CSV Data</label>
+            <textarea class="field" id="csvInput" rows="6" autocomplete="off" placeholder="name,email,company,next
+Alex,alex@acme.com,Acme,2026-04-10"></textarea>
+            <div class="toolbar">
+              <button class="btn btn-primary" id="parseCsv" type="button">Parse CSV</button>
+              <button class="btn btn-secondary" id="exportCsv" type="button">Export CSV</button>
+              <button class="btn btn-danger" id="clearAll" type="button">Clear All</button>
+            </div>
+            <p id="csvStatus" class="muted" aria-live="polite" style="margin-top:10px;"></p>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <div class="metrics">
+            <div class="metric"><div class="muted">Total Leads</div><strong id="metricTotal">0</strong></div>
+            <div class="metric"><div class="muted">Next Actions (7d)</div><strong id="metricNext">0</strong></div>
+            <div class="metric"><div class="muted">Qualified</div><strong id="metricQualified">0</strong></div>
+            <div class="metric"><div class="muted">Won</div><strong id="metricWon">0</strong></div>
+          </div>
+        </div>
+
+        <div class="demo" style="margin-top:24px;">
+          <div class="card">
+            <h3>Search & Edit Leads</h3>
+            <label for="search">Search</label>
+            <input class="field" id="search" placeholder="Search by name, company, or email..." />
+            <div id="leadTable" aria-live="polite"></div>
+          </div>
+          <div class="card">
+            <h3>Pipeline</h3>
+            <div class="pipeline" id="pipeline"></div>
+          </div>
+        </div>
+
+        <div class="demo" style="margin-top:24px;">
+          <div class="card">
+            <h3>Discovery Wizard</h3>
+            <label for="industry">Industry</label>
+            <input class="field" id="industry" placeholder="e.g. Facilities Management" />
+            <label for="role">Target Role</label>
+            <input class="field" id="role" placeholder="e.g. Operations Manager" />
+            <label for="region">Region</label>
+            <input class="field" id="region" placeholder="e.g. United Kingdom" />
+            <button class="btn btn-secondary" id="generatePlan" type="button">Generate Discovery Plan</button>
+          </div>
+          <div class="card">
+            <h3>Discovery Plan</h3>
+            <ul id="planList"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="container">
+        <h2>Pricing</h2>
+        <div class="pricing" style="margin-top:20px;">
+          <div class="card">
+            <h3>Starter</h3>
+            <p class="price">£12/mo</p>
+            <p>Up to 1,000 leads</p>
+            <button class="btn btn-secondary" type="button">Start Starter</button>
+          </div>
+          <div class="card price-card featured">
+            <h3>Growth</h3>
+            <p class="price">£20/mo</p>
+            <p>Unlimited leads + discovery templates</p>
+            <button class="btn btn-primary" type="button">Start Growth</button>
+          </div>
+          <div class="card">
+            <h3>Team</h3>
+            <p class="price">£45/mo</p>
+            <p>Shared pipelines + admin roles</p>
+            <button class="btn btn-secondary" type="button">Start Team</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section">
+      <div class="container">
+        <div class="waitlist">
+          <div>
+            <h2>Get Early Access</h2>
+            <p>We’re onboarding UK-first teams. Leave your email for a beta slot.</p>
+          </div>
+          <form onsubmit="event.preventDefault(); alert('Thanks! You are on the waitlist.');">
+            <label for="email">Email Address</label>
+            <input class="field" id="email" name="email" type="email" required autocomplete="email" spellcheck="false" placeholder="you@company.com" />
+            <button class="btn btn-primary" type="submit">Join Waitlist</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">© 2026 LeadBeam. Lightweight CRM for fast-moving teams.</div>
+  </footer>
+
+  <script>
+    const STORAGE_KEY = 'leadbeam_leads';
+    const stages = ['New', 'Contacted', 'Qualified', 'Proposal', 'Won', 'Lost'];
+
+    const leadTable = document.getElementById('leadTable');
+    const csvStatus = document.getElementById('csvStatus');
+    const pipelineEl = document.getElementById('pipeline');
+
+    function loadLeads() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }
+
+    function saveLeads(leads) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+    }
+
+    function parseCSV(text) {
+      const lines = text.trim().split('\n').filter(Boolean);
+      if (lines.length < 2) return [];
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      return lines.slice(1).map(line => {
+        const cols = line.split(',').map(c => c.trim());
+        const row = {};
+        headers.forEach((h, i) => row[h] = cols[i] || '');
+        return row;
+      });
+    }
+
+    function normalizeLead(row) {
+      return {
+        id: crypto.randomUUID(),
+        name: row.name || row.contact || row.fullname || '',
+        email: row.email || row.mail || '',
+        company: row.company || row.organisation || row.org || '',
+        next: row.next || row.nextaction || row.followup || '',
+        notes: row.notes || '',
+        status: stages.includes(row.status) ? row.status : 'New'
+      };
+    }
+
+    function addLead(lead) {
+      const leads = loadLeads();
+      leads.push(lead);
+      saveLeads(leads);
+      renderAll();
+    }
+
+    function updateLead(id, patch) {
+      const leads = loadLeads();
+      const updated = leads.map(l => l.id === id ? { ...l, ...patch } : l);
+      saveLeads(updated);
+      renderAll();
+    }
+
+    function deleteLead(id) {
+      const leads = loadLeads().filter(l => l.id !== id);
+      saveLeads(leads);
+      renderAll();
+    }
+
+    function renderTable(filterText) {
+      const leads = loadLeads();
+      const filtered = leads.filter(l => {
+        if (!filterText) return true;
+        const t = filterText.toLowerCase();
+        return [l.name, l.email, l.company].join(' ').toLowerCase().includes(t);
+      });
+
+      if (!filtered.length) {
+        leadTable.innerHTML = '<div class="card"><small>No leads yet. Add one or import CSV.</small></div>';
+        return;
+      }
+
+      let html = '<table><thead><tr>' +
+        '<th>Name</th><th>Email</th><th>Company</th><th>Status</th><th>Next Action</th><th>Notes</th><th></th>' +
+        '</tr></thead><tbody>';
+
+      filtered.forEach(lead => {
+        html += '<tr>' +
+          `<td>${lead.name || '-'}</td>` +
+          `<td>${lead.email || '-'}</td>` +
+          `<td>${lead.company || '-'}</td>` +
+          `<td><select data-id="${lead.id}" class="status-select">${stages.map(s => `<option value="${s}" ${lead.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></td>` +
+          `<td><input type="date" class="next-input" data-id="${lead.id}" value="${lead.next || ''}" /></td>` +
+          `<td><textarea class="notes-input" data-id="${lead.id}" rows="2">${lead.notes || ''}</textarea></td>` +
+          `<td><button class="btn btn-danger" data-delete="${lead.id}" type="button">Remove</button></td>` +
+        '</tr>';
+      });
+
+      html += '</tbody></table>';
+      leadTable.innerHTML = html;
+
+      document.querySelectorAll('.status-select').forEach(sel => {
+        sel.addEventListener('change', e => updateLead(e.target.dataset.id, { status: e.target.value }));
+      });
+      document.querySelectorAll('.next-input').forEach(input => {
+        input.addEventListener('change', e => updateLead(e.target.dataset.id, { next: e.target.value }));
+      });
+      document.querySelectorAll('.notes-input').forEach(input => {
+        input.addEventListener('change', e => updateLead(e.target.dataset.id, { notes: e.target.value }));
+      });
+      document.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.addEventListener('click', e => deleteLead(e.target.dataset.delete));
+      });
+    }
+
+    function renderPipeline() {
+      const leads = loadLeads();
+      pipelineEl.innerHTML = '';
+      stages.forEach(stage => {
+        const column = document.createElement('div');
+        column.className = 'pipeline-column';
+        const count = leads.filter(l => l.status === stage).length;
+        column.innerHTML = `<strong>${stage}</strong> <span class="muted">(${count})</span>`;
+        leads.filter(l => l.status === stage).forEach(lead => {
+          const card = document.createElement('div');
+          card.className = 'lead-card';
+          card.innerHTML = `<strong>${lead.name || lead.company || 'Unnamed'}</strong>` +
+            `<small>${lead.company || ''}</small>` +
+            `<small>${lead.email || ''}</small>` +
+            `<small>Next: ${lead.next || '—'}</small>`;
+          column.appendChild(card);
+        });
+        pipelineEl.appendChild(column);
+      });
+    }
+
+    function renderMetrics() {
+      const leads = loadLeads();
+      const now = new Date();
+      const upcoming = leads.filter(l => l.next && (new Date(l.next) - now) / (1000 * 60 * 60 * 24) <= 7 && (new Date(l.next) - now) >= 0);
+      document.getElementById('metricTotal').textContent = leads.length;
+      document.getElementById('metricNext').textContent = upcoming.length;
+      document.getElementById('metricQualified').textContent = leads.filter(l => l.status === 'Qualified').length;
+      document.getElementById('metricWon').textContent = leads.filter(l => l.status === 'Won').length;
+    }
+
+    function renderAll() {
+      renderTable(document.getElementById('search').value);
+      renderPipeline();
+      renderMetrics();
+    }
+
+    document.getElementById('addLead').addEventListener('click', () => {
+      const name = document.getElementById('leadName').value.trim();
+      const email = document.getElementById('leadEmail').value.trim();
+      const company = document.getElementById('leadCompany').value.trim();
+      const next = document.getElementById('leadNext').value;
+      const notes = document.getElementById('leadNotes').value.trim();
+
+      if (!name && !email && !company) {
+        alert('Add at least a name, email, or company.');
+        return;
+      }
+
+      addLead({ id: crypto.randomUUID(), name, email, company, next, notes, status: 'New' });
+      document.getElementById('leadName').value = '';
+      document.getElementById('leadEmail').value = '';
+      document.getElementById('leadCompany').value = '';
+      document.getElementById('leadNext').value = '';
+      document.getElementById('leadNotes').value = '';
+    });
+
+    document.getElementById('seedLeads').addEventListener('click', () => {
+      const sample = [
+        { name: 'Priya Shah', email: 'priya@bright.io', company: 'Bright Ops', next: '2026-04-06', notes: 'Asked for pricing deck', status: 'Contacted' },
+        { name: 'Oliver James', email: 'oliver@northco.uk', company: 'NorthCo', next: '2026-04-08', notes: 'Need case study', status: 'Qualified' },
+        { name: 'Maya Chen', email: 'maya@axis.io', company: 'Axis Systems', next: '2026-04-12', notes: 'Sent proposal', status: 'Proposal' }
+      ];
+      const leads = loadLeads();
+      sample.forEach(row => leads.push({ id: crypto.randomUUID(), ...row }));
+      saveLeads(leads);
+      renderAll();
+    });
+
+    document.getElementById('parseCsv').addEventListener('click', () => {
+      const csv = document.getElementById('csvInput').value;
+      const rows = parseCSV(csv);
+      if (!rows.length) {
+        csvStatus.textContent = 'Please paste a valid CSV with headers.';
+        return;
+      }
+      const leads = loadLeads();
+      rows.forEach(row => leads.push(normalizeLead(row)));
+      saveLeads(leads);
+      csvStatus.textContent = `Imported ${rows.length} lead(s).`;
+      renderAll();
+    });
+
+    document.getElementById('exportCsv').addEventListener('click', () => {
+      const leads = loadLeads();
+      if (!leads.length) {
+        alert('No leads to export.');
+        return;
+      }
+      const headers = ['name', 'email', 'company', 'status', 'next', 'notes'];
+      const rows = leads.map(l => headers.map(h => `"${(l[h] || '').replace(/"/g, '""')}"`).join(','));
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'leadbeam-leads.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('clearAll').addEventListener('click', () => {
+      if (!confirm('Clear all stored leads?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      csvStatus.textContent = 'All leads cleared.';
+      renderAll();
+    });
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      renderTable(e.target.value);
+    });
+
+    document.getElementById('generatePlan').addEventListener('click', () => {
+      const industry = document.getElementById('industry').value || 'your industry';
+      const role = document.getElementById('role').value || 'decision makers';
+      const region = document.getElementById('region').value || 'your region';
+      const plan = [
+        `Search LinkedIn for ${role} in ${industry} across ${region}.`,
+        `Pull 25 companies in ${industry} from local directories or Companies House.`,
+        `Use a verified email pattern to enrich new leads.`,
+        `Write a 3-touch sequence with a value-first opener.`,
+        `Schedule follow-ups and review replies weekly.`
+      ];
+      const list = document.getElementById('planList');
+      list.innerHTML = '';
+      plan.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        list.appendChild(li);
+      });
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
