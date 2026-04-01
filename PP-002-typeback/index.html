@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TypeBack — Typed Text Recall</title>
+  <meta name="description" content="TypeBack is a privacy-first typed text recall tool. Recover the last snippets you typed without relying on clipboard history." />
+  <meta name="keywords" content="typed text history, clipboard, productivity, keyboard recall" />
+  <meta name="theme-color" content="#F0FDFA" />
+  <meta property="og:title" content="TypeBack — Typed Text Recall" />
+  <meta property="og:description" content="Recover the last snippets you typed without clipboard history." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    :root {
+      --primary: #0D9488;
+      --on-primary: #FFFFFF;
+      --secondary: #14B8A6;
+      --on-secondary: #0F172A;
+      --accent: #EA580C;
+      --on-accent: #FFFFFF;
+      --bg: #F0FDFA;
+      --fg: #134E4A;
+      --card: #FFFFFF;
+      --card-fg: #134E4A;
+      --muted: #E8F1F4;
+      --muted-fg: #64748B;
+      --border: #99F6E4;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--fg); }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .skip-link { position: absolute; left: -999px; top: 12px; background: #fff; padding: 8px 12px; border-radius: 8px; }
+    .skip-link:focus { left: 12px; z-index: 999; }
+    header { position: sticky; top: 0; z-index: 20; background: rgba(240, 253, 250, 0.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; }
+    .logo { font-weight: 700; font-size: 20px; }
+    .nav-links { display: flex; gap: 18px; font-weight: 500; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 18px; border-radius: 10px; border: 1px solid transparent; font-weight: 600; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease; touch-action: manipulation; }
+    .btn:focus-visible { outline: 3px solid rgba(13,148,136,0.35); outline-offset: 2px; }
+    .btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: 0 8px 24px rgba(13,148,136,0.25); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(13,148,136,0.3); }
+    .btn-secondary { background: var(--card); border-color: var(--border); }
+    .btn-secondary:hover { background: #ecfdfb; }
+    .hero { padding: 72px 0 48px; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; align-items: center; }
+    .hero h1 { font-size: 42px; margin: 0 0 14px; text-wrap: balance; }
+    .hero p { color: var(--muted-fg); font-size: 18px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .section { padding: 64px 0; }
+    .section h2 { font-size: 30px; margin-bottom: 12px; text-wrap: balance; scroll-margin-top: 90px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .demo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; }
+    .field { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; font-family: inherit; }
+    .field:focus-visible { outline: 3px solid rgba(13,148,136,0.35); outline-offset: 2px; }
+    .snippet-list { max-height: 280px; overflow: auto; border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: #fff; }
+    .snippet { padding: 10px; border-bottom: 1px solid var(--border); }
+    .snippet:last-child { border-bottom: none; }
+    .snippet button { margin-top: 6px; }
+    .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .price { font-size: 30px; font-weight: 700; }
+    .price-card.featured { border-color: var(--primary); box-shadow: 0 16px 30px rgba(13,148,136,0.2); }
+    .waitlist { background: linear-gradient(120deg, #d1fae5, #ecfdfb); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; align-items: center; }
+    footer { padding: 40px 0; border-top: 1px solid var(--border); color: var(--muted-fg); }
+    @media (max-width: 900px) {
+      .hero-grid, .demo, .waitlist { grid-template-columns: 1fr; }
+      .grid-3, .pricing { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero h1 { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to Main Content</a>
+  <header>
+    <div class="container nav">
+      <div class="logo">TypeBack</div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#demo">Live Demo</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <a class="btn btn-primary" href="#waitlist">Join Waitlist</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="card" style="display:inline-block; margin-bottom:16px;">Privacy-first typed text recall</div>
+          <h1>Recover what you typed — even when you didn’t copy it.</h1>
+          <p>TypeBack keeps a local, encrypted history of your recent typing so you can recover lost snippets fast.</p>
+          <div style="display:flex; gap:12px; flex-wrap: wrap; margin-top:18px;">
+            <a class="btn btn-primary" href="#demo">Try the Demo</a>
+            <a class="btn btn-secondary" href="#pricing">See Pricing</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Why people use it</h3>
+          <ul>
+            <li>Recovered a lost invoice line in seconds</li>
+            <li>Never retype long URLs again</li>
+            <li>Find recently typed replies after app crashes</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container">
+        <h2>Key Features</h2>
+        <div class="grid-3" style="margin-top:20px;">
+          <div class="card">
+            <h3>Typed Snippet History</h3>
+            <p>Auto-splits on Enter or idle timeout.</p>
+          </div>
+          <div class="card">
+            <h3>Private & Local</h3>
+            <p>Your text stays on-device by default.</p>
+          </div>
+          <div class="card">
+            <h3>One-Click Copy</h3>
+            <p>Paste any prior snippet back instantly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section">
+      <div class="container">
+        <h2>Live Demo — Typed Recall</h2>
+        <p>Type a few lines and press Enter or pause for 4 seconds to create snippets.</p>
+        <div class="demo" style="margin-top:20px;">
+          <div class="card">
+            <h3>Type Here</h3>
+            <label for="typeArea">Typing Area</label>
+            <textarea class="field" id="typeArea" name="typeArea" rows="8" autocomplete="off" placeholder="Start typing…"></textarea>
+            <button class="btn btn-primary" id="clearHistory" type="button">Clear History</button>
+            <p id="status" style="margin-top:10px; color:var(--muted-fg)" aria-live="polite"></p>
+          </div>
+          <div class="card">
+            <h3>Recent Snippets</h3>
+            <div class="snippet-list" id="snippetList" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="container">
+        <h2>Pricing</h2>
+        <div class="pricing" style="margin-top:20px;">
+          <div class="card">
+            <h3>Free</h3>
+            <p class="price">£0</p>
+            <p>Last 50 snippets</p>
+            <button class="btn btn-secondary" type="button">Start Free</button>
+          </div>
+          <div class="card price-card featured">
+            <h3>Pro</h3>
+            <p class="price">£5/mo</p>
+            <p>Unlimited history + encrypted sync</p>
+            <button class="btn btn-primary" type="button">Start Pro</button>
+          </div>
+          <div class="card">
+            <h3>Team</h3>
+            <p class="price">£12/mo</p>
+            <p>Shared patterns + admin controls</p>
+            <button class="btn btn-secondary" type="button">Start Team</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section">
+      <div class="container">
+        <div class="waitlist">
+          <div>
+            <h2>Get Early Access</h2>
+            <p>Join the beta for desktop builds and privacy controls.</p>
+          </div>
+          <form onsubmit="event.preventDefault(); alert('Thanks! You are on the waitlist.');">
+            <label for="email">Email Address</label>
+            <input class="field" id="email" name="email" type="email" required autocomplete="email" spellcheck="false" placeholder="you@company.com" />
+            <button class="btn btn-primary" type="submit">Join Waitlist</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">© 2026 TypeBack. Keep your typing.</div>
+  </footer>
+
+  <script>
+    const key = 'typeback-snippets';
+    const list = document.getElementById('snippetList');
+    const area = document.getElementById('typeArea');
+    const status = document.getElementById('status');
+    let idleTimer;
+
+    function loadSnippets() {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    }
+
+    function saveSnippets(snippets) {
+      localStorage.setItem(key, JSON.stringify(snippets));
+    }
+
+    function render() {
+      const snippets = loadSnippets();
+      list.innerHTML = '';
+      if (!snippets.length) {
+        list.innerHTML = '<div class="snippet"><small>No snippets yet.</small></div>';
+        return;
+      }
+      snippets.forEach((s, idx) => {
+        const div = document.createElement('div');
+        div.className = 'snippet';
+        div.innerHTML = `<strong>${s.text}</strong><br/><small>${new Date(s.createdAt).toLocaleString()}</small>`;
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-secondary';
+        btn.type = 'button';
+        btn.textContent = 'Copy Snippet';
+        btn.setAttribute('aria-label', `Copy snippet ${idx + 1}`);
+        btn.addEventListener('click', async () => {
+          await navigator.clipboard.writeText(s.text);
+          status.textContent = 'Snippet copied.';
+        });
+        div.appendChild(document.createElement('br'));
+        div.appendChild(btn);
+        list.appendChild(div);
+      });
+    }
+
+    function addSnippet(text) {
+      if (!text.trim()) return;
+      const snippets = loadSnippets();
+      snippets.unshift({ text: text.trim(), createdAt: new Date().toISOString() });
+      saveSnippets(snippets.slice(0, 200));
+      render();
+    }
+
+    function handleIdle() {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        addSnippet(area.value);
+        area.value = '';
+        status.textContent = 'Snippet saved after idle.';
+      }, 4000);
+    }
+
+    area.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addSnippet(area.value);
+        area.value = '';
+        status.textContent = 'Snippet saved on Enter.';
+      } else {
+        handleIdle();
+      }
+    });
+
+    document.getElementById('clearHistory').addEventListener('click', () => {
+      localStorage.removeItem(key);
+      render();
+      status.textContent = 'History cleared.';
+    });
+
+    render();
+  </script>
+</body>
+</html>
