@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TelemetryGuard — PR-time observability checklist</title>
+  <meta name="description" content="Generate a telemetry checklist and OpenTelemetry snippets before incidents happen." />
+  <meta name="robots" content="index,follow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366F1;
+      --secondary: #818CF8;
+      --accent: #059669;
+      --bg: #F5F3FF;
+      --fg: #1E1B4B;
+      --muted: #64748B;
+      --card: #FFFFFF;
+      --border: #E0E7FF;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"IBM Plex Sans", sans-serif; background:var(--bg); color:var(--fg); line-height:1.6; }
+    .container { max-width:1100px; margin:0 auto; padding:0 20px; }
+    a { color: inherit; text-decoration:none; }
+    .nav { position: sticky; top:0; background: rgba(245,243,255,0.95); border-bottom:1px solid var(--border); backdrop-filter: blur(8px); z-index:10; }
+    .nav-inner { display:flex; align-items:center; justify-content:space-between; padding:14px 0; }
+    .logo { font-weight:700; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; padding:12px 18px; border-radius:10px; font-weight:600; cursor:pointer; border:1px solid transparent; transition: all 0.2s ease; }
+    .btn-primary { background:var(--primary); color:#fff; }
+    .btn-primary:hover { background:#4F46E5; }
+    .btn-secondary { background:white; color:var(--primary); border-color:var(--border); }
+    .btn-secondary:hover { background:#EEF2FF; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 3px solid var(--secondary);
+      outline-offset: 2px;
+    }
+    .hero { padding:60px 0 24px; }
+    h1 { font-size:2.4rem; margin:12px 0; line-height:1.1; }
+    .sub { color:var(--muted); }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    label { font-weight:600; font-size:0.9rem; }
+    textarea, input, select { width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); font-size:0.95rem; }
+    .builder { display:grid; grid-template-columns:1.1fr 0.9fr; gap:16px; }
+    .snippet { font-family:"JetBrains Mono", monospace; background:#111827; color:#E5E7EB; padding:14px; border-radius:12px; font-size:0.85rem; white-space:pre-wrap; }
+    .pricing { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .price-card { padding:18px; border-radius:14px; border:1px solid var(--border); background:white; }
+    .price-card.highlight { border-color:var(--primary); box-shadow:0 10px 20px rgba(99,102,241,0.18); }
+    @media (max-width: 900px) {
+      .builder, .grid-3, .pricing { grid-template-columns:1fr; }
+      h1 { font-size:2rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="logo">TelemetryGuard</div>
+      <div style="display:flex; gap:14px;">
+        <a href="#builder">Checklist</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <a class="btn btn-primary" href="#waitlist">Join waitlist</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="card">
+        <div class="sub">Stop missing logs right before an incident</div>
+        <h1>Generate PR-ready telemetry checklists and OpenTelemetry snippets.</h1>
+        <p class="sub">TelemetryGuard gives teams a fast, repeatable process to add logs, metrics, and traces before code ships — not after it breaks.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px;">
+          <a class="btn btn-primary" href="#builder">Build a checklist</a>
+          <a class="btn btn-secondary" href="#pricing">See pricing</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="container" style="padding:12px 0 18px;">
+    <div class="grid-3">
+      <div class="card"><strong>PR-time prompts</strong><div class="sub">Checklist driven by your endpoints.</div></div>
+      <div class="card"><strong>OpenTelemetry starter</strong><div class="sub">Language-specific snippet in seconds.</div></div>
+      <div class="card"><strong>Coverage score</strong><div class="sub">See what’s missing before merge.</div></div>
+    </div>
+  </section>
+
+  <section id="builder" class="container" style="padding:24px 0;">
+    <h2>Checklist builder</h2>
+    <p class="sub">Paste endpoints or components (one per line). Choose a language.</p>
+    <div class="builder" style="margin-top:12px;">
+      <div class="card">
+        <label for="endpoints">Endpoints / components</label>
+        <textarea id="endpoints">POST /api/payments
+GET /api/invoices
+Cron: nightly-reconciliation
+Worker: email-dispatch</textarea>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+          <div>
+            <label for="language">Language</label>
+            <select id="language">
+              <option value="node">Node.js</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+            </select>
+          </div>
+          <div>
+            <label for="service">Service name</label>
+            <input id="service" type="text" value="payments-api" />
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:12px;" onclick="buildChecklist()">Generate checklist</button>
+      </div>
+      <div class="card">
+        <h3>Coverage score</h3>
+        <div id="score" style="font-size:1.8rem; font-weight:700; color:var(--primary);">0%</div>
+        <p class="sub">Check items below to see your coverage.</p>
+        <div id="checklist"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h3>OpenTelemetry starter snippet</h3>
+      <div id="snippet" class="snippet">Generate a checklist to see code.</div>
+    </div>
+  </section>
+
+  <section id="pricing" class="container" style="padding:24px 0;">
+    <h2>Pricing</h2>
+    <div class="pricing" style="margin-top:12px;">
+      <div class="price-card">
+        <h3>Free</h3>
+        <div style="font-size:1.7rem; font-weight:700;">£0</div>
+        <ul>
+          <li>1 service</li>
+          <li>Checklist generator</li>
+          <li>Basic snippets</li>
+        </ul>
+        <button class="btn btn-secondary">Start free</button>
+      </div>
+      <div class="price-card highlight">
+        <h3>Team</h3>
+        <div style="font-size:1.7rem; font-weight:700;">£39<span style="font-size:0.9rem;">/mo</span></div>
+        <ul>
+          <li>Unlimited services</li>
+          <li>PR comment bot</li>
+          <li>Slack alerts</li>
+        </ul>
+        <button class="btn btn-primary">Upgrade</button>
+      </div>
+      <div class="price-card">
+        <h3>Enterprise</h3>
+        <div style="font-size:1.7rem; font-weight:700;">£149<span style="font-size:0.9rem;">/mo</span></div>
+        <ul>
+          <li>Policy checks</li>
+          <li>SAML + audit log</li>
+          <li>Dedicated support</li>
+        </ul>
+        <button class="btn btn-secondary">Talk to sales</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="waitlist" class="container" style="padding:24px 0 40px;">
+    <div class="card">
+      <h2>Join the waitlist</h2>
+      <p class="sub">Get early access + a setup call.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div>
+          <label for="email">Work email</label>
+          <input id="email" type="email" placeholder="you@company.com" />
+        </div>
+        <div>
+          <label for="stack">Stack</label>
+          <input id="stack" type="text" placeholder="Node / Python / Java" />
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px;">Notify me</button>
+    </div>
+  </section>
+
+  <footer class="container" style="padding-bottom:40px; color:var(--muted); font-size:0.9rem;">© TelemetryGuard</footer>
+
+  <script>
+    function buildChecklist() {
+      const endpoints = document.getElementById('endpoints').value.split(/\n+/).map(l => l.trim()).filter(Boolean);
+      const lang = document.getElementById('language').value;
+      const service = document.getElementById('service').value || 'service-name';
+      const checklist = [
+        'Structured log for request start + end',
+        'Trace spans for DB/HTTP calls',
+        'Counter metric for errors',
+        'Latency histogram for key endpoint',
+        'Correlation ID propagated',
+        'Alert thresholds defined'
+      ];
+      const checklistEl = document.getElementById('checklist');
+      checklistEl.innerHTML = '';
+      checklist.forEach((item, idx) => {
+        const id = `c${idx}`;
+        const row = document.createElement('div');
+        row.style.marginBottom = '8px';
+        row.innerHTML = `<label><input type="checkbox" id="${id}" onchange="updateScore()"> ${item}</label>`;
+        checklistEl.appendChild(row);
+      });
+      updateScore();
+
+      const snippet = lang === 'node' ? `// Node.js OpenTelemetry starter\nconst { NodeSDK } = require('@opentelemetry/sdk-node');\nconst { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');\nconst sdk = new NodeSDK({\n  serviceName: '${service}',\n  instrumentations: [getNodeAutoInstrumentations()],\n});\nsdk.start();\n\n// Example span\nconst { trace } = require('@opentelemetry/api');\nconst tracer = trace.getTracer('default');\ntracer.startActiveSpan('request', span => {\n  span.setAttribute('endpoints', '${endpoints.join(', ')}');\n  span.end();\n});`
+      : lang === 'python' ? `# Python OpenTelemetry starter\nfrom opentelemetry import trace\nfrom opentelemetry.sdk.resources import SERVICE_NAME, Resource\nfrom opentelemetry.sdk.trace import TracerProvider\ntrace.set_tracer_provider(TracerProvider(resource=Resource.create({SERVICE_NAME: '${service}'})))\ntracer = trace.get_tracer(__name__)\n\nwith tracer.start_as_current_span('request') as span:\n    span.set_attribute('endpoints', '${endpoints.join(', ')}')`
+      : `// Java OpenTelemetry starter\nOpenTelemetrySdk openTelemetry = OpenTelemetrySdk.builder()\n  .setTracerProvider(SdkTracerProvider.builder()\n    .setResource(Resource.getDefault().merge(Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, "${service}"))))\n    .build())\n  .build();\nTracer tracer = openTelemetry.getTracer("default");\nSpan span = tracer.spanBuilder("request").startSpan();\nspan.setAttribute("endpoints", "${endpoints.join(', ')}");\nspan.end();`;
+
+      document.getElementById('snippet').textContent = snippet;
+    }
+
+    function updateScore() {
+      const checks = Array.from(document.querySelectorAll('#checklist input[type=checkbox]'));
+      if (checks.length === 0) { document.getElementById('score').textContent = '0%'; return; }
+      const done = checks.filter(c => c.checked).length;
+      const pct = Math.round((done / checks.length) * 100);
+      document.getElementById('score').textContent = pct + '%';
+    }
+  </script>
+</body>
+</html>
