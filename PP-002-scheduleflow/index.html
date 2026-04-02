@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ScheduleFlow — Auto-adjusted project schedules for small teams</title>
+  <meta name="description" content="ScheduleFlow auto-adjusts delivery dates based on daily progress. A lightweight scheduling tool for small teams." />
+  <meta name="robots" content="index,follow" />
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #3B82F6;
+      --accent: #059669;
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --muted: #64748B;
+      --card: #FFFFFF;
+      --border: #E4ECFC;
+      --danger: #DC2626;
+      --warn: #F59E0B;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--fg);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .nav {
+      position: sticky; top: 0; background: rgba(248,250,252,0.9);
+      backdrop-filter: blur(8px); border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+    .logo { font-weight: 700; font-size: 1.1rem; }
+    .nav-links { display: flex; gap: 18px; font-size: 0.95rem; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 18px; border-radius: 10px; border: 1px solid transparent;
+      font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #1D4ED8; }
+    .btn-secondary { background: white; color: var(--primary); border-color: var(--border); }
+    .btn-secondary:hover { background: #EFF6FF; }
+    .btn-ghost { background: transparent; color: var(--muted); border-color: var(--border); }
+    .btn-ghost:hover { color: var(--fg); }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid var(--secondary);
+      outline-offset: 2px;
+    }
+    .hero { padding: 64px 0 24px; }
+    .hero-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 36px; }
+    .pill { display: inline-flex; gap: 8px; align-items: center; padding: 6px 10px; border-radius: 999px; background: #E0EAFF; color: #1E3A8A; font-size: 0.85rem; }
+    h1 { font-size: 2.6rem; line-height: 1.1; margin: 14px 0; }
+    .sub { color: var(--muted); font-size: 1.05rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 18px; }
+    .stat { background: #F1F5FD; padding: 12px; border-radius: 12px; text-align: center; }
+    .section { padding: 36px 0; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .feature h3 { margin: 6px 0 8px; }
+    .calc { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+    label { font-size: 0.9rem; font-weight: 600; }
+    input, select, textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.95rem; }
+    textarea { min-height: 110px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.9rem; }
+    th:last-child, td:last-child { text-align: right; }
+    .pill-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #E2F2FF; color: #1E3A8A; font-size: 0.8rem; font-weight: 600; }
+    .pricing { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .price-card { padding: 18px; border-radius: 14px; border: 1px solid var(--border); background: white; }
+    .price-card.highlight { border-color: var(--primary); box-shadow: 0 10px 20px rgba(37,99,235,0.15); }
+    .faq { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .footer { padding: 24px 0 40px; color: var(--muted); font-size: 0.9rem; }
+
+    @media (max-width: 900px) {
+      .hero-grid, .calc { grid-template-columns: 1fr; }
+      .grid-3, .pricing, .faq, .stats { grid-template-columns: 1fr; }
+      h1 { font-size: 2rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="logo">ScheduleFlow</div>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#calculator">Calculator</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <a class="btn btn-primary" href="#waitlist">Join waitlist</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="pill">Auto-adjusted schedules • Built for teams of 2–20</span>
+        <h1>Stop guessing delivery dates. Let ScheduleFlow update them daily.</h1>
+        <p class="sub">Log today’s progress, and ScheduleFlow recalculates end dates, flags risk, and shows exactly where you’re drifting — without heavyweight PM tools.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">
+          <a class="btn btn-primary" href="#calculator">Try the live calculator</a>
+          <a class="btn btn-secondary" href="#pricing">See pricing</a>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>5 min</strong><div class="sub">Setup time</div></div>
+          <div class="stat"><strong>+21%</strong><div class="sub">On-time delivery*</div></div>
+          <div class="stat"><strong>0</strong><div class="sub">Complex workflows</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Today’s update</h3>
+        <p class="sub">“We shipped 3 days of work, lost 1 day to a blocker.”</p>
+        <div class="card" style="margin-top:12px;">
+          <strong>New projected end date</strong>
+          <div style="font-size:1.6rem; margin-top:6px; color:var(--primary);">Tue, Apr 21</div>
+          <div class="sub">Risk level: <span style="color:var(--accent); font-weight:600;">Manageable</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="how" class="section">
+    <div class="container">
+      <h2>How it works</h2>
+      <div class="grid-3" style="margin-top:12px;">
+        <div class="card feature">
+          <h3>1) Add tasks + estimates</h3>
+          <p class="sub">Keep it simple: task name, estimated days, days completed.</p>
+        </div>
+        <div class="card feature">
+          <h3>2) Log daily progress</h3>
+          <p class="sub">Update completed days and today’s blockers.</p>
+        </div>
+        <div class="card feature">
+          <h3>3) Auto-adjust schedule</h3>
+          <p class="sub">We recalc end date, compare to baseline, and flag drift.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="calculator" class="section">
+    <div class="container">
+      <h2>Live schedule calculator</h2>
+      <p class="sub">Paste tasks, track blockers, and save a baseline. Everything runs locally in your browser.</p>
+      <div class="calc" style="margin-top:14px;">
+        <div class="card">
+          <table id="taskTable">
+            <thead>
+              <tr><th>Task</th><th>Estimate (days)</th><th>Done (days)</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input value="Discovery" aria-label="Task name"></td>
+                <td><input type="number" value="4"></td>
+                <td><input type="number" value="3"></td>
+                <td><button class="btn btn-ghost" onclick="removeRow(this)">Remove</button></td>
+              </tr>
+              <tr>
+                <td><input value="API Build" aria-label="Task name"></td>
+                <td><input type="number" value="6"></td>
+                <td><input type="number" value="2"></td>
+                <td><button class="btn btn-ghost" onclick="removeRow(this)">Remove</button></td>
+              </tr>
+              <tr>
+                <td><input value="QA & Fixes" aria-label="Task name"></td>
+                <td><input type="number" value="3"></td>
+                <td><input type="number" value="0"></td>
+                <td><button class="btn btn-ghost" onclick="removeRow(this)">Remove</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <button class="btn btn-secondary" onclick="addRow()">Add task</button>
+            <button class="btn btn-ghost" onclick="seedSample()">Load sample</button>
+            <button class="btn btn-ghost" onclick="clearTable()">Clear</button>
+            <button class="btn btn-ghost" onclick="downloadCSV()">Download CSV</button>
+          </div>
+          <div style="margin-top:12px;">
+            <label for="csvInput">Paste CSV to import (Task,Estimate,Done)</label>
+            <textarea id="csvInput" placeholder="Task,Estimate,Done\nDiscovery,4,3\nAPI Build,6,2"></textarea>
+            <button class="btn btn-secondary" style="margin-top:8px;" onclick="loadCSV()">Import CSV</button>
+          </div>
+        </div>
+        <div class="card">
+          <label for="projectName">Project name</label>
+          <input id="projectName" type="text" value="Client Website Revamp" />
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+            <div>
+              <label for="startDate">Start date</label>
+              <input id="startDate" type="date" />
+            </div>
+            <div>
+              <label for="workdays">Workdays/week</label>
+              <select id="workdays">
+                <option value="5" selected>5 (Mon–Fri)</option>
+                <option value="6">6 (Mon–Sat)</option>
+                <option value="7">7 (Every day)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+            <div>
+              <label for="velocity">Daily velocity (per person)</label>
+              <input id="velocity" type="number" value="2" step="0.5" />
+            </div>
+            <div>
+              <label for="team">Team size</label>
+              <input id="team" type="number" value="3" />
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+            <div>
+              <label for="progressToday">Progress today (days)</label>
+              <input id="progressToday" type="number" value="1" step="0.5" />
+            </div>
+            <div>
+              <label for="blockersToday">Blockers today (days lost)</label>
+              <input id="blockersToday" type="number" value="0" step="0.5" />
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+            <button class="btn btn-primary" onclick="recalculate()">Recalculate end date</button>
+            <button class="btn btn-secondary" onclick="saveBaseline()">Save baseline</button>
+            <button class="btn btn-ghost" onclick="saveLocal()">Save to browser</button>
+            <button class="btn btn-ghost" onclick="loadLocal()">Load saved</button>
+          </div>
+
+          <div id="result" class="card" style="margin-top:12px; background:#F1F5FD;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="section">
+    <div class="container">
+      <h2>Simple pricing</h2>
+      <div class="pricing" style="margin-top:12px;">
+        <div class="price-card">
+          <h3>Starter</h3>
+          <p class="sub">For tiny teams</p>
+          <div style="font-size:1.8rem; font-weight:700;">£19<span style="font-size:0.9rem;">/mo</span></div>
+          <ul>
+            <li>Up to 3 projects</li>
+            <li>Auto schedule calculator</li>
+            <li>Email reminders</li>
+          </ul>
+          <button class="btn btn-secondary">Start trial</button>
+        </div>
+        <div class="price-card highlight">
+          <h3>Team</h3>
+          <p class="sub">Most popular</p>
+          <div style="font-size:1.8rem; font-weight:700;">£49<span style="font-size:0.9rem;">/mo</span></div>
+          <ul>
+            <li>Unlimited projects</li>
+            <li>Risk alerts</li>
+            <li>Weekly summary report</li>
+          </ul>
+          <button class="btn btn-primary">Start trial</button>
+        </div>
+        <div class="price-card">
+          <h3>Agency</h3>
+          <p class="sub">Multiple clients</p>
+          <div style="font-size:1.8rem; font-weight:700;">£99<span style="font-size:0.9rem;">/mo</span></div>
+          <ul>
+            <li>Client workspaces</li>
+            <li>CSV export</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="btn btn-secondary">Talk to sales</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="waitlist" class="section">
+    <div class="container card">
+      <h2>Join the waitlist</h2>
+      <p class="sub">Get early access + a discounted launch plan.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div>
+          <label for="email">Work email</label>
+          <input id="email" type="email" placeholder="you@company.com" />
+        </div>
+        <div>
+          <label for="teamSize">Team size</label>
+          <input id="teamSize" type="number" placeholder="5" />
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px;">Notify me</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="faq">
+        <div class="card">
+          <strong>Does it replace Jira/Asana?</strong>
+          <p class="sub">No. It’s a lightweight scheduling layer that can sit on top of your existing tool.</p>
+        </div>
+        <div class="card">
+          <strong>Where does the data go?</strong>
+          <p class="sub">Everything you enter stays in your browser unless you export it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">*Illustrative benchmark based on early testers. Data stays local in your browser. © ScheduleFlow</div>
+  </footer>
+
+  <script>
+    const LOCAL_KEY = 'scheduleflowData';
+
+    function addRow() {
+      const tbody = document.querySelector('#taskTable tbody');
+      const row = document.createElement('tr');
+      row.innerHTML = `<td><input aria-label="Task name"></td><td><input type="number" value="1"></td><td><input type="number" value="0"></td><td><button class="btn btn-ghost" onclick="removeRow(this)">Remove</button></td>`;
+      tbody.appendChild(row);
+    }
+
+    function removeRow(btn) {
+      const row = btn.closest('tr');
+      if (row) row.remove();
+    }
+
+    function clearTable() {
+      document.querySelector('#taskTable tbody').innerHTML = '';
+    }
+
+    function seedSample() {
+      clearTable();
+      const sample = [
+        { task: 'Discovery', est: 4, done: 3 },
+        { task: 'API Build', est: 6, done: 2 },
+        { task: 'QA & Fixes', est: 3, done: 0 }
+      ];
+      const tbody = document.querySelector('#taskTable tbody');
+      sample.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td><input value="${item.task}"></td><td><input type="number" value="${item.est}"></td><td><input type="number" value="${item.done}"></td><td><button class="btn btn-ghost" onclick="removeRow(this)">Remove</button></td>`;
+        tbody.appendChild(row);
+      });
+    }
+
+    function calculateRemaining() {
+      const rows = Array.from(document.querySelectorAll('#taskTable tbody tr'));
+      let remaining = 0;
+      rows.forEach(r => {
+        const est = parseFloat(r.children[1].querySelector('input').value || 0);
+        const done = parseFloat(r.children[2].querySelector('input').value || 0);
+        remaining += Math.max(est - done, 0);
+      });
+      return remaining;
+    }
+
+    function recalculate() {
+      const remaining = calculateRemaining();
+      const velocity = parseFloat(document.getElementById('velocity').value || 1);
+      const team = parseFloat(document.getElementById('team').value || 1);
+      const workdays = parseInt(document.getElementById('workdays').value, 10);
+      const startDateVal = document.getElementById('startDate').value;
+      const progressToday = parseFloat(document.getElementById('progressToday').value || 0);
+      const blockersToday = parseFloat(document.getElementById('blockersToday').value || 0);
+
+      if (!startDateVal) {
+        document.getElementById('result').innerHTML = "<strong>Please select a start date.</strong>";
+        return;
+      }
+
+      const dailyCapacity = Math.max(velocity * team, 0.1);
+      const adjustedRemaining = Math.max(remaining - progressToday + blockersToday, 0);
+      const daysNeeded = adjustedRemaining / dailyCapacity;
+      const endDate = addWorkdays(new Date(startDateVal), Math.ceil(daysNeeded), workdays);
+
+      const baseline = getBaseline();
+      let baselineEnd = null;
+      if (baseline) baselineEnd = new Date(baseline.endDate);
+      const baselineDays = remaining / dailyCapacity;
+      const computedBaseline = addWorkdays(new Date(startDateVal), Math.ceil(baselineDays), workdays);
+      if (!baselineEnd) baselineEnd = computedBaseline;
+
+      const slipDays = daysBetween(baselineEnd, endDate);
+      const risk = slipDays > 5 || daysNeeded > 20 ? 'High' : slipDays > 2 || daysNeeded > 10 ? 'Moderate' : 'Low';
+      const riskColor = risk === 'High' ? 'var(--danger)' : risk === 'Moderate' ? 'var(--warn)' : 'var(--accent)';
+      const status = slipDays > 0
+        ? `Running ${slipDays} day(s) behind baseline.`
+        : slipDays < 0
+          ? `Ahead of baseline by ${Math.abs(slipDays)} day(s).`
+          : 'On baseline schedule.';
+
+      document.getElementById('result').innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong>Schedule summary</strong>
+          <span class="pill-status">${risk} risk</span>
+        </div>
+        <div style="margin-top:8px;"><strong>Remaining workload:</strong> ${remaining.toFixed(1)} days</div>
+        <div><strong>Adjusted remaining (after today):</strong> ${adjustedRemaining.toFixed(1)} days</div>
+        <div><strong>Baseline end date:</strong> ${baselineEnd.toDateString()}</div>
+        <div><strong>Projected end date:</strong> ${endDate.toDateString()}</div>
+        <div><strong>Schedule drift:</strong> <span style="color:${riskColor}">${slipDays} day(s)</span></div>
+        <div><strong>Status:</strong> ${status}</div>
+      `;
+    }
+
+    function saveBaseline() {
+      const startDateVal = document.getElementById('startDate').value;
+      if (!startDateVal) {
+        alert('Select a start date first.');
+        return;
+      }
+      const remaining = calculateRemaining();
+      const velocity = parseFloat(document.getElementById('velocity').value || 1);
+      const team = parseFloat(document.getElementById('team').value || 1);
+      const workdays = parseInt(document.getElementById('workdays').value, 10);
+      const dailyCapacity = Math.max(velocity * team, 0.1);
+      const baselineDays = remaining / dailyCapacity;
+      const baselineEnd = addWorkdays(new Date(startDateVal), Math.ceil(baselineDays), workdays);
+      const data = getLocalData();
+      data.baseline = { endDate: baselineEnd.toISOString(), createdAt: new Date().toISOString() };
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+      recalculate();
+    }
+
+    function addWorkdays(start, days, workdaysPerWeek) {
+      const d = new Date(start);
+      let added = 0;
+      while (added < days) {
+        d.setDate(d.getDate() + 1);
+        const day = d.getDay();
+        const isWorkday = workdaysPerWeek === 7 || (workdaysPerWeek === 6 && day !== 0) || (workdaysPerWeek === 5 && day !== 0 && day !== 6);
+        if (isWorkday) added++;
+      }
+      return d;
+    }
+
+    function daysBetween(dateA, dateB) {
+      const diff = Math.round((dateB - dateA) / (1000 * 60 * 60 * 24));
+      return diff;
+    }
+
+    function downloadCSV() {
+      const rows = Array.from(document.querySelectorAll('#taskTable tbody tr'));
+      const lines = ['Task,Estimate,Done'];
+      rows.forEach(r => {
+        const task = r.children[0].querySelector('input').value || '';
+        const est = r.children[1].querySelector('input').value || '0';
+        const done = r.children[2].querySelector('input').value || '0';
+        lines.push(`${sanitizeCSV(task)},${est},${done}`);
+      });
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'scheduleflow-tasks.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function sanitizeCSV(value) {
+      if (value.includes(',') || value.includes('"')) {
+        return '"' + value.replace(/"/g, '""') + '"';
+      }
+      return value;
+    }
+
+    function loadCSV() {
+      const raw = document.getElementById('csvInput').value.trim();
+      if (!raw) return;
+      const lines = raw.split(/\r?\n/).filter(Boolean);
+      const dataLines = lines[0].toLowerCase().includes('task') ? lines.slice(1) : lines;
+      clearTable();
+      dataLines.forEach(line => {
+        const parts = line.split(',');
+        const task = (parts[0] || '').replace(/^"|"$/g, '');
+        const est = parseFloat(parts[1] || '0');
+        const done = parseFloat(parts[2] || '0');
+        const row = document.createElement('tr');
+        row.innerHTML = `<td><input value="${task}"></td><td><input type="number" value="${est}"></td><td><input type="number" value="${done}"></td><td><button class="btn btn-ghost" onclick="removeRow(this)">Remove</button></td>`;
+        document.querySelector('#taskTable tbody').appendChild(row);
+      });
+    }
+
+    function saveLocal() {
+      const data = getLocalData();
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+      alert('Saved to your browser.');
+    }
+
+    function getLocalData() {
+      const rows = Array.from(document.querySelectorAll('#taskTable tbody tr'));
+      const tasks = rows.map(r => ({
+        task: r.children[0].querySelector('input').value || '',
+        est: parseFloat(r.children[1].querySelector('input').value || 0),
+        done: parseFloat(r.children[2].querySelector('input').value || 0)
+      }));
+      return {
+        projectName: document.getElementById('projectName').value,
+        startDate: document.getElementById('startDate').value,
+        velocity: document.getElementById('velocity').value,
+        team: document.getElementById('team').value,
+        workdays: document.getElementById('workdays').value,
+        progressToday: document.getElementById('progressToday').value,
+        blockersToday: document.getElementById('blockersToday').value,
+        baseline: getBaseline(),
+        tasks
+      };
+    }
+
+    function loadLocal() {
+      const stored = localStorage.getItem(LOCAL_KEY);
+      if (!stored) {
+        alert('No saved data found.');
+        return;
+      }
+      const data = JSON.parse(stored);
+      document.getElementById('projectName').value = data.projectName || '';
+      document.getElementById('startDate').value = data.startDate || '';
+      document.getElementById('velocity').value = data.velocity || 1;
+      document.getElementById('team').value = data.team || 1;
+      document.getElementById('workdays').value = data.workdays || 5;
+      document.getElementById('progressToday').value = data.progressToday || 0;
+      document.getElementById('blockersToday').value = data.blockersToday || 0;
+      clearTable();
+      const tbody = document.querySelector('#taskTable tbody');
+      (data.tasks || []).forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td><input value="${item.task}"></td><td><input type="number" value="${item.est}"></td><td><input type="number" value="${item.done}"></td><td><button class="btn btn-ghost" onclick="removeRow(this)">Remove</button></td>`;
+        tbody.appendChild(row);
+      });
+      recalculate();
+    }
+
+    function getBaseline() {
+      const stored = localStorage.getItem(LOCAL_KEY);
+      if (!stored) return null;
+      try {
+        const data = JSON.parse(stored);
+        return data.baseline || null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('startDate').value = today;
+      const stored = localStorage.getItem(LOCAL_KEY);
+      if (stored) loadLocal();
+      recalculate();
+    });
+  </script>
+</body>
+</html>
