@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Visibility Lite — Affordable SEO Visibility Tracker</title>
+  <meta name="description" content="Track SEO visibility and AI search mentions without Semrush pricing. Simple rank tracking + visibility score." />
+  <style>
+    :root{--primary:#0EA5E9;--accent:#22C55E;--bg:#F8FAFC;--fg:#0F172A;--card:#FFFFFF;--muted:#E2E8F0;--border:#CBD5E1;}
+    *{box-sizing:border-box;} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg);} 
+    header{position:sticky;top:0;background:rgba(248,250,252,.9);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);} 
+    .container{max-width:1100px;margin:0 auto;padding:0 20px;} .nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0;}
+    .btn{background:var(--primary);color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:600;display:inline-block;} .btn.secondary{background:var(--accent);} 
+    .hero{padding:48px 0;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;} .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
+    h1{font-size:38px;line-height:1.1;margin:10px 0;} p{color:#334155;} .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;} .section{padding:30px 0;}
+    label{display:block;font-weight:600;margin:10px 0 6px;} input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);} .result{background:#F1F5F9;border:1px dashed var(--border);padding:12px;border-radius:10px;white-space:pre-line;}
+    .price{font-size:32px;font-weight:800;} .muted{color:#64748B;}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;} .grid{grid-template-columns:1fr;} h1{font-size:30px;}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div style="font-weight:700;">Visibility Lite</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <a href="#pricing" class="btn secondary">Pricing</a>
+        <a href="#waitlist" class="btn">Join waitlist</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <div style="text-transform:uppercase;letter-spacing:.2em;font-size:12px;color:#0EA5E9;font-weight:700;">SEO VISIBILITY</div>
+        <h1>Track visibility without the £99/mo price tag.</h1>
+        <p>Visibility Lite gives small teams a simple visibility score, rank tracking, and AI‑mention checks at a fraction of Semrush cost.</p>
+        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;">
+          <a class="btn" href="#calc">Try the score calculator</a>
+          <a class="btn secondary" href="#pricing">See plans</a>
+        </div>
+      </div>
+      <div class="card" id="calc">
+        <h3>Visibility Score Calculator</h3>
+        <label>Keyword positions (comma‑separated)</label>
+        <input id="positions" value="3,5,12,18,4" />
+        <label>Monthly impressions</label>
+        <input id="impressions" type="number" value="12000" />
+        <label>Current CTR (%)</label>
+        <input id="ctr" type="number" value="2.8" />
+        <button class="btn" style="margin-top:12px;" onclick="calc()">Calculate</button>
+        <div id="out" class="result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid">
+        <div class="card"><strong>Simple visibility score</strong><br><span class="muted">Weighted score based on rank positions.</span></div>
+        <div class="card"><strong>AI mention checks</strong><br><span class="muted">Manual prompts + snapshot of mention status.</span></div>
+        <div class="card"><strong>Affordable tracking</strong><br><span class="muted">Built for indie founders and small sites.</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <h2>Pricing</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Starter</h3>
+          <div class="price">£9/mo</div>
+          <p class="muted">50 keywords, weekly checks.</p>
+          <a class="btn" href="#waitlist">Start</a>
+        </div>
+        <div class="card" style="border:2px solid var(--primary)">
+          <h3>Growth</h3>
+          <div class="price">£19/mo</div>
+          <p class="muted">200 keywords, AI mention report.</p>
+          <a class="btn" href="#waitlist">Go Growth</a>
+        </div>
+        <div class="card">
+          <h3>Agency</h3>
+          <div class="price">£49/mo</div>
+          <p class="muted">Multi‑site tracking, exports.</p>
+          <a class="btn" href="#waitlist">Talk to us</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="waitlist">
+      <div class="card">
+        <h2>Join early access</h2>
+        <p class="muted">Get notified when rank tracking goes live.</p>
+        <label>Email</label>
+        <input type="email" placeholder="you@company.com" />
+        <button class="btn" style="margin-top:12px;">Join waitlist</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container" style="padding:24px 0 40px;">
+    <div class="muted">© 2026 Visibility Lite.</div>
+  </footer>
+
+  <script>
+    function calc(){
+      const positions=document.getElementById('positions').value.split(',').map(x=>parseFloat(x)).filter(x=>!isNaN(x));
+      const impressions=Number(document.getElementById('impressions').value||0);
+      const ctr=Number(document.getElementById('ctr').value||0)/100;
+      if(!positions.length){document.getElementById('out').textContent='Enter positions.';return;}
+      const score=positions.reduce((s,p)=>s+Math.max(0, (30-p)),0)/(positions.length*30)*100;
+      const estClicks=impressions*ctr;
+      const msg=`Visibility score: ${score.toFixed(1)} / 100\nEstimated monthly clicks: ${estClicks.toFixed(0)}\nTop 3 priority keywords: positions ${positions.sort((a,b)=>a-b).slice(0,3).join(', ')}`;
+      document.getElementById('out').textContent=msg;
+    }
+    calc();
+  </script>
+</body>
+</html>
