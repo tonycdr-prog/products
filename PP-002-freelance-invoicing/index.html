@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Switchboard — Freelancer CRM + Invoicing Replacement</title>
+  <meta name="description" content="Replace Fiverr Workspace with a lightweight freelancer CRM, invoicing, and contracts hub. Migrate your data in minutes." />
+  <meta property="og:title" content="Switchboard — Freelancer CRM + Invoicing" />
+  <meta property="og:description" content="All-in-one client hub with migration wizard, proposals, contracts and invoices." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root {
+      --primary:#4F46E5; --on-primary:#FFFFFF; --secondary:#6366F1; --accent:#16A34A;
+      --bg:#EEF2FF; --fg:#1E1B4B; --card:#FFFFFF; --muted:#E0E7FF; --border:#C7D2FE;
+      --shadow:0 18px 40px rgba(79,70,229,.18);
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--fg); }
+    header { padding:20px; position:sticky; top:0; background:rgba(238,242,255,.92); backdrop-filter: blur(6px); border-bottom:1px solid var(--border); z-index:10; }
+    .container { max-width:1180px; margin:0 auto; padding:0 20px; }
+    .nav { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+    .logo { font-weight:800; letter-spacing:.4px; }
+    .btn { display:inline-block; background:var(--primary); color:var(--on-primary); padding:11px 16px; border-radius:10px; text-decoration:none; font-weight:600; border:none; cursor:pointer; }
+    .btn.secondary { background:var(--accent); }
+    .btn.ghost { background:transparent; color:var(--primary); border:1px solid var(--primary); }
+    .hero { padding:52px 0 28px; display:grid; grid-template-columns: 1.2fr .8fr; gap:28px; }
+    .hero-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadow); }
+    .kicker { font-size:12px; text-transform:uppercase; letter-spacing:.25em; color:#4338CA; font-weight:700; }
+    h1 { font-size:40px; line-height:1.1; margin:10px 0 12px; }
+    p { color:#4338CA; }
+    .pill { background:var(--muted); border:1px solid var(--border); padding:6px 10px; border-radius:999px; font-size:12px; color:#4338CA; }
+    .grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+    .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; }
+    .section { padding:34px 0; }
+    .price { font-size:32px; font-weight:800; }
+    .muted { color:#6B7280; }
+    label { display:block; font-weight:600; margin:10px 0 6px; }
+    input, select, textarea { width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:10px; background:#fff; font-family: inherit; }
+    textarea { resize: vertical; min-height: 70px; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { text-align:left; padding:8px; border-bottom:1px solid var(--border); font-size: 14px; }
+    .result { background:#F5F6FF; border:1px dashed var(--border); padding:12px; border-radius:10px; margin-top:10px; white-space:pre-line; }
+    .stack { display:flex; flex-direction:column; gap:10px; }
+    .inline { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .tag { font-size:12px; padding:4px 8px; border-radius:8px; background:#EEF2FF; border:1px solid var(--border); }
+    .right { text-align:right; }
+    footer { padding:24px 0 40px; }
+    @media (max-width: 980px){
+      .hero { grid-template-columns: 1fr; }
+      .grid { grid-template-columns:1fr; }
+      .grid-2 { grid-template-columns:1fr; }
+      h1 { font-size:32px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="logo">Switchboard</div>
+      <div class="inline">
+        <span class="pill">20% annual discount</span>
+        <a href="#waitlist" class="btn">Join waitlist</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <div class="kicker">FIVERR WORKSPACE REPLACEMENT</div>
+        <h1>Migrate clients, proposals, contracts & invoices in a single afternoon.</h1>
+        <p>Switchboard is a lightweight freelancer CRM built for the Fiverr Workspace shutdown. Import your data, rebuild invoices, and keep every client in one clean hub.</p>
+        <div class="inline" style="margin-top:16px;">
+          <a class="btn" href="#workspace">Open workspace</a>
+          <a class="btn secondary" href="#pricing">View pricing</a>
+        </div>
+        <div class="inline" style="margin-top:16px;">
+          <span class="pill">Client CRM</span><span class="pill">Proposals</span><span class="pill">Contracts</span><span class="pill">Invoicing</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>Instant Migration Plan</h3>
+        <p class="muted">Tell us what you used in Workspace. We generate a step-by-step import plan and invoice template.</p>
+        <div id="wizard">
+          <label>Current tool</label>
+          <select id="tool">
+            <option>Fiverr Workspace / AND.CO</option>
+            <option>Notion</option>
+            <option>FreshBooks</option>
+            <option>Other</option>
+          </select>
+          <label># of active clients</label>
+          <input id="clients" type="number" min="1" value="5" />
+          <label>VAT registered?</label>
+          <select id="vat">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+          <label>Average invoice amount (£)</label>
+          <input id="avg" type="number" min="50" value="850" />
+          <button class="btn" style="margin-top:12px;" onclick="runWizard()">Generate plan</button>
+          <div id="result" class="result" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="workspace">
+      <h2>Switchboard Workspace</h2>
+      <p class="muted">Keep your client list and invoices in one place. Everything here works offline and saves to your browser.</p>
+      <div class="grid-2" style="margin-top:18px;">
+        <div class="card">
+          <h3>Client Manager</h3>
+          <div class="stack">
+            <div class="inline">
+              <div style="flex:1;">
+                <label>Client name</label>
+                <input id="clientName" placeholder="Studio North" />
+              </div>
+              <div style="flex:1;">
+                <label>Email</label>
+                <input id="clientEmail" type="email" placeholder="hello@studionorth.com" />
+              </div>
+            </div>
+            <div class="inline">
+              <div style="flex:1;">
+                <label>Company</label>
+                <input id="clientCompany" placeholder="Studio North Ltd" />
+              </div>
+              <div style="flex:1;">
+                <label>VAT Number (optional)</label>
+                <input id="clientVat" placeholder="GB123456789" />
+              </div>
+            </div>
+            <label>Address</label>
+            <textarea id="clientAddress" placeholder="20 Bridge Street, Manchester, M1 2AB"></textarea>
+            <div class="inline">
+              <button class="btn" onclick="addClient()">Add client</button>
+              <button class="btn ghost" onclick="exportClientsCSV()">Export CSV</button>
+              <span class="tag" id="clientCount">0 clients</span>
+            </div>
+          </div>
+          <div class="result" id="clientList" style="margin-top:14px;">No clients yet.</div>
+        </div>
+
+        <div class="card">
+          <h3>Invoice Builder</h3>
+          <div class="stack">
+            <div class="inline">
+              <div style="flex:1;">
+                <label>Invoice #</label>
+                <input id="invoiceNumber" />
+              </div>
+              <div style="flex:1;">
+                <label>Date</label>
+                <input id="invoiceDate" type="date" />
+              </div>
+              <div style="flex:1;">
+                <label>Due in (days)</label>
+                <input id="invoiceDue" type="number" min="1" value="14" />
+              </div>
+            </div>
+            <label>Bill to</label>
+            <select id="invoiceClient"></select>
+            <table id="itemsTable">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th style="width:90px;">Qty</th>
+                  <th style="width:110px;">Rate (£)</th>
+                  <th class="right" style="width:110px;">Line total</th>
+                  <th style="width:60px;"></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="inline">
+              <button class="btn ghost" onclick="addItem()">Add item</button>
+              <label class="inline" style="gap:6px;">
+                <input id="vatToggle" type="checkbox" /> Apply VAT
+              </label>
+              <input id="vatRate" type="number" min="0" max="25" style="width:90px;" value="20" />
+              <span class="muted">% rate</span>
+            </div>
+            <label>Notes / payment terms</label>
+            <textarea id="invoiceNotes" placeholder="Payment via bank transfer. Late fee after 14 days."></textarea>
+            <div class="inline">
+              <button class="btn" onclick="saveState()">Save</button>
+              <button class="btn ghost" onclick="downloadInvoiceJSON()">Download JSON</button>
+              <button class="btn secondary" onclick="printInvoice()">Print invoice</button>
+            </div>
+          </div>
+          <div class="result" id="invoicePreview" aria-live="polite" style="margin-top:14px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid">
+        <div class="card"><strong>Import in minutes</strong><br><span class="muted">CSV + PDF import for clients, invoices, contracts. Auto-map fields.</span></div>
+        <div class="card"><strong>One-click invoice packs</strong><br><span class="muted">Generate invoice bundles and late-fee reminders automatically.</span></div>
+        <div class="card"><strong>Client portals</strong><br><span class="muted">Share proposals + contracts with e-sign and payment links.</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <h2>Simple pricing</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Starter</h3>
+          <div class="price">£10<span class="muted">/mo</span></div>
+          <ul class="muted">
+            <li>50 clients</li><li>Unlimited invoices</li><li>1 portal</li>
+          </ul>
+          <a class="btn" href="#waitlist">Start free</a>
+        </div>
+        <div class="card" style="border:2px solid var(--primary)">
+          <h3>Pro (recommended)</h3>
+          <div class="price">£18<span class="muted">/mo</span></div>
+          <ul class="muted">
+            <li>Unlimited clients</li><li>Contracts + e-sign</li><li>Migration concierge</li>
+          </ul>
+          <a class="btn" href="#waitlist">Get Pro</a>
+        </div>
+        <div class="card">
+          <h3>Studio</h3>
+          <div class="price">£28<span class="muted">/mo</span></div>
+          <ul class="muted">
+            <li>Team access</li><li>Multi-brand invoices</li><li>Priority support</li>
+          </ul>
+          <a class="btn" href="#waitlist">Talk to us</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="waitlist">
+      <div class="card">
+        <h2>Join the early access list</h2>
+        <p class="muted">Be first in line for the migration concierge and discounted pricing.</p>
+        <label>Email</label>
+        <input type="email" placeholder="you@studio.com" />
+        <button class="btn" style="margin-top:12px;">Join waitlist</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <div class="muted">© 2026 Switchboard. Built for freelancers transitioning from Fiverr Workspace.</div>
+  </footer>
+
+  <script>
+    const storageKey = 'switchboardData';
+    const state = {
+      clients: [],
+      invoice: {
+        number: 'SB-0001',
+        date: new Date().toISOString().slice(0,10),
+        dueDays: 14,
+        clientId: null,
+        items: [{ desc: 'Design sprint', qty: 1, rate: 650 }],
+        vatEnabled: true,
+        vatRate: 20,
+        notes: 'Payment via bank transfer. Late fee after 14 days.'
+      }
+    };
+
+    function loadState(){
+      const saved = localStorage.getItem(storageKey);
+      if(saved){
+        try {
+          const parsed = JSON.parse(saved);
+          if(parsed.clients) state.clients = parsed.clients;
+          if(parsed.invoice) Object.assign(state.invoice, parsed.invoice);
+        } catch (err) {}
+      } else {
+        state.clients = [
+          { id: crypto.randomUUID(), name: 'Studio North', email: 'hello@studionorth.com', company: 'Studio North Ltd', address: '20 Bridge Street\nManchester M1 2AB', vat: 'GB123456789' }
+        ];
+        state.invoice.clientId = state.clients[0].id;
+      }
+    }
+
+    function saveState(){
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      renderAll();
+    }
+
+    function addClient(){
+      const name = document.getElementById('clientName').value.trim();
+      const email = document.getElementById('clientEmail').value.trim();
+      if(!name || !email){
+        alert('Add client name + email first.');
+        return;
+      }
+      const client = {
+        id: crypto.randomUUID(),
+        name,
+        email,
+        company: document.getElementById('clientCompany').value.trim(),
+        vat: document.getElementById('clientVat').value.trim(),
+        address: document.getElementById('clientAddress').value.trim()
+      };
+      state.clients.push(client);
+      state.invoice.clientId = client.id;
+      ['clientName','clientEmail','clientCompany','clientVat','clientAddress'].forEach(id => document.getElementById(id).value='');
+      saveState();
+    }
+
+    function removeClient(id){
+      state.clients = state.clients.filter(c => c.id !== id);
+      if(state.invoice.clientId === id){
+        state.invoice.clientId = state.clients[0]?.id || null;
+      }
+      saveState();
+    }
+
+    function renderClients(){
+      const list = document.getElementById('clientList');
+      const select = document.getElementById('invoiceClient');
+      select.innerHTML = '';
+      if(state.clients.length === 0){
+        list.textContent = 'No clients yet.';
+        document.getElementById('clientCount').textContent = '0 clients';
+        select.innerHTML = '<option value="">Add a client first</option>';
+        return;
+      }
+      document.getElementById('clientCount').textContent = `${state.clients.length} clients`;
+      list.innerHTML = state.clients.map(c => `
+        <div style="margin-bottom:10px;">
+          <strong>${c.name}</strong> <span class="muted">${c.company || ''}</span><br>
+          <span class="muted">${c.email}</span><br>
+          <span class="muted">${c.address ? c.address.replace(/\n/g,' • ') : ''}</span>
+          <div style="margin-top:6px;"><button class="btn ghost" onclick="removeClient('${c.id}')">Remove</button></div>
+        </div>
+      `).join('');
+      state.clients.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id; opt.textContent = `${c.name} ${c.company ? '— ' + c.company : ''}`;
+        select.appendChild(opt);
+      });
+      select.value = state.invoice.clientId || state.clients[0].id;
+    }
+
+    function addItem(){
+      state.invoice.items.push({ desc: 'Project milestone', qty: 1, rate: 500 });
+      renderItems();
+      saveState();
+    }
+
+    function removeItem(index){
+      state.invoice.items.splice(index,1);
+      renderItems();
+      saveState();
+    }
+
+    function renderItems(){
+      const body = document.querySelector('#itemsTable tbody');
+      body.innerHTML = '';
+      state.invoice.items.forEach((item, idx) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input value="${item.desc}" data-field="desc" data-index="${idx}" /></td>
+          <td><input type="number" min="1" value="${item.qty}" data-field="qty" data-index="${idx}" /></td>
+          <td><input type="number" min="0" value="${item.rate}" data-field="rate" data-index="${idx}" /></td>
+          <td class="right">£${(item.qty * item.rate).toFixed(2)}</td>
+          <td><button class="btn ghost" onclick="removeItem(${idx})">Remove</button></td>
+        `;
+        body.appendChild(row);
+      });
+      body.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const i = Number(e.target.dataset.index);
+          const field = e.target.dataset.field;
+          state.invoice.items[i][field] = field === 'desc' ? e.target.value : Number(e.target.value || 0);
+          renderInvoicePreview();
+          saveState();
+        });
+      });
+      renderInvoicePreview();
+    }
+
+    function renderInvoicePreview(){
+      const invoice = state.invoice;
+      const client = state.clients.find(c => c.id === invoice.clientId);
+      const subtotal = invoice.items.reduce((sum, item) => sum + item.qty * item.rate, 0);
+      const vat = invoice.vatEnabled ? subtotal * (invoice.vatRate/100) : 0;
+      const total = subtotal + vat;
+      const dueDate = new Date(invoice.date);
+      dueDate.setDate(dueDate.getDate() + Number(invoice.dueDays || 0));
+      const preview = `Invoice ${invoice.number}\nDate: ${invoice.date} | Due: ${dueDate.toISOString().slice(0,10)}\n\nBill To:\n${client ? client.name : '—'}\n${client?.company || ''}\n${client?.email || ''}\n${client?.address || ''}\n\nItems:\n${invoice.items.map(item => `• ${item.desc} — ${item.qty} x £${item.rate.toFixed(2)} = £${(item.qty*item.rate).toFixed(2)}`).join('\n')}\n\nSubtotal: £${subtotal.toFixed(2)}\nVAT (${invoice.vatEnabled ? invoice.vatRate : 0}%): £${vat.toFixed(2)}\nTotal: £${total.toFixed(2)}\n\nNotes: ${invoice.notes || ''}`;
+      document.getElementById('invoicePreview').textContent = preview;
+    }
+
+    function bindInvoiceInputs(){
+      document.getElementById('invoiceNumber').value = state.invoice.number;
+      document.getElementById('invoiceDate').value = state.invoice.date;
+      document.getElementById('invoiceDue').value = state.invoice.dueDays;
+      document.getElementById('vatToggle').checked = state.invoice.vatEnabled;
+      document.getElementById('vatRate').value = state.invoice.vatRate;
+      document.getElementById('invoiceNotes').value = state.invoice.notes;
+
+      document.getElementById('invoiceNumber').addEventListener('input', (e)=>{ state.invoice.number = e.target.value; renderInvoicePreview(); saveState(); });
+      document.getElementById('invoiceDate').addEventListener('input', (e)=>{ state.invoice.date = e.target.value; renderInvoicePreview(); saveState(); });
+      document.getElementById('invoiceDue').addEventListener('input', (e)=>{ state.invoice.dueDays = Number(e.target.value||0); renderInvoicePreview(); saveState(); });
+      document.getElementById('invoiceClient').addEventListener('change', (e)=>{ state.invoice.clientId = e.target.value; renderInvoicePreview(); saveState(); });
+      document.getElementById('vatToggle').addEventListener('change', (e)=>{ state.invoice.vatEnabled = e.target.checked; renderInvoicePreview(); saveState(); });
+      document.getElementById('vatRate').addEventListener('input', (e)=>{ state.invoice.vatRate = Number(e.target.value||0); renderInvoicePreview(); saveState(); });
+      document.getElementById('invoiceNotes').addEventListener('input', (e)=>{ state.invoice.notes = e.target.value; renderInvoicePreview(); saveState(); });
+    }
+
+    function exportClientsCSV(){
+      if(state.clients.length === 0){ alert('No clients to export.'); return; }
+      const header = ['Name','Email','Company','VAT','Address'];
+      const rows = state.clients.map(c => [c.name,c.email,c.company,c.vat,c.address].map(v => '"' + (v || '').replace(/"/g,'""') + '"').join(','));
+      const csv = [header.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url; link.download = 'switchboard-clients.csv';
+      document.body.appendChild(link); link.click(); link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadInvoiceJSON(){
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url; link.download = 'switchboard-invoice.json';
+      document.body.appendChild(link); link.click(); link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function printInvoice(){
+      const preview = document.getElementById('invoicePreview').textContent;
+      const win = window.open('', 'print');
+      win.document.write(`<pre style="font-family: Inter, system-ui, sans-serif; white-space: pre-wrap;">${preview}</pre>`);
+      win.document.close();
+      win.focus();
+      win.print();
+      win.close();
+    }
+
+    function renderAll(){
+      renderClients();
+      renderItems();
+      renderInvoicePreview();
+    }
+
+    function runWizard(){
+      const tool=document.getElementById('tool').value;
+      const clients=Number(document.getElementById('clients').value||0);
+      const vat=document.getElementById('vat').value==='yes';
+      const avg=Number(document.getElementById('avg').value||0);
+      const vatRate=vat?0.2:0;
+      const projected=clients*avg*(1+vatRate);
+      const steps=[
+        `1) Export ${tool} data (clients, invoices, contracts) to CSV/PDF`,
+        `2) Upload into Switchboard (auto-map fields)`,
+        `3) Generate new invoice template with ${vat?"VAT lines":"no VAT"}`,
+        `4) Send migration notice to ${clients} clients`,
+        `5) Verify invoice numbering + recurring items`
+      ];
+      const msg=`Migration plan ready:\n${steps.join('\n')}\n\nEstimated next-month billings: £${projected.toFixed(0)}`;
+      document.getElementById('result').textContent=msg;
+    }
+
+    loadState();
+    bindInvoiceInputs();
+    renderAll();
+    runWizard();
+  </script>
+</body>
+</html>
