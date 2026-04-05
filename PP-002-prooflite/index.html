@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ProofLite — Lightweight social proof widgets</title>
+  <meta name="description" content="Generate fast, lightweight testimonial and logo widgets without heavy iFrames." />
+  <meta name="keywords" content="social proof, testimonials, widget, logo wall, performance" />
+  <meta property="og:title" content="ProofLite — Lightweight social proof" />
+  <meta property="og:description" content="Create a fast widget with clean HTML/CSS and embed anywhere." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Nunito:ital,wght@0,700;0,800;0,900;1,700&display=swap');
+    :root{
+      --primary:#E11D48; --on-primary:#fff;
+      --secondary:#FB7185; --on-secondary:#0F172A;
+      --accent:#2563EB; --on-accent:#fff;
+      --bg:#FFF1F2; --fg:#881337;
+      --card:#fff; --muted:#F0ECF2; --muted-fg:#64748B; --border:#FECDD3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--fg);}
+    h1,h2,h3{font-family:'Nunito',sans-serif;text-wrap:balance;}
+    .skip-link{position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;}
+    .skip-link:focus{left:16px;top:16px;width:auto;height:auto;background:#fff;padding:8px 12px;border:1px solid var(--border);border-radius:8px;z-index:10;}
+    .container{max-width:1100px;margin:0 auto;padding:24px;}
+    .nav{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;position:sticky;top:0;background:rgba(255,241,242,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);} 
+    .btn{padding:12px 18px;border-radius:12px;border:none;font-weight:700;cursor:pointer;touch-action:manipulation;}
+    .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+    .btn-primary{background:var(--primary);color:var(--on-primary);} 
+    .btn-accent{background:var(--accent);color:var(--on-accent);} 
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:32px 0;} 
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(136,19,55,.08);} 
+    input,textarea,select{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;margin:6px 0 12px;} 
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;} 
+    .preview{background:white;border:1px dashed var(--border);padding:16px;border-radius:12px;}
+    code{background:#fff;border:1px solid var(--border);padding:8px;border-radius:8px;display:block;white-space:pre-wrap;}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;} .grid-3{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="nav">
+    <div style="font-weight:800;font-size:20px;">ProofLite</div>
+    <button class="btn btn-primary">Generate widget</button>
+  </div>
+
+  <main id="main" class="container">
+    <section class="hero">
+      <div>
+        <h1>Social proof that loads in under 20ms.</h1>
+        <p>Build clean testimonial and logo widgets without heavy iFrames or trackers. Copy‑paste HTML, done.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn btn-accent">Start free</button>
+          <button class="btn" style="border:1px solid var(--border);">See examples</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Widget builder</h3>
+        <label for="layout">Layout</label>
+        <select id="layout" name="layout">
+          <option value="grid">Logo grid + quotes</option>
+          <option value="slider">Quote cards</option>
+        </select>
+        <label for="testimonials">Testimonials (one per line: Name | Role | Quote)</label>
+        <textarea id="testimonials" name="testimonials" rows="5" placeholder="Jamie | Founder, LoopHQ | We doubled conversions in a week…"></textarea>
+        <label for="logos">Logo URLs (one per line)</label>
+        <textarea id="logos" name="logos" rows="3" placeholder="https://example.com/logo1.png…"></textarea>
+        <button class="btn btn-primary" onclick="buildWidget()">Build widget</button>
+      </div>
+    </section>
+
+    <section class="grid-3">
+      <div class="card"><h3>Zero iFrames</h3><p>Pure HTML/CSS output, no third‑party JS required.</p></div>
+      <div class="card"><h3>Portable</h3><p>Embed on any site — Webflow, WordPress, or raw HTML.</p></div>
+      <div class="card"><h3>Fast</h3><p>Static markup keeps LCP fast and tracking minimal.</p></div>
+    </section>
+
+    <section style="margin:32px 0;" class="card">
+      <h2>Preview</h2>
+      <div id="preview" class="preview">Add testimonials to see a preview.</div>
+      <h3>Embed code</h3>
+      <code id="embed">&lt;!-- widget code will appear here --&gt;</code>
+    </section>
+
+    <section class="card">
+      <h2>Join the waitlist</h2>
+      <p>Get early access to the hosted widget dashboard.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <input style="flex:1;" type="email" name="email" autocomplete="email" spellcheck="false" placeholder="you@company.com…" />
+        <button class="btn btn-accent">Join waitlist</button>
+      </div>
+    </section>
+  </main>
+
+<script>
+function buildWidget(){
+  const layout = document.getElementById('layout').value;
+  const tLines = document.getElementById('testimonials').value.trim().split('\n').filter(Boolean);
+  const lLines = document.getElementById('logos').value.trim().split('\n').filter(Boolean);
+  const quotes = tLines.map(line=>{
+    const [name, role, quote] = line.split('|').map(s=>s && s.trim());
+    return {name, role, quote};
+  });
+
+  let html = `<div class="prooflite-widget ${layout}">`;
+  if (lLines.length){
+    html += `<div class="logo-grid">` + lLines.map(l=>`<img src="${l}" alt="logo" />`).join('') + `</div>`;
+  }
+  html += `<div class="quotes">` + quotes.map(q=>`
+    <div class="quote-card">
+      <p>“${q.quote || ''}”</p>
+      <span>${q.name || ''} — ${q.role || ''}</span>
+    </div>`).join('') + `</div>`;
+  html += `</div>`;
+
+  const css = `<style>
+.prooflite-widget{font-family:DM Sans, sans-serif;display:grid;gap:12px}
+.prooflite-widget .logo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:12px;align-items:center}
+.prooflite-widget .logo-grid img{max-width:100%;filter:grayscale(100%);opacity:.8}
+.prooflite-widget .quote-card{border:1px solid #FECDD3;padding:12px;border-radius:12px;background:#fff}
+.prooflite-widget .quote-card span{font-size:13px;color:#64748B}
+</style>`;
+
+  document.getElementById('preview').innerHTML = html;
+  document.getElementById('embed').textContent = css + html;
+}
+</script>
+</body>
+</html>
