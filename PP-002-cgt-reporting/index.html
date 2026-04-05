@@ -3,70 +3,213 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HMRC CGT Multi‑Disposal Helper</title>
+  <meta name="theme-color" content="#1C1917" />
+  <title>HMRC CGT Multi‑Disposal Helper — Real‑time UK CGT Clarity</title>
+  <meta name="description" content="Calculate UK capital gains tax across multiple disposal dates with allowance and tax band handling. Export a clean CSV summary for HMRC reporting." />
+  <meta property="og:title" content="HMRC CGT Multi‑Disposal Helper" />
+  <meta property="og:description" content="Know your CGT due across multiple disposals in minutes. Local, private, and built for UK tax years." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+
     :root {
-      color-scheme: light;
-      --bg: #f7f7fb;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --accent: #2563eb;
-      --accent-dark: #1e40af;
-      --border: #e5e7eb;
-      --danger: #dc2626;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --bg: #1C1917;
+      --card: #262321;
+      --text: #FFFFFF;
+      --muted: #94A3B8;
+      --primary: #EA580C;
+      --primary-strong: #F97316;
+      --accent: #2563EB;
+      --border: rgba(255,255,255,0.08);
+      --danger: #DC2626;
+      --ring: #EA580C;
+      --shadow: 0 24px 60px rgba(0,0,0,0.35);
+      --radius: 16px;
     }
+
     * { box-sizing: border-box; }
+    html { color-scheme: dark; }
     body {
       margin: 0;
+      font-family: 'Fira Sans', system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
+      line-height: 1.6;
+      -webkit-tap-highlight-color: rgba(255,255,255,0.15);
+      overflow-x: hidden;
     }
-    header {
-      padding: 28px 24px 0;
-      max-width: 1100px;
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(1120px, 92vw);
       margin: 0 auto;
     }
-    h1 { margin: 0 0 8px; font-size: 28px; }
-    p { margin: 0; color: var(--muted); }
-    main {
-      max-width: 1100px;
-      margin: 20px auto 60px;
-      padding: 0 24px;
-      display: grid;
-      gap: 20px;
+
+    .skip-link {
+      position: absolute;
+      left: 16px;
+      top: -40px;
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      z-index: 10;
+      transition: top 0.2s ease;
     }
+    .skip-link:focus-visible { top: 16px; }
+
+    header { padding: 48px 0 24px; }
+
+    .hero {
+      display: grid;
+      gap: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      align-items: center;
+    }
+
+    .eyebrow {
+      font-family: 'Fira Code', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      color: var(--primary-strong);
+    }
+
+    h1, h2, h3 { text-wrap: balance; scroll-margin-top: 90px; }
+    h1 { font-size: clamp(28px, 3vw, 42px); margin: 12px 0; }
+    h2 { font-size: clamp(22px, 2.2vw, 30px); margin: 0 0 10px; }
+    h3 { font-size: 20px; margin: 0 0 12px; }
+
+    .lead { font-size: 18px; color: var(--muted); }
+
+    .benefits {
+      margin: 20px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+    .benefits li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 15px;
+    }
+    .benefits li span {
+      color: var(--primary-strong);
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      touch-action: manipulation;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(234,88,12,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); background: var(--primary-strong); }
+    .btn-outline {
+      border-color: var(--border);
+      color: var(--text);
+      background: transparent;
+    }
+    .btn-outline:hover { border-color: var(--primary-strong); }
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-accent:hover { filter: brightness(1.05); }
+
+    section { padding: 32px 0; }
+
+    .chapter {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      align-items: start;
+    }
+
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
     }
+
+    .pill {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(234,88,12,0.18);
+      color: var(--primary-strong);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
     .grid {
       display: grid;
       gap: 14px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
+
     label {
       display: block;
       font-weight: 600;
       margin-bottom: 6px;
     }
+
     input, select {
       width: 100%;
       padding: 10px 12px;
+      border-radius: 10px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      background: #1f1c1a;
+      color: var(--text);
       font-size: 14px;
-      background: #fff;
     }
+
+    input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
+      font-variant-numeric: tabular-nums;
     }
+
     thead th {
       text-align: left;
       color: var(--muted);
@@ -74,159 +217,318 @@
       border-bottom: 1px solid var(--border);
       padding: 10px 8px;
     }
+
     tbody td {
-      padding: 8px;
+      padding: 10px 8px;
       border-bottom: 1px solid var(--border);
       vertical-align: top;
+      word-break: break-word;
     }
-    tbody tr:last-child td { border-bottom: none; }
+
     .actions {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      gap: 10px;
+      margin-top: 14px;
     }
+
     button {
-      appearance: none;
       border: none;
-      padding: 10px 16px;
       border-radius: 10px;
-      background: var(--accent);
-      color: white;
+      padding: 10px 14px;
       font-weight: 600;
+      background: var(--primary);
+      color: #fff;
       cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      touch-action: manipulation;
     }
+
+    button:hover { background: var(--primary-strong); }
+
     button.secondary {
-      background: #eef2ff;
-      color: var(--accent-dark);
+      background: rgba(234,88,12,0.18);
+      color: var(--primary-strong);
+      border: 1px solid var(--border);
     }
+
+    button.secondary:hover { border-color: var(--primary-strong); }
+
     button.danger {
-      background: #fee2e2;
-      color: var(--danger);
+      background: rgba(220,38,38,0.18);
+      color: #FCA5A5;
+      border: 1px solid rgba(220,38,38,0.4);
     }
+
+    button.danger:hover { border-color: rgba(220,38,38,0.7); }
+
     .summary-grid {
       display: grid;
-      gap: 12px;
+      gap: 14px;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
+
     .summary-item {
-      padding: 12px;
-      border-radius: 10px;
+      padding: 14px;
+      border-radius: 12px;
       border: 1px solid var(--border);
-      background: #fafafa;
+      background: #1f1c1a;
     }
+
     .summary-item span {
       display: block;
       font-size: 12px;
       color: var(--muted);
     }
+
     .summary-item strong {
       font-size: 18px;
+      font-variant-numeric: tabular-nums;
     }
-    .note {
-      font-size: 12px;
+
+    .note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+    .pricing {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .price {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 12px 0;
+    }
+
+    .price span {
+      font-size: 14px;
       color: var(--muted);
-      margin-top: 8px;
+      font-weight: 400;
     }
-    .pill {
-      display: inline-block;
-      padding: 4px 8px;
-      background: #eef2ff;
-      color: var(--accent-dark);
+
+    .list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 4px 10px;
       border-radius: 999px;
+      background: rgba(37,99,235,0.2);
+      color: #93C5FD;
       font-size: 12px;
       font-weight: 600;
     }
-    .output {
-      min-width: 120px;
-    }
-    .right { text-align: right; }
+
     footer {
-      max-width: 1100px;
-      margin: 0 auto 40px;
-      padding: 0 24px;
+      padding: 28px 0 50px;
       color: var(--muted);
       font-size: 12px;
+      text-align: center;
+    }
+
+    .waitlist { display: grid; gap: 12px; }
+
+    .thanks {
+      color: #86EFAC;
+      font-weight: 600;
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+
+    @media (max-width: 720px) {
+      .hero-card { order: -1; }
+      table { font-size: 12px; }
+      thead { display: none; }
+      tbody td { display: grid; gap: 4px; }
+      tbody tr { border-bottom: 1px solid var(--border); padding-bottom: 12px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>HMRC CGT Multi‑Disposal Helper</h1>
-    <p>Estimate UK capital gains tax across multiple disposal dates with allowance + tax band handling. <span class="pill">Local & offline</span></p>
+  <a class="skip-link" href="#main">Skip to Main Content</a>
+  <header class="container">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">UK CGT Calculator</div>
+        <h1>Know Your CGT Due Across Multiple Disposals in Minutes.</h1>
+        <p class="lead">Stop juggling spreadsheets. This helper allocates your allowance and basic‑rate band in date order so you can report confidently.</p>
+        <ul class="benefits">
+          <li><span>•</span>Handles multiple disposal dates with UK tax year inputs.</li>
+          <li><span>•</span>Shows allowance usage, taxable gains, and estimated CGT instantly.</li>
+          <li><span>•</span>Exports a clean CSV summary ready for your accountant.</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#calculator">Run the Calculator</a>
+          <a class="btn btn-accent" href="#pricing">Get Pro — £9&nbsp;/&nbsp;mo</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="pill">Local &amp; Private</div>
+        <h2>Built for HMRC Real‑Time Reporting.</h2>
+        <p class="lead">Everything stays in your browser. No logins, no uploads — just clear outputs and totals you can trust.</p>
+        <div class="cta-row">
+          <a class="btn btn-outline" href="#waitlist">Join the Waitlist</a>
+          <a class="btn btn-outline" href="#calculator">See the Tool</a>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <main>
-    <section class="card">
-      <h2>Tax Year Inputs</h2>
-      <div class="grid">
+  <main id="main">
+    <section class="container">
+      <div class="chapter">
         <div>
-          <label for="taxYear">Tax year label</label>
-          <input id="taxYear" value="2025/26" />
+          <span class="badge">Chapter 1</span>
+          <h2>Stop CGT Guesswork Before You Submit.</h2>
+          <p class="lead">Multi‑disposal reporting is where calculators fall apart. This tool keeps the rules visible and makes your assumptions explicit.</p>
         </div>
-        <div>
-          <label for="assetType">Asset type</label>
-          <select id="assetType">
-            <option value="other">Shares/crypto/other assets (10% / 20%)</option>
-            <option value="residential">Residential property (18% / 28%)</option>
-          </select>
+        <div class="card">
+          <h3>What You&rsquo;ll Get</h3>
+          <ul class="list">
+            <li>✓ Allowance allocation per disposal date.</li>
+            <li>✓ Basic‑rate band usage tracking.</li>
+            <li>✓ Residential vs other asset tax rates.</li>
+            <li>✓ CSV export for HMRC or advisors.</li>
+          </ul>
         </div>
-        <div>
-          <label for="allowance">Annual exempt amount (£)</label>
-          <input id="allowance" type="number" min="0" step="1" value="3000" />
-        </div>
-        <div>
-          <label for="taxableIncome">Taxable income excl. gains (£)</label>
-          <input id="taxableIncome" type="number" min="0" step="1" value="0" />
-        </div>
-        <div>
-          <label for="basicBand">Basic rate band limit (£)</label>
-          <input id="basicBand" type="number" min="0" step="1" value="37700" />
-        </div>
-      </div>
-      <p class="note">Set your own allowance and tax band if different. This tool is a calculator, not tax advice.</p>
-    </section>
-
-    <section class="card">
-      <h2>Disposals</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Proceeds (£)</th>
-            <th>Cost basis (£)</th>
-            <th>Fees (£)</th>
-            <th>Notes</th>
-            <th class="right">Gain</th>
-            <th class="right">Allowance used</th>
-            <th class="right">Taxable gain</th>
-            <th class="right">Est. tax</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="disposalBody"></tbody>
-      </table>
-      <div class="actions">
-        <button id="addRow">Add disposal</button>
-        <button id="addSample" class="secondary">Insert sample data</button>
-        <button id="exportCsv" class="secondary">Export CSV</button>
       </div>
     </section>
 
-    <section class="card">
-      <h2>Summary</h2>
-      <div class="summary-grid">
-        <div class="summary-item"><span>Total gains</span><strong id="totalGains">£0.00</strong></div>
-        <div class="summary-item"><span>Allowance used</span><strong id="totalAllowance">£0.00</strong></div>
-        <div class="summary-item"><span>Taxable gains</span><strong id="totalTaxable">£0.00</strong></div>
-        <div class="summary-item"><span>Estimated CGT due</span><strong id="totalTax">£0.00</strong></div>
+    <section id="calculator" class="container">
+      <div class="card">
+        <h2>Tax Year Inputs</h2>
+        <div class="grid">
+          <div>
+            <label for="taxYear">Tax Year Label</label>
+            <input id="taxYear" name="taxYear" autocomplete="off" value="2025/26" />
+          </div>
+          <div>
+            <label for="assetType">Asset Type</label>
+            <select id="assetType" name="assetType" autocomplete="off">
+              <option value="other">Shares/crypto/other assets (10% / 20%)</option>
+              <option value="residential">Residential property (18% / 28%)</option>
+            </select>
+          </div>
+          <div>
+            <label for="allowance">Annual Exempt Amount (£)</label>
+            <input id="allowance" name="allowance" type="number" min="0" step="1" value="3000" inputmode="numeric" autocomplete="off" />
+          </div>
+          <div>
+            <label for="taxableIncome">Taxable Income Excl. Gains (£)</label>
+            <input id="taxableIncome" name="taxableIncome" type="number" min="0" step="1" value="0" inputmode="numeric" autocomplete="off" />
+          </div>
+          <div>
+            <label for="basicBand">Basic Rate Band Limit (£)</label>
+            <input id="basicBand" name="basicBand" type="number" min="0" step="1" value="37700" inputmode="numeric" autocomplete="off" />
+          </div>
+        </div>
+        <p class="note">Update allowance and tax band values if HMRC guidance changes. This calculator is informational, not tax advice.</p>
       </div>
-      <p class="note">Calculation allocates allowance and basic-rate band in date order. Check with HMRC guidance or your accountant for accuracy.</p>
+    </section>
+
+    <section class="container">
+      <div class="card">
+        <h2>Disposals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Proceeds (£)</th>
+              <th>Cost Basis (£)</th>
+              <th>Fees (£)</th>
+              <th>Notes</th>
+              <th class="right">Gain</th>
+              <th class="right">Allowance Used</th>
+              <th class="right">Taxable Gain</th>
+              <th class="right">Est. Tax</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="disposalBody"></tbody>
+        </table>
+        <div class="actions">
+          <button id="addRow" type="button">Add Disposal</button>
+          <button id="addSample" class="secondary" type="button">Insert Sample Data</button>
+          <button id="exportCsv" class="secondary" type="button">Export CSV</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="card">
+        <h2>Summary</h2>
+        <div class="summary-grid">
+          <div class="summary-item"><span>Total Gains</span><strong id="totalGains">£0.00</strong></div>
+          <div class="summary-item"><span>Allowance Used</span><strong id="totalAllowance">£0.00</strong></div>
+          <div class="summary-item"><span>Taxable Gains</span><strong id="totalTaxable">£0.00</strong></div>
+          <div class="summary-item"><span>Estimated CGT Due</span><strong id="totalTax">£0.00</strong></div>
+        </div>
+        <p class="note">Calculation allocates allowance and basic‑rate band in date order. Confirm with HMRC guidance or your accountant.</p>
+      </div>
+    </section>
+
+    <section id="pricing" class="container">
+      <div class="chapter">
+        <div>
+          <span class="badge">Chapter 2</span>
+          <h2>Pricing That Matches the Task.</h2>
+          <p class="lead">Run one‑off scenarios for free, or upgrade when you need saved reports and reminders.</p>
+        </div>
+        <div class="pricing">
+          <div class="card">
+            <h3>Free</h3>
+            <div class="price">£0&nbsp;<span>/&nbsp;one‑off runs</span></div>
+            <ul class="list">
+              <li>✓ Unlimited in‑browser calculations</li>
+              <li>✓ CSV export</li>
+              <li>✓ Residential vs other asset rates</li>
+            </ul>
+            <div class="cta-row">
+              <a class="btn btn-outline" href="#calculator">Use the Calculator</a>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Pro</h3>
+            <div class="price">£9&nbsp;<span>/&nbsp;month</span></div>
+            <ul class="list">
+              <li>✓ Saved scenarios per tax year</li>
+              <li>✓ PDF summary export</li>
+              <li>✓ Annual reminder before tax year end</li>
+            </ul>
+            <div class="cta-row">
+              <a href="#stripe-coming-soon" class="btn btn-primary btn-pay">Get Pro — £9&nbsp;/&nbsp;mo</a>
+            </div>
+            <p class="note">Payment coming soon — join the waitlist.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="container">
+      <div class="card">
+        <h2>Join the Waitlist</h2>
+        <p class="lead">Get early access to saved reports, reminders, and HMRC‑ready exports.</p>
+        <form id="waitlistForm" class="waitlist" action="mailto:waitlist@example.com" method="post" enctype="text/plain">
+          <label for="email">Email Address</label>
+          <input id="email" name="email" type="email" placeholder="you@email.com…" required autocomplete="email" spellcheck="false" />
+          <button class="btn btn-primary" type="submit">Notify Me</button>
+          <div class="thanks" id="thanksMsg" role="status" aria-live="polite">Thanks — we&rsquo;ll be in touch.</div>
+        </form>
+      </div>
     </section>
   </main>
 
-  <footer>
-    Built for quick HMRC real‑time reporting prep. No data leaves your browser.
+  <footer class="container">
+    Built for UK investors and advisors. No data leaves your browser.
   </footer>
 
   <script>
@@ -241,11 +543,11 @@
     const addRow = (data = {}) => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td><input type="date" value="${data.date || ''}" /></td>
-        <td><input type="number" min="0" step="0.01" value="${data.proceeds || ''}" /></td>
-        <td><input type="number" min="0" step="0.01" value="${data.cost || ''}" /></td>
-        <td><input type="number" min="0" step="0.01" value="${data.fees || ''}" /></td>
-        <td><input type="text" value="${data.notes || ''}" /></td>
+        <td><input type="date" name="date" aria-label="Disposal Date" autocomplete="off" value="${data.date || ''}" /></td>
+        <td><input type="number" name="proceeds" aria-label="Proceeds" min="0" step="0.01" inputmode="decimal" autocomplete="off" value="${data.proceeds || ''}" /></td>
+        <td><input type="number" name="cost" aria-label="Cost Basis" min="0" step="0.01" inputmode="decimal" autocomplete="off" value="${data.cost || ''}" /></td>
+        <td><input type="number" name="fees" aria-label="Fees" min="0" step="0.01" inputmode="decimal" autocomplete="off" value="${data.fees || ''}" /></td>
+        <td><input type="text" name="notes" aria-label="Notes" autocomplete="off" value="${data.notes || ''}" /></td>
         <td class="right output" data-field="gain">-</td>
         <td class="right output" data-field="allowance">-</td>
         <td class="right output" data-field="taxable">-</td>
@@ -394,7 +696,17 @@
       el.addEventListener('change', calculate);
     });
 
-    // Seed with two rows
+    const waitlistForm = document.getElementById('waitlistForm');
+    const thanksMsg = document.getElementById('thanksMsg');
+    waitlistForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      thanksMsg.style.display = 'block';
+      waitlistForm.reset();
+      setTimeout(() => {
+        thanksMsg.style.display = 'none';
+      }, 5000);
+    });
+
     addRow();
     addRow();
     calculate();
