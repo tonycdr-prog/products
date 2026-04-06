@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#F0FDFA" />
+  <title>TypeBack — Typed Text Recall</title>
+  <meta name="description" content="Recall the last things you typed—even if you never copied them. A safe, local-first text history tool." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    :root {
+      --bg: #F0FDFA;
+      --fg: #134E4A;
+      --muted: #64748B;
+      --card: #FFFFFF;
+      --border: #99F6E4;
+      --primary: #0D9488;
+      --accent: #EA580C;
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: light; }
+    body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--fg); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+    .skip { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip:focus { position: static; width: auto; height: auto; padding: 8px 12px; background: var(--primary); color: #fff; border-radius: 8px; }
+    .btn { padding: 12px 18px; border-radius: 10px; border: 1px solid var(--border); background: transparent; font-weight: 600; }
+    .btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid #0D9488; outline-offset: 2px; }
+    .btn:hover { border-color: var(--primary); }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--muted); }
+    @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to Content</a>
+  <div class="container">
+    <main id="main">
+      <header class="grid-2">
+        <div>
+          <h1>TypeBack</h1>
+          <p>Recall the last things you typed—even if you never copied them. Local-first, privacy-safe text history.</p>
+          <div style="display:flex; gap:10px;">
+            <a class="btn primary" href="#demo">Try the Demo</a>
+            <a class="btn" href="#pricing">See Pricing</a>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Why It Matters</h2>
+          <ul>
+            <li>Recover lost snippets in seconds</li>
+            <li>Stop retyping emails, IDs, and commands</li>
+            <li>Keep everything local</li>
+          </ul>
+        </div>
+      </header>
+
+      <section id="demo" class="card" style="margin-top:24px;">
+        <h2>Live Demo</h2>
+        <div class="grid-2">
+          <div>
+            <label class="mono" for="typingArea">Type Here (Enter Creates a Snippet)</label>
+            <textarea id="typingArea" name="typingArea" rows="8" placeholder="Start typing…" oninput="captureTyping()"></textarea>
+            <div style="margin-top:10px; display:flex; gap:10px;">
+              <button class="btn primary" type="button" onclick="clearHistory()">Clear History</button>
+              <button class="btn" type="button" onclick="seedExample()">Seed Example</button>
+            </div>
+            <div id="status" class="mono" aria-live="polite" style="margin-top:8px;"></div>
+          </div>
+          <div>
+            <label class="mono" for="search">Search Snippets</label>
+            <input id="search" name="search" type="text" placeholder="Search recent snippets…" autocomplete="off" oninput="renderSnippets()" />
+            <div id="snippetList" style="margin-top:8px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" style="margin-top:24px;">
+        <h2>Pricing</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h3>Personal</h3>
+            <p><strong>£4/mo</strong> • 7-day history • local only</p>
+            <a class="btn primary" href="#waitlist">Start Trial</a>
+          </div>
+          <div class="card" style="border-color:#0D9488;">
+            <h3>Pro</h3>
+            <p><strong>£9/mo</strong> • 30-day history • encrypted sync</p>
+            <a class="btn primary" href="#waitlist">Start Trial</a>
+          </div>
+          <div class="card">
+            <h3>Team</h3>
+            <p><strong>£29/mo</strong> • shared snippets • admin controls</p>
+            <a class="btn primary" href="#waitlist">Talk to Us</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="waitlist" class="card" style="margin-top:24px;">
+        <h2>Join the Waitlist</h2>
+        <p>Get early access to the desktop app.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <label class="mono" for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@company.com…" autocomplete="email" spellcheck="false" style="flex:1; min-width:220px;" />
+          <button class="btn primary" type="button" onclick="saveEmail()">Join Waitlist</button>
+        </div>
+        <div id="emailStatus" class="mono" aria-live="polite" style="margin-top:8px;"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'typeback_snippets';
+    let buffer = '';
+
+    function loadSnippets() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    }
+    function saveSnippets(snippets) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snippets));
+    }
+    function captureTyping() {
+      const text = document.getElementById('typingArea').value;
+      if (text.includes('\n')) {
+        const parts = text.split('\n');
+        const newSnippets = parts.slice(0, -1).map(s => s.trim()).filter(Boolean);
+        if (newSnippets.length) {
+          const snippets = loadSnippets();
+          newSnippets.reverse().forEach(s => snippets.unshift({ text: s, ts: new Date().toISOString() }));
+          saveSnippets(snippets);
+          renderSnippets();
+        }
+        document.getElementById('typingArea').value = parts[parts.length - 1];
+      }
+      document.getElementById('status').textContent = 'Capturing locally only.';
+    }
+    function renderSnippets() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const snippets = loadSnippets().filter(s => s.text.toLowerCase().includes(q));
+      const list = document.getElementById('snippetList');
+      list.innerHTML = snippets.length ? '' : '<p class="mono">No snippets yet.</p>';
+      snippets.slice(0, 20).forEach(s => {
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.style.marginBottom = '10px';
+        el.innerHTML = `<div>${s.text}</div><div class="mono">${new Date(s.ts).toLocaleString()}</div>`;
+        list.appendChild(el);
+      });
+    }
+    function clearHistory() {
+      localStorage.removeItem(STORAGE_KEY);
+      renderSnippets();
+    }
+    function seedExample() {
+      const snippets = [
+        'Invoice paid — confirmation ID 4832',
+        'Reminder: call supplier at 3pm',
+        'Stripe test key: sk_test_****'
+      ].map(t => ({ text: t, ts: new Date().toISOString() }));
+      saveSnippets(snippets);
+      renderSnippets();
+    }
+    function saveEmail() {
+      const email = document.getElementById('email').value.trim();
+      if (!email.includes('@')) {
+        document.getElementById('emailStatus').textContent = 'Please enter a valid email.';
+        return;
+      }
+      const list = JSON.parse(localStorage.getItem('typeback_waitlist') || '[]');
+      list.push({ email, ts: new Date().toISOString() });
+      localStorage.setItem('typeback_waitlist', JSON.stringify(list));
+      document.getElementById('emailStatus').textContent = 'Thanks! You are on the waitlist.';
+    }
+    renderSnippets();
+  </script>
+</body>
+</html>
