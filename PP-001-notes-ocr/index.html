@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#FFFBEB" />
+  <title>AmberNote — Affordable OCR Notes</title>
+  <meta name="description" content="A lightweight Evernote-style notes app with OCR search — without the Evernote price tag." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap');
+    :root {
+      --bg: #FFFBEB;
+      --fg: #0F172A;
+      --muted: #64748B;
+      --card: #FFFFFF;
+      --border: #EEEDED;
+      --accent: #D97706;
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: light; }
+    body { margin: 0; font-family: Inter, sans-serif; background: var(--bg); color: var(--fg); }
+    h1, h2 { font-family: 'Source Serif 4', serif; text-wrap: balance; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+    .skip { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip:focus { position: static; width: auto; height: auto; padding: 8px 12px; background: var(--accent); color: #fff; border-radius: 8px; }
+    .btn { padding: 12px 18px; border-radius: 10px; border: 1px solid var(--border); background: transparent; font-weight: 600; }
+    .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .btn:hover { border-color: var(--accent); }
+    .btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid #D97706; outline-offset: 2px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--muted); }
+    @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to Content</a>
+  <div class="container">
+    <main id="main">
+      <header class="grid-2">
+        <div>
+          <h1>AmberNote</h1>
+          <p>Lightweight notes + OCR search for receipts, business cards, and images — without a £10/month bill.</p>
+          <div style="display:flex; gap:10px;">
+            <a class="btn primary" href="#demo">Try the Demo</a>
+            <a class="btn" href="#pricing">See Pricing</a>
+          </div>
+        </div>
+        <div class="card">
+          <h2>What You Get</h2>
+          <ul>
+            <li>Fast notes + archive</li>
+            <li>OCR on images (in-browser)</li>
+            <li>Search across notes + OCR text</li>
+          </ul>
+        </div>
+      </header>
+
+      <section id="demo" class="card" style="margin-top:24px;">
+        <h2>Live Demo</h2>
+        <div class="grid-2">
+          <div>
+            <label class="mono" for="noteTitle">Note Title</label>
+            <input id="noteTitle" name="noteTitle" type="text" placeholder="Client meeting notes…" autocomplete="off" />
+            <label class="mono" for="noteBody" style="margin-top:10px; display:block;">Note Text</label>
+            <textarea id="noteBody" name="noteBody" rows="6" placeholder="Key takeaways…" autocomplete="off"></textarea>
+            <label class="mono" for="imageInput" style="margin-top:10px; display:block;">Add Image for OCR</label>
+            <input id="imageInput" name="imageInput" type="file" accept="image/*" />
+            <div style="margin-top:10px; display:flex; gap:10px;">
+              <button class="btn primary" type="button" onclick="addNote()">Save Note</button>
+              <button class="btn" type="button" onclick="runOCR()">Run OCR</button>
+            </div>
+            <div id="ocrStatus" class="mono" aria-live="polite" style="margin-top:8px;"></div>
+          </div>
+          <div>
+            <label class="mono" for="search">Search Notes</label>
+            <input id="search" name="search" type="text" placeholder="Search receipts, names, tags…" autocomplete="off" oninput="renderNotes()" />
+            <div id="notesList" style="margin-top:8px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" style="margin-top:24px;">
+        <h2>Pricing</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h3>Personal</h3>
+            <p><strong>£5/mo</strong> • 1 device • basic OCR</p>
+            <a class="btn primary" href="#waitlist">Start Trial</a>
+          </div>
+          <div class="card" style="border-color:#D97706;">
+            <h3>Pro</h3>
+            <p><strong>£12/mo</strong> • 3 devices • faster OCR</p>
+            <a class="btn primary" href="#waitlist">Start Trial</a>
+          </div>
+          <div class="card">
+            <h3>Team</h3>
+            <p><strong>£39/mo</strong> • shared notebooks • admin controls</p>
+            <a class="btn primary" href="#waitlist">Talk to Us</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="waitlist" class="card" style="margin-top:24px;">
+        <h2>Join the Waitlist</h2>
+        <p>Get early access and import help from Evernote.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <label class="mono" for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@company.com…" autocomplete="email" spellcheck="false" style="flex:1; min-width:220px;" />
+          <button class="btn primary" type="button" onclick="saveEmail()">Join Waitlist</button>
+        </div>
+        <div id="emailStatus" class="mono" aria-live="polite" style="margin-top:8px;"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script>
+    const STORAGE_KEY = 'ambernote_notes';
+
+    function loadNotes() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    }
+    function saveNotes(notes) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+    function addNote() {
+      const title = document.getElementById('noteTitle').value.trim();
+      const body = document.getElementById('noteBody').value.trim();
+      if (!title && !body) return;
+      const notes = loadNotes();
+      notes.unshift({ title, body, ocr: '', ts: new Date().toISOString() });
+      saveNotes(notes);
+      document.getElementById('noteTitle').value = '';
+      document.getElementById('noteBody').value = '';
+      renderNotes();
+    }
+    async function runOCR() {
+      const file = document.getElementById('imageInput').files[0];
+      if (!file) {
+        document.getElementById('ocrStatus').textContent = 'Please upload an image first.';
+        return;
+      }
+      document.getElementById('ocrStatus').textContent = 'Running OCR…';
+      const { data } = await Tesseract.recognize(file, 'eng');
+      const notes = loadNotes();
+      notes.unshift({ title: 'OCR Capture', body: '', ocr: data.text, ts: new Date().toISOString() });
+      saveNotes(notes);
+      document.getElementById('ocrStatus').textContent = 'OCR saved as a new note.';
+      renderNotes();
+    }
+    function renderNotes() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const notes = loadNotes().filter(n => (n.title + ' ' + n.body + ' ' + n.ocr).toLowerCase().includes(q));
+      const container = document.getElementById('notesList');
+      container.innerHTML = notes.length ? '' : '<p class="mono">No notes found.</p>';
+      notes.forEach(n => {
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.style.marginBottom = '10px';
+        el.innerHTML = `<strong>${n.title || 'Untitled'}</strong><div class="mono">${new Date(n.ts).toLocaleString()}</div><p>${(n.body || n.ocr || '').slice(0, 180)}</p>`;
+        container.appendChild(el);
+      });
+    }
+    function saveEmail() {
+      const email = document.getElementById('email').value.trim();
+      if (!email.includes('@')) {
+        document.getElementById('emailStatus').textContent = 'Please enter a valid email.';
+        return;
+      }
+      const list = JSON.parse(localStorage.getItem('ambernote_waitlist') || '[]');
+      list.push({ email, ts: new Date().toISOString() });
+      localStorage.setItem('ambernote_waitlist', JSON.stringify(list));
+      document.getElementById('emailStatus').textContent = 'Thanks! You are on the waitlist.';
+    }
+    renderNotes();
+  </script>
+</body>
+</html>
