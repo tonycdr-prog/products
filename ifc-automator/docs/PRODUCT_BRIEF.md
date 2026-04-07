@@ -1,6 +1,6 @@
 # IFC Automator
 
-**What it does:** Automatically assembles client‑ready IFC packs (Enquiry & PO, RAMS, Certs/Specs, Reports, IFC Certificate) into a consistent folder structure.
+**What it does:** Automatically assembles IFCC/IFC audit‑ready packs (Enquiry & PO, RAMS, Certs/Specs, Reports, IFC Certificate, audit evidence) into a consistent folder structure across all schemes.
 
 **Target customer:** UK compliance and maintenance teams handling smoke control, fire dampers, ventilation and PPM upgrades.
 
