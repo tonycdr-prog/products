@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SMB Competitor Tracker</title>
+<style>
+  :root{
+    --bg:#0f1115;--panel:#151922;--muted:#9aa3b2;--text:#e7ecf3;--accent:#6ee7ff;--accent2:#9bffb0;--danger:#ff7a7a;--warn:#ffcc66;
+    --border:#232a36;--card:#11151d;--shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+  body{margin:0;background:linear-gradient(180deg,#0c0f14,#0f1115 40%);color:var(--text);}
+  header{padding:28px 28px 10px 28px;display:flex;gap:18px;align-items:center;}
+  header h1{margin:0;font-size:24px;letter-spacing:.3px;}
+  header p{margin:0;color:var(--muted);}
+  .container{padding:18px 28px 60px 28px;display:grid;gap:16px;}
+  .grid{display:grid;gap:16px;grid-template-columns:1.1fr .9fr;}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);}  
+  .panel h2{margin:0 0 12px 0;font-size:16px;}
+  .row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+  .row-2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .row-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px;}
+  input,select,textarea{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:#0c0f14;color:var(--text);}
+  textarea{min-height:70px;resize:vertical;}
+  button{background:var(--accent);color:#052027;border:none;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer;}
+  button.secondary{background:#232a36;color:var(--text);}
+  button.danger{background:var(--danger);color:#320808;}
+  button.ghost{background:transparent;border:1px dashed var(--border);color:var(--muted);}
+  .table{width:100%;border-collapse:collapse;font-size:13px;}
+  .table th,.table td{border-bottom:1px solid var(--border);padding:8px;text-align:left;vertical-align:top;}
+  .tag{display:inline-flex;align-items:center;background:#1f2836;border:1px solid #2b3647;color:#cfe2ff;padding:2px 8px;border-radius:999px;font-size:11px;margin-right:4px;}
+  .muted{color:var(--muted);}
+  .pill{padding:2px 8px;border-radius:999px;font-size:11px;display:inline-flex;align-items:center;gap:6px;}
+  .pill.ok{background:#1d2b22;color:#9bffb0;border:1px solid #2b3b31;}
+  .pill.warn{background:#2c2516;color:#ffcc66;border:1px solid #3b2f18;}
+  .pill.danger{background:#321517;color:#ff9b9b;border:1px solid #3b1f1f;}
+  .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .actions button{margin-right:6px;margin-bottom:6px;}
+  .empty{padding:16px;border:1px dashed var(--border);border-radius:12px;color:var(--muted);}
+  .right-col{display:grid;gap:16px;}
+  .alert{padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card);} 
+  .alert strong{display:block;margin-bottom:4px;}
+  .footer{margin-top:12px;color:var(--muted);font-size:12px;}
+  @media(max-width:1100px){.grid{grid-template-columns:1fr;}.row{grid-template-columns:1fr 1fr;}.row-4{grid-template-columns:1fr 1fr;}.row-3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>SMB Competitor Tracker</h1>
+    <p>Track competitor pricing, product changes, and hiring signals — manually but consistently. Data stays in your browser.</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="grid">
+    <section class="panel">
+      <h2>Add competitor</h2>
+      <div class="row">
+        <div><label>Name</label><input id="c-name" placeholder="Acme CRM"></div>
+        <div><label>Website</label><input id="c-url" placeholder="https://acme.com"></div>
+        <div><label>Segment</label><input id="c-seg" placeholder="SMB CRM"></div>
+        <div><label>Region</label><input id="c-region" placeholder="UK / EU"></div>
+        <div><label>Tags (comma)</label><input id="c-tags" placeholder="crm, freemium"></div>
+        <div><label>Baseline price</label><input id="c-base" placeholder="29"></div>
+      </div>
+      <div class="row-3" style="margin-top:10px;">
+        <div><label>Currency</label><select id="c-currency"><option>GBP</option><option>USD</option><option>EUR</option></select></div>
+        <div><label>Alert threshold (% change)</label><input id="c-alert" type="number" min="1" value="15"></div>
+        <div>
+          <label>Signal scope</label>
+          <div class="flex">
+            <label><input type="checkbox" id="s-pricing" checked> Pricing</label>
+            <label><input type="checkbox" id="s-features" checked> Features</label>
+            <label><input type="checkbox" id="s-jobs" checked> Hiring</label>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;" class="row-2">
+        <div><label>Notes</label><textarea id="c-notes" placeholder="Positioning, ICP, anything useful"></textarea></div>
+        <div>
+          <label>Quick actions</label>
+          <div class="flex">
+            <button id="add-competitor">Add competitor</button>
+            <button id="reset-data" class="secondary">Reset all data</button>
+          </div>
+          <div class="footer">LocalStorage key: smbCompetitorTracker_v1</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="right-col">
+      <section class="panel">
+        <h2>New snapshot</h2>
+        <div class="row-3">
+          <div>
+            <label>Competitor</label>
+            <select id="snap-competitor"></select>
+          </div>
+          <div>
+            <label>Price now</label>
+            <input id="snap-price" type="number" placeholder="49">
+          </div>
+          <div>
+            <label>Jobs open (count)</label>
+            <input id="snap-jobs" type="number" placeholder="3">
+          </div>
+        </div>
+        <div class="row-2" style="margin-top:10px;">
+          <div>
+            <label>Feature change / product notes</label>
+            <textarea id="snap-features" placeholder="Launched new onboarding flow, new AI assistant"></textarea>
+          </div>
+          <div>
+            <label>Extra notes</label>
+            <textarea id="snap-notes" placeholder="Any pricing copy / promos"></textarea>
+          </div>
+        </div>
+        <div class="flex" style="margin-top:10px;">
+          <button id="add-snapshot">Record snapshot</button>
+          <button id="export-json" class="secondary">Export JSON</button>
+          <button id="export-csv" class="secondary">Export CSV</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Latest alerts</h2>
+        <div id="alerts" class="alert-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h2>Competitors</h2>
+    <div id="competitor-table"></div>
+  </section>
+</div>
+
+<script>
+  const STORAGE_KEY = 'smbCompetitorTracker_v1';
+  const $ = (id)=>document.getElementById(id);
+
+  function loadData(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return {competitors:[]};
+    try { return JSON.parse(raw); } catch(e){ return {competitors:[]}; }
+  }
+  function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+  function makeId(){ return Math.random().toString(36).slice(2,10); }
+
+  function addCompetitor(){
+    const data = loadData();
+    const name = $('c-name').value.trim();
+    if(!name) return alert('Name required');
+    const competitor = {
+      id: makeId(),
+      name,
+      url: $('c-url').value.trim(),
+      segment: $('c-seg').value.trim(),
+      region: $('c-region').value.trim(),
+      tags: $('c-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+      baselinePrice: Number($('c-base').value || 0),
+      currency: $('c-currency').value,
+      alertPct: Number($('c-alert').value || 15),
+      signals: {
+        pricing: $('s-pricing').checked,
+        features: $('s-features').checked,
+        jobs: $('s-jobs').checked
+      },
+      notes: $('c-notes').value.trim(),
+      createdAt: new Date().toISOString(),
+      snapshots: []
+    };
+    data.competitors.push(competitor);
+    saveData(data);
+    clearCompetitorForm();
+    render();
+  }
+
+  function clearCompetitorForm(){
+    ['c-name','c-url','c-seg','c-region','c-tags','c-base','c-notes'].forEach(id=>$(id).value='');
+  }
+
+  function addSnapshot(){
+    const data = loadData();
+    const competitorId = $('snap-competitor').value;
+    const comp = data.competitors.find(c=>c.id===competitorId);
+    if(!comp) return alert('Choose a competitor');
+    const snap = {
+      date: new Date().toISOString(),
+      price: Number($('snap-price').value || 0),
+      jobs: Number($('snap-jobs').value || 0),
+      features: $('snap-features').value.trim(),
+      notes: $('snap-notes').value.trim()
+    };
+    comp.snapshots.push(snap);
+    saveData(data);
+    ['snap-price','snap-jobs','snap-features','snap-notes'].forEach(id=>$(id).value='');
+    render();
+  }
+
+  function deleteCompetitor(id){
+    const data = loadData();
+    data.competitors = data.competitors.filter(c=>c.id!==id);
+    saveData(data);
+    render();
+  }
+
+  function updateCompetitor(id, field, value){
+    const data = loadData();
+    const comp = data.competitors.find(c=>c.id===id);
+    if(!comp) return;
+    comp[field] = value;
+    saveData(data);
+    render();
+  }
+
+  function render(){
+    const data = loadData();
+    const table = $('competitor-table');
+    const select = $('snap-competitor');
+    select.innerHTML = data.competitors.length ? '' : '<option value="">No competitors yet</option>';
+    data.competitors.forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c.id; opt.textContent = c.name; select.appendChild(opt);
+    });
+
+    if(!data.competitors.length){
+      table.innerHTML = '<div class="empty">No competitors yet. Add one above to start tracking.</div>';
+      $('alerts').innerHTML = '<div class="muted">No alerts yet.</div>';
+      return;
+    }
+
+    const rows = data.competitors.map(c=>{
+      const snaps = c.snapshots || [];
+      const latest = snaps[snaps.length-1];
+      const prev = snaps[snaps.length-2];
+      const priceDelta = latest && prev ? latest.price - prev.price : 0;
+      const jobsDelta = latest && prev ? latest.jobs - prev.jobs : 0;
+      const pricePct = prev && prev.price ? ((priceDelta/prev.price)*100) : 0;
+      const priceFlag = Math.abs(pricePct) >= (c.alertPct || 15);
+      const statusClass = priceFlag ? 'danger' : (snaps.length ? 'ok' : 'warn');
+      const statusText = snaps.length ? (priceFlag ? 'Alert' : 'OK') : 'No data';
+
+      return `
+        <tr>
+          <td><strong>${c.name}</strong><div class="muted">${c.segment || ''}</div></td>
+          <td><a href="${c.url || '#'}" target="_blank" style="color:var(--accent)">${c.url || '—'}</a><div class="muted">${c.region || ''}</div></td>
+          <td>${(c.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('') || '<span class="muted">—</span>'}</td>
+          <td>
+            <div><span class="pill ${statusClass}">${statusText}</span></div>
+            <div class="muted">${latest ? `${c.currency} ${latest.price} (${priceDelta>=0?'+':''}${priceDelta || 0})` : 'No snapshots'}</div>
+            <div class="muted">Jobs: ${latest ? `${latest.jobs} (${jobsDelta>=0?'+':''}${jobsDelta})` : '—'}</div>
+          </td>
+          <td>
+            <div class="muted">Signals:</div>
+            <div class="flex">
+              ${c.signals?.pricing ? '<span class="pill ok">Pricing</span>' : ''}
+              ${c.signals?.features ? '<span class="pill ok">Features</span>' : ''}
+              ${c.signals?.jobs ? '<span class="pill ok">Hiring</span>' : ''}
+            </div>
+            <div class="muted">Alert ≥ ${c.alertPct || 15}% change</div>
+          </td>
+          <td class="actions">
+            <button class="secondary" onclick="prefillSnapshot('${c.id}')">Snapshot</button>
+            <button class="ghost" onclick="promptEdit('${c.id}')">Edit</button>
+            <button class="danger" onclick="deleteCompetitor('${c.id}')">Delete</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    table.innerHTML = `
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Competitor</th>
+            <th>Site</th>
+            <th>Tags</th>
+            <th>Latest snapshot</th>
+            <th>Signals</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+
+    renderAlerts(data);
+  }
+
+  function renderAlerts(data){
+    const alerts = [];
+    data.competitors.forEach(c=>{
+      const snaps = c.snapshots || [];
+      if(snaps.length < 2) return;
+      const latest = snaps[snaps.length-1];
+      const prev = snaps[snaps.length-2];
+      const priceDelta = latest.price - prev.price;
+      const pricePct = prev.price ? ((priceDelta/prev.price)*100) : 0;
+      if(Math.abs(pricePct) >= (c.alertPct || 15)){
+        alerts.push({
+          type:'price',
+          title:`${c.name}: ${c.currency} ${latest.price} (${priceDelta>=0?'+':''}${priceDelta})`,
+          body:`Price changed by ${pricePct.toFixed(1)}%.`
+        });
+      }
+      if(c.signals?.jobs && latest.jobs !== prev.jobs){
+        alerts.push({
+          type:'jobs',
+          title:`${c.name}: Hiring ${latest.jobs} roles`,
+          body:`Jobs changed by ${latest.jobs - prev.jobs}.`
+        });
+      }
+      if(c.signals?.features && latest.features && latest.features !== prev.features){
+        alerts.push({
+          type:'features',
+          title:`${c.name}: Feature update`,
+          body:`${latest.features.slice(0,120)}${latest.features.length>120?'...':''}`
+        });
+      }
+    });
+
+    const alertWrap = $('alerts');
+    if(!alerts.length){
+      alertWrap.innerHTML = '<div class="muted">No alerts yet.</div>';
+      return;
+    }
+    alertWrap.innerHTML = alerts.slice(0,6).map(a=>`
+      <div class="alert">
+        <strong>${a.title}</strong>
+        <div class="muted">${a.body}</div>
+      </div>
+    `).join('');
+  }
+
+  function prefillSnapshot(id){
+    $('snap-competitor').value = id;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function promptEdit(id){
+    const data = loadData();
+    const comp = data.competitors.find(c=>c.id===id);
+    if(!comp) return;
+    const newName = prompt('Edit name', comp.name);
+    if(newName===null) return;
+    comp.name = newName.trim() || comp.name;
+    const newAlert = prompt('Alert threshold (%)', comp.alertPct || 15);
+    if(newAlert!==null) comp.alertPct = Number(newAlert) || comp.alertPct;
+    saveData(data);
+    render();
+  }
+
+  function exportJSON(){
+    const data = loadData();
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    downloadBlob(blob, 'smb-competitor-tracker.json');
+  }
+
+  function exportCSV(){
+    const data = loadData();
+    const rows = [['Competitor','Date','Price','Currency','Jobs','Features','Notes','Segment','Region','Tags']];
+    data.competitors.forEach(c=>{
+      (c.snapshots||[]).forEach(s=>{
+        rows.push([
+          c.name, s.date, s.price, c.currency, s.jobs, (s.features||'').replace(/\n/g,' '), (s.notes||'').replace(/\n/g,' '), c.segment, c.region, (c.tags||[]).join('|')
+        ]);
+      });
+    });
+    const csv = rows.map(r=>r.map(v=>`"${(v??'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    downloadBlob(blob, 'smb-competitor-tracker.csv');
+  }
+
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  $('add-competitor').addEventListener('click', addCompetitor);
+  $('add-snapshot').addEventListener('click', addSnapshot);
+  $('export-json').addEventListener('click', exportJSON);
+  $('export-csv').addEventListener('click', exportCSV);
+  $('reset-data').addEventListener('click', ()=>{
+    if(confirm('Delete all competitors and snapshots?')){
+      localStorage.removeItem(STORAGE_KEY);
+      render();
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>
