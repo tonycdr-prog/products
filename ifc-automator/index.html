@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IFC Automator — Client-ready IFC packs in minutes</title>
+  <meta name="description" content="Turn messy IFC folders into a clean, client‑ready pack. Enquiry → RAMS → Certs → Reports → IFC Certificate, automatically assembled." />
+  <meta property="og:title" content="IFC Automator" />
+  <meta property="og:description" content="Client‑ready IFC packs in minutes. No chasing folders." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://deucalion.uk" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #000;
+      --panel: #0a0a0a;
+      --text: #ededed;
+      --muted: #777;
+      --line: #1a1a1a;
+      --accent: #50e3c2;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--text); text-decoration: none; }
+    .page { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+    .nav { padding: 48px 0 0; display: flex; align-items: center; justify-content: space-between; }
+    .wordmark { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; }
+    .nav-pill { font-size: 12px; font-weight: 500; color: #666; border: 1px solid #222; padding: 4px 10px; border-radius: 999px; }
+
+    .hero { padding: 96px 0 0; display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; }
+    .hero h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; color: #fff; }
+    .lede { margin-top: 18px; font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 540px; }
+    .cta-row { margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn { padding: 10px 18px; border-radius: 8px; border: 1px solid #333; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #ededed; color: #000; border-color: #ededed; }
+    .btn-ghost { background: transparent; color: #bbb; border-color: #222; }
+
+    .preview {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--panel);
+    }
+    .preview-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .preview-body { padding: 18px; display: grid; gap: 10px; }
+    .folder {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border: 1px solid #151515; border-radius: 8px; background: #060606;
+      color: #cfcfcf; font-size: 13px;
+    }
+    .folder span { color: #6b6b6b; font-size: 12px; margin-left: auto; }
+
+    .section { margin-top: 72px; padding-top: 48px; border-top: 1px solid var(--line); }
+    .section-label { font-size: 13px; font-weight: 500; color: #555; margin-bottom: 24px; }
+
+    .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .step { padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+    .step h3 { font-size: 12px; font-weight: 600; color: #ededed; margin-bottom: 6px; }
+    .step p { font-size: 12px; color: #777; line-height: 1.5; }
+
+    .features { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; }
+    .feature h4 { font-size: 14px; font-weight: 600; color: #ededed; margin-bottom: 6px; }
+    .feature p { font-size: 13px; color: #666; line-height: 1.6; }
+
+    .signup { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--line); }
+    .signup-label { font-size: 13px; font-weight: 500; color: #555; margin-bottom: 16px; display: block; }
+    .form-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .form-row input { flex: 1; min-width: 180px; padding: 10px 14px; border-radius: 6px; border: 1px solid #222; background: #0a0a0a; color: #ededed; font-size: 14px; }
+    .form-row button { padding: 10px 20px; border-radius: 6px; border: 1px solid #333; background: #ededed; color: #000; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .form-msg { margin-top: 10px; font-size: 13px; min-height: 20px; }
+    .form-msg.ok { color: #3cc; }
+    .form-msg.err { color: #c44; }
+
+    .footer { margin-top: 72px; padding: 28px 0 48px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; font-size: 12px; color: #444; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .steps { grid-template-columns: 1fr; }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="nav">
+      <span class="wordmark">IFC Automator</span>
+      <span class="nav-pill">Private beta</span>
+    </nav>
+
+    <section class="hero">
+      <div>
+        <h1>Client‑ready IFC packs in minutes.</h1>
+        <p class="lede">
+          Turn messy folders into a clean, ordered IFC handover. Enquiry → RAMS → Certs → Reports → IFC Certificate — auto‑assembled from the files you already have.
+        </p>
+        <div class="cta-row">
+          <button class="btn btn-primary">Get early access</button>
+          <button class="btn btn-ghost">See how it works</button>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="preview-header">IFC Pack Builder — Output Preview</div>
+        <div class="preview-body">
+          <div class="folder">1. Enquiry &amp; PO Instruction <span>auto‑captured</span></div>
+          <div class="folder">2. RAMS <span>template + project data</span></div>
+          <div class="folder">3. Cert of Conforms &amp; Specs <span>manufacturer matched</span></div>
+          <div class="folder">4. Reports <span>client‑ready</span></div>
+          <div class="folder">5. IFC Cert <span>generated</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Your current flow, automated</div>
+      <div class="steps">
+        <div class="step"><h3>1. Enquiry &amp; PO</h3><p>Email or PPM note is captured and tagged automatically.</p></div>
+        <div class="step"><h3>2. RAMS</h3><p>Correct RAMS template injected with site + scope data.</p></div>
+        <div class="step"><h3>3. Certs &amp; Specs</h3><p>Pulls manufacturer certs/specs based on system type.</p></div>
+        <div class="step"><h3>4. Reports</h3><p>Your report/certificate added in the right place.</p></div>
+        <div class="step"><h3>5. IFC Cert</h3><p>Final IFC certificate generated and filed.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Why it matters</div>
+      <div class="features">
+        <div class="feature">
+          <h4>Zero folder chaos</h4>
+          <p>Consistent structure every time. No missing documents. No guessing.</p>
+        </div>
+        <div class="feature">
+          <h4>Faster handover</h4>
+          <p>Turnaround drops from hours to minutes. Teams stay billable.</p>
+        </div>
+        <div class="feature">
+          <h4>Audit‑ready by default</h4>
+          <p>Every pack is structured for client review and compliance sign‑off.</p>
+        </div>
+        <div class="feature">
+          <h4>Built for UK compliance teams</h4>
+          <p>Smoke control, fire dampers, ventilation, PPM upgrades.</p>
+        </div>
+      </div>
+
+      <div class="signup" id="waitlist">
+        <span class="signup-label">Get early access</span>
+        <form id="form">
+          <div class="form-row">
+            <input type="email" id="email" placeholder="Email" required autocomplete="email" />
+            <input type="text" id="company" placeholder="Company" required autocomplete="organization" />
+            <button type="submit" id="btn">Join waitlist</button>
+          </div>
+        </form>
+        <div class="form-msg" id="msg"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>&copy; 2026 IFC Automator</span>
+      <span>Built in the UK</span>
+      <span><a href="https://deucalion.uk">Deucalion.uk</a></span>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+    const btn = document.getElementById('btn');
+    const msg = document.getElementById('msg');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = 'Joining...';
+      msg.className = 'form-msg';
+      msg.textContent = '';
+
+      setTimeout(() => {
+        msg.textContent = "You're on the list.";
+        msg.className = 'form-msg ok';
+        form.reset();
+        btn.disabled = false;
+        btn.textContent = 'Join waitlist';
+      }, 500);
+    });
+  </script>
+</body>
+</html>
