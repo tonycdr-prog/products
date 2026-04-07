@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Competency Matrix</title>
+  <meta name="description" content="Interactive competency matrix for smoke control and fire safety systems." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0b0b0b;
+      --panel: #111;
+      --text: #ededed;
+      --muted: #777;
+      --line: #1a1a1a;
+      --accent: #50e3c2;
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 32px 20px 60px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    h1 { font-size: 24px; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 13px; }
+
+    .toolbar {
+      margin: 20px 0 16px;
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    }
+    .toolbar input, .toolbar select, .toolbar button {
+      background: #0f0f0f; color: var(--text); border: 1px solid #222; border-radius: 8px;
+      padding: 8px 10px; font-size: 12px;
+    }
+    .toolbar button { cursor: pointer; }
+    .toolbar button.primary { background: #ededed; color: #000; border-color: #ededed; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left; font-size: 12px; color: #666; font-weight: 500;
+      padding: 10px; border-bottom: 1px solid var(--line);
+    }
+    tbody td {
+      padding: 10px; border-bottom: 1px solid var(--line); font-size: 13px; vertical-align: top;
+    }
+    tbody tr:hover { background: #0f0f0f; }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 2px 8px; border-radius: 999px; font-size: 11px; border: 1px solid #222; color: #999;
+    }
+
+    .level { width: 100%; }
+
+    .badge { font-size: 11px; padding: 2px 6px; border-radius: 6px; border: 1px solid #222; }
+    .lvl-0 { color: #999; }
+    .lvl-1 { color: #d6a56b; }
+    .lvl-2 { color: #f5d67c; }
+    .lvl-3 { color: #7bd7a5; }
+    .lvl-4 { color: #50e3c2; }
+
+    .footer { margin-top: 20px; color: #555; font-size: 12px; }
+
+    @media (max-width: 800px) {
+      header { flex-direction: column; align-items: flex-start; }
+      thead { display: none; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      tbody tr { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 12px; padding: 8px; }
+      tbody td { border: none; padding: 6px 4px; }
+      tbody td::before {
+        content: attr(data-label);
+        display: block; font-size: 11px; color: #666; margin-bottom: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Competency Matrix</h1>
+        <div class="sub">0 = No Experience · 1 = Assisted · 2 = Supervised · 3 = Independent · 4 = Expert/Trainer</div>
+      </div>
+      <span class="pill" id="saved-indicator">All changes saved</span>
+    </header>
+
+    <div class="toolbar">
+      <input id="search" type="text" placeholder="Search domain or scope" />
+      <select id="domainFilter"></select>
+      <select id="minLevel">
+        <option value="">Min level: any</option>
+        <option value="0">0+</option>
+        <option value="1">1+</option>
+        <option value="2">2+</option>
+        <option value="3">3+</option>
+        <option value="4">4</option>
+      </select>
+      <button class="primary" id="export">Export CSV</button>
+      <button id="reset">Reset</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 16%">Domain</th>
+          <th>Scope</th>
+          <th style="width: 22%">Evidence examples</th>
+          <th style="width: 14%">Level</th>
+          <th style="width: 16%">Sign-off</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+
+    <div class="footer">Stored locally in your browser. Use Export to download a CSV.</div>
+  </div>
+
+  <script>
+    const data = [
+      { domain: 'Smoke Ventilation Theory', scope: 'Principles & standards (BS 7346-8, BS EN 12101, BS 9999/9991)', evidence: 'Training certs, CPD' },
+      { domain: 'AOV Systems', scope: 'Servicing', evidence: 'Service reports' },
+      { domain: 'AOV Systems', scope: 'Remedials', evidence: 'Remedial reports' },
+      { domain: 'AOV Systems', scope: 'Installations', evidence: 'Install certs' },
+      { domain: 'Dampers', scope: 'Servicing', evidence: 'Service reports' },
+      { domain: 'Dampers', scope: 'Remedials', evidence: 'Remedial reports' },
+      { domain: 'Dampers', scope: 'Installations', evidence: 'Install certs' },
+      { domain: 'Fans', scope: 'Servicing', evidence: 'Service reports' },
+      { domain: 'Fans', scope: 'Remedials', evidence: 'Remedial reports' },
+      { domain: 'Fans', scope: 'Installations', evidence: 'Install certs' },
+      { domain: 'Controls', scope: 'Servicing', evidence: 'Service reports' },
+      { domain: 'Controls', scope: 'Remedials', evidence: 'Remedial reports' },
+      { domain: 'Controls', scope: 'Installations', evidence: 'Install certs' },
+      { domain: 'Compressors', scope: 'Servicing', evidence: 'Service reports' },
+      { domain: 'Compressors', scope: 'Remedials', evidence: 'Remedial reports' },
+      { domain: 'Compressors', scope: 'Installations', evidence: 'Install certs' },
+      { domain: 'Fire/Smoke Curtains', scope: 'Servicing', evidence: 'Service reports' },
+      { domain: 'Fire/Smoke Curtains', scope: 'Remedials', evidence: 'Remedial reports' },
+      { domain: 'Fire/Smoke Curtains', scope: 'Installations', evidence: 'Install certs' },
+      { domain: 'Electrical Installations', scope: 'NVQ3/AM2/18th Edition', evidence: 'Certificates' },
+      { domain: 'Ductwork Installations', scope: 'Certified standard', evidence: 'Certs, QA checks' },
+      { domain: 'Fire Stopping Installations', scope: 'Accredited standard', evidence: 'Certs, audit records' },
+      { domain: 'System Surveys', scope: 'Full surveys + reporting', evidence: 'Survey reports' },
+      { domain: 'Service Report Completion', scope: 'Accurate, client-ready reports', evidence: 'Example reports' },
+      { domain: 'IRATA', scope: 'Rope access level', evidence: 'IRATA cert' },
+      { domain: 'Additional Access', scope: 'Ladders, roof access, rescue', evidence: 'Training certs' },
+      { domain: 'IPAF', scope: 'MEWP categories', evidence: 'IPAF cert' },
+      { domain: 'PASMA', scope: 'Tower assembly/use', evidence: 'PASMA cert' },
+      { domain: 'Health & Safety', scope: 'RAMS, LOTO, risk assessment', evidence: 'H&S training, toolbox' },
+      { domain: 'PPE', scope: 'Selection, inspection, use', evidence: 'PPE training' },
+      { domain: 'Manufacturer Training', scope: 'SE Controls, Colt, Elta, Flakt Woods, Nuaire, Novenco, WindowMaster, Easi-Vent, Kingspan, etc.', evidence: 'Manufacturer certs' },
+      { domain: 'Sector Experience', scope: 'Residential (Low-Rise)', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Residential (High-Rise >18m)', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Social Housing', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Commercial', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Retail & Shopping', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Healthcare', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Education', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Hotels & Leisure', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Industrial / Warehouses', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Car Parks', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Transport Hubs', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'High-Risk / Specialist', evidence: 'Site logs' },
+      { domain: 'Sector Experience', scope: 'Custodial', evidence: 'Site logs' },
+    ];
+
+    const stateKey = 'competency-matrix-v1';
+    const saved = JSON.parse(localStorage.getItem(stateKey) || '{}');
+
+    const rowsEl = document.getElementById('rows');
+    const searchEl = document.getElementById('search');
+    const domainFilter = document.getElementById('domainFilter');
+    const minLevel = document.getElementById('minLevel');
+    const savedIndicator = document.getElementById('saved-indicator');
+
+    function setSaved(flag) {
+      savedIndicator.textContent = flag ? 'All changes saved' : 'Saving…';
+      savedIndicator.style.color = flag ? '#8a8a8a' : '#50e3c2';
+    }
+
+    function getDomains() {
+      return ['All domains', ...new Set(data.map(d => d.domain))];
+    }
+
+    function renderFilters() {
+      domainFilter.innerHTML = '';
+      getDomains().forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        domainFilter.appendChild(opt);
+      });
+    }
+
+    function levelSelect(id, current = '') {
+      const sel = document.createElement('select');
+      sel.className = 'level';
+      ['','0','1','2','3','4'].forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v === '' ? 'Select…' : v;
+        if (v === current) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', () => {
+        setSaved(false);
+        saved[id] = saved[id] || {};
+        saved[id].level = sel.value;
+        localStorage.setItem(stateKey, JSON.stringify(saved));
+        setSaved(true);
+      });
+      return sel;
+    }
+
+    function signoffInput(id, current = '') {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = current;
+      input.placeholder = 'Name / date';
+      input.style.width = '100%';
+      input.addEventListener('input', () => {
+        setSaved(false);
+        saved[id] = saved[id] || {};
+        saved[id].signoff = input.value;
+        localStorage.setItem(stateKey, JSON.stringify(saved));
+        setSaved(true);
+      });
+      return input;
+    }
+
+    function rowMatches(item, idx) {
+      const q = searchEl.value.toLowerCase().trim();
+      const dom = domainFilter.value;
+      const min = minLevel.value;
+      const savedLevel = saved[idx]?.level || '';
+
+      if (dom && dom !== 'All domains' && item.domain !== dom) return false;
+      if (q && !(item.domain.toLowerCase().includes(q) || item.scope.toLowerCase().includes(q))) return false;
+      if (min && (savedLevel === '' || Number(savedLevel) < Number(min))) return false;
+      return true;
+    }
+
+    function render() {
+      rowsEl.innerHTML = '';
+      data.forEach((item, idx) => {
+        if (!rowMatches(item, idx)) return;
+
+        const tr = document.createElement('tr');
+
+        const tdDomain = document.createElement('td');
+        tdDomain.dataset.label = 'Domain';
+        tdDomain.textContent = item.domain;
+
+        const tdScope = document.createElement('td');
+        tdScope.dataset.label = 'Scope';
+        tdScope.textContent = item.scope;
+
+        const tdEvidence = document.createElement('td');
+        tdEvidence.dataset.label = 'Evidence';
+        tdEvidence.textContent = item.evidence || '';
+
+        const tdLevel = document.createElement('td');
+        tdLevel.dataset.label = 'Level';
+        tdLevel.appendChild(levelSelect(idx, saved[idx]?.level || ''));
+
+        const tdSignoff = document.createElement('td');
+        tdSignoff.dataset.label = 'Sign-off';
+        tdSignoff.appendChild(signoffInput(idx, saved[idx]?.signoff || ''));
+
+        tr.appendChild(tdDomain);
+        tr.appendChild(tdScope);
+        tr.appendChild(tdEvidence);
+        tr.appendChild(tdLevel);
+        tr.appendChild(tdSignoff);
+        rowsEl.appendChild(tr);
+      });
+    }
+
+    function exportCsv() {
+      const headers = ['Domain','Scope','Evidence Examples','Level (0-4)','Sign-off'];
+      const lines = [headers.join(',')];
+      data.forEach((item, idx) => {
+        const lvl = saved[idx]?.level || '';
+        const sign = (saved[idx]?.signoff || '').replace(/\n/g, ' ');
+        const row = [item.domain, item.scope, item.evidence, lvl, sign]
+          .map(v => '"' + String(v || '').replace(/"/g, '""') + '"')
+          .join(',');
+        lines.push(row);
+      });
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'competency-matrix.csv';
+      a.click();
+    }
+
+    document.getElementById('export').addEventListener('click', exportCsv);
+    document.getElementById('reset').addEventListener('click', () => {
+      if (!confirm('Clear all saved levels and sign-offs?')) return;
+      localStorage.removeItem(stateKey);
+      location.reload();
+    });
+    searchEl.addEventListener('input', render);
+    domainFilter.addEventListener('change', render);
+    minLevel.addEventListener('change', render);
+
+    renderFilters();
+    render();
+  </script>
+</body>
+</html>
