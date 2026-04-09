@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PermaQR — keep printed QR codes alive forever</title>
+  <meta name="description" content="Generate a QR code that you control. Create a self-hosted redirect page and update the destination anytime." />
+  <meta property="og:title" content="PermaQR" />
+  <meta property="og:description" content="Permanent QR links + self-hosted redirect page." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+    :root{
+      --primary:#1E293B;--on-primary:#fff;--secondary:#334155;--on-secondary:#fff;--accent:#22C55E;--on-accent:#0F172A;
+      --bg:#0F172A;--fg:#F8FAFC;--card:#1B2336;--card-fg:#F8FAFC;--muted:#272F42;--muted-fg:#94A3B8;--border:#475569;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:'Fira Sans',system-ui;background:var(--bg);color:var(--fg)}
+    header{padding:24px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(15,23,42,.95);backdrop-filter:blur(8px)}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:36px 0}
+    h1{font-size:42px;line-height:1.05;margin:0 0 12px}
+    .btn{background:var(--accent);color:var(--on-accent);padding:12px 18px;border-radius:12px;border:none;font-weight:700;cursor:pointer}
+    .btn.secondary{background:transparent;color:var(--fg);border:1px solid var(--border)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+    input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0b1220;color:var(--fg)}
+    label{font-size:12px;color:var(--muted-fg)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    code{font-family:'Fira Code',monospace;color:#a7f3d0}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.grid,.features,.pricing{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center">
+    <strong>PermaQR</strong>
+    <button class="btn" onclick="document.getElementById('email').focus()">Join waitlist</button>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div>
+      <h1>Keep printed QR codes alive forever.</h1>
+      <p>Generate a QR code that points to a tiny redirect page you control. Update the destination anytime without reprinting books, flyers, or packaging.</p>
+      <div style="display:flex;gap:12px;margin-top:16px">
+        <button class="btn" onclick="generate()">Generate QR</button>
+        <button class="btn secondary" onclick="downloadRedirect()">Download redirect page</button>
+      </div>
+    </div>
+    <div class="card">
+      <div id="qrcode" style="display:flex;justify-content:center;align-items:center;height:240px">QR preview</div>
+      <p style="color:var(--muted-fg);margin-top:8px">Print this QR and host the redirect page on your own domain.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="grid">
+      <div>
+        <label>Destination URL</label>
+        <input id="dest" type="url" placeholder="https://your-new-site.com" />
+      </div>
+      <div>
+        <label>Short slug (for your domain)</label>
+        <input id="slug" type="text" placeholder="mybook" />
+      </div>
+    </div>
+    <label style="margin-top:10px;display:block">Redirect message (optional)</label>
+    <textarea id="message" rows="3" placeholder="Taking you to my new home..."></textarea>
+    <p style="color:var(--muted-fg)">Your QR should point to: <code>https://yourdomain.com/<span id="slugPreview">mybook</span></code></p>
+  </section>
+
+  <section class="features">
+    <div class="card"><strong>Own the link</strong><p>Host the redirect HTML anywhere you control.</p></div>
+    <div class="card"><strong>Change anytime</strong><p>Edit one line to update the destination.</p></div>
+    <div class="card"><strong>No lock-in</strong><p>Use your own domain; avoid SaaS shutdown risk.</p></div>
+  </section>
+
+  <section>
+    <h2>Pricing</h2>
+    <div class="pricing">
+      <div class="card"><h3>DIY</h3><p style="font-size:24px">Free</p><p>Download the redirect page</p></div>
+      <div class="card" style="border:2px solid var(--accent)"><h3>Hosted</h3><p style="font-size:24px">£3/mo</p><p>We host + analytics</p></div>
+      <div class="card"><h3>Studio</h3><p style="font-size:24px">£9/mo</p><p>Multiple links + QR packs</p></div>
+    </div>
+  </section>
+
+  <section class="card" style="margin:24px 0">
+    <h2>Waitlist</h2>
+    <form onsubmit="event.preventDefault(); alert('Thanks!');">
+      <input id="email" type="email" placeholder="you@email.com" required style="max-width:360px" />
+      <button class="btn" style="margin-left:8px">Join</button>
+    </form>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+  const qrEl = document.getElementById('qrcode');
+  const slug = document.getElementById('slug');
+  const slugPreview = document.getElementById('slugPreview');
+  let qr;
+  slug.addEventListener('input', ()=> slugPreview.textContent = slug.value || 'mybook');
+
+  function generate(){
+    const destination = document.getElementById('dest').value || 'https://example.com';
+    const codeUrl = 'https://yourdomain.com/' + (slug.value || 'mybook');
+    qrEl.innerHTML = '';
+    qr = new QRCode(qrEl, {text: codeUrl, width:200, height:200, colorDark:'#F8FAFC', colorLight:'#0F172A'});
+    qrEl.dataset.destination = destination;
+  }
+
+  function downloadRedirect(){
+    const destination = document.getElementById('dest').value || 'https://example.com';
+    const message = document.getElementById('message').value || 'Redirecting...';
+    const html = `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=${destination}"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Redirect</title><style>body{font-family:system-ui;background:#0F172A;color:#F8FAFC;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}</style></head><body><div>${message}<br><small>${destination}</small></div></body></html>`;
+    const blob = new Blob([html], {type:'text/html'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'redirect.html';
+    a.click();
+  }
+  generate();
+</script>
+</body>
+</html>
