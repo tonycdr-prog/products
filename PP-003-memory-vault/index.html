@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MemoryVault — encrypt your AI memory files locally</title>
+  <meta name="description" content="Encrypt/decrypt Claude memory files in-browser using Web Crypto. Nothing leaves your device." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+    :root{--primary:#1E3A5F;--accent:#059669;--bg:#0F172A;--fg:#FFFFFF;--card:#192134;--border:rgba(255,255,255,0.08);--muted:#10192E;--muted-fg:#94A3B8;}
+    *{box-sizing:border-box} body{margin:0;font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--fg);font-size:14px;line-height:1.2}
+    header{padding:20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(15,23,42,.96)}
+    .container{max-width:980px;margin:0 auto;padding:0 18px}
+    h1{font-size:16px;margin:0 0 8px;font-weight:500}
+    h2{font-size:16px;margin:0 0 10px;font-weight:500}
+    p{font-size:14px;color:var(--muted-fg)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0}
+    input{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--muted);color:var(--fg);font-size:14px}
+    .btn{background:var(--accent);border:none;color:#fff;padding:10px 14px;border-radius:8px;font-weight:500;cursor:pointer;font-size:14px}
+    .btn.secondary{background:transparent;border:1px solid var(--border)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .status{font-size:12px;color:var(--muted-fg)}
+    @media(max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><div class="container"><strong>MemoryVault</strong></div></header>
+<main class="container">
+  <section class="card">
+    <h1>Encrypt your AI memory files locally.</h1>
+    <p>No uploads. Web Crypto AES‑GCM. Works with .md and .json memory files.</p>
+    <div class="row" style="margin-top:10px">
+      <div>
+        <label>Choose file</label>
+        <input id="file" type="file" />
+      </div>
+      <div>
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Strong passphrase" />
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn" onclick="encryptFile()">Encrypt</button>
+      <button class="btn secondary" onclick="decryptFile()">Decrypt</button>
+    </div>
+    <div class="status" id="status">Ready.</div>
+  </section>
+
+  <section class="card">
+    <h2>How it works</h2>
+    <p>We derive a key with PBKDF2 and encrypt with AES‑GCM. The output file bundles salt + IV + ciphertext so you can decrypt later with the same password.</p>
+  </section>
+
+  <section class="card">
+    <h2>Pricing</h2>
+    <p>Free for local use. Team vault coming soon (£8/user/mo).</p>
+  </section>
+
+  <section class="card">
+    <h2>Waitlist</h2>
+    <form onsubmit="event.preventDefault(); alert('Thanks!');">
+      <input id="email" type="email" placeholder="you@email.com" required />
+      <button class="btn" style="margin-top:8px">Join</button>
+    </form>
+  </section>
+</main>
+
+<script>
+  const statusEl = document.getElementById('status');
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  async function getKey(password, salt){
+    const baseKey = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'}, baseKey, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+  }
+
+  async function encryptFile(){
+    const file = document.getElementById('file').files[0];
+    const password = document.getElementById('password').value;
+    if(!file || !password) return alert('Select a file and password');
+    const data = new Uint8Array(await file.arrayBuffer());
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await getKey(password, salt);
+    const ciphertext = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, data));
+    const combined = new Uint8Array(salt.length + iv.length + ciphertext.length);
+    combined.set(salt,0); combined.set(iv, salt.length); combined.set(ciphertext, salt.length+iv.length);
+    downloadBlob(combined, file.name + '.enc');
+    statusEl.textContent = 'Encrypted and downloaded.';
+  }
+
+  async function decryptFile(){
+    const file = document.getElementById('file').files[0];
+    const password = document.getElementById('password').value;
+    if(!file || !password) return alert('Select a file and password');
+    const data = new Uint8Array(await file.arrayBuffer());
+    const salt = data.slice(0,16); const iv = data.slice(16,28); const ciphertext = data.slice(28);
+    const key = await getKey(password, salt);
+    try{
+      const plaintext = new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, ciphertext));
+      downloadBlob(plaintext, file.name.replace('.enc','') || 'decrypted.txt');
+      statusEl.textContent = 'Decrypted and downloaded.';
+    }catch(e){
+      statusEl.textContent = 'Decrypt failed. Check password.';
+    }
+  }
+
+  function downloadBlob(bytes, filename){
+    const blob = new Blob([bytes]);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+  }
+</script>
+</body>
+</html>
