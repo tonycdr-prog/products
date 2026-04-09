@@ -67,7 +67,7 @@
     </div>
     <label style="margin-top:10px;display:block">Redirect message (optional)</label>
     <textarea id="message" rows="3" placeholder="Taking you to my new home..."></textarea>
-    <p style="color:var(--muted-fg)">Your QR should point to: <code>https://yourdomain.com/<span id="slugPreview">mybook</span></code></p>
+    <p style="color:var(--muted-fg)">Your QR should point to: <code>https://permaqr.link/<span id="slugPreview">mybook</span></code></p>
   </section>
 
   <section class="features">
@@ -104,7 +104,7 @@
 
   function generate(){
     const destination = document.getElementById('dest').value || 'https://example.com';
-    const codeUrl = 'https://yourdomain.com/' + (slug.value || 'mybook');
+    const codeUrl = 'https://permaqr.link/' + (slug.value || 'mybook');
     qrEl.innerHTML = '';
     qr = new QRCode(qrEl, {text: codeUrl, width:200, height:200, colorDark:'#F8FAFC', colorLight:'#0F172A'});
     qrEl.dataset.destination = destination;
