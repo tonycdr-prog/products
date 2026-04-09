@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SideHustle HMRC Tracker — UK tax‑year aware sales + cost tracker</title>
+  <meta name="description" content="Track marketplace sales, fees, and costs. See tax‑year totals, £1,000 trading allowance status, and export clean CSVs for HMRC reporting." />
+  <meta property="og:title" content="SideHustle HMRC Tracker" />
+  <meta property="og:description" content="Track sales, fees, and costs with tax‑year summaries + allowance meter." />
+  <style>
+    :root{
+      --primary:#D97706;--on-primary:#fff;--secondary:#F59E0B;--on-secondary:#0F172A;--accent:#059669;--on-accent:#fff;
+      --bg:#FFFBEB;--fg:#0F172A;--card:#fff;--card-fg:#0F172A;--muted:#FCF6F0;--muted-fg:#64748B;--border:#FAEEE1;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial; background:var(--bg); color:var(--fg);}    
+    header{padding:22px 20px; position:sticky; top:0; background:rgba(255,251,235,.9); backdrop-filter:blur(6px); border-bottom:1px solid var(--border); z-index:10}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px;}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:30px 0;}
+    h1{font-size:38px;line-height:1.1;margin:0 0 12px;font-weight:700}
+    h2{margin:0 0 12px}
+    .tag{display:inline-flex;gap:8px;align-items:center;background:var(--muted);color:var(--muted-fg);padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
+    .cta{display:flex;gap:12px;align-items:center;margin-top:18px}
+    .btn{background:var(--primary);color:var(--on-primary);padding:10px 16px;border-radius:12px;border:none;font-weight:600;cursor:pointer}
+    .btn.secondary{background:var(--card);color:var(--fg);border:1px solid var(--border)}
+    .btn.ghost{background:transparent;color:var(--fg);border:1px dashed var(--border)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 4px 18px rgba(0,0,0,.04)}
+    .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    .kpi{display:flex;flex-direction:column;gap:4px}
+    .kpi span{font-size:12px;color:var(--muted-fg)}
+    .kpi strong{font-size:18px}
+    .form{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:10px;align-items:end}
+    label{font-size:12px;color:var(--muted-fg)}
+    input,select,textarea{width:100%;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:#fff}
+    textarea{resize:vertical;min-height:36px}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:9px;border-bottom:1px solid var(--border);text-align:left}
+    .pill{padding:4px 8px;border-radius:999px;background:var(--muted);color:var(--muted-fg);font-size:12px}
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .price{font-size:26px;font-weight:700}
+    .highlight{border:2px solid var(--primary)}
+    footer{padding:40px 0;color:var(--muted-fg)}
+    .allowance{display:flex;gap:10px;align-items:center}
+    progress{width:100%;height:12px;border-radius:999px;overflow:hidden}
+    progress::-webkit-progress-bar{background:#fff0dc}
+    progress::-webkit-progress-value{background:var(--accent)}
+    .split{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    @media(max-width:1020px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.form{grid-template-columns:1fr 1fr}.pricing{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:16px">
+    <strong>SideHustle HMRC Tracker</strong>
+    <div class="split">
+      <select id="taxYearSelect" aria-label="Tax year"></select>
+      <button class="btn secondary" onclick="downloadCSV()">Export entries CSV</button>
+      <button class="btn" onclick="document.getElementById('tracker').scrollIntoView({behavior:'smooth'})">Start tracking</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div>
+      <span class="tag">UK side‑hustle sellers • tax‑year aware • trading allowance meter</span>
+      <h1>Track sales + fees + costs. Know exactly where you stand for HMRC.</h1>
+      <p>Built for casual Vinted/eBay/Depop sellers who don’t want full accounting software. Capture entries in seconds, view tax‑year totals, and export clean CSVs.</p>
+      <div class="cta">
+        <button class="btn" onclick="document.getElementById('tracker').scrollIntoView({behavior:'smooth'})">Add first entry</button>
+        <button class="btn secondary" onclick="downloadSummaryCSV()">Export monthly summary</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="grid">
+        <div class="kpi"><span>Total sales</span><strong id="kpi-sales">£0.00</strong></div>
+        <div class="kpi"><span>Fees + shipping</span><strong id="kpi-fees">£0.00</strong></div>
+        <div class="kpi"><span>Total costs</span><strong id="kpi-costs">£0.00</strong></div>
+        <div class="kpi"><span>Profit (pre‑tax)</span><strong id="kpi-profit">£0.00</strong></div>
+        <div class="kpi"><span>Sales over £1,000</span><strong id="kpi-allowance">£0.00</strong></div>
+      </div>
+      <div style="margin-top:10px" class="allowance">
+        <small style="min-width:130px;color:var(--muted-fg)">Trading allowance</small>
+        <progress id="allowanceBar" value="0" max="1000"></progress>
+        <small id="allowanceText" style="color:var(--muted-fg)">£0 / £1,000</small>
+      </div>
+      <p style="margin-top:10px;color:var(--muted-fg)">Tip: this tracker is informational only and not tax advice. UK tax year starts 6 April.</p>
+    </div>
+  </section>
+
+  <section id="tracker" class="card" style="margin:24px 0">
+    <h2>Quick entry</h2>
+    <div class="form">
+      <div><label>Type</label><select id="type"><option value="sale">Sale</option><option value="cost">Cost/Expense</option></select></div>
+      <div><label>Amount (£)</label><input id="amount" type="number" step="0.01" placeholder="12.99" /></div>
+      <div><label>Fees (£)</label><input id="fees" type="number" step="0.01" placeholder="1.20" /></div>
+      <div><label>Shipping (£)</label><input id="shipping" type="number" step="0.01" placeholder="2.80" /></div>
+      <div><label>Platform</label>
+        <select id="platform">
+          <option>Vinted</option><option>eBay</option><option>Depop</option><option>Etsy</option><option>Facebook</option><option>Other</option>
+        </select>
+      </div>
+      <div><label>Category</label>
+        <select id="category">
+          <option>Clothing</option><option>Electronics</option><option>Collectibles</option><option>Home</option><option>Kids</option><option>Other</option>
+        </select>
+      </div>
+      <div><label>Date</label><input id="date" type="date" /></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:10px;margin-top:10px">
+      <div><label>Item / Note</label><input id="note" type="text" placeholder="Vintage jacket" /></div>
+      <div><button class="btn" onclick="addEntry()">Add</button></div>
+      <div><button class="btn secondary" onclick="clearForm()">Clear</button></div>
+      <div><button class="btn ghost" onclick="seedDemo()">Seed demo</button></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h2>Entries</h2>
+      <div class="split">
+        <span class="pill" id="count">0 entries</span>
+        <button class="btn secondary" onclick="downloadCSV()">Export entries CSV</button>
+        <button class="btn ghost" onclick="clearAll()">Clear all</button>
+      </div>
+    </div>
+    <div style="overflow:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th><th>Amount</th><th>Fees</th><th>Shipping</th><th>Platform</th><th>Category</th><th>Note</th><th>Date</th><th>Tax year</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card" style="margin:24px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <h2>Monthly summary (filtered tax year)</h2>
+      <button class="btn secondary" onclick="downloadSummaryCSV()">Export summary CSV</button>
+    </div>
+    <div style="overflow:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th><th>Sales</th><th>Fees</th><th>Shipping</th><th>Costs</th><th>Profit</th>
+          </tr>
+        </thead>
+        <tbody id="summaryRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="margin:32px 0">
+    <h2>Pricing</h2>
+    <div class="pricing">
+      <div class="card"><h3>Starter</h3><p class="price">£0</p><p>Local tracking + exports</p><button class="btn secondary">Get started</button></div>
+      <div class="card highlight"><h3>Plus</h3><p class="price">£5/mo</p><p>Auto summaries + reminders</p><button class="btn">Start Plus</button></div>
+      <div class="card"><h3>Pro</h3><p class="price">£12/mo</p><p>Marketplace imports + accountant-ready pack</p><button class="btn secondary">Talk to us</button></div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-bottom:24px">
+    <h2>Waitlist</h2>
+    <p>Get notified when marketplace imports and HMRC summary packs ship.</p>
+    <form onsubmit="event.preventDefault(); alert('Thanks! We\'ll be in touch.');">
+      <input id="email" type="email" placeholder="you@email.com" required style="max-width:360px"/>
+      <button class="btn" style="margin-left:8px">Join</button>
+    </form>
+  </section>
+</main>
+
+<footer class="container">
+  <small>Disclaimer: informational tracker only. Not tax advice.</small>
+</footer>
+
+<script>
+  const storageKey = 'uk-tax-tracker-entries-v2';
+  const rows = document.getElementById('rows');
+  const summaryRows = document.getElementById('summaryRows');
+  const count = document.getElementById('count');
+  const kpiSales = document.getElementById('kpi-sales');
+  const kpiCosts = document.getElementById('kpi-costs');
+  const kpiFees = document.getElementById('kpi-fees');
+  const kpiProfit = document.getElementById('kpi-profit');
+  const kpiAllowance = document.getElementById('kpi-allowance');
+  const allowanceBar = document.getElementById('allowanceBar');
+  const allowanceText = document.getElementById('allowanceText');
+  const taxYearSelect = document.getElementById('taxYearSelect');
+  const entries = JSON.parse(localStorage.getItem(storageKey) || '[]');
+
+  function taxYearLabel(dateStr){
+    if(!dateStr) return 'Unknown';
+    const d = new Date(dateStr);
+    const y = d.getFullYear();
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    const startYear = (m > 4 || (m === 4 && day >= 6)) ? y : y - 1;
+    const endYear = startYear + 1;
+    return `${startYear}/${String(endYear).slice(-2)}`;
+  }
+
+  function currentTaxYear(){
+    const now = new Date();
+    const m = now.getMonth() + 1;
+    const day = now.getDate();
+    const y = now.getFullYear();
+    const startYear = (m > 4 || (m === 4 && day >= 6)) ? y : y - 1;
+    return `${startYear}/${String(startYear+1).slice(-2)}`;
+  }
+
+  function setupTaxYearOptions(){
+    const years = new Set(entries.map(e => taxYearLabel(e.date)).filter(y => y !== 'Unknown'));
+    years.add(currentTaxYear());
+    const sorted = Array.from(years).sort();
+    taxYearSelect.innerHTML = `<option value="all">All tax years</option>` + sorted.map(y => `<option value="${y}">${y}</option>`).join('');
+    taxYearSelect.value = currentTaxYear();
+  }
+
+  function filteredEntries(){
+    const selected = taxYearSelect.value;
+    if(selected === 'all') return entries;
+    return entries.filter(e => taxYearLabel(e.date) === selected);
+  }
+
+  function render(){
+    rows.innerHTML = '';
+    summaryRows.innerHTML = '';
+    const filtered = filteredEntries();
+    let sales = 0, costs = 0, fees = 0, shipping = 0;
+
+    filtered.forEach((e,i)=>{
+      if(e.type === 'sale'){
+        sales += e.amount;
+        fees += e.fees || 0;
+        shipping += e.shipping || 0;
+      } else {
+        costs += e.amount;
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${e.type}</td>
+        <td>£${e.amount.toFixed(2)}</td>
+        <td>£${(e.fees||0).toFixed(2)}</td>
+        <td>£${(e.shipping||0).toFixed(2)}</td>
+        <td>${e.platform||''}</td>
+        <td>${e.category||''}</td>
+        <td>${e.note||''}</td>
+        <td>${e.date||''}</td>
+        <td>${taxYearLabel(e.date)}</td>
+        <td><button onclick="removeEntry(${i})">Delete</button></td>
+      `;
+      rows.appendChild(tr);
+    });
+
+    const profit = sales - costs - fees - shipping;
+    const allowance = 1000;
+    const overAllowance = Math.max(0, sales - allowance);
+
+    count.textContent = `${filtered.length} entries`;
+    kpiSales.textContent = `£${sales.toFixed(2)}`;
+    kpiCosts.textContent = `£${costs.toFixed(2)}`;
+    kpiFees.textContent = `£${(fees+shipping).toFixed(2)}`;
+    kpiProfit.textContent = `£${profit.toFixed(2)}`;
+    kpiAllowance.textContent = `£${overAllowance.toFixed(2)}`;
+    allowanceBar.value = Math.min(sales, allowance);
+    allowanceText.textContent = `£${sales.toFixed(2)} / £1,000`;
+
+    const monthly = {};
+    filtered.forEach(e => {
+      if(!e.date) return;
+      const key = e.date.slice(0,7);
+      if(!monthly[key]) monthly[key] = {sales:0,fees:0,shipping:0,costs:0};
+      if(e.type === 'sale'){
+        monthly[key].sales += e.amount;
+        monthly[key].fees += e.fees || 0;
+        monthly[key].shipping += e.shipping || 0;
+      } else {
+        monthly[key].costs += e.amount;
+      }
+    });
+
+    Object.keys(monthly).sort().forEach(key => {
+      const m = monthly[key];
+      const p = m.sales - m.costs - m.fees - m.shipping;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${key}</td>
+        <td>£${m.sales.toFixed(2)}</td>
+        <td>£${m.fees.toFixed(2)}</td>
+        <td>£${m.shipping.toFixed(2)}</td>
+        <td>£${m.costs.toFixed(2)}</td>
+        <td>£${p.toFixed(2)}</td>
+      `;
+      summaryRows.appendChild(tr);
+    });
+
+    localStorage.setItem(storageKey, JSON.stringify(entries));
+  }
+
+  function addEntry(){
+    const type = document.getElementById('type').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    if(isNaN(amount)) return alert('Enter an amount');
+    const fees = parseFloat(document.getElementById('fees').value) || 0;
+    const shipping = parseFloat(document.getElementById('shipping').value) || 0;
+    const platform = document.getElementById('platform').value;
+    const category = document.getElementById('category').value;
+    const note = document.getElementById('note').value;
+    const date = document.getElementById('date').value;
+    entries.unshift({type, amount, fees, shipping, platform, category, note, date});
+    clearForm();
+    setupTaxYearOptions();
+    render();
+  }
+
+  function clearForm(){
+    document.getElementById('amount').value = '';
+    document.getElementById('fees').value = '';
+    document.getElementById('shipping').value = '';
+    document.getElementById('note').value = '';
+  }
+
+  function seedDemo(){
+    if(!confirm('Seed 5 demo entries?')) return;
+    const today = new Date();
+    const fmt = (d) => d.toISOString().slice(0,10);
+    entries.unshift(
+      {type:'sale', amount:42.5, fees:2.1, shipping:3.2, platform:'Vinted', category:'Clothing', note:'Denim jacket', date:fmt(today)},
+      {type:'cost', amount:4.5, fees:0, shipping:0, platform:'Other', category:'Other', note:'Packaging', date:fmt(today)},
+      {type:'sale', amount:18.0, fees:1.0, shipping:2.0, platform:'eBay', category:'Collectibles', note:'Vinyl', date:fmt(new Date(today.getTime()-86400000*4))},
+      {type:'cost', amount:6.0, fees:0, shipping:0, platform:'Other', category:'Other', note:'Labels', date:fmt(new Date(today.getTime()-86400000*8))},
+      {type:'sale', amount:55.0, fees:2.8, shipping:3.5, platform:'Depop', category:'Clothing', note:'Bundle sale', date:fmt(new Date(today.getTime()-86400000*12))}
+    );
+    setupTaxYearOptions();
+    render();
+  }
+
+  function removeEntry(i){ entries.splice(i,1); render(); }
+
+  function clearAll(){
+    if(!confirm('Clear all entries?')) return;
+    entries.length = 0; render(); setupTaxYearOptions();
+  }
+
+  function downloadCSV(){
+    const header = ['type','amount','fees','shipping','platform','category','note','date','tax_year'];
+    const lines = [header.join(',')].concat(filteredEntries().map(e=>[
+      e.type, e.amount, e.fees||0, e.shipping||0, e.platform||'', e.category||'', (e.note||'').replace(/,/g,' '), e.date||'', taxYearLabel(e.date)
+    ].join(',')));
+    const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'sidehustle-tracker-entries.csv';
+    a.click();
+  }
+
+  function downloadSummaryCSV(){
+    const filtered = filteredEntries();
+    const monthly = {};
+    filtered.forEach(e => {
+      if(!e.date) return;
+      const key = e.date.slice(0,7);
+      if(!monthly[key]) monthly[key] = {sales:0,fees:0,shipping:0,costs:0};
+      if(e.type === 'sale'){
+        monthly[key].sales += e.amount;
+        monthly[key].fees += e.fees || 0;
+        monthly[key].shipping += e.shipping || 0;
+      } else {
+        monthly[key].costs += e.amount;
+      }
+    });
+    const header = ['month','sales','fees','shipping','costs','profit'];
+    const lines = [header.join(',')];
+    Object.keys(monthly).sort().forEach(key => {
+      const m = monthly[key];
+      const profit = m.sales - m.costs - m.fees - m.shipping;
+      lines.push([key,m.sales,m.fees,m.shipping,m.costs,profit].join(','));
+    });
+    const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'sidehustle-tracker-summary.csv';
+    a.click();
+  }
+
+  taxYearSelect.addEventListener('change', render);
+  setupTaxYearOptions();
+  render();
+</script>
+</body>
+</html>
