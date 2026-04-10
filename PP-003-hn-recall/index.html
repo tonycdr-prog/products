@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HN Recall — Find posts you vaguely remember</title>
+  <meta name="description" content="Search Hacker News with memory‑friendly prompts, filters, and saved searches." />
+  <meta property="og:title" content="HN Recall — Find posts you vaguely remember" />
+  <meta property="og:description" content="Memory‑friendly HN search with prompts, filters, and saved searches." />
+  <style>
+    :root{
+      --primary:#1E293B; --secondary:#334155; --accent:#22C55E; --bg:#0F172A; --fg:#F8FAFC; --card:#141c2b; --border:#3b4a67; --muted:#9AA7BF;
+      --radius:14px; --shadow:0 12px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);}
+    a{color:#93C5FD;text-decoration:none}
+    .skip{position:absolute;left:-999px;top:10px;background:#fff;padding:8px 12px;border:1px solid var(--border);border-radius:8px;color:#111}
+    .skip:focus{left:10px}
+    button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    header{max-width:1180px;margin:0 auto;padding:48px 20px 24px}
+    h1{font-size:40px;margin:12px 0}
+    h2{margin-top:0}
+    .lead{color:var(--muted);max-width:760px}
+    .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+    .btn{background:var(--accent);color:#0F172A;border:none;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:transparent;border:1px solid var(--border);color:var(--fg)}
+    .section{max-width:1180px;margin:0 auto;padding:16px 20px 40px}
+    .grid{display:grid;gap:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+    .searchbar{display:grid;grid-template-columns:1fr 150px 150px 150px;gap:10px}
+    .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:10px}
+    @media (max-width:900px){.searchbar{grid-template-columns:1fr}}
+    input,select,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:#0B1220;color:var(--fg)}
+    .result{border:1px solid var(--border);border-radius:12px;padding:12px;margin:8px 0;background:#0B1220}
+    .result small{color:var(--muted)}
+    .pricing{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .price{border:1px solid var(--border);border-radius:14px;padding:18px;background:#0B1220}
+    .price.featured{border:2px solid var(--accent)}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:12px}
+    .muted{color:var(--muted)}
+    .inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .saved-item{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--border);border-radius:10px;padding:10px;background:#0B1220;margin-top:8px}
+    .tag{border:1px solid var(--border);padding:6px 10px;border-radius:999px;background:#0B1220;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <span class="pill">Memory‑friendly HN search</span>
+    <h1>HN Recall: find posts even when you only remember the vibe.</h1>
+    <p class="lead">Use fuzzy prompts, filters, and saved searches to rediscover old Hacker News stories without exact titles.</p>
+    <div class="cta-row">
+      <button class="btn" onclick="document.getElementById('search').scrollIntoView({behavior:'smooth'})">Try search</button>
+      <button class="btn secondary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Pricing</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="search" class="section">
+      <div class="card">
+        <h2>Search HN</h2>
+        <label for="query">Describe what you remember</label>
+        <div class="searchbar">
+          <input id="query" name="query" placeholder="e.g., dev helping mom with chromebook update" />
+          <select id="type" name="type">
+            <option value="story">Stories</option>
+            <option value="comment">Comments</option>
+          </select>
+          <select id="category" name="category">
+            <option value="any">Any category</option>
+            <option value="show_hn">Show HN</option>
+            <option value="ask_hn">Ask HN</option>
+            <option value="job">Jobs</option>
+            <option value="poll">Polls</option>
+          </select>
+          <select id="sort" name="sort">
+            <option value="relevance">Sort: relevance</option>
+            <option value="date">Sort: newest first</option>
+          </select>
+        </div>
+        <div class="filters">
+          <select id="time" name="time">
+            <option value="all">All time</option>
+            <option value="year">Past year</option>
+            <option value="month">Past month</option>
+            <option value="week">Past week</option>
+          </select>
+          <input id="minPoints" type="number" min="0" placeholder="Min points (e.g., 50)" />
+          <input id="minComments" type="number" min="0" placeholder="Min comments (e.g., 20)" />
+          <input id="saveName" type="text" placeholder="Save search as…" />
+        </div>
+        <div class="cta-row">
+          <button class="btn" onclick="searchHN()">Search</button>
+          <button class="btn secondary" onclick="fillExample()">Use example prompt</button>
+          <button class="btn secondary" onclick="saveSearch()">Save search</button>
+          <button class="btn secondary" onclick="copyShareLink()">Copy share link</button>
+        </div>
+        <div id="status" class="muted" style="margin-top:8px;" aria-live="polite"></div>
+        <div id="results"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
+        <div class="card">
+          <h3>Prompt templates</h3>
+          <p class="muted">One‑tap memory starters.</p>
+          <div class="inline">
+            <button class="btn secondary" onclick="applyTemplate('Show HN about a solo dev automating invoicing')">Show HN automation</button>
+            <button class="btn secondary" onclick="applyTemplate('Ask HN: best laptop for CS student')">Ask HN question</button>
+            <button class="btn secondary" onclick="applyTemplate('Thread about a database rewrite that went wrong')">Eng story</button>
+            <button class="btn secondary" onclick="applyTemplate('HN post about saving 100k/year on infra')">Infra savings</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Saved searches</h3>
+          <p class="muted">Stored locally in your browser.</p>
+          <div id="savedList"></div>
+        </div>
+        <div class="card">
+          <h3>Recent searches</h3>
+          <p class="muted">Your last 8 prompts.</p>
+          <div id="historyList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <h2>Pricing</h2>
+      <div class="pricing">
+        <div class="price"><h3>Free</h3><p class="muted">Basic search</p><p><strong>£0/mo</strong></p><button class="btn secondary">Start free</button></div>
+        <div class="price featured"><h3>Pro</h3><p class="muted">Saved searches + alerts</p><p><strong>£3/mo</strong></p><button class="btn">Get Pro</button></div>
+        <div class="price"><h3>Teams</h3><p class="muted">Org‑wide search + export</p><p><strong>£12/mo</strong></p><button class="btn secondary">Talk to us</button></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <h2>Get early access</h2>
+        <p class="muted">Join the waitlist for search alerts and saved queries.</p>
+        <div class="cta-row">
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" />
+          <button class="btn" onclick="joinWaitlist()">Join waitlist</button>
+        </div>
+        <div id="waitlistMsg" class="muted" style="margin-top:8px;" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const savedKey = 'hnRecallSaved';
+    const historyKey = 'hnRecallHistory';
+
+    function getFormState(){
+      return {
+        query: document.getElementById('query').value.trim(),
+        type: document.getElementById('type').value,
+        category: document.getElementById('category').value,
+        sort: document.getElementById('sort').value,
+        time: document.getElementById('time').value,
+        minPoints: document.getElementById('minPoints').value,
+        minComments: document.getElementById('minComments').value
+      };
+    }
+
+    function setFormState(state){
+      document.getElementById('query').value = state.query || '';
+      document.getElementById('type').value = state.type || 'story';
+      document.getElementById('category').value = state.category || 'any';
+      document.getElementById('sort').value = state.sort || 'relevance';
+      document.getElementById('time').value = state.time || 'all';
+      document.getElementById('minPoints').value = state.minPoints || '';
+      document.getElementById('minComments').value = state.minComments || '';
+    }
+
+    function buildSearchUrl(state){
+      const base = state.sort === 'date' ? 'https://hn.algolia.com/api/v1/search_by_date' : 'https://hn.algolia.com/api/v1/search';
+      const params = new URLSearchParams();
+      params.set('query', state.query);
+
+      let tags = '';
+      if(state.type === 'comment'){
+        tags = 'comment';
+      } else if(state.category && state.category !== 'any') {
+        tags = state.category;
+      } else {
+        tags = 'story';
+      }
+      params.set('tags', tags);
+
+      const filters = [];
+      if(state.time !== 'all'){
+        const now = Date.now();
+        const ms = state.time === 'week' ? 7*24*3600*1000 : state.time === 'month' ? 30*24*3600*1000 : 365*24*3600*1000;
+        filters.push('created_at_i>' + Math.floor((now - ms)/1000));
+      }
+      if(state.minPoints){filters.push('points>=' + Number(state.minPoints));}
+      if(state.minComments){filters.push('num_comments>=' + Number(state.minComments));}
+      if(filters.length){params.set('numericFilters', filters.join(','));}
+
+      return base + '?' + params.toString();
+    }
+
+    async function searchHN(){
+      const state = getFormState();
+      if(!state.query){return;}
+      const status = document.getElementById('status');
+      status.textContent = 'Searching…';
+      try{
+        const url = buildSearchUrl(state);
+        const res = await fetch(url);
+        const data = await res.json();
+        status.textContent = `Found ${data.hits.length} results`;
+        renderResults(data.hits);
+        addHistory(state);
+      } catch (e){
+        status.textContent = 'Search failed. Try again.';
+      }
+    }
+
+    function renderResults(hits){
+      const results = hits.slice(0,20).map(h => {
+        const title = h.title || h.story_title || 'Untitled';
+        const link = h.url || h.story_url || `https://news.ycombinator.com/item?id=${h.objectID}`;
+        const snippet = (h.comment_text||'').replace(/<[^>]*>/g,'').slice(0,180);
+        const meta = `${h.author || 'unknown'} • ${new Date(h.created_at).toLocaleDateString()} • ${h.points ?? 0} points`;
+        return `<div class="result"><a href="${link}" target="_blank" rel="noopener">${title}</a><br><small>${meta}</small>${snippet ? `<p class=\"muted\">${snippet}</p>` : ''}</div>`;
+      }).join('');
+      document.getElementById('results').innerHTML = results || '<p class="muted">No results.</p>';
+    }
+
+    function fillExample(){
+      document.getElementById('query').value = 'developer helping mom chromebook update';
+      document.getElementById('type').value = 'story';
+      document.getElementById('category').value = 'any';
+    }
+
+    function applyTemplate(text){
+      document.getElementById('query').value = text;
+      document.getElementById('type').value = text.startsWith('Ask HN') ? 'story' : 'story';
+      if(text.startsWith('Ask HN')) document.getElementById('category').value = 'ask_hn';
+      if(text.startsWith('Show HN')) document.getElementById('category').value = 'show_hn';
+    }
+
+    function joinWaitlist(){
+      const email = document.getElementById('email').value.trim();
+      document.getElementById('waitlistMsg').textContent = email ? 'Thanks — we will email you soon.' : 'Please enter a valid email.';
+    }
+
+    function loadSaved(){
+      return JSON.parse(localStorage.getItem(savedKey) || '[]');
+    }
+
+    function saveSaved(list){
+      localStorage.setItem(savedKey, JSON.stringify(list));
+    }
+
+    function saveSearch(){
+      const state = getFormState();
+      if(!state.query){return;}
+      const name = document.getElementById('saveName').value.trim() || `Search ${new Date().toLocaleDateString()}`;
+      const saved = loadSaved();
+      saved.unshift({ id: Date.now(), name, state });
+      saveSaved(saved.slice(0,15));
+      document.getElementById('saveName').value = '';
+      renderSaved();
+    }
+
+    function renderSaved(){
+      const saved = loadSaved();
+      const list = saved.map(item => {
+        const summary = `${item.state.query} • ${item.state.type}${item.state.category && item.state.category !== 'any' ? ' / ' + item.state.category.replace('_',' ') : ''}`;
+        return `
+          <div class="saved-item">
+            <div>
+              <strong>${item.name}</strong><div class="muted" style="font-size:12px;">${summary}</div>
+            </div>
+            <div class="inline">
+              <button class="btn secondary" onclick="runSaved(${item.id})">Run</button>
+              <button class="btn secondary" onclick="deleteSaved(${item.id})">Delete</button>
+            </div>
+          </div>`;
+      }).join('');
+      document.getElementById('savedList').innerHTML = list || '<p class="muted">No saved searches yet.</p>';
+    }
+
+    function runSaved(id){
+      const saved = loadSaved();
+      const item = saved.find(s => s.id === id);
+      if(!item) return;
+      setFormState(item.state);
+      searchHN();
+    }
+
+    function deleteSaved(id){
+      const saved = loadSaved().filter(s => s.id !== id);
+      saveSaved(saved);
+      renderSaved();
+    }
+
+    function loadHistory(){
+      return JSON.parse(localStorage.getItem(historyKey) || '[]');
+    }
+
+    function saveHistory(list){
+      localStorage.setItem(historyKey, JSON.stringify(list));
+    }
+
+    function addHistory(state){
+      const history = loadHistory();
+      history.unshift({ ...state, ts: Date.now() });
+      saveHistory(history.slice(0,8));
+      renderHistory();
+    }
+
+    function renderHistory(){
+      const history = loadHistory();
+      const list = history.map(item => {
+        const label = `${item.query} • ${item.type}${item.category && item.category !== 'any' ? ' / ' + item.category.replace('_',' ') : ''}`;
+        return `<div class="saved-item"><div><strong>${label}</strong><div class="muted" style="font-size:12px;">${new Date(item.ts).toLocaleString()}</div></div><button class="btn secondary" onclick='setFormState(${JSON.stringify(item).replace(/'/g,"\\'")});searchHN();'>Run</button></div>`;
+      }).join('');
+      document.getElementById('historyList').innerHTML = list || '<p class="muted">No history yet.</p>';
+    }
+
+    function copyShareLink(){
+      const state = getFormState();
+      const params = new URLSearchParams(state);
+      const link = `${location.href.split('#')[0]}?${params.toString()}`;
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(link);
+        document.getElementById('status').textContent = 'Share link copied.';
+      } else {
+        prompt('Copy link', link);
+      }
+    }
+
+    function hydrateFromURL(){
+      const params = new URLSearchParams(location.search);
+      if(!params.get('query')) return;
+      setFormState({
+        query: params.get('query'),
+        type: params.get('type') || 'story',
+        category: params.get('category') || 'any',
+        sort: params.get('sort') || 'relevance',
+        time: params.get('time') || 'all',
+        minPoints: params.get('minPoints') || '',
+        minComments: params.get('minComments') || ''
+      });
+    }
+
+    renderSaved();
+    renderHistory();
+    hydrateFromURL();
+  </script>
+</body>
+</html>
