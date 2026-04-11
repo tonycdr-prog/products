@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="AI-aware hiring scorecards for engineering teams. Generate a structured evaluation rubric in minutes." />
+  <meta name="keywords" content="AI hiring, interview scorecard, developer evaluation" />
+  <title>AICodeHire — AI-Aware Hiring Scorecards</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+    :root {
+      --primary: #0369A1;
+      --secondary: #0EA5E9;
+      --accent: #16A34A;
+      --bg: #F0F9FF;
+      --fg: #0C4A6E;
+      --card: #FFFFFF;
+      --muted: #E7EFF5;
+      --border: #BAE6FD;
+      --muted-fg: #64748B;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--fg); }
+    h1, h2, h3 { margin: 0 0 12px; letter-spacing: -0.5px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+    .nav { display:flex; align-items:center; justify-content:space-between; }
+    .btn { background: var(--primary); color: #fff; padding: 12px 18px; border-radius: 10px; text-decoration: none; font-weight: 700; display: inline-block; }
+    .btn.secondary { background: var(--secondary); }
+    .hero { display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: center; margin-top: 20px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 6px 24px rgba(3, 105, 161, 0.12); }
+    .grid { display: grid; gap: 16px; }
+    .pricing { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted-fg); letter-spacing: 1px; }
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; margin-top: 6px; }
+    .output { background: var(--muted); border-radius: 12px; padding: 14px; white-space: pre-wrap; font-size: 14px; }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <strong>AICodeHire</strong>
+      <a class="btn" href="#scorecard">Generate scorecard</a>
+    </div>
+
+    <section class="hero">
+      <div>
+        <h1>Hire engineers who can work with AI, not around it</h1>
+        <p>Build a role-specific scorecard that evaluates AI-assisted workflows, code review judgement, and delivery quality. Stop guessing — use a structured rubric.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="btn" href="#scorecard">Create scorecard</a>
+          <a class="btn secondary" href="#pricing">See pricing</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>What’s inside</h3>
+        <ul>
+          <li>AI policy-aware rubric</li>
+          <li>Task list for take-home or live</li>
+          <li>Interview prompt pack</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="scorecard" style="margin:48px 0;">
+      <h2>Scorecard generator</h2>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+        <div class="card">
+          <div class="grid">
+            <div>
+              <label>Role level</label>
+              <select id="level">
+                <option value="junior">Junior</option>
+                <option value="mid">Mid</option>
+                <option value="senior">Senior</option>
+                <option value="lead">Lead</option>
+              </select>
+            </div>
+            <div>
+              <label>Stack focus</label>
+              <input id="stack" placeholder="e.g. Node.js, React, Postgres" />
+            </div>
+            <div>
+              <label>AI policy</label>
+              <select id="policy">
+                <option value="allowed">AI allowed (with disclosure)</option>
+                <option value="partial">AI allowed for research only</option>
+                <option value="restricted">No AI tools during assessment</option>
+              </select>
+            </div>
+            <button class="btn" onclick="generateScorecard()">Generate scorecard</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Scorecard output</h3>
+          <div id="scorecardOutput" class="output">Fill the form to generate a scorecard.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" style="margin:48px 0;">
+      <h2>Pricing</h2>
+      <div class="pricing">
+        <div class="card">
+          <h3>Team</h3>
+          <p><strong>£49/mo</strong></p>
+          <ul>
+            <li>Unlimited scorecards</li>
+            <li>Team templates</li>
+            <li>Email support</li>
+          </ul>
+          <a class="btn" href="#waitlist">Start Team</a>
+        </div>
+        <div class="card" style="border:2px solid var(--accent);">
+          <h3>Studio</h3>
+          <p><strong>£149/mo</strong></p>
+          <ul>
+            <li>Hiring workflow packs</li>
+            <li>AI policy templates</li>
+            <li>Scorecard export</li>
+          </ul>
+          <a class="btn" href="#waitlist">Start Studio</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" style="margin:48px 0;">
+      <div class="card">
+        <h2>Get early access</h2>
+        <p>Join the waitlist for AI-aware hiring templates.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <input placeholder="you@company.com" style="flex:1; min-width:220px;" />
+          <button class="btn">Join waitlist</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function generateScorecard() {
+      const level = document.getElementById('level').value;
+      const stack = document.getElementById('stack').value || 'your stack';
+      const policy = document.getElementById('policy').value;
+
+      const rubric = {
+        junior: 'Foundations (30%), Debugging (25%), Learning speed (20%), Collaboration (15%), AI usage judgement (10%)',
+        mid: 'System design basics (25%), Delivery speed (25%), Code review judgement (20%), AI usage judgement (15%), Communication (15%)',
+        senior: 'Architecture decisions (30%), Risk management (20%), AI-assisted workflow (20%), Mentorship (15%), Delivery quality (15%)',
+        lead: 'Technical strategy (30%), Team leverage (20%), AI policy stewardship (20%), Stakeholder alignment (15%), Quality systems (15%)'
+      };
+
+      const policyNotes = {
+        allowed: 'AI allowed with disclosure. Evaluate prompt quality, verification steps, and source citations.',
+        partial: 'AI allowed for research only. Assess manual implementation quality + understanding.',
+        restricted: 'No AI tools. Evaluate reasoning and problem decomposition.'
+      };
+
+      const output = `Role: ${level.toUpperCase()}\nStack focus: ${stack}\n\nRubric weights:\n- ${rubric[level]}\n\nAssessment tasks:\n1) 90-min build task (feature in ${stack})\n2) Debugging session with failing tests\n3) 20-min code review of a PR\n\nAI Policy: ${policyNotes[policy]}`;
+
+      document.getElementById('scorecardOutput').textContent = output;
+    }
+  </script>
+</body>
+</html>
