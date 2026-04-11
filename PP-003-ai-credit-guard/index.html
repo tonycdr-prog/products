@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Track AI API errors and estimate refundable credits. Generate dispute-ready summaries." />
+  <meta name="keywords" content="openai usage tracker, credit dispute, AI billing" />
+  <title>CreditGuard AI — Usage Dispute Tracker</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+    :root {
+      --primary: #0F172A;
+      --secondary: #1E293B;
+      --accent: #22C55E;
+      --bg: #020617;
+      --fg: #F8FAFC;
+      --card: #0E1223;
+      --muted: #1A1E2F;
+      --border: #334155;
+      --muted-fg: #94A3B8;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Fira Sans', sans-serif; background: var(--bg); color: var(--fg); }
+    h1, h2, h3 { margin: 0 0 12px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+    .nav { display:flex; align-items:center; justify-content:space-between; }
+    .btn { background: var(--accent); color: #0F172A; padding: 12px 18px; border-radius: 10px; text-decoration: none; font-weight: 700; display: inline-block; }
+    .btn.secondary { background: var(--secondary); color: var(--fg); }
+    .hero { display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: center; margin-top: 20px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 6px 24px rgba(15, 23, 42, 0.4); }
+    .grid { display: grid; gap: 16px; }
+    .pricing { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted-fg); letter-spacing: 1px; }
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #0B1020; color: var(--fg); margin-top: 6px; }
+    .output { background: var(--muted); border-radius: 12px; padding: 14px; white-space: pre-wrap; font-family: 'Fira Code', monospace; font-size: 13px; }
+    .metric { display:flex; justify-content:space-between; }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <strong>CreditGuard AI</strong>
+      <a class="btn" href="#tracker">Run estimator</a>
+    </div>
+
+    <section class="hero">
+      <div>
+        <h1>Know what you’re owed when AI models fail</h1>
+        <p>Track error rates, estimate refundable credits, and generate a dispute-ready summary for support teams.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="btn" href="#tracker">Estimate credits</a>
+          <a class="btn secondary" href="#pricing">See pricing</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Built for ops teams</h3>
+        <ul>
+          <li>Error + retry tracking</li>
+          <li>Refund estimate per provider</li>
+          <li>Support-ready summary</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="tracker" style="margin:48px 0;">
+      <h2>Refund estimator</h2>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+        <div class="card">
+          <div class="grid">
+            <div>
+              <label>Monthly spend (£)</label>
+              <input id="spend" type="number" min="0" value="800" />
+            </div>
+            <div>
+              <label>Error rate (%)</label>
+              <input id="errorRate" type="number" min="0" max="100" value="4" />
+            </div>
+            <div>
+              <label>Policy strictness</label>
+              <select id="policy">
+                <option value="strict">Strict (refund all failed calls)</option>
+                <option value="standard">Standard (refund 60%)</option>
+                <option value="lenient">Lenient (refund 30%)</option>
+              </select>
+            </div>
+            <button class="btn" onclick="estimate()">Estimate credits</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Dispute summary</h3>
+          <div id="summary" class="output">Enter your usage to generate a summary.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin:48px 0;">
+      <h2>Operational metrics</h2>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div class="card"><div class="metric"><span>Error spikes detected</span><strong id="spikes">0</strong></div></div>
+        <div class="card"><div class="metric"><span>Refund potential</span><strong id="refund">£0</strong></div></div>
+        <div class="card"><div class="metric"><span>Tickets this month</span><strong id="tickets">0</strong></div></div>
+      </div>
+    </section>
+
+    <section id="pricing" style="margin:48px 0;">
+      <h2>Pricing</h2>
+      <div class="pricing">
+        <div class="card">
+          <h3>Ops</h3>
+          <p><strong>£29/mo</strong></p>
+          <ul>
+            <li>Usage dashboard</li>
+            <li>Refund estimator</li>
+            <li>Basic exports</li>
+          </ul>
+          <a class="btn" href="#waitlist">Start Ops</a>
+        </div>
+        <div class="card" style="border:2px solid var(--accent);">
+          <h3>FinOps</h3>
+          <p><strong>£99/mo</strong></p>
+          <ul>
+            <li>Multi-provider tracking</li>
+            <li>Auto dispute packets</li>
+            <li>Slack alerts</li>
+          </ul>
+          <a class="btn" href="#waitlist">Start FinOps</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" style="margin:48px 0;">
+      <div class="card">
+        <h2>Get early access</h2>
+        <p>Join the waitlist for CreditGuard AI.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <input placeholder="you@company.com" style="flex:1; min-width:220px;" />
+          <button class="btn">Join waitlist</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function estimate() {
+      const spend = parseFloat(document.getElementById('spend').value || '0');
+      const errorRate = parseFloat(document.getElementById('errorRate').value || '0') / 100;
+      const policy = document.getElementById('policy').value;
+
+      const multiplier = policy === 'strict' ? 1 : policy === 'standard' ? 0.6 : 0.3;
+      const refund = spend * errorRate * multiplier;
+      const spikes = Math.max(1, Math.round(errorRate * 10));
+      const tickets = Math.max(1, Math.round(errorRate * 6));
+
+      const summary = `Monthly spend: £${spend.toFixed(2)}\n` +
+        `Observed error rate: ${(errorRate*100).toFixed(1)}%\n` +
+        `Policy applied: ${policy}\n\n` +
+        `Estimated refundable credits: £${refund.toFixed(2)}\n` +
+        `Recommended action: Submit a support ticket with logs + request credit adjustment.`;
+
+      document.getElementById('summary').textContent = summary;
+      document.getElementById('refund').textContent = `£${refund.toFixed(0)}`;
+      document.getElementById('spikes').textContent = spikes;
+      document.getElementById('tickets').textContent = tickets;
+    }
+  </script>
+</body>
+</html>
