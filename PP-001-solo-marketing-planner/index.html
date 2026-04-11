@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SoloSignal turns solo founder goals into a 7-day marketing execution plan with KPIs, tasks, and exports." />
+  <title>SoloSignal — Solo Founder Marketing Planner</title>
+  <style>
+    :root {
+      --primary: #b91c1c;
+      --primary-dark: #7f1d1d;
+      --secondary: #0f172a;
+      --accent: #f97316;
+      --bg: #fff7ed;
+      --card: #ffffff;
+      --muted: #fef2f2;
+      --border: #fcd5d5;
+      --text: #0f172a;
+      --muted-text: #475569;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    h1, h2, h3 { margin: 0 0 12px; letter-spacing: -0.02em; }
+    p { line-height: 1.6; margin: 0 0 12px; }
+    .container { max-width: 1150px; margin: 0 auto; padding: 28px 20px 48px; }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0 24px; }
+    .badge { background: var(--muted); color: var(--primary-dark); padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .btn { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 12px 16px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+    .btn.secondary { background: #111827; }
+    .btn.ghost { background: transparent; color: var(--primary-dark); border: 1px solid var(--border); }
+    .hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 28px; align-items: center; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06); }
+    .grid { display: grid; gap: 16px; }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .section { margin: 42px 0; }
+    label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted-text); letter-spacing: 0.04em; }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; background: #fff; margin-top: 6px;
+    }
+    textarea { min-height: 88px; }
+    .inline { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .pill { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-size: 12px; font-weight: 600; }
+    .output { background: var(--muted); border-radius: 12px; padding: 14px; white-space: pre-wrap; font-size: 14px; min-height: 120px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { border-bottom: 1px solid var(--border); padding: 8px; text-align: left; }
+    th { background: #fff1f2; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted-text); }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .muted { color: var(--muted-text); font-size: 13px; }
+    .footer { text-align: center; color: var(--muted-text); font-size: 12px; padding-top: 26px; }
+    .channel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+    .channel-grid label { text-transform: none; font-weight: 600; color: var(--text); }
+    .kpi-status { font-weight: 700; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .nav { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="inline">
+        <strong>SoloSignal</strong>
+        <span class="badge">Solo founder edition</span>
+      </div>
+      <div class="inline">
+        <a class="btn ghost" href="#planner">Open planner</a>
+        <a class="btn" href="#pricing">Start planning</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div>
+        <h1>Plan your marketing week in under 5 minutes.</h1>
+        <p>SoloSignal turns a vague growth goal into a 7-day execution plan, a realistic task list, and KPI guardrails that fit a solo founder’s time budget.</p>
+        <div class="inline">
+          <a class="btn" href="#planner">Generate my plan</a>
+          <a class="btn secondary" href="#pricing">See pricing</a>
+        </div>
+        <div class="inline" style="margin-top:16px;">
+          <span class="pill">7-day calendar</span>
+          <span class="pill">KPI tracker</span>
+          <span class="pill">CSV + JSON export</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>What you get</h3>
+        <ul>
+          <li>Weekly plan with focus days + task list</li>
+          <li>Suggested KPIs tied to your goal</li>
+          <li>Exports for Monday planning or coach reviews</li>
+        </ul>
+        <p><strong>Built for:</strong> SaaS, devtools, solo agencies.</p>
+      </div>
+    </section>
+
+    <section id="planner" class="section">
+      <h2>Generate your 7-day plan</h2>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+        <div class="card">
+          <div class="grid">
+            <div>
+              <label>Product / offer</label>
+              <input id="product" placeholder="e.g. AI onboarding checklist" />
+            </div>
+            <div>
+              <label>Ideal customer</label>
+              <input id="audience" placeholder="e.g. Seed-stage SaaS founders" />
+            </div>
+            <div>
+              <label>Stage</label>
+              <select id="stage">
+                <option value="prelaunch">Pre-launch</option>
+                <option value="early">Early traction</option>
+                <option value="growth">Growth</option>
+              </select>
+            </div>
+            <div>
+              <label>Primary goal</label>
+              <select id="goal">
+                <option value="demos">Book more demos</option>
+                <option value="trials">Increase trials</option>
+                <option value="revenue">Grow monthly revenue</option>
+                <option value="pipeline">Fill the pipeline</option>
+              </select>
+            </div>
+            <div>
+              <label>Weekly hours available</label>
+              <input id="hours" type="number" min="1" max="40" value="6" />
+            </div>
+            <div>
+              <label>Weekly budget (£)</label>
+              <input id="budget" type="number" min="0" value="200" />
+            </div>
+            <div>
+              <label>Channels to focus</label>
+              <div class="channel-grid" id="channelList"></div>
+            </div>
+            <button class="btn" onclick="generatePlan()">Generate plan</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Your plan summary</h3>
+          <div id="planSummary" class="output">Fill the form to generate a plan.</div>
+          <div class="toolbar" style="margin-top:12px;">
+            <button class="btn ghost" onclick="copySummary()">Copy summary</button>
+            <button class="btn ghost" onclick="downloadJSON()">Download JSON</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <div class="toolbar" style="justify-content: space-between;">
+          <h2 style="margin:0;">Weekly task board</h2>
+          <div class="toolbar">
+            <button class="btn ghost" onclick="addTaskRow()">Add task</button>
+            <button class="btn ghost" onclick="exportCSV()">Export CSV</button>
+            <button class="btn ghost" onclick="savePlan()">Save</button>
+            <button class="btn ghost" onclick="clearPlan()">Clear</button>
+          </div>
+        </div>
+        <p class="muted">Edit any task inline. Saved plans live in your browser.</p>
+        <div style="overflow-x:auto;">
+          <table id="taskTable">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Task</th>
+                <th>Channel</th>
+                <th>Estimate</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <div class="card">
+          <h2>KPI tracker</h2>
+          <p class="muted">Track the numbers that move your goal. Update actuals daily.</p>
+          <div style="overflow-x:auto;">
+            <table id="kpiTable">
+              <thead>
+                <tr>
+                  <th>KPI</th>
+                  <th>Baseline</th>
+                  <th>Target</th>
+                  <th>Actual</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="toolbar" style="margin-top:12px;">
+            <button class="btn ghost" onclick="addKpiRow()">Add KPI</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Founder guardrails</h2>
+          <ul>
+            <li>Pick one primary channel per week.</li>
+            <li>Keep tasks sized for 30–60 minutes.</li>
+            <li>Review KPIs every Friday.</li>
+            <li>If no signal by week 2, change the offer or channel.</li>
+          </ul>
+          <h3>Weekly check-in</h3>
+          <textarea id="checkin" placeholder="What worked? What didn’t? Next week’s one bet?"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <h2>Simple pricing</h2>
+      <div class="grid-3 grid">
+        <div class="card">
+          <h3>Starter</h3>
+          <p><strong>£19/mo</strong></p>
+          <ul>
+            <li>Weekly plan generator</li>
+            <li>Single channel focus</li>
+            <li>Email support</li>
+          </ul>
+          <a class="btn" href="#waitlist">Start Starter</a>
+        </div>
+        <div class="card" style="border:2px solid var(--accent);">
+          <h3>Builder</h3>
+          <p><strong>£39/mo</strong> <span style="color:var(--accent)">Most popular</span></p>
+          <ul>
+            <li>Multi-channel planning</li>
+            <li>Templates + exports</li>
+            <li>KPI tracking</li>
+          </ul>
+          <a class="btn" href="#waitlist">Start Builder</a>
+        </div>
+        <div class="card">
+          <h3>Studio</h3>
+          <p><strong>£99/mo</strong></p>
+          <ul>
+            <li>Multiple products</li>
+            <li>Team seats</li>
+            <li>Quarterly GTM review</li>
+          </ul>
+          <a class="btn" href="#waitlist">Contact sales</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section">
+      <div class="card">
+        <h2>Get the launch invite</h2>
+        <p>Join the waitlist and get the founder playbook + first plan free.</p>
+        <div class="inline" style="align-items:stretch;">
+          <input placeholder="you@company.com" style="flex:1; min-width:220px;" />
+          <button class="btn">Join waitlist</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">© 2026 SoloSignal. UK-friendly marketing planner for solo founders.</div>
+  </div>
+
+  <script>
+    const channelOptions = [
+      { id: 'content', label: 'Content + SEO' },
+      { id: 'outreach', label: 'Cold outreach' },
+      { id: 'communities', label: 'Communities' },
+      { id: 'paid', label: 'Paid ads' },
+      { id: 'partners', label: 'Partnerships' },
+      { id: 'lifecycle', label: 'Lifecycle/CRM' }
+    ];
+
+    const channelTasks = {
+      content: [
+        'Draft one pillar article with CTA',
+        'Ship 3 short posts from the pillar',
+        'Refresh a landing page headline + proof'
+      ],
+      outreach: [
+        'Build a list of 30 ideal targets',
+        'Send 20 personalised emails',
+        'Follow-up with 10 warm replies'
+      ],
+      communities: [
+        'Answer 5 niche questions with a soft CTA',
+        'Post a quick case study or teardown',
+        'DM 5 founders for feedback'
+      ],
+      paid: [
+        'Launch 2 ads with different angles',
+        'Test 3 creatives and pause losers',
+        'Optimise landing page for conversions'
+      ],
+      partners: [
+        'List 5 potential partners with overlap',
+        'Pitch 2 co-marketing ideas',
+        'Draft a shared webinar outline'
+      ],
+      lifecycle: [
+        'Write a 3-email activation sequence',
+        'Add one in-app nudge or tooltip',
+        'Review churn reasons and update FAQ'
+      ]
+    };
+
+    const goalMap = {
+      demos: ['Demo requests', 'Qualified leads', 'Landing page conversion'],
+      trials: ['Trial starts', 'Activation rate', 'Signup conversion'],
+      revenue: ['Monthly revenue', 'Upgrade rate', 'Average contract value'],
+      pipeline: ['Sales conversations', 'Reply rate', 'Meeting booked rate']
+    };
+
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    function renderChannels() {
+      const container = document.getElementById('channelList');
+      container.innerHTML = '';
+      channelOptions.forEach(option => {
+        const wrapper = document.createElement('label');
+        wrapper.style.display = 'flex';
+        wrapper.style.gap = '8px';
+        wrapper.style.alignItems = 'center';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.value = option.id;
+        input.checked = option.id === 'content';
+        wrapper.appendChild(input);
+        wrapper.appendChild(document.createTextNode(option.label));
+        container.appendChild(wrapper);
+      });
+    }
+
+    function generatePlan() {
+      const product = document.getElementById('product').value || 'your product';
+      const audience = document.getElementById('audience').value || 'your ideal customers';
+      const stage = document.getElementById('stage').value;
+      const goal = document.getElementById('goal').value;
+      const hours = parseInt(document.getElementById('hours').value || '6', 10);
+      const budget = parseInt(document.getElementById('budget').value || '0', 10);
+      const selectedChannels = Array.from(document.querySelectorAll('#channelList input:checked')).map(el => el.value);
+
+      if (selectedChannels.length === 0) {
+        alert('Pick at least one channel.');
+        return;
+      }
+
+      const taskPool = selectedChannels.flatMap(channel => channelTasks[channel].map(task => `[${channel}] ${task}`));
+      const tasksNeeded = Math.min(14, Math.max(7, Math.round(hours) + 2));
+      const schedule = [];
+
+      for (let i = 0; i < tasksNeeded; i++) {
+        const day = days[i % days.length];
+        const task = taskPool[i % taskPool.length] || 'Review metrics + adjust next steps';
+        schedule.push({ day, task, channel: task.includes('[') ? task.slice(1, task.indexOf(']')) : selectedChannels[0] });
+      }
+
+      const summary = `Goal: ${goal.replace('demos','book more demos').replace('trials','increase trials').replace('revenue','grow revenue').replace('pipeline','fill the pipeline')} for ${product}.\n` +
+        `Audience: ${audience}. Stage: ${stage}.\n` +
+        `Time budget: ${hours}h/week | Spend: £${budget}/week\n` +
+        `Channels: ${selectedChannels.join(', ')}\n\n` +
+        `Focus days: ${schedule.slice(0, 5).map(item => item.day + ' - ' + item.task).join('\n')}`;
+
+      document.getElementById('planSummary').textContent = summary;
+      buildTaskTable(schedule);
+      seedKpiTable(goal);
+      savePlan();
+    }
+
+    function buildTaskTable(schedule) {
+      const tbody = document.querySelector('#taskTable tbody');
+      tbody.innerHTML = '';
+      schedule.forEach(item => addTaskRow(item));
+    }
+
+    function addTaskRow(item = {}) {
+      const tbody = document.querySelector('#taskTable tbody');
+      const row = document.createElement('tr');
+
+      const dayCell = document.createElement('td');
+      const daySelect = document.createElement('select');
+      days.forEach(day => {
+        const option = document.createElement('option');
+        option.value = day;
+        option.textContent = day;
+        daySelect.appendChild(option);
+      });
+      daySelect.value = item.day || 'Mon';
+      dayCell.appendChild(daySelect);
+
+      const taskCell = document.createElement('td');
+      const taskInput = document.createElement('input');
+      taskInput.value = item.task ? item.task.replace(/^\[[^\]]+\]\s*/, '') : '';
+      taskCell.appendChild(taskInput);
+
+      const channelCell = document.createElement('td');
+      const channelSelect = document.createElement('select');
+      channelOptions.forEach(option => {
+        const opt = document.createElement('option');
+        opt.value = option.id;
+        opt.textContent = option.label;
+        channelSelect.appendChild(opt);
+      });
+      channelSelect.value = item.channel || channelOptions[0].id;
+      channelCell.appendChild(channelSelect);
+
+      const estimateCell = document.createElement('td');
+      const estimateInput = document.createElement('input');
+      estimateInput.value = item.estimate || '45m';
+      estimateCell.appendChild(estimateInput);
+
+      const statusCell = document.createElement('td');
+      const statusSelect = document.createElement('select');
+      ['Planned', 'In progress', 'Done'].forEach(status => {
+        const opt = document.createElement('option');
+        opt.value = status;
+        opt.textContent = status;
+        statusSelect.appendChild(opt);
+      });
+      statusSelect.value = item.status || 'Planned';
+      statusCell.appendChild(statusSelect);
+
+      row.appendChild(dayCell);
+      row.appendChild(taskCell);
+      row.appendChild(channelCell);
+      row.appendChild(estimateCell);
+      row.appendChild(statusCell);
+      tbody.appendChild(row);
+    }
+
+    function seedKpiTable(goal) {
+      const tbody = document.querySelector('#kpiTable tbody');
+      tbody.innerHTML = '';
+      (goalMap[goal] || goalMap.demos).forEach(kpi => {
+        addKpiRow({ kpi, baseline: '', target: '', actual: '' });
+      });
+    }
+
+    function addKpiRow(item = {}) {
+      const tbody = document.querySelector('#kpiTable tbody');
+      const row = document.createElement('tr');
+
+      const kpiCell = document.createElement('td');
+      const kpiInput = document.createElement('input');
+      kpiInput.value = item.kpi || '';
+      kpiCell.appendChild(kpiInput);
+
+      const baselineCell = document.createElement('td');
+      const baselineInput = document.createElement('input');
+      baselineInput.type = 'number';
+      baselineInput.value = item.baseline || '';
+      baselineCell.appendChild(baselineInput);
+
+      const targetCell = document.createElement('td');
+      const targetInput = document.createElement('input');
+      targetInput.type = 'number';
+      targetInput.value = item.target || '';
+      targetCell.appendChild(targetInput);
+
+      const actualCell = document.createElement('td');
+      const actualInput = document.createElement('input');
+      actualInput.type = 'number';
+      actualInput.value = item.actual || '';
+      actualCell.appendChild(actualInput);
+
+      const statusCell = document.createElement('td');
+      const status = document.createElement('span');
+      status.className = 'kpi-status';
+      status.textContent = '—';
+      statusCell.appendChild(status);
+
+      [baselineInput, targetInput, actualInput].forEach(input => {
+        input.addEventListener('input', () => updateKpiStatus(row));
+      });
+
+      row.appendChild(kpiCell);
+      row.appendChild(baselineCell);
+      row.appendChild(targetCell);
+      row.appendChild(actualCell);
+      row.appendChild(statusCell);
+      tbody.appendChild(row);
+    }
+
+    function updateKpiStatus(row) {
+      const target = parseFloat(row.children[2].querySelector('input').value || '0');
+      const actual = parseFloat(row.children[3].querySelector('input').value || '0');
+      const status = row.children[4].querySelector('span');
+      if (!target) {
+        status.textContent = '—';
+        status.style.color = '';
+        return;
+      }
+      const delta = actual - target;
+      status.textContent = delta >= 0 ? `On track (+${delta})` : `Behind (${delta})`;
+      status.style.color = delta >= 0 ? '#15803d' : '#b91c1c';
+    }
+
+    function copySummary() {
+      const summary = document.getElementById('planSummary').textContent;
+      navigator.clipboard.writeText(summary).then(() => alert('Summary copied.'));
+    }
+
+    function downloadJSON() {
+      const data = collectPlan();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'solosignal-plan.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportCSV() {
+      const tasks = collectPlan().tasks;
+      const header = ['Day', 'Task', 'Channel', 'Estimate', 'Status'];
+      const rows = tasks.map(task => [task.day, task.task, task.channel, task.estimate, task.status]);
+      const csv = [header, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'solosignal-tasks.csv';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function collectPlan() {
+      const tasks = Array.from(document.querySelectorAll('#taskTable tbody tr')).map(row => ({
+        day: row.children[0].querySelector('select').value,
+        task: row.children[1].querySelector('input').value,
+        channel: row.children[2].querySelector('select').value,
+        estimate: row.children[3].querySelector('input').value,
+        status: row.children[4].querySelector('select').value
+      }));
+
+      const kpis = Array.from(document.querySelectorAll('#kpiTable tbody tr')).map(row => ({
+        kpi: row.children[0].querySelector('input').value,
+        baseline: row.children[1].querySelector('input').value,
+        target: row.children[2].querySelector('input').value,
+        actual: row.children[3].querySelector('input').value
+      }));
+
+      return {
+        product: document.getElementById('product').value,
+        audience: document.getElementById('audience').value,
+        stage: document.getElementById('stage').value,
+        goal: document.getElementById('goal').value,
+        hours: document.getElementById('hours').value,
+        budget: document.getElementById('budget').value,
+        channels: Array.from(document.querySelectorAll('#channelList input:checked')).map(el => el.value),
+        summary: document.getElementById('planSummary').textContent,
+        tasks,
+        kpis,
+        checkin: document.getElementById('checkin').value
+      };
+    }
+
+    function savePlan() {
+      const data = collectPlan();
+      localStorage.setItem('solosignal-plan', JSON.stringify(data));
+    }
+
+    function loadPlan() {
+      const data = localStorage.getItem('solosignal-plan');
+      if (!data) return;
+      const plan = JSON.parse(data);
+      document.getElementById('product').value = plan.product || '';
+      document.getElementById('audience').value = plan.audience || '';
+      document.getElementById('stage').value = plan.stage || 'prelaunch';
+      document.getElementById('goal').value = plan.goal || 'demos';
+      document.getElementById('hours').value = plan.hours || 6;
+      document.getElementById('budget').value = plan.budget || 0;
+      document.getElementById('planSummary').textContent = plan.summary || 'Fill the form to generate a plan.';
+      document.getElementById('checkin').value = plan.checkin || '';
+
+      const channelInputs = document.querySelectorAll('#channelList input');
+      channelInputs.forEach(input => {
+        input.checked = (plan.channels || []).includes(input.value);
+      });
+
+      if (plan.tasks && plan.tasks.length) {
+        buildTaskTable(plan.tasks);
+      }
+      if (plan.kpis && plan.kpis.length) {
+        const tbody = document.querySelector('#kpiTable tbody');
+        tbody.innerHTML = '';
+        plan.kpis.forEach(kpi => addKpiRow(kpi));
+      }
+    }
+
+    function clearPlan() {
+      localStorage.removeItem('solosignal-plan');
+      document.getElementById('planSummary').textContent = 'Fill the form to generate a plan.';
+      document.querySelector('#taskTable tbody').innerHTML = '';
+      document.querySelector('#kpiTable tbody').innerHTML = '';
+      document.getElementById('checkin').value = '';
+    }
+
+    renderChannels();
+    loadPlan();
+  </script>
+</body>
+</html>
