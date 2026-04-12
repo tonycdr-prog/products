@@ -3,102 +3,184 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LeadBeam — Lightweight CRM + Lead Discovery</title>
-  <meta name="description" content="LeadBeam imports your curated leads, tracks follow-ups, and generates discovery plans for small teams." />
+  <title>LeadBeam — Turn Messy Lead Lists Into a Focused Follow‑Up Pipeline</title>
+  <meta name="description" content="LeadBeam is a lightweight UK‑friendly CRM that turns messy lead lists into a focused follow‑up pipeline with clear next actions and discovery playbooks." />
+  <meta property="og:title" content="LeadBeam — Turn Messy Lead Lists Into a Focused Follow‑Up Pipeline" />
+  <meta property="og:description" content="Lightweight CRM + discovery playbooks for solo founders and small UK teams. Run a live demo in your browser." />
   <meta name="theme-color" content="#F8FAFC" />
   <style>
     :root {
-      --primary: #2563EB;
-      --on-primary: #FFFFFF;
-      --secondary: #1E293B;
-      --accent: #059669;
       --bg: #F8FAFC;
-      --fg: #0F172A;
-      --card: #FFFFFF;
-      --muted: #EEF2FF;
-      --muted-fg: #64748B;
+      --surface: #FFFFFF;
+      --primary: #1E3A8A;
+      --primary-soft: #DBEAFE;
+      --accent: #14B8A6;
+      --accent-soft: #ECFEFF;
+      --warning: #F59E0B;
+      --text: #0F172A;
+      --muted: #64748B;
       --border: #E2E8F0;
-      --danger: #DC2626;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+      --space-1: 6px;
+      --space-2: 10px;
+      --space-3: 16px;
+      --space-4: 24px;
+      --space-5: 32px;
+      --space-6: 48px;
+      --space-7: 64px;
     }
+
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background: var(--bg);
-      color: var(--fg);
-      line-height: 1.5;
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-tap-highlight-color: rgba(30, 58, 138, 0.15);
     }
     a { color: inherit; text-decoration: none; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-    .skip-link { position: absolute; left: -999px; top: 12px; background: #fff; padding: 8px 12px; border-radius: 8px; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 var(--space-4); }
+    .skip-link {
+      position: absolute; left: -999px; top: 12px; background: #fff;
+      padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border);
+    }
     .skip-link:focus { left: 12px; z-index: 999; }
-    header { position: sticky; top: 0; z-index: 20; background: rgba(248, 250, 252, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
-    .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 16px; }
+
+    header {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(248, 250, 252, 0.92); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-3) 0; gap: var(--space-3);
+    }
     .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.3px; }
-    .nav-links { display: flex; gap: 18px; font-weight: 600; color: var(--secondary); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 16px; border-radius: 10px; border: 1px solid transparent; font-weight: 600; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease; }
-    .btn:focus-visible { outline: 3px solid rgba(37,99,235,0.35); outline-offset: 2px; }
-    .btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: 0 10px 26px rgba(37,99,235,0.25); }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 32px rgba(37,99,235,0.3); }
-    .btn-secondary { background: var(--card); border-color: var(--border); }
-    .btn-secondary:hover { background: #eff6ff; }
-    .btn-danger { background: #FEE2E2; color: var(--danger); border-color: #FCA5A5; }
-    .hero { padding: 72px 0 48px; }
-    .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 32px; align-items: center; }
-    .hero h1 { font-size: 42px; margin: 0 0 14px; text-wrap: balance; }
-    .hero p { color: var(--muted-fg); font-size: 18px; }
-    .badge { display: inline-block; background: var(--muted); padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
-    .section { padding: 56px 0; }
-    .section h2 { font-size: 30px; margin-bottom: 12px; text-wrap: balance; scroll-margin-top: 90px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; }
-    .field { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; font-family: inherit; }
-    .field:focus-visible { outline: 3px solid rgba(37,99,235,0.35); outline-offset: 2px; }
-    .demo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
-    th { background: var(--muted); }
-    .pipeline { display: grid; grid-template-columns: repeat(6, minmax(160px, 1fr)); gap: 12px; overflow-x: auto; }
-    .pipeline-column { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; min-height: 140px; }
-    .lead-card { border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 8px; background: #fff; }
-    .lead-card small { color: var(--muted-fg); display: block; }
-    .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 8px; border-radius: 999px; background: #ECFEFF; color: #0F766E; font-weight: 600; }
-    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .metric { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
-    .metric strong { font-size: 22px; }
-    .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .price { font-size: 30px; font-weight: 700; }
-    .price-card.featured { border-color: var(--primary); box-shadow: 0 16px 30px rgba(37,99,235,0.2); }
-    .waitlist { background: linear-gradient(120deg, #e0e7ff, #f1f5ff); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; align-items: center; }
-    footer { padding: 40px 0; border-top: 1px solid var(--border); color: var(--muted-fg); }
-    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
-    .muted { color: var(--muted-fg); }
+    .nav-links { display: flex; gap: var(--space-4); font-weight: 600; color: var(--muted); }
+    .nav-links a:hover { color: var(--primary); }
+
+    .btn,
+    .btn-pay {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 18px; border-radius: 999px; border: 2px solid transparent;
+      font-weight: 700; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease;
+      touch-action: manipulation;
+    }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: var(--shadow); }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-secondary { background: #fff; border-color: var(--primary); color: var(--primary); }
+    .btn-secondary:hover { background: var(--primary-soft); }
+    .btn-pay { background: var(--accent); color: #042F2E; box-shadow: var(--shadow); }
+    .btn-pay:hover { transform: translateY(-1px); }
+    .btn:focus-visible, .btn-pay:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(30, 58, 138, 0.35);
+      outline-offset: 2px;
+    }
+
+    .hero { padding: var(--space-7) 0 var(--space-6); }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-6); align-items: center;
+    }
+    h1 {
+      font-size: clamp(2.4rem, 4vw, 3.4rem);
+      line-height: 1.1;
+      margin: 0 0 var(--space-3);
+      text-wrap: balance;
+    }
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      margin: 0 0 var(--space-2);
+      text-wrap: balance;
+      scroll-margin-top: 110px;
+    }
+    h3 {
+      font-size: 1.2rem;
+      margin: 0 0 var(--space-2);
+      text-wrap: balance;
+    }
+    p { margin: 0 0 var(--space-3); }
+    .muted { color: var(--muted); }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: var(--space-4); box-shadow: var(--shadow);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+      background: var(--accent-soft); color: #0F766E; font-weight: 600; font-size: 0.85rem;
+    }
+    .benefits { margin: var(--space-4) 0 0; padding-left: 18px; display: grid; gap: var(--space-2); }
+
+    .chapter { padding: var(--space-6) 0; }
+    .chapter-card { border-left: 6px solid var(--primary); }
+    .chapter-card.secondary { border-left-color: var(--accent); }
+    .chapter-card.tertiary { border-left-color: var(--warning); }
+
+    .section { padding: var(--space-6) 0; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-weight: 600; font-size: 0.8rem; }
+
+    label { font-weight: 600; display: block; margin-bottom: var(--space-1); }
+    input, select, textarea {
+      width: 100%; padding: 12px 12px; border-radius: 12px; border: 1px solid var(--border);
+      font-family: inherit; font-size: 1rem; background: #fff; color: var(--text);
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: var(--primary-soft); }
+
+    .pipeline { display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: var(--space-3); overflow-x: auto; }
+    .pipeline-col { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: var(--space-3); min-height: 140px; }
+    .lead-card { border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-top: var(--space-2); background: #fff; }
+
+    .pricing { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+    .price-card { border: 2px solid var(--border); }
+    .price-card.highlight { border-color: var(--accent); box-shadow: 0 18px 40px rgba(20, 184, 166, 0.18); }
+
+    .progress {
+      position: fixed; top: 88px; right: 24px; background: #fff; border: 1px solid var(--border);
+      border-radius: 999px; padding: 6px 12px; font-size: 0.85rem; color: var(--muted);
+      box-shadow: var(--shadow);
+    }
+
+    footer { padding: var(--space-6) 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; }
+
     @media (max-width: 980px) {
-      .hero-grid, .demo, .waitlist { grid-template-columns: 1fr; }
-      .grid-3, .pricing { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .hero-grid { grid-template-columns: 1fr; }
+      .grid-2, .grid-3, .pricing { grid-template-columns: 1fr; }
       .nav-links { display: none; }
-      .hero h1 { font-size: 34px; }
-      .pipeline { grid-template-columns: repeat(3, minmax(160px, 1fr)); }
+      .progress { display: none; }
+      .pipeline { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
     }
     @media (max-width: 640px) {
-      .metrics { grid-template-columns: 1fr; }
-      .pipeline { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .pipeline { grid-template-columns: repeat(1, minmax(180px, 1fr)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
     }
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to Main Content</a>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="progress">LeadBeam • Chapter Flow</div>
+
   <header>
     <div class="container nav">
       <div class="logo">LeadBeam</div>
       <nav class="nav-links" aria-label="Primary">
-        <a href="#features">Features</a>
-        <a href="#demo">Live CRM</a>
+        <a href="#chapters">Why It Works</a>
+        <a href="#demo">Live Demo</a>
         <a href="#pricing">Pricing</a>
       </nav>
-      <a class="btn btn-primary" href="#waitlist">Join Waitlist</a>
+      <a class="btn btn-primary" href="#waitlist">Join the Waitlist</a>
     </div>
   </header>
 
@@ -106,117 +188,117 @@
     <section class="hero">
       <div class="container hero-grid">
         <div>
-          <span class="badge">Built for small teams & solo founders</span>
-          <h1>Import your leads. Automate discovery. Close faster.</h1>
-          <p>LeadBeam is a lightweight CRM that accepts curated leads, keeps follow-ups on track, and generates discovery steps — without enterprise bloat.</p>
-          <div style="display:flex; gap:12px; flex-wrap: wrap; margin-top:18px;">
-            <a class="btn btn-primary" href="#demo">Try the Live CRM</a>
+          <span class="badge">Built for UK‑First Small Teams</span>
+          <h1>Turn Messy Lead Lists Into a Focused Follow‑Up Pipeline.</h1>
+          <p class="muted">LeadBeam keeps your best opportunities visible, highlights the next action date, and gives you a ready‑made discovery playbook — without enterprise CRM bloat.</p>
+          <ul class="benefits">
+            <li><strong>Know who needs attention today.</strong> Every lead has a next action date and status.</li>
+            <li><strong>Keep the pipeline honest.</strong> Qualify, win, or pause leads in a single view.</li>
+            <li><strong>Find more of the right prospects.</strong> Discovery playbooks turn research into a checklist.</li>
+          </ul>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:var(--space-4);">
+            <a class="btn btn-primary" href="#demo">Try the Live Demo</a>
             <a class="btn btn-secondary" href="#pricing">See Pricing</a>
           </div>
         </div>
         <div class="card">
-          <h3>Sales ops in 15 minutes</h3>
-          <ul>
-            <li>CSV import or manual lead entry</li>
-            <li>Pipeline stages with next-action dates</li>
-            <li>Discovery playbooks by industry + region</li>
-          </ul>
-          <div class="pill">No login required for demo</div>
+          <h3>What You Get in 15 Minutes</h3>
+          <p class="muted">Add a few leads, set the next actions, and watch the pipeline organise itself.</p>
+          <div class="grid-2" style="margin-top:var(--space-3);">
+            <div class="pill">No Login Required</div>
+            <div class="pill">Local‑First Demo</div>
+          </div>
+          <div style="margin-top:var(--space-3);">
+            <p><strong>Ideal for:</strong> solo founders, small agencies, and UK SMEs that live in spreadsheets today.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="features" class="section">
+    <section id="chapters" class="chapter">
       <div class="container">
-        <h2>Key Features</h2>
-        <div class="grid-3" style="margin-top:20px;">
-          <div class="card">
-            <h3>Lead Capture</h3>
-            <p>Paste CSV or add leads manually with email, company, and next-action reminders.</p>
-          </div>
-          <div class="card">
-            <h3>Pipeline Focus</h3>
-            <p>Move leads across stages, log notes, and keep the next step visible.</p>
-          </div>
-          <div class="card">
-            <h3>Discovery Engine</h3>
-            <p>Generate a tailored plan to source similar prospects in minutes.</p>
-          </div>
+        <div class="card chapter-card">
+          <h2>Chapter 1 — The Messy Handover Problem</h2>
+          <p>Lead lists live in inboxes, Notion tables, and rogue spreadsheets. The moment someone forgets a follow‑up date, revenue slips. LeadBeam keeps next actions visible without a heavyweight CRM migration.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="container">
+        <div class="card chapter-card secondary">
+          <h2>Chapter 2 — Focus on the Next Move</h2>
+          <p>Every lead gets a status, a next‑action date, and a clear owner. The pipeline view shows where deals are stuck so you can unblock them fast.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="container">
+        <div class="card chapter-card tertiary">
+          <h2>Chapter 3 — Expand With Confidence</h2>
+          <p>Discovery playbooks turn the “where do we find more” problem into a checklist. You stay compliant, personal, and consistent.</p>
         </div>
       </div>
     </section>
 
     <section id="demo" class="section">
       <div class="container">
-        <h2>Live CRM — Import, Track, and Plan</h2>
-        <p class="muted">Everything below works locally in your browser (stored in your device only).</p>
+        <h2>Live CRM Demo</h2>
+        <p class="muted">Everything below works in your browser and stays local to your device.</p>
 
-        <div class="demo" style="margin-top:20px;">
+        <div class="grid-2" style="margin-top:var(--space-4);">
           <div class="card">
             <h3>Add a Lead</h3>
-            <label for="leadName">Name</label>
-            <input class="field" id="leadName" placeholder="Alex Morgan" />
-            <label for="leadEmail">Email</label>
-            <input class="field" id="leadEmail" type="email" placeholder="alex@acme.com" />
+            <label for="leadName">Contact Name</label>
+            <input id="leadName" name="leadName" type="text" autocomplete="off" placeholder="Priya Shah…" />
             <label for="leadCompany">Company</label>
-            <input class="field" id="leadCompany" placeholder="Acme Ltd" />
+            <input id="leadCompany" name="leadCompany" type="text" autocomplete="off" placeholder="Bright Ops…" />
+            <label for="leadEmail">Email</label>
+            <input id="leadEmail" name="leadEmail" type="email" autocomplete="email" inputmode="email" spellcheck="false" placeholder="priya@brightops.co.uk…" />
             <label for="leadNext">Next Action Date</label>
-            <input class="field" id="leadNext" type="date" />
+            <input id="leadNext" name="leadNext" type="date" autocomplete="off" />
+            <label for="leadStatus">Status</label>
+            <select id="leadStatus" name="leadStatus">
+              <option value="New">New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Proposal">Proposal</option>
+              <option value="Won">Won</option>
+              <option value="Paused">Paused</option>
+            </select>
             <label for="leadNotes">Notes</label>
-            <textarea class="field" id="leadNotes" rows="3" placeholder="Key details, last contact, intent..."></textarea>
-            <button class="btn btn-primary" id="addLead" type="button">Add Lead</button>
-            <button class="btn btn-secondary" id="seedLeads" type="button">Load Sample Leads</button>
+            <textarea id="leadNotes" name="leadNotes" rows="3" autocomplete="off" placeholder="Short context, objections, or next step…"></textarea>
+            <button class="btn btn-primary" id="addLead" type="button" style="margin-top:var(--space-2);">Add Lead</button>
+            <button class="btn btn-secondary" id="seedLeads" type="button" style="margin-top:var(--space-2);">Load Sample Leads</button>
           </div>
+
           <div class="card">
-            <h3>Import Leads (CSV)</h3>
-            <label for="csvInput">CSV Data</label>
-            <textarea class="field" id="csvInput" rows="6" autocomplete="off" placeholder="name,email,company,next
-Alex,alex@acme.com,Acme,2026-04-10"></textarea>
-            <div class="toolbar">
-              <button class="btn btn-primary" id="parseCsv" type="button">Parse CSV</button>
-              <button class="btn btn-secondary" id="exportCsv" type="button">Export CSV</button>
-              <button class="btn btn-danger" id="clearAll" type="button">Clear All</button>
+            <h3>Lead List</h3>
+            <p class="muted">Edit status or next action directly in the table.</p>
+            <div style="margin-top:var(--space-3);">
+              <label for="leadSearch">Search</label>
+              <input id="leadSearch" name="leadSearch" type="text" autocomplete="off" placeholder="Search by name, company, or email…" />
             </div>
-            <p id="csvStatus" class="muted" aria-live="polite" style="margin-top:10px;"></p>
+            <div id="leadTable" style="margin-top:var(--space-3);" aria-live="polite"></div>
           </div>
         </div>
 
-        <div style="margin-top:24px;">
-          <div class="metrics">
-            <div class="metric"><div class="muted">Total Leads</div><strong id="metricTotal">0</strong></div>
-            <div class="metric"><div class="muted">Next Actions (7d)</div><strong id="metricNext">0</strong></div>
-            <div class="metric"><div class="muted">Qualified</div><strong id="metricQualified">0</strong></div>
-            <div class="metric"><div class="muted">Won</div><strong id="metricWon">0</strong></div>
-          </div>
-        </div>
-
-        <div class="demo" style="margin-top:24px;">
+        <div class="grid-2" style="margin-top:var(--space-4);">
           <div class="card">
-            <h3>Search & Edit Leads</h3>
-            <label for="search">Search</label>
-            <input class="field" id="search" placeholder="Search by name, company, or email..." />
-            <div id="leadTable" aria-live="polite"></div>
+            <h3>Pipeline Snapshot</h3>
+            <div class="pipeline" id="pipeline" aria-live="polite"></div>
           </div>
           <div class="card">
-            <h3>Pipeline</h3>
-            <div class="pipeline" id="pipeline"></div>
-          </div>
-        </div>
-
-        <div class="demo" style="margin-top:24px;">
-          <div class="card">
-            <h3>Discovery Wizard</h3>
-            <label for="industry">Industry</label>
-            <input class="field" id="industry" placeholder="e.g. Facilities Management" />
+            <h3>Discovery Playbook</h3>
+            <label for="industry">Industry Focus</label>
+            <input id="industry" name="industry" type="text" autocomplete="off" placeholder="Facilities management…" />
             <label for="role">Target Role</label>
-            <input class="field" id="role" placeholder="e.g. Operations Manager" />
+            <input id="role" name="role" type="text" autocomplete="off" placeholder="Operations manager…" />
             <label for="region">Region</label>
-            <input class="field" id="region" placeholder="e.g. United Kingdom" />
-            <button class="btn btn-secondary" id="generatePlan" type="button">Generate Discovery Plan</button>
-          </div>
-          <div class="card">
-            <h3>Discovery Plan</h3>
-            <ul id="planList"></ul>
+            <input id="region" name="region" type="text" autocomplete="off" placeholder="United Kingdom…" />
+            <button class="btn btn-secondary" id="generatePlan" type="button" style="margin-top:var(--space-2);">Generate Playbook</button>
+            <ul id="planList" style="margin-top:var(--space-3);"></ul>
           </div>
         </div>
       </div>
@@ -225,24 +307,28 @@ Alex,alex@acme.com,Acme,2026-04-10"></textarea>
     <section id="pricing" class="section">
       <div class="container">
         <h2>Pricing</h2>
-        <div class="pricing" style="margin-top:20px;">
-          <div class="card">
-            <h3>Starter</h3>
-            <p class="price">£12/mo</p>
-            <p>Up to 1,000 leads</p>
-            <button class="btn btn-secondary" type="button">Start Starter</button>
+        <p class="muted">Start free. Upgrade for exports, templates, and reminders.</p>
+        <div class="pricing" style="margin-top:var(--space-4);">
+          <div class="card price-card">
+            <h3>Free</h3>
+            <p><strong>£0</strong> • Up to 50 leads</p>
+            <ul class="benefits">
+              <li>Local lead tracker</li>
+              <li>Pipeline status view</li>
+              <li>Basic discovery checklist</li>
+            </ul>
+            <a class="btn btn-secondary" href="#demo">Use the Free Demo</a>
           </div>
-          <div class="card price-card featured">
-            <h3>Growth</h3>
-            <p class="price">£20/mo</p>
-            <p>Unlimited leads + discovery templates</p>
-            <button class="btn btn-primary" type="button">Start Growth</button>
-          </div>
-          <div class="card">
-            <h3>Team</h3>
-            <p class="price">£45/mo</p>
-            <p>Shared pipelines + admin roles</p>
-            <button class="btn btn-secondary" type="button">Start Team</button>
+          <div class="card price-card highlight">
+            <h3>Pro</h3>
+            <p><strong>£9/mo</strong> • Unlimited leads + exports</p>
+            <ul class="benefits">
+              <li>Unlimited leads + team notes</li>
+              <li>CSV export and weekly follow‑up reminders</li>
+              <li>Industry playbook templates</li>
+            </ul>
+            <a href="#stripe-coming-soon" class="btn-pay">Get Pro — £9/mo</a>
+            <p class="muted" style="margin-top:var(--space-2);">Payment coming soon — join the waitlist.</p>
           </div>
         </div>
       </div>
@@ -250,31 +336,39 @@ Alex,alex@acme.com,Acme,2026-04-10"></textarea>
 
     <section id="waitlist" class="section">
       <div class="container">
-        <div class="waitlist">
-          <div>
-            <h2>Get Early Access</h2>
-            <p>We’re onboarding UK-first teams. Leave your email for a beta slot.</p>
-          </div>
-          <form onsubmit="event.preventDefault(); alert('Thanks! You are on the waitlist.');">
+        <div class="card">
+          <h2>Join the Waitlist</h2>
+          <p class="muted">Get an email when Pro exports and reminders are live.</p>
+          <form id="waitlistForm">
             <label for="email">Email Address</label>
-            <input class="field" id="email" name="email" type="email" required autocomplete="email" spellcheck="false" placeholder="you@company.com" />
-            <button class="btn btn-primary" type="submit">Join Waitlist</button>
+            <input id="email" name="email" type="email" required autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@company.com…" />
+            <button class="btn btn-primary" type="submit" style="margin-top:var(--space-2);">Notify Me</button>
+            <p id="waitlistMessage" class="muted" style="margin-top:var(--space-2);" aria-live="polite"></p>
           </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="card" style="text-align:center;">
+          <h2>Bring Clarity to Your Follow‑Ups This Week</h2>
+          <p class="muted">Run the demo, then invite your team when Pro opens.</p>
+          <a class="btn btn-primary" href="#demo">Start the Free Demo</a>
         </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="container">© 2026 LeadBeam. Lightweight CRM for fast-moving teams.</div>
+    <div class="container">LeadBeam is a lightweight CRM for UK‑first teams. Data stays in your browser until Pro launches.</div>
   </footer>
 
   <script>
     const STORAGE_KEY = 'leadbeam_leads';
-    const stages = ['New', 'Contacted', 'Qualified', 'Proposal', 'Won', 'Lost'];
+    const stages = ['New', 'Contacted', 'Qualified', 'Proposal', 'Won', 'Paused'];
 
     const leadTable = document.getElementById('leadTable');
-    const csvStatus = document.getElementById('csvStatus');
     const pipelineEl = document.getElementById('pipeline');
 
     function loadLeads() {
@@ -286,76 +380,32 @@ Alex,alex@acme.com,Acme,2026-04-10"></textarea>
       localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
     }
 
-    function parseCSV(text) {
-      const lines = text.trim().split('\n').filter(Boolean);
-      if (lines.length < 2) return [];
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-      return lines.slice(1).map(line => {
-        const cols = line.split(',').map(c => c.trim());
-        const row = {};
-        headers.forEach((h, i) => row[h] = cols[i] || '');
-        return row;
-      });
-    }
-
-    function normalizeLead(row) {
-      return {
-        id: crypto.randomUUID(),
-        name: row.name || row.contact || row.fullname || '',
-        email: row.email || row.mail || '',
-        company: row.company || row.organisation || row.org || '',
-        next: row.next || row.nextaction || row.followup || '',
-        notes: row.notes || '',
-        status: stages.includes(row.status) ? row.status : 'New'
-      };
-    }
-
-    function addLead(lead) {
-      const leads = loadLeads();
-      leads.push(lead);
-      saveLeads(leads);
-      renderAll();
-    }
-
-    function updateLead(id, patch) {
-      const leads = loadLeads();
-      const updated = leads.map(l => l.id === id ? { ...l, ...patch } : l);
-      saveLeads(updated);
-      renderAll();
-    }
-
-    function deleteLead(id) {
-      const leads = loadLeads().filter(l => l.id !== id);
-      saveLeads(leads);
-      renderAll();
-    }
-
     function renderTable(filterText) {
       const leads = loadLeads();
-      const filtered = leads.filter(l => {
+      const filtered = leads.filter(lead => {
         if (!filterText) return true;
         const t = filterText.toLowerCase();
-        return [l.name, l.email, l.company].join(' ').toLowerCase().includes(t);
+        return [lead.name, lead.company, lead.email].join(' ').toLowerCase().includes(t);
       });
 
       if (!filtered.length) {
-        leadTable.innerHTML = '<div class="card"><small>No leads yet. Add one or import CSV.</small></div>';
+        leadTable.innerHTML = '<div class="card"><small>No leads yet — add one on the left.</small></div>';
         return;
       }
 
       let html = '<table><thead><tr>' +
-        '<th>Name</th><th>Email</th><th>Company</th><th>Status</th><th>Next Action</th><th>Notes</th><th></th>' +
+        '<th>Name</th><th>Company</th><th>Email</th><th>Status</th><th>Next</th><th>Notes</th><th></th>' +
         '</tr></thead><tbody>';
 
       filtered.forEach(lead => {
         html += '<tr>' +
           `<td>${lead.name || '-'}</td>` +
-          `<td>${lead.email || '-'}</td>` +
           `<td>${lead.company || '-'}</td>` +
-          `<td><select data-id="${lead.id}" class="status-select">${stages.map(s => `<option value="${s}" ${lead.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></td>` +
-          `<td><input type="date" class="next-input" data-id="${lead.id}" value="${lead.next || ''}" /></td>` +
-          `<td><textarea class="notes-input" data-id="${lead.id}" rows="2">${lead.notes || ''}</textarea></td>` +
-          `<td><button class="btn btn-danger" data-delete="${lead.id}" type="button">Remove</button></td>` +
+          `<td>${lead.email || '-'}</td>` +
+          `<td><select data-id="${lead.id}" name="status-${lead.id}" class="status-select">${stages.map(stage => `<option value="${stage}" ${lead.status === stage ? 'selected' : ''}>${stage}</option>`).join('')}</select></td>` +
+          `<td><input type="date" class="next-input" name="next-${lead.id}" autocomplete="off" data-id="${lead.id}" value="${lead.next || ''}" /></td>` +
+          `<td><textarea class="notes-input" name="notes-${lead.id}" autocomplete="off" data-id="${lead.id}" rows="2">${lead.notes || ''}</textarea></td>` +
+          `<td><button class="btn btn-secondary" data-delete="${lead.id}" type="button">Remove</button></td>` +
         '</tr>';
       });
 
@@ -381,63 +431,81 @@ Alex,alex@acme.com,Acme,2026-04-10"></textarea>
       pipelineEl.innerHTML = '';
       stages.forEach(stage => {
         const column = document.createElement('div');
-        column.className = 'pipeline-column';
+        column.className = 'pipeline-col';
         const count = leads.filter(l => l.status === stage).length;
         column.innerHTML = `<strong>${stage}</strong> <span class="muted">(${count})</span>`;
         leads.filter(l => l.status === stage).forEach(lead => {
           const card = document.createElement('div');
           card.className = 'lead-card';
           card.innerHTML = `<strong>${lead.name || lead.company || 'Unnamed'}</strong>` +
-            `<small>${lead.company || ''}</small>` +
-            `<small>${lead.email || ''}</small>` +
-            `<small>Next: ${lead.next || '—'}</small>`;
+            `<div class="muted">${lead.company || ''}</div>` +
+            `<div class="muted">Next: ${lead.next || '—'}</div>`;
           column.appendChild(card);
         });
         pipelineEl.appendChild(column);
       });
     }
 
-    function renderMetrics() {
-      const leads = loadLeads();
-      const now = new Date();
-      const upcoming = leads.filter(l => l.next && (new Date(l.next) - now) / (1000 * 60 * 60 * 24) <= 7 && (new Date(l.next) - now) >= 0);
-      document.getElementById('metricTotal').textContent = leads.length;
-      document.getElementById('metricNext').textContent = upcoming.length;
-      document.getElementById('metricQualified').textContent = leads.filter(l => l.status === 'Qualified').length;
-      document.getElementById('metricWon').textContent = leads.filter(l => l.status === 'Won').length;
+    function renderAll() {
+      renderTable(document.getElementById('leadSearch').value);
+      renderPipeline();
     }
 
-    function renderAll() {
-      renderTable(document.getElementById('search').value);
-      renderPipeline();
-      renderMetrics();
+    function addLead(lead) {
+      const leads = loadLeads();
+      leads.push(lead);
+      saveLeads(leads);
+      renderAll();
+    }
+
+    function updateLead(id, patch) {
+      const leads = loadLeads().map(lead => lead.id === id ? { ...lead, ...patch } : lead);
+      saveLeads(leads);
+      renderAll();
+    }
+
+    function deleteLead(id) {
+      const leads = loadLeads().filter(lead => lead.id !== id);
+      saveLeads(leads);
+      renderAll();
     }
 
     document.getElementById('addLead').addEventListener('click', () => {
       const name = document.getElementById('leadName').value.trim();
-      const email = document.getElementById('leadEmail').value.trim();
       const company = document.getElementById('leadCompany').value.trim();
+      const email = document.getElementById('leadEmail').value.trim();
       const next = document.getElementById('leadNext').value;
       const notes = document.getElementById('leadNotes').value.trim();
+      const status = document.getElementById('leadStatus').value;
 
-      if (!name && !email && !company) {
-        alert('Add at least a name, email, or company.');
+      if (!name && !company && !email) {
+        alert('Add at least a name, company, or email.');
         return;
       }
 
-      addLead({ id: crypto.randomUUID(), name, email, company, next, notes, status: 'New' });
+      addLead({
+        id: crypto.randomUUID(),
+        name,
+        company,
+        email,
+        next,
+        notes,
+        status
+      });
+
       document.getElementById('leadName').value = '';
-      document.getElementById('leadEmail').value = '';
       document.getElementById('leadCompany').value = '';
+      document.getElementById('leadEmail').value = '';
       document.getElementById('leadNext').value = '';
       document.getElementById('leadNotes').value = '';
+      document.getElementById('leadStatus').value = 'New';
     });
 
     document.getElementById('seedLeads').addEventListener('click', () => {
       const sample = [
-        { name: 'Priya Shah', email: 'priya@bright.io', company: 'Bright Ops', next: '2026-04-06', notes: 'Asked for pricing deck', status: 'Contacted' },
-        { name: 'Oliver James', email: 'oliver@northco.uk', company: 'NorthCo', next: '2026-04-08', notes: 'Need case study', status: 'Qualified' },
-        { name: 'Maya Chen', email: 'maya@axis.io', company: 'Axis Systems', next: '2026-04-12', notes: 'Sent proposal', status: 'Proposal' }
+        { name: 'Priya Shah', company: 'Bright Ops', email: 'priya@brightops.co.uk', next: '2026-04-12', notes: 'Asked for deck', status: 'Contacted' },
+        { name: 'Oliver James', company: 'NorthCo', email: 'oliver@northco.uk', next: '2026-04-14', notes: 'Need case study', status: 'Qualified' },
+        { name: 'Maya Chen', company: 'Axis Systems', email: 'maya@axis.io', next: '2026-04-16', notes: 'Proposal sent', status: 'Proposal' }
       ];
       const leads = loadLeads();
       sample.forEach(row => leads.push({ id: crypto.randomUUID(), ...row }));
@@ -445,59 +513,20 @@ Alex,alex@acme.com,Acme,2026-04-10"></textarea>
       renderAll();
     });
 
-    document.getElementById('parseCsv').addEventListener('click', () => {
-      const csv = document.getElementById('csvInput').value;
-      const rows = parseCSV(csv);
-      if (!rows.length) {
-        csvStatus.textContent = 'Please paste a valid CSV with headers.';
-        return;
-      }
-      const leads = loadLeads();
-      rows.forEach(row => leads.push(normalizeLead(row)));
-      saveLeads(leads);
-      csvStatus.textContent = `Imported ${rows.length} lead(s).`;
-      renderAll();
-    });
-
-    document.getElementById('exportCsv').addEventListener('click', () => {
-      const leads = loadLeads();
-      if (!leads.length) {
-        alert('No leads to export.');
-        return;
-      }
-      const headers = ['name', 'email', 'company', 'status', 'next', 'notes'];
-      const rows = leads.map(l => headers.map(h => `"${(l[h] || '').replace(/"/g, '""')}"`).join(','));
-      const csv = [headers.join(','), ...rows].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'leadbeam-leads.csv';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-
-    document.getElementById('clearAll').addEventListener('click', () => {
-      if (!confirm('Clear all stored leads?')) return;
-      localStorage.removeItem(STORAGE_KEY);
-      csvStatus.textContent = 'All leads cleared.';
-      renderAll();
-    });
-
-    document.getElementById('search').addEventListener('input', (e) => {
+    document.getElementById('leadSearch').addEventListener('input', (e) => {
       renderTable(e.target.value);
     });
 
     document.getElementById('generatePlan').addEventListener('click', () => {
       const industry = document.getElementById('industry').value || 'your industry';
       const role = document.getElementById('role').value || 'decision makers';
-      const region = document.getElementById('region').value || 'your region';
+      const region = document.getElementById('region').value || 'the UK';
       const plan = [
         `Search LinkedIn for ${role} in ${industry} across ${region}.`,
-        `Pull 25 companies in ${industry} from local directories or Companies House.`,
-        `Use a verified email pattern to enrich new leads.`,
-        `Write a 3-touch sequence with a value-first opener.`,
-        `Schedule follow-ups and review replies weekly.`
+        `Pull 20 target companies from Companies House or local directories.`,
+        `Draft a 3‑touch email sequence with a value‑first opener.`,
+        `Log next actions for each lead within 48 hours.`,
+        `Review replies every Friday and move leads to Qualified/Won.`
       ];
       const list = document.getElementById('planList');
       list.innerHTML = '';
@@ -506,6 +535,18 @@ Alex,alex@acme.com,Acme,2026-04-10"></textarea>
         li.textContent = step;
         list.appendChild(li);
       });
+    });
+
+    document.getElementById('waitlistForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('waitlistMessage');
+      if (!email) {
+        message.textContent = 'Enter a valid email to continue.';
+        return;
+      }
+      message.textContent = 'Thanks — you will get an update shortly.';
+      e.target.reset();
     });
 
     renderAll();
