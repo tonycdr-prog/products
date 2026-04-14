@@ -6,290 +6,257 @@
   <title>Products</title>
   <style>
     :root {
-      --bg: #0b0f14;
-      --panel: #121826;
-      --text: #e6edf3;
-      --muted: #9aa4b2;
-      --accent: #7aa2ff;
-      --border: #1f2937;
+      --bg:#0b0e14; --panel:#111827; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --accent:#60a5fa; --border:#1f2937;
     }
     * { box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg); color: var(--text);
     }
-    header {
-      padding: 32px 24px 8px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      font-weight: 700;
-    }
-    .sub {
-      color: var(--muted);
-      margin: 0 0 16px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      padding: 16px 24px 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    header { padding: 48px 24px 24px; text-align:center; }
+    h1 { margin:0 0 8px; font-size: 32px; }
+    p.lead { margin:0; color: var(--muted); }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
     .card {
-      display: block;
-      padding: 16px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      text-decoration: none;
-      color: var(--text);
-      transition: transform 0.08s ease, border 0.08s ease;
+      display:block; padding: 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--card);
+      text-decoration: none; color: inherit; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
     }
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-    }
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 16px;
-    }
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.4;
-    }
+    .card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 8px 24px rgba(96,165,250,.15); }
+    .card h3 { margin:0 0 8px; font-size: 18px; }
+    .card p { margin:0; color: var(--muted); font-size: 14px; line-height: 1.4; }
+    footer { padding: 24px; text-align:center; color: var(--muted); font-size: 12px; }
   </style>
 </head>
 <body>
   <header>
     <h1>Products</h1>
-    <p class="sub">Auto-deployed builds</p>
+    <p class="lead">A living index of shipped product builds.</p>
   </header>
-  <main class="grid">
+  <main>
+    <div class="grid">
+      <a class="card" href="/products/PP-001-arch-diagram-polish/">
+        <h3>Pp 001 Arch Diagram Polish</h3>
+        <p># PRODUCT_BRIEF</p>
+      </a>
       <a class="card" href="/products/PP-001-bookmarknest/">
-        <h2>BookmarkNest</h2>
-        <p>BookmarkNest auto-categorizes bookmarks and generates a concise summary, making saved links searchable and easy to revisit.</p>
+        <h3>Pp 001 Bookmarknest</h3>
+        <p># BookmarkNest — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-001-carousel-maker/">
-        <h2>Carousel Maker</h2>
-        <p>Creates LinkedIn-ready carousel slides with correct 4:5 sizing, simple themes, and one-click PNG exports. Eliminates the &quot;resize Canva/Gamma&quot; workflow.</p>
+        <h3>Pp 001 Carousel Maker</h3>
+        <p># CarouselKit — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-001-chaserflow/">
-        <h2>Chaserflow</h2>
-        <p>Automates polite invoice reminder sequences (UK‑friendly) so freelancers and SMEs get paid faster without manual chasing. Includes a lightweight tracker to calculate days overdue and generate ready‑to‑send emails.</p>
+        <h3>Pp 001 Chaserflow</h3>
+        <p># ChaserFlow — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-001-cod-commission-tracker/">
-        <h2>COD Commission Tracker</h2>
-        <p>Calculates commissions owed on cash‑on‑delivery orders, flags unpaid commission, and creates a monthly summary for marketplace operators.</p>
+        <h3>Pp 001 Cod Commission Tracker</h3>
+        <p># Product Brief — COD Commission Tracker</p>
       </a>
       <a class="card" href="/products/PP-001-competitor-price-tracker/">
-        <h2>Competitor Price Tracker</h2>
-        <p>Quickly turns a competitor price list into clear pricing actions and alert-ready exports. Helps small ecommerce sellers avoid hours of manual checking.</p>
+        <h3>Pp 001 Competitor Price Tracker</h3>
+        <p># Product Brief — PricePulse</p>
       </a>
       <a class="card" href="/products/PP-001-docstack/">
-        <h2>DocStack</h2>
-        <p>DocStack combines proposals, contracts, and invoices into a single workflow for small businesses.</p>
+        <h3>Pp 001 Docstack</h3>
+        <p># DocStack — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-001-invoice-chaser-lite/">
-        <h2>Invoice Chaser Lite</h2>
-        <p>Automates polite invoice follow‑ups. Generates reminder emails and keeps a simple log so owners stop losing cash to awkward chasing.</p>
+        <h3>Pp 001 Invoice Chaser Lite</h3>
+        <p># Product Brief — Invoice Chaser Lite</p>
       </a>
       <a class="card" href="/products/PP-001-invoice-preflight/">
-        <h2>Invoice Preflight</h2>
-        <p>Turns messy OCR/pasted invoice text into structured fields (vendor, invoice number, date, subtotal, VAT, total). Designed for SMEs who need accuracy before posting invoices to accounting systems.</p>
+        <h3>Pp 001 Invoice Preflight</h3>
+        <p># Product Brief — Invoice Preflight Extractor</p>
       </a>
       <a class="card" href="/products/PP-001-maintenance-nagger/">
-        <h2>Maintenance Nagger</h2>
-        <p>Maintainly is a lightweight maintenance scheduler for small UK landlords. It tracks recurring safety tasks (boiler service, PAT tests, smoke alarms), nags on overdue items, and keeps a simple completion log for compliance.</p>
+        <h3>Pp 001 Maintenance Nagger</h3>
+        <p># Product Brief — Maintainly</p>
       </a>
       <a class="card" href="/products/PP-001-noteforge/">
-        <h2>NoteForge</h2>
-        <p>NoteForge is a lightweight, affordable Evernote-style note vault with built‑in OCR search. Users can capture notes, attach images, and search across text + OCR without paying heavy subscription fees.</p>
+        <h3>Pp 001 Noteforge</h3>
+        <p># NoteForge — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-001-notes-ocr/">
-        <h2>Notes OCR</h2>
-        <p>Lightweight notes app with OCR search for images and receipts, designed as an affordable Evernote alternative.</p>
+        <h3>Pp 001 Notes Ocr</h3>
+        <p># PRODUCT_BRIEF — AmberNote (PP-001)</p>
       </a>
       <a class="card" href="/products/PP-001-saas-stack-map/">
-        <h2>SaaS Stack Map</h2>
-        <p>Lightweight inventory of all services behind your SaaS: domain registrars, hosting, email, databases, analytics, payments, and renewals.</p>
+        <h3>Pp 001 Saas Stack Map</h3>
+        <p># Product Brief — SaaS Stack Map</p>
       </a>
       <a class="card" href="/products/PP-001-seo-visibility/">
-        <h2>SEO Visibility</h2>
-        <p>Affordable SEO visibility tracker with a simple visibility score and AI‑mention checks for small sites.</p>
+        <h3>Pp 001 Seo Visibility</h3>
+        <p># Product Brief — Visibility Lite</p>
       </a>
       <a class="card" href="/products/PP-001-solo-marketing-planner/">
-        <h2>Solo Marketing Planner</h2>
-        <p>SoloSignal turns a solo founder’s marketing goal into a 7‑day execution plan, channel task board, and KPI tracker. It’s a focused planning workspace you can run in a browser without a full CRM or agency overhead.</p>
+        <h3>Pp 001 Solo Marketing Planner</h3>
+        <p># SoloSignal — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-001-uk-seller-tax-tracker/">
-        <h2>UK Seller Tax Tracker</h2>
-        <p>A UK tax‑year aware tracker for side‑hustle sellers. Capture sales, fees, shipping, and costs, view allowance status, and export both entry‑level and monthly summary CSVs for HMRC reporting.</p>
+        <h3>Pp 001 Uk Seller Tax Tracker</h3>
+        <p># Product Brief — SideHustle HMRC Tracker</p>
       </a>
       <a class="card" href="/products/PP-001-whatsapp-booking-assistant/">
-        <h2>WhatsApp Booking Assistant</h2>
-        <p>Lightweight booking workflow for tour and service businesses using WhatsApp. Captures booking details, generates confirmation + voucher templates, and exports a daily CSV.</p>
+        <h3>Pp 001 Whatsapp Booking Assistant</h3>
+        <p># PRODUCT_BRIEF — WhatsApp Booking Assistant</p>
       </a>
       <a class="card" href="/products/PP-002-ai-hiring-scorecard/">
-        <h2>AI Hiring Scorecard</h2>
-        <p>Generates AI-aware hiring scorecards with role-specific rubrics, tasks, and policy guidance.</p>
+        <h3>Pp 002 Ai Hiring Scorecard</h3>
+        <p># AICodeHire — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-002-bsa-checklist/">
-        <h2>BSA Checklist</h2>
-        <p>A UK‑specific Building Safety Act checklist and document tracker for landlords, managing agents, and leaseholders. It guides users through required steps and highlights missing documents.</p>
+        <h3>Pp 002 Bsa Checklist</h3>
+        <p># BSA Checklist — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-002-cgt-reporting/">
-        <h2>CGT Reporting</h2>
-        <p>Interactive calculator that handles **multiple disposal dates**, **annual exempt allocation**, and **basic‑rate band usage** for UK CGT. Produces per‑disposal totals and an exportable CSV summary.</p>
+        <h3>Pp 002 Cgt Reporting</h3>
+        <p># Product Brief — HMRC CGT Multi‑Disposal Reporting Helper</p>
       </a>
       <a class="card" href="/products/PP-002-fee-link-optimizer/">
-        <h2>Fee Link Optimizer</h2>
-        <p>Calculates true payment fees and generates a payment link + QR so clients can pay with the lowest overhead.</p>
+        <h3>Pp 002 Fee Link Optimizer</h3>
+        <p># Product Brief — FeeLink</p>
       </a>
       <a class="card" href="/products/PP-002-fieldkit/">
-        <h2>FieldKit</h2>
-        <p>FieldKit is a lightweight CRM and job scheduler for local service businesses (plumbers, cleaners, electricians).</p>
+        <h3>Pp 002 Fieldkit</h3>
+        <p># FieldKit — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-002-freelance-invoicing/">
-        <h2>Freelance Invoicing</h2>
-        <p>Lightweight freelancer CRM + invoicing replacement for Fiverr Workspace (AND.CO). Lets users import client data, create invoices, and manage billing in one hub.</p>
+        <h3>Pp 002 Freelance Invoicing</h3>
+        <p># Product Brief — Switchboard</p>
       </a>
       <a class="card" href="/products/PP-002-micro-automation-layer/">
-        <h2>Micro Automation Layer</h2>
-        <p>Turns manual copy‑paste workflows into a simple automation recipe + checklist that non‑technical owners can implement.</p>
+        <h3>Pp 002 Micro Automation Layer</h3>
+        <p># Product Brief — Micro‑Automation Layer</p>
       </a>
       <a class="card" href="/products/PP-002-perma-qr-link/">
-        <h2>Perma QR Link</h2>
-        <p>Generates a QR code and a self‑hosted redirect page so printed QR codes can point to a permanent, editable destination.</p>
+        <h3>Pp 002 Perma Qr Link</h3>
+        <p># Product Brief — PermaQR</p>
       </a>
       <a class="card" href="/products/PP-002-prooflite/">
-        <h2>Prooflite</h2>
-        <p>Generates lightweight social proof widgets (testimonials + logo wall) with clean HTML/CSS, no iFrames.</p>
+        <h3>Pp 002 Prooflite</h3>
+        <p># ProofLite — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-002-safe-lead-scout/">
-        <h2>Safe Lead Scout</h2>
-        <p>Builds compliant lead discovery workflows without auto‑DM spam. Generates search links across Reddit/HN/IndieHackers, qualifying checklists, and polite outreach templates.</p>
+        <h3>Pp 002 Safe Lead Scout</h3>
+        <p># Safe Lead Scout — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-002-scheduleflow/">
-        <h2>ScheduleFlow</h2>
-        <p>ScheduleFlow is a lightweight scheduling tool that recalculates delivery dates daily based on real progress. Teams can lock a baseline schedule, log today’s progress/blockers, and see drift instantly without heavyweight PM suites.</p>
+        <h3>Pp 002 Scheduleflow</h3>
+        <p># ScheduleFlow — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-002-smb-competitor-tracker/">
-        <h2>SMB Competitor Tracker</h2>
-        <p>A lightweight, browser‑based tracker for SMB operators to log competitor pricing, feature releases, and hiring signals. It stores everything locally (LocalStorage) and provides alerts when changes exceed thresholds.</p>
+        <h3>Pp 002 Smb Competitor Tracker</h3>
+        <p># SMB Competitor Tracker</p>
       </a>
       <a class="card" href="/products/PP-002-typeback/">
-        <h2>TypeBack</h2>
-        <p>TypeBack is a privacy-first typed text recall tool. It stores recent typing locally so users can recover lost snippets without relying on clipboard history.</p>
+        <h3>Pp 002 Typeback</h3>
+        <p># TypeBack — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-002-typed-history/">
-        <h2>Typed History</h2>
-        <p>Local-first typed text history that captures snippets as you type (not just clipboard) so you can recall lost text.</p>
+        <h3>Pp 002 Typed History</h3>
+        <p># PRODUCT_BRIEF — TypeBack (PP-002)</p>
       </a>
       <a class="card" href="/products/PP-002-typing-recall/">
-        <h2>Typing Recall</h2>
-        <p>Captures and recalls typed text locally (not just clipboard). Users can search and copy previous snippets. MVP is in‑browser; desktop apps later.</p>
+        <h3>Pp 002 Typing Recall</h3>
+        <p># TypeTrace — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-002-waitlist-outreach-planner/">
-        <h2>Waitlist Outreach Planner</h2>
-        <p>Generates a compliant, organic outreach plan for founders who can’t post promo content in communities. Includes channel suggestions, messaging angles, and a task checklist.</p>
+        <h3>Pp 002 Waitlist Outreach Planner</h3>
+        <p># Product Brief — Organic Waitlist Planner</p>
       </a>
       <a class="card" href="/products/PP-002-whatsapp-booking/">
-        <h2>WhatsApp Booking</h2>
-        <p>Simple slot manager for small tour operators to prevent overbooking and speed up WhatsApp replies. Generates ready-to-send templates and tracks capacity.</p>
+        <h3>Pp 002 Whatsapp Booking</h3>
+        <p># Product Brief — WhatsApp Booking Guard</p>
       </a>
       <a class="card" href="/products/PP-002-whatsapp-booking-bot/">
-        <h2>WhatsApp Booking Bot</h2>
-        <p>Turns WhatsApp conversations into a self‑serve appointment flow. Customers choose services and times via WhatsApp; staff receive confirmed bookings.</p>
+        <h3>Pp 002 Whatsapp Booking Bot</h3>
+        <p># PRODUCT_BRIEF — WhatsApp Booking Bot</p>
       </a>
       <a class="card" href="/products/PP-003-ai-credit-guard/">
-        <h2>AI Credit Guard</h2>
-        <p>Tracks AI API usage errors, estimates refundable credits, and generates dispute-ready summaries for provider support teams.</p>
+        <h3>Pp 003 Ai Credit Guard</h3>
+        <p># CreditGuard AI — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-003-arxiv-quality-ranker/">
-        <h2>arXiv Quality Ranker</h2>
-        <p>Pulls citation data from OpenAlex for arXiv IDs and ranks papers by a simple quality score (citations + recency).</p>
+        <h3>Pp 003 Arxiv Quality Ranker</h3>
+        <p># Product Brief — arXiv Quality Ranker</p>
       </a>
       <a class="card" href="/products/PP-003-cashflow-clarity/">
-        <h2>Cashflow Clarity</h2>
-        <p>A simple monthly cashflow + P&amp;L tracker built for owners who want clarity without accounting fluff.</p>
+        <h3>Pp 003 Cashflow Clarity</h3>
+        <p># Product Brief — Cashflow Clarity</p>
       </a>
       <a class="card" href="/products/PP-003-flyerforge/">
-        <h2>FlyerForge</h2>
-        <p>Simple, web‑based desktop‑publishing replacement for Microsoft Publisher. Create flyers/brochures and export to PNG/PDF.</p>
+        <h3>Pp 003 Flyerforge</h3>
+        <p># FlyerForge — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-003-hn-monitor/">
-        <h2>HN Monitor</h2>
-        <p>SignalHunt monitors new Hacker News posts and scores them against example pains you provide. It highlights high-similarity posts, lets you filter by signals (recency, points, comments), and generates reply drafts so you can engage early.</p>
+        <h3>Pp 003 Hn Monitor</h3>
+        <p># PRODUCT_BRIEF — SignalHunt (PP-003)</p>
       </a>
       <a class="card" href="/products/PP-003-hn-recall/">
-        <h2>HN Recall</h2>
-        <p>HN Recall is a memory‑friendly search layer for Hacker News. Users search with fuzzy prompts, apply filters (time, points, comments, category), save searches, and rerun them later.</p>
+        <h3>Pp 003 Hn Recall</h3>
+        <p># HN Recall — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-003-invoice-ocr-lite/">
-        <h2>Invoice OCR Lite</h2>
-        <p>In‑browser OCR for invoices. Extracts vendor, date, and total, then exports CSV.</p>
+        <h3>Pp 003 Invoice Ocr Lite</h3>
+        <p># Product Brief — Invoice OCR Lite</p>
       </a>
       <a class="card" href="/products/PP-003-leadbeam/">
-        <h2>LeadBeam</h2>
-        <p>LeadBeam is a lightweight CRM that imports curated leads, tracks follow‑ups with next‑action dates, and generates discovery playbooks to find similar prospects. It replaces messy Notion + Gmail setups with a focused pipeline.</p>
+        <h3>Pp 003 Leadbeam</h3>
+        <p># LeadBeam — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-003-memory-vault/">
-        <h2>Memory Vault</h2>
-        <p>Encrypts/decrypts AI memory files locally in the browser using Web Crypto (AES‑GCM). No uploads.</p>
+        <h3>Pp 003 Memory Vault</h3>
+        <p># Product Brief — MemoryVault</p>
       </a>
       <a class="card" href="/products/PP-003-parallel-sessions/">
-        <h2>Parallel Sessions</h2>
-        <p>A lightweight orchestration layer for running multiple coding-agent sessions in parallel without losing context. Users create focus slots, attach goals, store handoff notes, and export summary prompts for each lane.</p>
+        <h3>Pp 003 Parallel Sessions</h3>
+        <p># Product Brief — Parallel Sessions Pilot</p>
       </a>
       <a class="card" href="/products/PP-003-telemetryguard/">
-        <h2>TelemetryGuard</h2>
-        <p>TelemetryGuard generates PR-time telemetry checklists and OpenTelemetry starter snippets so teams stop shipping uninstrumented code.</p>
+        <h3>Pp 003 Telemetryguard</h3>
+        <p># TelemetryGuard — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-003-uk-boundary-checker/">
-        <h2>UK Boundary Checker</h2>
-        <p>Estimates boundary discrepancies from title plan vs on‑site measurements, then generates a copy‑ready surveyor brief and evidence checklist.</p>
+        <h3>Pp 003 Uk Boundary Checker</h3>
+        <p># BoundaryCheck UK — Product Brief</p>
       </a>
       <a class="card" href="/products/PP-003-uk-cgt-isa/">
-        <h2>UK CGT ISA</h2>
-        <p>UK CGT calculator and Bed &amp; ISA planner for GIA investors. Generates a clean summary for self‑assessment.</p>
+        <h3>Pp 003 Uk Cgt Isa</h3>
+        <p># Product Brief — GIA Shield</p>
       </a>
       <a class="card" href="/products/PP-003-whatsapp-business-setup/">
-        <h2>WhatsApp Business Setup</h2>
-        <p>Guides SMEs through a setup checklist and generates ready‑to‑paste greeting/away messages and quick replies.</p>
+        <h3>Pp 003 Whatsapp Business Setup</h3>
+        <p># PRODUCT_BRIEF — WhatsApp Business Setup Wizard</p>
       </a>
       <a class="card" href="/products/PP-003-workflow-health/">
-        <h2>Workflow Health</h2>
-        <p>Scores automation workflows for breakage risk and generates a self-healing checklist. Targets SMEs whose DIY automations fail on edge cases.</p>
+        <h3>Pp 003 Workflow Health</h3>
+        <p># Product Brief — Workflow Health Checker</p>
       </a>
       <a class="card" href="/products/PP-004-clawconfig-guard/">
-        <h2>ClawConfig Guard</h2>
-        <p>Schema-aware editor for OpenClaw settings.json with automatic backups, version history, and rollback.</p>
+        <h3>Pp 004 Clawconfig Guard</h3>
+        <p># Product Brief — ClawConfig Guard</p>
       </a>
       <a class="card" href="/products/PP-004-planpulse/">
-        <h2>PlanPulse</h2>
-        <p>PlanPulse tracks AI subscription plans and shows daily comparisons across vendors.</p>
+        <h3>Pp 004 Planpulse</h3>
+        <p># PlanPulse — Product Brief</p>
       </a>
       <a class="card" href="/products/competency-matrix-app/">
-        <h2>Competency Matrix App</h2>
-        <p>Interactive competency matrix with filters, level selection, sign‑off fields, and CSV export. Saves locally in the browser.</p>
+        <h3>Competency Matrix App</h3>
+        <p># Competency Matrix (Web)</p>
       </a>
       <a class="card" href="/products/dns-email-audit/">
-        <h2>DNS Email Audit</h2>
-        <p>A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report. Built for fast pre‑flight checks during DNS migrations and nameserver changes.</p>
+        <h3>Dns Email Audit</h3>
+        <p># DNS + Email Deliverability Pre‑Flight — Product Brief</p>
       </a>
       <a class="card" href="/products/ifc-automator/">
-        <h2>IFC Automator</h2>
-        <p>Automatically assembles IFCC/IFC audit‑ready packs (Enquiry & PO, RAMS, Certs/Specs, Reports, IFC Certificate, audit evidence) into a consistent folder structure across all schemes.</p>
+        <h3>Ifc Automator</h3>
+        <p># IFC Automator</p>
       </a>
+    </div>
   </main>
+  <footer>Updated automatically by OpenClaw Auto-Deployer.</footer>
 </body>
 </html>
