@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#F8FAFC" />
+  <title>DiagramPolish — Make architecture diagrams look presentation‑ready</title>
+  <meta name="description" content="Turn rough architecture diagrams into presentation‑ready visuals with one click. Powered by smart themes, spacing, and export presets." />
+  <meta property="og:title" content="DiagramPolish" />
+  <meta property="og:description" content="Make architecture diagrams look professional in minutes." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root{
+      --primary:#64748B;--on-primary:#fff;--secondary:#94A3B8;--on-secondary:#0F172A;
+      --accent:#EA580C;--on-accent:#fff;--bg:#F8FAFC;--fg:#0F172A;--card:#fff;--muted:#EBF0F5;--border:#E2E8F0;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+    h1,h2,h3{margin:0 0 0.5rem;text-wrap:balance}
+    h2{scroll-margin-top:90px}
+    a{color:inherit;text-decoration:none}
+    .skip{position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip:focus{left:16px;top:16px;width:auto;height:auto;padding:8px 12px;background:#fff;border:1px solid var(--border);border-radius:8px;z-index:1000}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+    .logo{font-weight:700;letter-spacing:0.5px}
+    .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:10px 16px;border-radius:10px;background:#fff;cursor:pointer;transition:background-color 120ms ease,border-color 120ms ease;color 120ms ease;touch-action:manipulation}
+    .btn:hover{background:var(--muted)}
+    .btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+    .btn.primary:hover{background:#DC4C12;border-color:#DC4C12}
+    .btn:focus-visible{outline:3px solid #94A3B8;outline-offset:2px}
+    .hero{display:grid;grid-template-columns:1.1fr 0.9fr;gap:32px;align-items:center;padding:32px 0}
+    .hero-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(15,23,42,0.06)}
+    .pill{display:inline-block;background:var(--muted);color:var(--primary);padding:6px 12px;border-radius:999px;font-size:0.9rem}
+    .grid{display:grid;gap:16px}
+    .two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .section{padding:32px 0}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
+    .price{font-size:2rem;font-weight:700}
+    textarea{width:100%;min-height:160px;border:1px solid var(--border);border-radius:12px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+    #diagram{background:#fff;border:1px dashed var(--border);border-radius:12px;padding:12px;overflow:auto;min-height:220px}
+    .toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px}
+    .field label{display:block;font-size:0.85rem;color:#475569;margin-bottom:6px}
+    .field select,.field input[type="range"]{width:100%}
+    .footer{padding:32px 0;color:#64748B;font-size:0.9rem}
+    .muted{color:#64748B}
+    .stack{display:flex;gap:10px;flex-wrap:wrap}
+    .status{font-size:0.85rem;color:#475569}
+    @media (max-width:900px){.hero{grid-template-columns:1fr}.two,.three{grid-template-columns:1fr}}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip">Skip to Main Content</a>
+  <main id="main" class="container">
+    <div class="nav">
+      <div class="logo">DiagramPolish</div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a class="btn" href="#pricing">Pricing</a>
+        <a class="btn primary" href="#demo">Try the Demo</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div>
+        <span class="pill">Architecture diagrams, but polished</span>
+        <h1>Make your diagrams look presentation‑ready in minutes</h1>
+        <p>Paste a rough diagram, pick a theme, and export a slide‑ready visual. Save hours of manual alignment and styling.</p>
+        <div class="stack" style="margin-top:16px">
+          <a class="btn primary" href="#demo">Polish a Diagram</a>
+          <a class="btn" href="#pricing">See Pricing</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>Before → After</h3>
+        <div class="grid two">
+          <div class="card">
+            <strong>Before</strong>
+            <p class="muted">Plain boxes, uneven spacing</p>
+          </div>
+          <div class="card" style="border-color:var(--accent)">
+            <strong>After</strong>
+            <p style="color:#EA580C">Aligned, themed, consistent</p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <strong>Exports:</strong> SVG + PNG (PDF/PPTX‑ready)
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="demo">
+      <h2>Live Demo</h2>
+      <div class="grid two">
+        <div class="card">
+          <label for="input"><strong>Paste Diagram (Mermaid)</strong></label>
+          <textarea id="input">flowchart LR
+  user[User] --> web[Web App]
+  web --> api[API]
+  api --> db[(Database)]
+  api --> cache[(Cache)]
+  api --> queue[(Queue)]
+  queue --> worker[Worker]
+</textarea>
+          <div class="toolbar">
+            <div class="field">
+              <label for="theme">Theme</label>
+              <select id="theme">
+                <option value="default">Clean (Default)</option>
+                <option value="neutral">Neutral</option>
+                <option value="forest">Forest</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="direction">Flow Direction</label>
+              <select id="direction">
+                <option value="LR">Left → Right</option>
+                <option value="RL">Right → Left</option>
+                <option value="TB">Top → Bottom</option>
+                <option value="BT">Bottom → Top</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="spacing">Spacing</label>
+              <input id="spacing" type="range" min="40" max="120" step="5" value="70" />
+              <div class="status">Node & rank spacing: <span id="spacingValue">70</span>px</div>
+            </div>
+            <div class="field">
+              <label for="sample">Sample Diagrams</label>
+              <select id="sample">
+                <option value="">Choose a sample…</option>
+                <option value="saas">SaaS Platform</option>
+                <option value="data">Data Pipeline</option>
+                <option value="edge">Edge/IoT Fleet</option>
+              </select>
+            </div>
+          </div>
+          <div class="stack" style="margin-top:12px">
+            <button class="btn primary" id="renderBtn" type="button">Polish Diagram</button>
+            <button class="btn" id="autoBtn" type="button">Auto Render: ON</button>
+            <button class="btn" id="resetBtn" type="button">Reset Sample</button>
+          </div>
+          <div class="stack" style="margin-top:12px">
+            <button class="btn" id="downloadSvg" type="button">Download SVG</button>
+            <button class="btn" id="downloadPng" type="button">Download PNG</button>
+            <button class="btn" id="copySvg" type="button">Copy SVG</button>
+          </div>
+          <p class="status" id="status">Ready.</p>
+        </div>
+        <div class="card">
+          <strong>Output</strong>
+          <div id="diagram"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid three">
+        <div class="card">
+          <h3>Smart Spacing</h3>
+          <p>Auto spacing, consistent node sizing, and smooth edges.</p>
+        </div>
+        <div class="card">
+          <h3>Theme Presets</h3>
+          <p>Switch between clean, neutral, forest, and dark palettes.</p>
+        </div>
+        <div class="card">
+          <h3>Export Packs</h3>
+          <p>Download SVG/PNG for slides, docs, and wikis.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <h2>Pricing</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>Free</h3>
+          <div class="price">£0</div>
+          <ul>
+            <li>3 exports/month</li>
+            <li>Basic themes</li>
+            <li>Community support</li>
+          </ul>
+          <a class="btn" href="#waitlist">Start Free</a>
+        </div>
+        <div class="card" style="border:2px solid var(--accent)">
+          <h3>Pro (Recommended)</h3>
+          <div class="price">£29/mo</div>
+          <ul>
+            <li>Unlimited exports</li>
+            <li>Premium themes</li>
+            <li>SVG/PNG export</li>
+          </ul>
+          <a class="btn primary" href="#waitlist">Upgrade to Pro</a>
+        </div>
+        <div class="card">
+          <h3>Teams</h3>
+          <div class="price">£99/mo</div>
+          <ul>
+            <li>Shared libraries</li>
+            <li>Brand presets</li>
+            <li>Priority support</li>
+          </ul>
+          <a class="btn" href="#waitlist">Talk to Sales</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="waitlist">
+      <div class="card">
+        <h2>Get Early Access</h2>
+        <p>Join the waitlist for early access and private beta pricing.</p>
+        <form onsubmit="event.preventDefault();alert('Thanks! We\'ll be in touch.');">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <label for="email" class="skip">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" spellcheck="false" placeholder="you@company.com…" required style="flex:1;min-width:220px;border:1px solid var(--border);border-radius:10px;padding:10px" />
+            <button class="btn primary" type="submit">Join Waitlist</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <div class="footer">© 2026 DiagramPolish. Built for busy engineering teams.</div>
+  </main>
+
+  <script>
+    const input = document.getElementById('input');
+    const theme = document.getElementById('theme');
+    const direction = document.getElementById('direction');
+    const spacing = document.getElementById('spacing');
+    const spacingValue = document.getElementById('spacingValue');
+    const status = document.getElementById('status');
+    const diagram = document.getElementById('diagram');
+    const autoBtn = document.getElementById('autoBtn');
+    const sampleSelect = document.getElementById('sample');
+
+    const samples = {
+      saas: `flowchart LR
+  user[End User] --> ui[Web App]
+  ui --> api[API Gateway]
+  api --> svc1[Billing Service]
+  api --> svc2[Auth Service]
+  svc1 --> db[(Postgres)]
+  svc2 --> cache[(Redis)]
+  api --> queue[(Job Queue)]
+  queue --> worker[Background Worker]`,
+      data: `flowchart TB
+  src[Data Sources] --> ingest[Ingest]
+  ingest --> clean[Cleaning]
+  clean --> warehouse[(Warehouse)]
+  warehouse --> bi[BI Dashboards]
+  warehouse --> ml[ML Models]`,
+      edge: `flowchart LR
+  devices[IoT Devices] --> edge[Edge Gateway]
+  edge --> stream[Stream Processor]
+  stream --> storage[(Time Series DB)]
+  stream --> alerts[Alerting]
+  alerts --> ops[Ops Team]`
+    };
+
+    let autoRender = true;
+
+    function normalizeFlowchart(text){
+      const lines = text.split('\n');
+      const idx = lines.findIndex(line => line.trim().length);
+      if(idx === -1) return text;
+      const line = lines[idx].trim();
+      if(line.startsWith('flowchart')){
+        lines[idx] = `flowchart ${direction.value}`;
+      }
+      return lines.join('\n');
+    }
+
+    function render(){
+      const spacingVal = Number(spacing.value);
+      spacingValue.textContent = spacingVal;
+      const source = normalizeFlowchart(input.value);
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: theme.value,
+        flowchart: { curve: 'basis', nodeSpacing: spacingVal, rankSpacing: spacingVal }
+      });
+      diagram.innerHTML = '';
+      mermaid.render('mermaid-svg', source).then(({svg})=>{
+        diagram.innerHTML = svg;
+        status.textContent = 'Polished and ready.';
+        persist();
+      }).catch((err)=>{
+        diagram.innerHTML = '<p>Diagram syntax error. Check Mermaid formatting.</p>';
+        status.textContent = 'Render failed.';
+        console.error(err);
+      });
+    }
+
+    function persist(){
+      const payload = {
+        input: input.value,
+        theme: theme.value,
+        direction: direction.value,
+        spacing: spacing.value,
+        auto: autoRender
+      };
+      localStorage.setItem('diagramPolish', JSON.stringify(payload));
+    }
+
+    function restore(){
+      const saved = localStorage.getItem('diagramPolish');
+      if(!saved) return;
+      try{
+        const payload = JSON.parse(saved);
+        if(payload.input) input.value = payload.input;
+        if(payload.theme) theme.value = payload.theme;
+        if(payload.direction) direction.value = payload.direction;
+        if(payload.spacing) spacing.value = payload.spacing;
+        if(typeof payload.auto === 'boolean') autoRender = payload.auto;
+      }catch(e){
+        console.warn('Restore failed', e);
+      }
+    }
+
+    function downloadBlob(blob, filename){
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function getSvgString(){
+      const svg = diagram.querySelector('svg');
+      if(!svg) return null;
+      return new XMLSerializer().serializeToString(svg);
+    }
+
+    function downloadSvg(){
+      const svgData = getSvgString();
+      if(!svgData){ status.textContent = 'Nothing to export.'; return; }
+      const blob = new Blob([svgData], {type:'image/svg+xml;charset=utf-8'});
+      downloadBlob(blob, 'diagram-polish.svg');
+      status.textContent = 'SVG downloaded.';
+    }
+
+    function downloadPng(){
+      const svgData = getSvgString();
+      if(!svgData){ status.textContent = 'Nothing to export.'; return; }
+      const svg = diagram.querySelector('svg');
+      const viewBox = svg.viewBox.baseVal;
+      const width = viewBox && viewBox.width ? viewBox.width : Number(svg.getAttribute('width')) || 900;
+      const height = viewBox && viewBox.height ? viewBox.height : Number(svg.getAttribute('height')) || 600;
+      const img = new Image();
+      const svgBlob = new Blob([svgData], {type:'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(svgBlob);
+      img.onload = ()=>{
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0,0,width,height);
+        ctx.drawImage(img,0,0,width,height);
+        canvas.toBlob((blob)=>{
+          if(blob) downloadBlob(blob, 'diagram-polish.png');
+          status.textContent = 'PNG downloaded.';
+        }, 'image/png');
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = ()=>{ status.textContent = 'PNG export failed.'; };
+      img.src = url;
+    }
+
+    async function copySvg(){
+      const svgData = getSvgString();
+      if(!svgData){ status.textContent = 'Nothing to copy.'; return; }
+      try{
+        await navigator.clipboard.writeText(svgData);
+        status.textContent = 'SVG copied to clipboard.';
+      }catch(e){
+        status.textContent = 'Clipboard blocked. Try download.';
+      }
+    }
+
+    document.getElementById('renderBtn').addEventListener('click', render);
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      input.value = samples.saas;
+      render();
+    });
+    document.getElementById('downloadSvg').addEventListener('click', downloadSvg);
+    document.getElementById('downloadPng').addEventListener('click', downloadPng);
+    document.getElementById('copySvg').addEventListener('click', copySvg);
+
+    sampleSelect.addEventListener('change', ()=>{
+      const val = sampleSelect.value;
+      if(samples[val]){
+        input.value = samples[val];
+        render();
+      }
+    });
+
+    autoBtn.addEventListener('click', ()=>{
+      autoRender = !autoRender;
+      autoBtn.textContent = `Auto Render: ${autoRender ? 'ON' : 'OFF'}`;
+      persist();
+    });
+
+    [input, theme, direction, spacing].forEach(el=>{
+      el.addEventListener('input', ()=>{
+        if(autoRender) render();
+      });
+    });
+
+    restore();
+    autoBtn.textContent = `Auto Render: ${autoRender ? 'ON' : 'OFF'}`;
+    render();
+  </script>
+</body>
+</html>
