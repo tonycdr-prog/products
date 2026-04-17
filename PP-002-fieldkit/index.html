@@ -6,6 +6,17 @@
   <title>FieldKit — Lightweight CRM for Local Services</title>
   <meta name="description" content="A simple CRM + scheduling + billing hub for small local service teams." />
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root{--bg:#0b0f16;--fg:#e5e7eb;--primary:#6366f1;--border:rgba(148,163,184,.25);--muted:#94a3b8;--card:#111827;--ring:#6366f1;}
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--fg);line-height:1.5;}
+    a{color:var(--primary);}
+    a:hover{text-decoration:underline;}
+    button, .btn, input, select, textarea{font:inherit;}
+    :focus-visible{outline:3px solid color-mix(in srgb, var(--ring) 70%, white 30%); outline-offset:2px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;}
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
   <header class="max-w-5xl mx-auto px-6 py-10">
