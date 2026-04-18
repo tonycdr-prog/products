@@ -2,24 +2,272 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Products</title>
   <style>
-    :root{--bg:#0b0f16;--text:#e5e7eb;--muted:#94a3b8;--border:rgba(148,163,184,.18);--shadow:0 10px 30px rgba(0,0,0,.45);}*{box-sizing:border-box}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:radial-gradient(1200px 800px at 20% -10%, rgba(124,58,237,.25), transparent 55%),radial-gradient(900px 600px at 90% 0%, rgba(34,197,94,.18), transparent 55%),var(--bg);color:var(--text);}header{padding:48px 20px 18px;max-width:1100px;margin:0 auto;}h1{margin:0 0 8px;font-size:28px;letter-spacing:.2px;}p{margin:0;color:var(--muted);line-height:1.5}.wrap{max-width:1100px;margin:0 auto;padding:18px 20px 56px;}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;}
-    .card{display:block;text-decoration:none;color:inherit;background:linear-gradient(180deg, rgba(16,24,38,.9), rgba(15,23,42,.85));border:1px solid var(--border);border-radius:14px;padding:16px 16px 14px;box-shadow:var(--shadow);transition:transform .12s ease,border-color .12s ease,background .12s ease;min-height:120px;}
-    .card:hover{transform:translateY(-2px);border-color:rgba(124,58,237,.45);background:linear-gradient(180deg, rgba(16,24,38,.95), rgba(15,23,42,.92));}
-    .title{font-weight:650;font-size:16px;margin:0 0 8px;}.desc{color:var(--muted);font-size:14px;line-height:1.35;margin:0 0 10px;}.meta{font-size:12px;color:rgba(148,163,184,.75)}
-    footer{max-width:1100px;margin:0 auto;padding:0 20px 44px;color:rgba(148,163,184,.65);font-size:12px;}.pill{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:999px;margin-left:8px;color:rgba(229,231,235,.85)}
+    :root{
+      --bg:#0b0f14; --panel:#101825; --panel2:#0f1622;
+      --text:#e6edf3; --muted:#9aa4b2; --border:#223044;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); color:var(--text);}
+    header{padding:44px 20px 18px; max-width:1100px; margin:0 auto;}
+    h1{margin:0 0 6px; font-size:28px; letter-spacing:.2px;}
+    p{margin:0; color:var(--muted); line-height:1.5;}
+    main{max-width:1100px; margin:0 auto; padding:20px;}
+    .grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px;}
+    .card{display:block; text-decoration:none; color:inherit; background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:var(--shadow); transition: transform .12s ease, border-color .12s ease;}
+    .card:hover{transform: translateY(-2px); border-color: rgba(125,211,252,.5);}
+    .title{font-weight:650; font-size:16px; margin:0 0 8px;}
+    .desc{color:var(--muted); font-size:13px; line-height:1.45;}
+    footer{max-width:1100px; margin:0 auto; padding:26px 20px 44px; color:var(--muted); font-size:12px;}
+    code{background:#0a1220;border:1px solid var(--border); padding:2px 6px; border-radius:8px;}
   </style>
 </head>
 <body>
   <header>
-    <h1>Products <span class="pill">55 live</span></h1>
-    <p>Auto-deployed builds. If something looks stale, refresh in ~60s after a push.</p>
+    <h1>Products</h1>
+    <p>58 live builds on GitHub Pages.</p>
   </header>
-  <div class="wrap"><div class="grid">\n      <a class="card" href="PP-001-arch-diagram-polish/">\n        <div class="title">Arch Diagram Polish</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-arch-diagram-polish/</div>\n      </a>\n\n      <a class="card" href="PP-001-bookmarknest/">\n        <div class="title">Bookmarknest</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-bookmarknest/</div>\n      </a>\n\n      <a class="card" href="PP-001-carousel-maker/">\n        <div class="title">Carousel Maker</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-carousel-maker/</div>\n      </a>\n\n      <a class="card" href="PP-001-chaserflow/">\n        <div class="title">Chaserflow</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-chaserflow/</div>\n      </a>\n\n      <a class="card" href="PP-001-cod-commission-tracker/">\n        <div class="title">COD Commission Tracker</div>\n        <div class="desc">Calculates commissions owed on cash‑on‑delivery orders, flags unpaid commission, and creates a monthly summary for marketplace operators.</div>\n        <div class="meta">/products/PP-001-cod-commission-tracker/</div>\n      </a>\n\n      <a class="card" href="PP-001-competitor-price-tracker/">\n        <div class="title">Competitor Price Tracker</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-competitor-price-tracker/</div>\n      </a>\n\n      <a class="card" href="PP-001-docstack/">\n        <div class="title">Docstack</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-docstack/</div>\n      </a>\n\n      <a class="card" href="PP-001-invoice-chaser-lite/">\n        <div class="title">Invoice Chaser Lite</div>\n        <div class="desc">Automates polite invoice follow‑ups. Generates reminder emails and keeps a simple log so owners stop losing cash to awkward chasing.</div>\n        <div class="meta">/products/PP-001-invoice-chaser-lite/</div>\n      </a>\n\n      <a class="card" href="PP-001-invoice-preflight/">\n        <div class="title">Invoice Preflight</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-invoice-preflight/</div>\n      </a>\n\n      <a class="card" href="PP-001-maintenance-nagger/">\n        <div class="title">Maintenance Nagger</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-maintenance-nagger/</div>\n      </a>\n\n      <a class="card" href="PP-001-noteforge/">\n        <div class="title">Noteforge</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-noteforge/</div>\n      </a>\n\n      <a class="card" href="PP-001-notes-ocr/">\n        <div class="title">Notes OCR</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-notes-ocr/</div>\n      </a>\n\n      <a class="card" href="PP-001-saas-stack-map/">\n        <div class="title">SAAS Stack Map</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-saas-stack-map/</div>\n      </a>\n\n      <a class="card" href="PP-001-seo-visibility/">\n        <div class="title">Seo Visibility</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-seo-visibility/</div>\n      </a>\n\n      <a class="card" href="PP-001-solo-marketing-planner/">\n        <div class="title">Solo Marketing Planner</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-solo-marketing-planner/</div>\n      </a>\n\n      <a class="card" href="PP-001-uk-seller-tax-tracker/">\n        <div class="title">UK Seller Tax Tracker</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-uk-seller-tax-tracker/</div>\n      </a>\n\n      <a class="card" href="PP-001-whatsapp-booking-assistant/">\n        <div class="title">Whatsapp Booking Assistant</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-001-whatsapp-booking-assistant/</div>\n      </a>\n\n      <a class="card" href="PP-002-ai-hiring-scorecard/">\n        <div class="title">AI Hiring Scorecard</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-ai-hiring-scorecard/</div>\n      </a>\n\n      <a class="card" href="PP-002-bsa-checklist/">\n        <div class="title">BSA Checklist</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-bsa-checklist/</div>\n      </a>\n\n      <a class="card" href="PP-002-cgt-reporting/">\n        <div class="title">CGT Reporting</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-cgt-reporting/</div>\n      </a>\n\n      <a class="card" href="PP-002-fee-link-optimizer/">\n        <div class="title">Fee Link Optimizer</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-fee-link-optimizer/</div>\n      </a>\n\n      <a class="card" href="PP-002-fieldkit/">\n        <div class="title">Fieldkit</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-fieldkit/</div>\n      </a>\n\n      <a class="card" href="PP-002-freelance-invoicing/">\n        <div class="title">Freelance Invoicing</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-freelance-invoicing/</div>\n      </a>\n\n      <a class="card" href="PP-002-micro-automation-layer/">\n        <div class="title">Micro Automation Layer</div>\n        <div class="desc">Turns manual copy‑paste workflows into a simple automation recipe + checklist that non‑technical owners can implement.</div>\n        <div class="meta">/products/PP-002-micro-automation-layer/</div>\n      </a>\n\n      <a class="card" href="PP-002-perma-qr-link/">\n        <div class="title">Perma QR Link</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-perma-qr-link/</div>\n      </a>\n\n      <a class="card" href="PP-002-prooflite/">\n        <div class="title">Prooflite</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-prooflite/</div>\n      </a>\n\n      <a class="card" href="PP-002-safe-lead-scout/">\n        <div class="title">Safe Lead Scout</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-safe-lead-scout/</div>\n      </a>\n\n      <a class="card" href="PP-002-scheduleflow/">\n        <div class="title">Scheduleflow</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-scheduleflow/</div>\n      </a>\n\n      <a class="card" href="PP-002-smb-competitor-tracker/">\n        <div class="title">Smb Competitor Tracker</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-smb-competitor-tracker/</div>\n      </a>\n\n      <a class="card" href="PP-002-typeback/">\n        <div class="title">Typeback</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-typeback/</div>\n      </a>\n\n      <a class="card" href="PP-002-typed-history/">\n        <div class="title">Typed History</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-typed-history/</div>\n      </a>\n\n      <a class="card" href="PP-002-typing-recall/">\n        <div class="title">Typing Recall</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-typing-recall/</div>\n      </a>\n\n      <a class="card" href="PP-002-waitlist-outreach-planner/">\n        <div class="title">Waitlist Outreach Planner</div>\n        <div class="desc">Generates a compliant, organic outreach plan for founders who can’t post promo content in communities. Includes channel suggestions, messaging angles, and a task checklist.</div>\n        <div class="meta">/products/PP-002-waitlist-outreach-planner/</div>\n      </a>\n\n      <a class="card" href="PP-002-whatsapp-booking-bot/">\n        <div class="title">Whatsapp Booking Bot</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-whatsapp-booking-bot/</div>\n      </a>\n\n      <a class="card" href="PP-002-whatsapp-booking/">\n        <div class="title">Whatsapp Booking</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-002-whatsapp-booking/</div>\n      </a>\n\n      <a class="card" href="PP-003-ai-credit-guard/">\n        <div class="title">AI Credit Guard</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-ai-credit-guard/</div>\n      </a>\n\n      <a class="card" href="PP-003-arxiv-quality-ranker/">\n        <div class="title">Arxiv Quality Ranker</div>\n        <div class="desc">Pulls citation data from OpenAlex for arXiv IDs and ranks papers by a simple quality score (citations + recency).</div>\n        <div class="meta">/products/PP-003-arxiv-quality-ranker/</div>\n      </a>\n\n      <a class="card" href="PP-003-cashflow-clarity/">\n        <div class="title">Cashflow Clarity</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-cashflow-clarity/</div>\n      </a>\n\n      <a class="card" href="PP-003-flyerforge/">\n        <div class="title">Flyerforge</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-flyerforge/</div>\n      </a>\n\n      <a class="card" href="PP-003-hn-monitor/">\n        <div class="title">HN Monitor</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-hn-monitor/</div>\n      </a>\n\n      <a class="card" href="PP-003-hn-recall/">\n        <div class="title">HN Recall</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-hn-recall/</div>\n      </a>\n\n      <a class="card" href="PP-003-invoice-ocr-lite/">\n        <div class="title">Invoice OCR Lite</div>\n        <div class="desc">In‑browser OCR for invoices. Extracts vendor, date, and total, then exports CSV.</div>\n        <div class="meta">/products/PP-003-invoice-ocr-lite/</div>\n      </a>\n\n      <a class="card" href="PP-003-leadbeam/">\n        <div class="title">Leadbeam</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-leadbeam/</div>\n      </a>\n\n      <a class="card" href="PP-003-memory-vault/">\n        <div class="title">Memory Vault</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-memory-vault/</div>\n      </a>\n\n      <a class="card" href="PP-003-parallel-sessions/">\n        <div class="title">Parallel Sessions</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-parallel-sessions/</div>\n      </a>\n\n      <a class="card" href="PP-003-telemetryguard/">\n        <div class="title">Telemetryguard</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-telemetryguard/</div>\n      </a>\n\n      <a class="card" href="PP-003-uk-boundary-checker/">\n        <div class="title">UK Boundary Checker</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-uk-boundary-checker/</div>\n      </a>\n\n      <a class="card" href="PP-003-uk-cgt-isa/">\n        <div class="title">UK CGT Isa</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-uk-cgt-isa/</div>\n      </a>\n\n      <a class="card" href="PP-003-whatsapp-business-setup/">\n        <div class="title">Whatsapp Business Setup</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-whatsapp-business-setup/</div>\n      </a>\n\n      <a class="card" href="PP-003-workflow-health/">\n        <div class="title">Workflow Health</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-003-workflow-health/</div>\n      </a>\n\n      <a class="card" href="PP-004-clawconfig-guard/">\n        <div class="title">Clawconfig Guard</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-004-clawconfig-guard/</div>\n      </a>\n\n      <a class="card" href="PP-004-planpulse/">\n        <div class="title">Planpulse</div>\n        <div class="desc"></div>\n        <div class="meta">/products/PP-004-planpulse/</div>\n      </a>\n\n      <a class="card" href="competency-matrix-app/">\n        <div class="title">Competency Matrix App</div>\n        <div class="desc"></div>\n        <div class="meta">/products/competency-matrix-app/</div>\n      </a>\n\n      <a class="card" href="dns-email-audit/">\n        <div class="title">DNS Email Audit</div>\n        <div class="desc"></div>\n        <div class="meta">/products/dns-email-audit/</div>\n      </a>\n\n      <a class="card" href="ifc-automator/">\n        <div class="title">IFC Automator</div>\n        <div class="desc"></div>\n        <div class="meta">/products/ifc-automator/</div>\n      </a>\n
-  </div></div>
-  <footer><div>Repo: <a href="https://github.com/tonycdr-prog/products" style="color:#c4b5fd">tonycdr-prog/products</a></div></footer>
+  <main>
+    <div class="grid">
+    <a class="card" href="PP-001-arch-diagram-polish/">
+      <div class="title">PP 001 Arch Diagram Polish</div>
+      <div class="desc">PP-001-arch-diagram-polish</div>
+    </a>
+    <a class="card" href="PP-001-bookmarknest/">
+      <div class="title">PP 001 Bookmarknest</div>
+      <div class="desc">BookmarkNest auto-categorizes bookmarks and generates a concise summary, making saved links searchable and easy to revisit.</div>
+    </a>
+    <a class="card" href="PP-001-carousel-maker/">
+      <div class="title">PP 001 Carousel Maker</div>
+      <div class="desc">Creates LinkedIn-ready carousel slides with correct 4:5 sizing, simple themes, and one-click PNG exports.</div>
+    </a>
+    <a class="card" href="PP-001-chaserflow/">
+      <div class="title">PP 001 Chaserflow</div>
+      <div class="desc">Automates polite invoice reminder sequences (UK‑friendly) so freelancers and SMEs get paid faster without manual chasing.</div>
+    </a>
+    <a class="card" href="PP-001-cod-commission-tracker/">
+      <div class="title">PP 001 Cod Commission Tracker</div>
+      <div class="desc">PP-001-cod-commission-tracker</div>
+    </a>
+    <a class="card" href="PP-001-competitor-price-tracker/">
+      <div class="title">PP 001 Competitor Price Tracker</div>
+      <div class="desc">Quickly turns a competitor price list into clear pricing actions and alert-ready exports.</div>
+    </a>
+    <a class="card" href="PP-001-docstack/">
+      <div class="title">PP 001 Docstack</div>
+      <div class="desc">DocStack combines proposals, contracts, and invoices into a single workflow for small businesses.</div>
+    </a>
+    <a class="card" href="PP-001-invoice-chaser-lite/">
+      <div class="title">PP 001 Invoice Chaser Lite</div>
+      <div class="desc">PP-001-invoice-chaser-lite</div>
+    </a>
+    <a class="card" href="PP-001-invoice-preflight/">
+      <div class="title">PP 001 Invoice Preflight</div>
+      <div class="desc">Turns messy OCR/pasted invoice text into structured fields (vendor, invoice number, date, subtotal, VAT, total).</div>
+    </a>
+    <a class="card" href="PP-001-maintenance-nagger/">
+      <div class="title">PP 001 Maintenance Nagger</div>
+      <div class="desc">Maintainly is a lightweight maintenance scheduler for small UK landlords.</div>
+    </a>
+    <a class="card" href="PP-001-noteforge/">
+      <div class="title">PP 001 Noteforge</div>
+      <div class="desc">NoteForge is a lightweight, affordable Evernote-style note vault with built‑in OCR search.</div>
+    </a>
+    <a class="card" href="PP-001-notes-ocr/">
+      <div class="title">PP 001 Notes Ocr</div>
+      <div class="desc">Lightweight notes app with OCR search for images and receipts, designed as an affordable Evernote alternative.</div>
+    </a>
+    <a class="card" href="PP-001-saas-stack-map/">
+      <div class="title">PP 001 Saas Stack Map</div>
+      <div class="desc">Lightweight inventory of all services behind your SaaS: domain registrars, hosting, email, databases, analytics, payments, and renewals.</div>
+    </a>
+    <a class="card" href="PP-001-seo-visibility/">
+      <div class="title">PP 001 Seo Visibility</div>
+      <div class="desc">Affordable SEO visibility tracker with a simple visibility score and AI‑mention checks for small sites.</div>
+    </a>
+    <a class="card" href="PP-001-solo-marketing-planner/">
+      <div class="title">PP 001 Solo Marketing Planner</div>
+      <div class="desc">SoloSignal turns a solo founder’s marketing goal into a 7‑day execution plan, channel task board, and KPI tracker.</div>
+    </a>
+    <a class="card" href="PP-001-uk-seller-tax-tracker/">
+      <div class="title">PP 001 Uk Seller Tax Tracker</div>
+      <div class="desc">A UK tax‑year aware tracker for side‑hustle sellers.</div>
+    </a>
+    <a class="card" href="PP-001-whatsapp-booking-assistant/">
+      <div class="title">PP 001 Whatsapp Booking Assistant</div>
+      <div class="desc">Lightweight booking workflow for tour and service businesses using WhatsApp.</div>
+    </a>
+    <a class="card" href="PP-002-ai-hiring-scorecard/">
+      <div class="title">PP 002 Ai Hiring Scorecard</div>
+      <div class="desc">Generates AI-aware hiring scorecards with role-specific rubrics, tasks, and policy guidance.</div>
+    </a>
+    <a class="card" href="PP-002-bsa-checklist/">
+      <div class="title">PP 002 Bsa Checklist</div>
+      <div class="desc">A UK‑specific Building Safety Act checklist and document tracker for landlords, managing agents, and leaseholders.</div>
+    </a>
+    <a class="card" href="PP-002-cgt-reporting/">
+      <div class="title">PP 002 Cgt Reporting</div>
+      <div class="desc">Interactive calculator that handles **multiple disposal dates**, **annual exempt allocation**, and **basic‑rate band usage** for UK CGT.</div>
+    </a>
+    <a class="card" href="PP-002-fee-link-optimizer/">
+      <div class="title">PP 002 Fee Link Optimizer</div>
+      <div class="desc">Calculates true payment fees and generates a payment link + QR so clients can pay with the lowest overhead.</div>
+    </a>
+    <a class="card" href="PP-002-fieldkit/">
+      <div class="title">PP 002 Fieldkit</div>
+      <div class="desc">FieldKit is a lightweight CRM and job scheduler for local service businesses (plumbers, cleaners, electricians).</div>
+    </a>
+    <a class="card" href="PP-002-freelance-invoicing/">
+      <div class="title">PP 002 Freelance Invoicing</div>
+      <div class="desc">Lightweight freelancer CRM + invoicing replacement for Fiverr Workspace (AND.CO).</div>
+    </a>
+    <a class="card" href="PP-002-micro-automation-layer/">
+      <div class="title">PP 002 Micro Automation Layer</div>
+      <div class="desc">PP-002-micro-automation-layer</div>
+    </a>
+    <a class="card" href="PP-002-perma-qr-link/">
+      <div class="title">PP 002 Perma Qr Link</div>
+      <div class="desc">Generates a QR code and a self‑hosted redirect page so printed QR codes can point to a permanent, editable destination.</div>
+    </a>
+    <a class="card" href="PP-002-prooflite/">
+      <div class="title">PP 002 Prooflite</div>
+      <div class="desc">Generates lightweight social proof widgets (testimonials + logo wall) with clean HTML/CSS, no iFrames.</div>
+    </a>
+    <a class="card" href="PP-002-safe-lead-scout/">
+      <div class="title">PP 002 Safe Lead Scout</div>
+      <div class="desc">Builds compliant lead discovery workflows without auto‑DM spam.</div>
+    </a>
+    <a class="card" href="PP-002-scheduleflow/">
+      <div class="title">PP 002 Scheduleflow</div>
+      <div class="desc">ScheduleFlow is a lightweight scheduling tool that recalculates delivery dates daily based on real progress.</div>
+    </a>
+    <a class="card" href="PP-002-smb-competitor-tracker/">
+      <div class="title">PP 002 Smb Competitor Tracker</div>
+      <div class="desc">A lightweight, browser‑based tracker for SMB operators to log competitor pricing, feature releases, and hiring signals.</div>
+    </a>
+    <a class="card" href="PP-002-typeback/">
+      <div class="title">PP 002 Typeback</div>
+      <div class="desc">TypeBack is a privacy-first typed text recall tool.</div>
+    </a>
+    <a class="card" href="PP-002-typed-history/">
+      <div class="title">PP 002 Typed History</div>
+      <div class="desc">Local-first typed text history that captures snippets as you type (not just clipboard) so you can recall lost text.</div>
+    </a>
+    <a class="card" href="PP-002-typing-recall/">
+      <div class="title">PP 002 Typing Recall</div>
+      <div class="desc">Captures and recalls typed text locally (not just clipboard).</div>
+    </a>
+    <a class="card" href="PP-002-waitlist-outreach-planner/">
+      <div class="title">PP 002 Waitlist Outreach Planner</div>
+      <div class="desc">PP-002-waitlist-outreach-planner</div>
+    </a>
+    <a class="card" href="PP-002-whatsapp-booking/">
+      <div class="title">PP 002 Whatsapp Booking</div>
+      <div class="desc">Simple slot manager for small tour operators to prevent overbooking and speed up WhatsApp replies.</div>
+    </a>
+    <a class="card" href="PP-002-whatsapp-booking-bot/">
+      <div class="title">PP 002 Whatsapp Booking Bot</div>
+      <div class="desc">Turns WhatsApp conversations into a self‑serve appointment flow.</div>
+    </a>
+    <a class="card" href="PP-003-ai-credit-guard/">
+      <div class="title">PP 003 Ai Credit Guard</div>
+      <div class="desc">Tracks AI API usage errors, estimates refundable credits, and generates dispute-ready summaries for provider support teams.</div>
+    </a>
+    <a class="card" href="PP-003-arxiv-quality-ranker/">
+      <div class="title">PP 003 Arxiv Quality Ranker</div>
+      <div class="desc">PP-003-arxiv-quality-ranker</div>
+    </a>
+    <a class="card" href="PP-003-cashflow-clarity/">
+      <div class="title">PP 003 Cashflow Clarity</div>
+      <div class="desc">A simple monthly cashflow + P&amp;L tracker built for owners who want clarity without accounting fluff.</div>
+    </a>
+    <a class="card" href="PP-003-flyerforge/">
+      <div class="title">PP 003 Flyerforge</div>
+      <div class="desc">Simple, web‑based desktop‑publishing replacement for Microsoft Publisher.</div>
+    </a>
+    <a class="card" href="PP-003-hn-monitor/">
+      <div class="title">PP 003 Hn Monitor</div>
+      <div class="desc">SignalHunt monitors new Hacker News posts and scores them against example pains you provide.</div>
+    </a>
+    <a class="card" href="PP-003-hn-recall/">
+      <div class="title">PP 003 Hn Recall</div>
+      <div class="desc">HN Recall is a memory‑friendly search layer for Hacker News.</div>
+    </a>
+    <a class="card" href="PP-003-invoice-ocr-lite/">
+      <div class="title">PP 003 Invoice Ocr Lite</div>
+      <div class="desc">PP-003-invoice-ocr-lite</div>
+    </a>
+    <a class="card" href="PP-003-leadbeam/">
+      <div class="title">PP 003 Leadbeam</div>
+      <div class="desc">LeadBeam is a lightweight CRM that imports curated leads, tracks follow‑ups with next‑action dates, and generates discovery playbooks to find similar prospects.</div>
+    </a>
+    <a class="card" href="PP-003-memory-vault/">
+      <div class="title">PP 003 Memory Vault</div>
+      <div class="desc">Encrypts/decrypts AI memory files locally in the browser using Web Crypto (AES‑GCM).</div>
+    </a>
+    <a class="card" href="PP-003-parallel-sessions/">
+      <div class="title">PP 003 Parallel Sessions</div>
+      <div class="desc">A lightweight orchestration layer for running multiple coding-agent sessions in parallel without losing context.</div>
+    </a>
+    <a class="card" href="PP-003-telemetryguard/">
+      <div class="title">PP 003 Telemetryguard</div>
+      <div class="desc">TelemetryGuard generates PR-time telemetry checklists and OpenTelemetry starter snippets so teams stop shipping uninstrumented code.</div>
+    </a>
+    <a class="card" href="PP-003-uk-boundary-checker/">
+      <div class="title">PP 003 Uk Boundary Checker</div>
+      <div class="desc">Estimates boundary discrepancies from title plan vs on‑site measurements, then generates a copy‑ready surveyor brief and evidence checklist.</div>
+    </a>
+    <a class="card" href="PP-003-uk-cgt-isa/">
+      <div class="title">PP 003 Uk Cgt Isa</div>
+      <div class="desc">UK CGT calculator and Bed &amp; ISA planner for GIA investors.</div>
+    </a>
+    <a class="card" href="PP-003-whatsapp-business-setup/">
+      <div class="title">PP 003 Whatsapp Business Setup</div>
+      <div class="desc">Guides SMEs through a setup checklist and generates ready‑to‑paste greeting/away messages and quick replies.</div>
+    </a>
+    <a class="card" href="PP-003-workflow-health/">
+      <div class="title">PP 003 Workflow Health</div>
+      <div class="desc">Scores automation workflows for breakage risk and generates a self-healing checklist.</div>
+    </a>
+    <a class="card" href="PP-004-clawconfig-guard/">
+      <div class="title">PP 004 Clawconfig Guard</div>
+      <div class="desc">Schema-aware editor for OpenClaw settings.json with automatic backups, version history, and rollback.</div>
+    </a>
+    <a class="card" href="PP-004-planpulse/">
+      <div class="title">PP 004 Planpulse</div>
+      <div class="desc">PlanPulse tracks AI subscription plans and shows daily comparisons across vendors.</div>
+    </a>
+    <a class="card" href="PP-PP-001-repair-log-pack/">
+      <div class="title">PP PP 001 Repair Log Pack</div>
+      <div class="desc">A tenant-controlled repair log and escalation pack generator.</div>
+    </a>
+    <a class="card" href="PP-PP-002-service-charge-audit/">
+      <div class="title">PP PP 002 Service Charge Audit</div>
+      <div class="desc">A UK-focused service charge audit helper for leaseholders.</div>
+    </a>
+    <a class="card" href="PP-PP-003-invoice-chase-pack/">
+      <div class="title">PP PP 003 Invoice Chase Pack</div>
+      <div class="desc">Turns an unpaid invoice into a ready-to-send chase bundle:</div>
+    </a>
+    <a class="card" href="competency-matrix-app/">
+      <div class="title">Competency Matrix App</div>
+      <div class="desc">competency-matrix-app</div>
+    </a>
+    <a class="card" href="dns-email-audit/">
+      <div class="title">Dns Email Audit</div>
+      <div class="desc">A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report.</div>
+    </a>
+    <a class="card" href="ifc-automator/">
+      <div class="title">Ifc Automator</div>
+      <div class="desc">ifc-automator</div>
+    </a>
+    </div>
+  </main>
+  <footer>
+    <div>Repo index. Each card links to <code>/products/&lt;slug&gt;/</code>.</div>
+  </footer>
 </body>
 </html>
