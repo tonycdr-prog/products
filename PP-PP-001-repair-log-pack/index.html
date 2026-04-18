@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RepairTrail — tenant repair log + escalation pack (UK)</title>
+  <meta name="description" content="Keep a structured repair log, generate a timeline, and export a clean escalation letter pack. Local-first MVP." />
+  <meta name="keywords" content="tenant repairs, landlord repairs, disrepair, complaint letter, evidence pack" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap');
+    :root{
+      --primary:#0F766E; --onPrimary:#fff;
+      --secondary:#14B8A6; --onSecondary:#0F172A;
+      --accent:#0369A1; --onAccent:#fff;
+      --bg:#F0FDFA; --fg:#134E4A;
+      --card:#fff; --muted:#E8F0F3; --mutedFg:#64748B;
+      --border:#99F6E4; --danger:#DC2626;
+      --shadow: 0 10px 30px rgba(15,118,110,.12);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    body{margin:0; font-family:"Josefin Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--fg);}
+    .container{max-width:1120px; margin:0 auto; padding:24px;}
+
+    .nav{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 0;}
+    .brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+    .logo{width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:var(--shadow)}
+    .brand strong{font-family:Cinzel,serif; letter-spacing:.2px;}
+    .navlinks{display:flex; gap:10px; flex-wrap:wrap;}
+
+    .btn{appearance:none; border:1px solid var(--border); background:var(--card); color:var(--fg); padding:10px 14px; border-radius:999px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; gap:8px; align-items:center;}
+    .btnPrimary{background:var(--primary); color:var(--onPrimary); border-color:transparent;}
+    .btnAccent{background:var(--accent); color:var(--onAccent); border-color:transparent;}
+    .btn:focus{outline:3px solid rgba(15,118,110,.25); outline-offset:2px;}
+
+    .hero{display:grid; grid-template-columns:1.2fr .8fr; gap:18px; margin-top:20px;}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;}}
+
+    .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow)}
+
+    h1{font-family:Cinzel,serif; margin:0 0 10px; font-size:42px; line-height:1.08;}
+    @media(max-width:520px){h1{font-size:34px}}
+    .sub{color:var(--mutedFg); font-size:18px; line-height:1.5; margin:0 0 14px;}
+
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+    label{display:block; font-weight:700; margin:12px 0 6px;}
+    input, textarea, select{width:100%; padding:12px 12px; border:1px solid rgba(15,118,110,.25); border-radius:14px; background:#fff; font:inherit;}
+    textarea{min-height:90px; resize:vertical;}
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media(max-width:620px){.row{grid-template-columns:1fr;}}
+
+    .list{margin-top:12px; display:flex; flex-direction:column; gap:10px;}
+    .item{border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px; background:linear-gradient(180deg,#fff,#f8fffe);}
+    .itemHead{display:flex; justify-content:space-between; gap:10px; align-items:flex-start;}
+    .badge{font-size:12px; padding:6px 10px; border-radius:999px; background:var(--muted); color:#0f172a;}
+    .badge.bad{background:rgba(220,38,38,.12); color:#7f1d1d; border:1px solid rgba(220,38,38,.25)}
+    .item small{color:var(--mutedFg)}
+
+    .footer{margin:24px 0 10px; color:var(--mutedFg); font-size:14px;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a class="brand" href="#top">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>RepairTrail</strong><br/>
+          <span style="color:var(--mutedFg); font-size:13px">Repair log → timeline → escalation pack</span>
+        </div>
+      </a>
+      <div class="navlinks">
+        <a class="btn" href="#log">Log issue</a>
+        <a class="btn" href="#letter">Letter</a>
+        <a class="btn btnPrimary" href="#waitlist">Updates</a>
+      </div>
+    </div>
+
+    <section class="hero" id="top">
+      <div class="card">
+        <h1>Stop losing your repair history in email threads.</h1>
+        <p class="sub">RepairTrail is a simple, tenant-controlled log. Add issues, track contacts, and export a clean timeline + escalation letter pack.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <a class="btn btnPrimary" href="#log">Start a repair log</a>
+          <button class="btn btnAccent" id="btnExport" type="button">Export pack (PDF)</button>
+          <span style="color:var(--mutedFg)">Local-first MVP</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="font-family:Cinzel,serif; margin:0 0 8px;">What counts as a “good” log?</h2>
+        <p class="sub" style="margin:0 0 10px; font-size:16px;">It should answer:</p>
+        <ul style="margin:0;">
+          <li>What’s broken (and severity)?</li>
+          <li>When did you report it?</li>
+          <li>Who did you contact?</li>
+          <li>What happened next?</li>
+          <li>How long has it been unresolved?</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="grid" id="log">
+      <div class="card">
+        <h2 style="font-family:Cinzel,serif; margin:0 0 6px;">Add an issue</h2>
+        <div class="row">
+          <div>
+            <label for="title">Issue title</label>
+            <input id="title" placeholder="e.g. Front door won’t lock" />
+          </div>
+          <div>
+            <label for="severity">Severity</label>
+            <select id="severity">
+              <option value="high">High (security / water / electrics)</option>
+              <option value="medium">Medium (heating, appliances, damp)</option>
+              <option value="low">Low (cosmetic / minor)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="reported">Date first reported</label>
+            <input id="reported" type="date" />
+          </div>
+          <div>
+            <label for="status">Status</label>
+            <select id="status">
+              <option value="open">Open</option>
+              <option value="in_progress">In progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="who">Who did you report to?</label>
+        <input id="who" placeholder="Landlord / letting agent / property management" />
+
+        <label for="notes">Notes (keep it factual)</label>
+        <textarea id="notes" placeholder="What happened, dates, any contractor visits, what was said... (avoid anything you can’t evidence)"></textarea>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="btn btnPrimary" id="btnAdd" type="button">Add to log</button>
+          <button class="btn" id="btnClear" type="button">Clear form</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-family:Cinzel,serif; margin:0 0 6px;">Your timeline</h2>
+        <p class="sub" style="margin:0; font-size:16px;">Stored locally in your browser. Use export to create a PDF snapshot.</p>
+        <div class="list" id="list" aria-live="polite"></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="btn" id="btnDownloadTimeline" type="button">Download timeline (PDF)</button>
+          <button class="btn" id="btnResetAll" type="button">Reset all data</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="letter">
+      <div class="card" id="letterRoot">
+        <h2 style="font-family:Cinzel,serif; margin:0 0 6px;">Escalation letter (template)</h2>
+        <p class="sub" style="margin:0; font-size:16px;">Generates a calm, structured letter with your timeline embedded. Not legal advice.</p>
+
+        <div class="row">
+          <div>
+            <label for="yourName">Your name</label>
+            <input id="yourName" placeholder="Your name" />
+          </div>
+          <div>
+            <label for="yourAddress">Your address</label>
+            <input id="yourAddress" placeholder="Property address" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="landlord">Landlord/agent name</label>
+            <input id="landlord" placeholder="Company / person" />
+          </div>
+          <div>
+            <label for="landlordEmail">Email (optional)</label>
+            <input id="landlordEmail" placeholder="repairs@..." />
+          </div>
+        </div>
+
+        <label for="letterText">Generated letter</label>
+        <textarea id="letterText"></textarea>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="btn btnAccent" id="btnGenLetter" type="button">Generate letter</button>
+          <button class="btn" id="btnCopyLetter" type="button">Copy</button>
+          <button class="btn" id="btnLetterPdf" type="button">Download letter (PDF)</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-family:Cinzel,serif; margin:0 0 6px;">Pricing</h2>
+        <p class="sub" style="margin:0 0 10px;">Suggested model (for later): free log + paid export packs.</p>
+        <div class="row">
+          <div class="card" style="box-shadow:none;">
+            <strong>Free</strong>
+            <div style="font-size:32px; font-weight:800; margin:10px 0;">£0</div>
+            <ul>
+              <li>Repair log</li>
+              <li>Copy/paste letter</li>
+            </ul>
+          </div>
+          <div class="card" style="box-shadow:none; border:2px solid var(--accent)">
+            <strong>Pack</strong>
+            <div style="font-size:32px; font-weight:800; margin:10px 0;">£9</div>
+            <ul>
+              <li>PDF timeline</li>
+              <li>Letter PDF</li>
+              <li>Evidence checklist</li>
+            </ul>
+            <a class="btn btnPrimary" href="#waitlist">Join waitlist</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="card" style="margin-top:16px;">
+      <h2 style="font-family:Cinzel,serif; margin:0 0 6px;">Get updates</h2>
+      <p class="sub" style="margin:0 0 12px;">Email capture is local-only in this MVP.</p>
+      <div class="row">
+        <div>
+          <label for="email">Email</label>
+          <input id="email" placeholder="you@domain.com" />
+        </div>
+        <div style="display:flex; align-items:end; gap:10px;">
+          <button class="btn btnPrimary" id="btnSaveEmail" type="button">Save locally</button>
+          <a class="btn" id="btnMailto" href="#">Email me the link</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <strong>Disclaimer:</strong> informational only; not legal advice. Consider getting independent advice (Shelter/Citizens Advice) for your circumstances.
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.3/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function loadItems(){
+      return JSON.parse(localStorage.getItem('rt.items') || '[]');
+    }
+    function saveItems(items){
+      localStorage.setItem('rt.items', JSON.stringify(items));
+    }
+
+    function daysSince(date){
+      if (!date) return null;
+      const d = new Date(date + 'T00:00:00');
+      const ms = Date.now() - d.getTime();
+      return Math.max(0, Math.floor(ms/(1000*60*60*24)));
+    }
+
+    function overdueBadge(sev, status, reported){
+      if (status === 'resolved') return {text:'Resolved', bad:false};
+      const days = daysSince(reported);
+      if (days === null) return {text:'Open', bad:false};
+      const threshold = sev === 'high' ? 7 : (sev === 'medium' ? 14 : 30);
+      if (days >= threshold) return {text:`Overdue (${days}d)`, bad:true};
+      return {text:`Open (${days}d)`, bad:false};
+    }
+
+    function render(){
+      const items = loadItems().sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+      const list = $('list');
+      if (!items.length){
+        list.innerHTML = `<div class="item"><small>No issues yet. Add your first issue on the left.</small></div>`;
+        return;
+      }
+      list.innerHTML = items.map(it => {
+        const badge = overdueBadge(it.severity, it.status, it.reported);
+        const dateStr = it.reported ? new Date(it.reported+'T00:00:00').toLocaleDateString('en-GB') : '—';
+        return `
+          <div class="item">
+            <div class="itemHead">
+              <div>
+                <strong>${escapeHtml(it.title || 'Untitled')}</strong><br/>
+                <small>${escapeHtml(it.who || '—')} • Reported: ${dateStr} • Severity: ${escapeHtml(it.severity)}</small>
+              </div>
+              <span class="badge ${badge.bad ? 'bad':''}">${escapeHtml(badge.text)}</span>
+            </div>
+            ${it.notes ? `<div style="margin-top:8px; color:#475569;">${escapeHtml(it.notes)}</div>` : ''}
+            <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn" type="button" onclick="window.rtMarkResolved('${it.id}')">Mark resolved</button>
+              <button class="btn" type="button" onclick="window.rtDelete('${it.id}')">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function add(){
+      const title = $('title').value.trim();
+      const severity = $('severity').value;
+      const reported = $('reported').value;
+      const status = $('status').value;
+      const who = $('who').value.trim();
+      const notes = $('notes').value.trim();
+
+      if (!title){ alert('Add an issue title.'); return; }
+      const items = loadItems();
+      items.push({
+        id: crypto.randomUUID(),
+        title, severity, reported, status, who, notes,
+        createdAt: Date.now()
+      });
+      saveItems(items);
+      clearForm();
+      render();
+    }
+
+    function clearForm(){
+      ['title','reported','who','notes'].forEach(id=>$(id).value='');
+      $('severity').value='high';
+      $('status').value='open';
+    }
+
+    window.rtDelete = (id) => {
+      const items = loadItems().filter(x=>x.id!==id);
+      saveItems(items);
+      render();
+    };
+    window.rtMarkResolved = (id) => {
+      const items = loadItems().map(x=> x.id===id ? {...x, status:'resolved'} : x);
+      saveItems(items);
+      render();
+    };
+
+    function genLetter(){
+      const items = loadItems().sort((a,b)=> (a.reported||'').localeCompare(b.reported||''));
+      const yourName = $('yourName').value.trim() || '[Your name]';
+      const yourAddress = $('yourAddress').value.trim() || '[Your address]';
+      const landlord = $('landlord').value.trim() || '[Landlord/agent]';
+
+      const today = new Date().toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
+      const deadline = new Date(Date.now() + 14*24*60*60*1000).toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
+
+      const timeline = items.length
+        ? items.map((it, i) => {
+            const d = it.reported ? new Date(it.reported+'T00:00:00').toLocaleDateString('en-GB') : '—';
+            return `${i+1}. ${d} — ${it.title} (severity: ${it.severity}, status: ${it.status})${it.who ? ` — reported to ${it.who}` : ''}.`;
+          }).join('\n')
+        : '[No items in log yet]';
+
+      const letter =
+`From:\n${yourName}\n${yourAddress}\n\nTo:\n${landlord}\n\nDate: ${today}\n\nSubject: Repairs and safety concerns — request for timely resolution\n\nHello,\n\nI am writing to request an update and a clear plan to resolve outstanding repairs at the property. For clarity, here is a factual timeline from my repair log:\n\n${timeline}\n\nPlease confirm:\n- What actions will be taken to resolve each issue\n- Who will attend (contractor name if known)\n- Proposed dates for inspection/works\n\nIf any issue is urgent (e.g. security, water ingress, electrics), please prioritise it accordingly.\n\nI would appreciate a written response by ${deadline}.\n\nKind regards,\n${yourName}\n\n---\nNote: template only; not legal advice.`;
+
+      $('letterText').value = letter;
+      localStorage.setItem('rt.letter', letter);
+    }
+
+    function copyLetter(){
+      navigator.clipboard.writeText($('letterText').value || '').catch(()=>{});
+    }
+
+    function downloadPdfFromEl(el, filename){
+      const opt = {
+        margin: 10,
+        filename,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(el).save();
+    }
+
+    function downloadTimeline(){
+      downloadPdfFromEl($('list'), 'repairtrail-timeline.pdf');
+    }
+
+    function downloadLetter(){
+      const wrapper = document.createElement('div');
+      wrapper.style.fontFamily = 'Josefin Sans, sans-serif';
+      wrapper.style.padding = '18px';
+      wrapper.innerHTML = `<h2 style="font-family:Cinzel,serif; margin:0 0 8px;">RepairTrail — Escalation letter</h2>`+
+        `<pre style="white-space:pre-wrap; font-size:12.5px; line-height:1.35;">${escapeHtml($('letterText').value || '')}</pre>`;
+      downloadPdfFromEl(wrapper, 'repairtrail-letter.pdf');
+    }
+
+    function exportPack(){
+      // ensure letter exists
+      if (!$('letterText').value.trim()) genLetter();
+      const items = loadItems().sort((a,b)=> (a.reported||'').localeCompare(b.reported||''));
+      const wrapper = document.createElement('div');
+      wrapper.style.fontFamily = 'Josefin Sans, sans-serif';
+      wrapper.style.padding = '18px';
+      wrapper.innerHTML = `
+        <h2 style="font-family:Cinzel,serif; margin:0 0 6px;">RepairTrail — Escalation pack</h2>
+        <p style="margin:0 0 10px; color:#475569;">Timeline + checklist (template only).</p>
+        <h3 style="margin:14px 0 6px;">Timeline</h3>
+        <ul>${items.map(it=>{
+          const d = it.reported ? new Date(it.reported+'T00:00:00').toLocaleDateString('en-GB') : '—';
+          return `<li><strong>${escapeHtml(d)}</strong> — ${escapeHtml(it.title)} (${escapeHtml(it.severity)}, ${escapeHtml(it.status)})</li>`;
+        }).join('') || '<li>No issues logged yet.</li>'}</ul>
+        <h3 style="margin:14px 0 6px;">Evidence checklist</h3>
+        <ul>
+          <li>Photos/videos (with dates)</li>
+          <li>All emails/messages to/from landlord/agent</li>
+          <li>Contractor visit dates + outcomes</li>
+          <li>Any safety concerns (e.g. electrics, water near fittings)</li>
+          <li>Receipts for anything you paid for (if applicable)</li>
+        </ul>
+        <h3 style="margin:14px 0 6px;">Letter</h3>
+        <pre style="white-space:pre-wrap; font-size:12.5px; line-height:1.35;">${escapeHtml($('letterText').value || '')}</pre>
+        <p style="color:#64748B; font-size:12px;">Disclaimer: informational only; not legal advice.</p>
+      `;
+      downloadPdfFromEl(wrapper, 'repairtrail-pack.pdf');
+    }
+
+    function saveEmail(){
+      const email = $('email').value.trim();
+      if (!email) return;
+      const list = JSON.parse(localStorage.getItem('rt.waitlist')||'[]');
+      list.push({email, ts:Date.now()});
+      localStorage.setItem('rt.waitlist', JSON.stringify(list));
+      $('email').value = '';
+      alert('Saved locally. (This MVP does not send anything yet.)');
+    }
+
+    function updateMailto(){
+      const subject = encodeURIComponent('RepairTrail link');
+      const body = encodeURIComponent('Link: '+location.href+'\n\nI used RepairTrail to create a repair log timeline.');
+      $('btnMailto').href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    $('btnAdd').addEventListener('click', add);
+    $('btnClear').addEventListener('click', clearForm);
+    $('btnGenLetter').addEventListener('click', genLetter);
+    $('btnCopyLetter').addEventListener('click', copyLetter);
+    $('btnLetterPdf').addEventListener('click', downloadLetter);
+    $('btnDownloadTimeline').addEventListener('click', downloadTimeline);
+    $('btnExport').addEventListener('click', exportPack);
+    $('btnResetAll').addEventListener('click', ()=>{ if(confirm('Delete all saved repair log data on this device?')){ localStorage.removeItem('rt.items'); localStorage.removeItem('rt.letter'); render(); }});
+    $('btnSaveEmail').addEventListener('click', saveEmail);
+
+    updateMailto();
+    const savedLetter = localStorage.getItem('rt.letter');
+    if (savedLetter) $('letterText').value = savedLetter;
+    render();
+  </script>
+</body>
+</html>
