@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ServiceChargeSense — UK service charge audit & red‑flag checker</title>
+  <meta name="description" content="Audit UK leasehold service charges, spot red flags, and generate a Section 22/21-style info request letter in minutes." />
+  <meta name="keywords" content="leasehold, service charge, audit, section 22, landlord and tenant act 1985, managing agent" />
+  <meta property="og:title" content="ServiceChargeSense" />
+  <meta property="og:description" content="Upload your numbers, get red flags + a ready-to-send request letter." />
+  <meta property="og:type" content="website" />
+
+  <style>
+    :root{
+      --primary:#0F766E; --onPrimary:#fff;
+      --secondary:#14B8A6; --onSecondary:#0F172A;
+      --accent:#0369A1; --onAccent:#fff;
+      --bg:#F0FDFA; --fg:#134E4A;
+      --card:#fff; --muted:#E8F0F3; --mutedFg:#475569;
+      --border:#99F6E4; --danger:#DC2626;
+      --shadow: 0 10px 30px rgba(15,118,110,.12);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    body{margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--fg);}
+    a{color:inherit}
+
+    .container{max-width:1120px; margin:0 auto; padding:24px;}
+    .nav{display:flex; justify-content:space-between; align-items:center; gap:14px; padding:10px 0;}
+    .brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+    .logo{width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:var(--shadow)}
+    .brand strong{font-family: ui-serif, Georgia, "Times New Roman", serif; letter-spacing:.2px;}
+    .navlinks{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+
+    .btn{appearance:none; border:1px solid var(--border); background:var(--card); color:var(--fg); padding:10px 14px; border-radius:999px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px;}
+    .btnPrimary{background:var(--primary); color:var(--onPrimary); border-color:transparent;}
+    .btnAccent{background:var(--accent); color:var(--onAccent); border-color:transparent;}
+    .btn:focus{outline:3px solid rgba(15,118,110,.25); outline-offset:2px;}
+
+    .hero{display:grid; grid-template-columns: 1.2fr .8fr; gap:22px; margin-top:22px;}
+    @media (max-width: 900px){.hero{grid-template-columns:1fr;}}
+
+    .hCard{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:22px; box-shadow:var(--shadow)}
+
+    h1{font-family: ui-serif, Georgia, "Times New Roman", serif; margin:0 0 10px; font-size:42px; line-height:1.1;}
+    @media (max-width: 520px){h1{font-size:34px}}
+    .sub{color:var(--mutedFg); font-size:18px; line-height:1.5; margin:0 0 16px;}
+
+    .pillRow{display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 0;}
+    .pill{background:var(--muted); color:#0f172a; border:1px solid rgba(0,0,0,.04); padding:8px 10px; border-radius:999px; font-size:14px;}
+
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-top:18px;}
+    @media (max-width: 900px){.grid{grid-template-columns:1fr;}}
+
+    .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow)}
+    .card h2{font-family: ui-serif, Georgia, "Times New Roman", serif; margin:0 0 8px; font-size:22px;}
+    .card p{margin:0; color:var(--mutedFg); line-height:1.5}
+
+    label{display:block; font-weight:700; margin:12px 0 6px;}
+    input, select, textarea{width:100%; padding:12px 12px; border:1px solid rgba(15,118,110,.25); border-radius:14px; background:#fff; font:inherit;}
+    textarea{min-height:90px; resize:vertical}
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media(max-width: 620px){.row{grid-template-columns:1fr;}}
+
+    .results{margin-top:14px; border-top:1px solid rgba(15,118,110,.15); padding-top:14px;}
+    .flag{display:flex; gap:12px; padding:12px; border-radius:16px; border:1px solid rgba(0,0,0,.05); background:linear-gradient(180deg,#fff,#f8fffe);}
+    .dot{width:10px; height:10px; border-radius:999px; margin-top:6px; background:var(--secondary)}
+    .dot.bad{background:var(--danger)}
+    .flag strong{display:block}
+    .flag small{color:var(--mutedFg)}
+
+    .pricing{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px;}
+    @media(max-width: 900px){.pricing{grid-template-columns:1fr;}}
+
+    .priceCard{border:1px solid var(--border); background:var(--card); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow)}
+    .priceCard.reco{border:2px solid var(--accent)}
+    .price{font-size:34px; font-weight:800; margin:10px 0;}
+
+    .footer{margin:26px 0 10px; color:var(--mutedFg); font-size:14px;}
+    .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding:2px 8px; border:1px solid rgba(0,0,0,.1); border-radius:8px; background:#fff;}
+
+    .status{margin-top:10px; padding:10px 12px; border-radius:14px; border:1px solid rgba(0,0,0,.06); background:#fff; color:var(--mutedFg);}
+    .status.ok{border-color: rgba(20,184,166,.35); background: rgba(20,184,166,.06); color:#0f172a;}
+    .status.bad{border-color: rgba(220,38,38,.35); background: rgba(220,38,38,.06); color:#7f1d1d;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a class="brand" href="#top">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>ServiceChargeSense</strong><br/>
+          <span style="color:var(--mutedFg); font-size:13px">UK leasehold service charge audit</span>
+        </div>
+      </a>
+      <div class="navlinks">
+        <a class="btn" href="#tool">Run audit</a>
+        <a class="btn" href="#pricing">Pricing</a>
+        <a class="btn btnPrimary" href="#waitlist">Get updates</a>
+      </div>
+    </div>
+
+    <section class="hero" id="top">
+      <div class="hCard">
+        <h1>Spot red flags in your service charge in <span style="color:var(--primary)">5 minutes</span>.</h1>
+        <p class="sub">If your managing agent won’t share a clear budget, this turns your numbers into a simple audit: percentage changes, inflation-adjusted shifts, and a ready-to-send request letter.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <a class="btn btnPrimary" href="#tool">Run the audit</a>
+          <button class="btn btnAccent" id="btnDownloadReport" type="button">Download report (PDF)</button>
+          <span style="color:var(--mutedFg)">No signup required. Local-first.</span>
+        </div>
+        <div class="pillRow" aria-label="Highlights">
+          <div class="pill">Red-flag checklist</div>
+          <div class="pill">UK-focused letter generator</div>
+          <div class="pill">Inflation-adjusted comparison</div>
+          <div class="pill">Clean PDF output</div>
+        </div>
+      </div>
+
+      <div class="hCard">
+        <h2 style="font-family:ui-serif,Georgia,serif; margin:0 0 8px;">What you get</h2>
+        <p class="sub" style="margin:0 0 10px; font-size:16px;">A short, practical output you can act on:</p>
+        <div class="card" style="margin-top:12px;">
+          <h2 style="font-size:18px;">1) Clear deltas</h2>
+          <p>Year-on-year change, inflation-adjusted change, and “where did it move?” prompts.</p>
+        </div>
+        <div class="card" style="margin-top:12px;">
+          <h2 style="font-size:18px;">2) Red flags</h2>
+          <p>Missing breakdowns, sudden spikes, vague “management fees”, major works with no explanation.</p>
+        </div>
+        <div class="card" style="margin-top:12px;">
+          <h2 style="font-size:18px;">3) A request letter</h2>
+          <p>A polite template to request information / inspection (always review before sending).</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="tool" style="margin-top:18px;">
+      <div class="card" id="reportRoot">
+        <h2>Audit tool</h2>
+        <p>Enter the headline figures you have. If you have a breakdown, add 2–5 biggest line items.</p>
+
+        <div class="row">
+          <div>
+            <label for="prevCharge">Service charge last year (£)</label>
+            <input id="prevCharge" inputmode="decimal" placeholder="e.g. 1800" />
+          </div>
+          <div>
+            <label for="currCharge">Service charge this year (£)</label>
+            <input id="currCharge" inputmode="decimal" placeholder="e.g. 3200" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="inflation">Inflation assumption (CPI %, optional)</label>
+            <input id="inflation" inputmode="decimal" placeholder="e.g. 3.2" />
+          </div>
+          <div>
+            <label for="propertyType">Property type</label>
+            <select id="propertyType">
+              <option value="flat">Leasehold flat</option>
+              <option value="house">Leasehold house</option>
+              <option value="shared">Shared ownership / other</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="breakdown">Largest cost items you were told about (optional)</label>
+        <textarea id="breakdown" placeholder="Example:\n- Insurance: £420\n- Management fee: £480\n- Cleaning: £650\n- Repairs/major works: £1,150"></textarea>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="btn btnPrimary" id="btnRun" type="button">Run audit</button>
+          <button class="btn" id="btnReset" type="button">Reset</button>
+        </div>
+
+        <div class="results" id="results" aria-live="polite"></div>
+      </div>
+
+      <div class="card">
+        <h2>Request letter generator</h2>
+        <p>Produces a template you can copy/paste or export to PDF. This is <strong>not legal advice</strong>.</p>
+
+        <div class="row">
+          <div>
+            <label for="yourName">Your name</label>
+            <input id="yourName" placeholder="e.g. Alex Smith" />
+          </div>
+          <div>
+            <label for="yourAddress">Your address</label>
+            <input id="yourAddress" placeholder="Flat X, Building Y, Postcode" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="agentName">Managing agent / freeholder</label>
+            <input id="agentName" placeholder="Company name" />
+          </div>
+          <div>
+            <label for="agentEmail">Email (optional)</label>
+            <input id="agentEmail" placeholder="support@..." />
+          </div>
+        </div>
+
+        <label for="letter">Generated letter</label>
+        <textarea id="letter"></textarea>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="btn btnAccent" id="btnGenerateLetter" type="button">Generate letter</button>
+          <button class="btn" id="btnCopyLetter" type="button">Copy</button>
+          <button class="btn" id="btnDownloadLetter" type="button">Download letter (PDF)</button>
+        </div>
+
+        <div class="pillRow" style="margin-top:12px;">
+          <div class="pill">Mentions right to info/inspection (review)</div>
+          <div class="pill">Tracks key figures from audit</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="hCard" style="margin-top:18px;">
+      <h2 style="font-family:ui-serif,Georgia,serif; margin:0 0 8px;">Pricing</h2>
+      <p class="sub" style="margin:0;">This is an MVP. Suggested monetisation: free checker + paid downloadable packs.</p>
+
+      <div class="pricing">
+        <div class="priceCard">
+          <strong>Free</strong>
+          <div class="price">£0</div>
+          <ul>
+            <li>Audit tool</li>
+            <li>Copy/paste letter</li>
+            <li>Local storage (your device)</li>
+          </ul>
+          <a class="btn" href="#tool">Use free</a>
+        </div>
+
+        <div class="priceCard reco">
+          <strong>Report Pack</strong>
+          <div class="price">£12</div>
+          <div style="color:var(--mutedFg)">One-off per building</div>
+          <ul>
+            <li>PDF report for your records</li>
+            <li>Letter PDF + checklist</li>
+            <li>Red-flag explanations</li>
+          </ul>
+          <a class="btn btnPrimary" href="#waitlist">I want this</a>
+        </div>
+
+        <div class="priceCard">
+          <strong>Pro</strong>
+          <div class="price">£8/mo</div>
+          <div style="color:var(--mutedFg)">For ongoing monitoring</div>
+          <ul>
+            <li>Multiple buildings</li>
+            <li>Reminder timeline</li>
+            <li>Export history</li>
+          </ul>
+          <a class="btn" href="#waitlist">Join waitlist</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="hCard" style="margin-top:18px;">
+      <h2 style="font-family:ui-serif,Georgia,serif; margin:0 0 8px;">Get updates</h2>
+      <p class="sub" style="margin:0 0 12px;">Drop your email. You can save locally, or (if you’ve deployed an endpoint) send it to a real waitlist collector.</p>
+
+      <div class="row">
+        <div>
+          <label for="wlName">Name (optional)</label>
+          <input id="wlName" placeholder="e.g. Alex" autocomplete="name" />
+        </div>
+        <div>
+          <label for="wlEmail">Email</label>
+          <input id="wlEmail" placeholder="you@domain.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <label for="wlEndpoint">Waitlist endpoint URL (optional)</label>
+      <input id="wlEndpoint" placeholder="Example: https://your-domain.com/api/waitlist" />
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center;">
+        <button class="btn btnPrimary" id="btnWaitlistLocal" type="button">Save locally</button>
+        <button class="btn btnAccent" id="btnWaitlistSend" type="button">Send to endpoint</button>
+        <button class="btn" id="btnWaitlistExport" type="button">Export local CSV</button>
+        <a class="btn" id="btnMailto" href="#">Email me the link</a>
+      </div>
+
+      <div id="wlStatus" class="status" aria-live="polite">Nothing sent yet.</div>
+      <p style="margin:10px 0 0; color:var(--mutedFg);">Tip: press <span class="kbd">⌘</span>+<span class="kbd">P</span> to print to PDF as a backup.</p>
+      <p style="margin:6px 0 0; color:var(--mutedFg); font-size:14px;">Dev note: a minimal Node waitlist collector is included in <code>server/waitlist-server.js</code>.</p>
+    </section>
+
+    <div class="footer">
+      <strong>Disclaimer:</strong> informational only; not legal advice. Always sanity-check letters and statutory references.
+    </div>
+  </div>
+
+  <!-- MIT: html2pdf.js (bundle includes html2canvas + jsPDF components) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.3/html2pdf.bundle.min.js" integrity="sha512-yDQx9O1xBrmCq7BLu4pvqBkATJ1QxMydy9o1vAJQdQGlycQZk0sKE0TgHH+7e0s9MB9SMmV7AEf9mXQH5y0f7Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function money(n){
+      if (!isFinite(n)) return '—';
+      return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(n);
+    }
+
+    function parseNum(v){
+      const s = String(v||'').replace(/[^0-9.+-]/g,'');
+      const n = parseFloat(s);
+      return isFinite(n) ? n : NaN;
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function runAudit(){
+      const prev = parseNum($('prevCharge').value);
+      const curr = parseNum($('currCharge').value);
+      const inf = parseNum($('inflation').value);
+
+      const res = $('results');
+      res.innerHTML = '';
+
+      if (!isFinite(prev) || !isFinite(curr) || prev <= 0 || curr <= 0){
+        res.innerHTML = `<div class="flag"><div class="dot bad"></div><div><strong>Enter last year and this year service charge</strong><small>Use positive numbers (e.g. 1800, 3200).</small></div></div>`;
+        return;
+      }
+
+      const change = (curr - prev);
+      const pct = (change / prev) * 100;
+      const infAdj = isFinite(inf) ? ((curr / prev) / (1 + inf/100) - 1) * 100 : null;
+
+      const flags = [];
+      flags.push({bad:false, title:`Headline change: ${money(change)} (${pct.toFixed(1)}%)`, note:`Last year ${money(prev)} → this year ${money(curr)}.`});
+
+      if (pct >= 25) flags.push({bad:true, title:`Big jump detected (≥ 25%)`, note:`Ask for a clear budget breakdown and explanation of any exceptional items (e.g. major works).`});
+      if (pct >= 75) flags.push({bad:true, title:`Extreme jump detected (≥ 75%)`, note:`Consider requesting inspection of accounts/vouchers and written justification. Keep everything in writing.`});
+
+      if (infAdj !== null){
+        flags.push({bad: infAdj >= 15, title:`Inflation-adjusted change: ${infAdj.toFixed(1)}%`, note:`Rough sense-check only (based on your CPI input).`});
+      }
+
+      const breakdown = $('breakdown').value.trim();
+      if (!breakdown) flags.push({bad:true, title:`No breakdown captured`, note:`If you only have a headline figure, request a summary and supporting info. Even a top 5 list helps.`});
+      if (breakdown && /management\s*fee/i.test(breakdown) && pct >= 25) flags.push({bad:true, title:`Management fee mentioned — verify basis`, note:`Ask what it covers, how it’s calculated, and whether it changed vs last year.`});
+      if (breakdown && /(major\s*works|section\s*20|s20)/i.test(breakdown)) flags.push({bad:true, title:`Major works referenced`, note:`Ensure consultation/quotes/timeline are documented. Request supporting invoices/contractor scope if applicable.`});
+
+      // Render
+      res.innerHTML = flags.map(f => `
+        <div class="flag" style="margin-top:10px;">
+          <div class="dot ${f.bad ? 'bad':''}"></div>
+          <div>
+            <strong>${escapeHtml(f.title)}</strong>
+            <small>${escapeHtml(f.note)}</small>
+          </div>
+        </div>
+      `).join('');
+
+      // Store state for letter / waitlist metadata
+      localStorage.setItem('scs.audit', JSON.stringify({prev,curr,change,pct,inf:isFinite(inf)?inf:null, infAdj, breakdown, ts:Date.now()}));
+    }
+
+    function genLetter(){
+      const audit = JSON.parse(localStorage.getItem('scs.audit')||'null');
+      const yourName = $('yourName').value.trim() || '[Your name]';
+      const yourAddress = $('yourAddress').value.trim() || '[Your address]';
+      const agentName = $('agentName').value.trim() || '[Managing agent / freeholder]';
+
+      const today = new Date();
+      const dateStr = today.toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
+
+      const headline = audit ? `Service charge: £${audit.prev.toFixed(0)} (last year) → £${audit.curr.toFixed(0)} (this year), change ${audit.pct.toFixed(1)}%.` : `Service charge increase query.`;
+
+      const letter =
+`From:\n${yourName}\n${yourAddress}\n\nTo:\n${agentName}\n\nDate: ${dateStr}\n\nSubject: Request for service charge information and supporting documents\n\nHello,\n\nI am a leaseholder at the address above. I am writing to request a clear breakdown and supporting information for the most recent service charge demand and/or accounts.\n\n${headline}\n\nPlease provide (as applicable):\n- A summary of the service charge budget/actuals for the relevant period\n- The key line items (management fee, insurance, cleaning, repairs/maintenance, major works) and any material changes vs the prior year\n- Where charges relate to works/services, the relevant invoices, contracts, and/or specifications\n- The basis for any administration or management charges\n\nIf there is a formal process for inspecting accounts/vouchers (e.g. by appointment), please confirm the steps and timeframes.\n\nI would appreciate a written response within 14 days.\n\nKind regards,\n${yourName}\n\n---\nNote: This is an informational template only and should be checked for your circumstances.`;
+
+      $('letter').value = letter;
+      localStorage.setItem('scs.letter', letter);
+    }
+
+    function copyLetter(){
+      const txt = $('letter').value;
+      navigator.clipboard.writeText(txt).catch(()=>{});
+    }
+
+    function downloadPdfFromEl(el, filename){
+      const opt = {
+        margin: 10,
+        filename,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(el).save();
+    }
+
+    function downloadLetterPdf(){
+      const wrapper = document.createElement('div');
+      wrapper.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
+      wrapper.style.padding = '18px';
+      wrapper.innerHTML = `<h2 style="font-family:ui-serif,Georgia,serif; margin:0 0 8px;">ServiceChargeSense — Request letter</h2>`+
+        `<pre style="white-space:pre-wrap; font-size:12.5px; line-height:1.35;">${escapeHtml($('letter').value || '')}</pre>`;
+      downloadPdfFromEl(wrapper, 'servicecharge-request-letter.pdf');
+    }
+
+    function downloadReportPdf(){
+      downloadPdfFromEl($('reportRoot'), 'servicecharge-audit-report.pdf');
+    }
+
+    // --- Waitlist ---
+    function isValidEmail(email){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||'').trim());
+    }
+
+    function setWaitlistStatus(msg, kind){
+      const el = $('wlStatus');
+      el.textContent = msg;
+      el.classList.remove('ok','bad');
+      if (kind === 'ok') el.classList.add('ok');
+      if (kind === 'bad') el.classList.add('bad');
+    }
+
+    function saveWaitlistLocal(entry){
+      const list = JSON.parse(localStorage.getItem('scs.waitlist')||'[]');
+      list.push(entry);
+      localStorage.setItem('scs.waitlist', JSON.stringify(list));
+    }
+
+    function exportWaitlistCsv(){
+      const list = JSON.parse(localStorage.getItem('scs.waitlist')||'[]');
+      if (!list.length){
+        setWaitlistStatus('No local waitlist entries yet.', 'bad');
+        return;
+      }
+      const header = ['ts','email','name','source','prev','curr','pct'];
+      const rows = list.map(e => {
+        const a = e.audit || {};
+        const cells = [
+          new Date(e.ts||Date.now()).toISOString(),
+          e.email||'',
+          e.name||'',
+          e.source||'',
+          (a.prev ?? ''),
+          (a.curr ?? ''),
+          (a.pct ?? '')
+        ];
+        return cells.map(v => {
+          const s = String(v ?? '');
+          return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+        }).join(',');
+      });
+      const csv = header.join(',') + '\n' + rows.join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'servicechargesense-waitlist.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setWaitlistStatus(`Exported ${list.length} local entries as CSV.`, 'ok');
+    }
+
+    async function sendWaitlistEndpoint(entry){
+      const endpoint = $('wlEndpoint').value.trim();
+      if (!endpoint){
+        setWaitlistStatus('Add an endpoint URL first (or just save locally).', 'bad');
+        return;
+      }
+      localStorage.setItem('scs.waitlistEndpoint', endpoint);
+
+      setWaitlistStatus('Sending…', '');
+
+      let resp;
+      try{
+        resp = await fetch(endpoint, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(entry)
+        });
+      }catch(err){
+        setWaitlistStatus('Could not reach endpoint. (Network/CORS?) Saved locally as fallback.', 'bad');
+        return {ok:false, status:0};
+      }
+
+      if (!resp.ok){
+        const t = await resp.text().catch(()=> '');
+        setWaitlistStatus(`Endpoint rejected (${resp.status}). Saved locally as fallback.`, 'bad');
+        return {ok:false, status:resp.status, body:t};
+      }
+
+      setWaitlistStatus('Sent to endpoint successfully. (Also saved locally.)', 'ok');
+      return {ok:true, status:resp.status};
+    }
+
+    async function submitWaitlistLocal(){
+      const email = $('wlEmail').value.trim();
+      const name = $('wlName').value.trim();
+      if (!isValidEmail(email)){
+        setWaitlistStatus('Enter a valid email address.', 'bad');
+        return;
+      }
+      const audit = JSON.parse(localStorage.getItem('scs.audit')||'null');
+      const entry = { email, name, source: location.href, product: 'ServiceChargeSense', ts: Date.now(), audit: audit ? {prev:audit.prev, curr:audit.curr, pct:audit.pct} : null };
+      saveWaitlistLocal(entry);
+      $('wlEmail').value = '';
+      $('wlName').value = '';
+      setWaitlistStatus('Saved locally (this browser).', 'ok');
+    }
+
+    async function submitWaitlistEndpoint(){
+      const email = $('wlEmail').value.trim();
+      const name = $('wlName').value.trim();
+      if (!isValidEmail(email)){
+        setWaitlistStatus('Enter a valid email address.', 'bad');
+        return;
+      }
+      const audit = JSON.parse(localStorage.getItem('scs.audit')||'null');
+      const entry = { email, name, source: location.href, product: 'ServiceChargeSense', ts: Date.now(), audit: audit ? {prev:audit.prev, curr:audit.curr, pct:audit.pct} : null };
+
+      // Always keep a local copy
+      saveWaitlistLocal(entry);
+      const r = await sendWaitlistEndpoint(entry);
+      if (r.ok){
+        $('wlEmail').value = '';
+        $('wlName').value = '';
+      }
+    }
+
+    function updateMailto(){
+      const subject = encodeURIComponent('ServiceChargeSense link');
+      const body = encodeURIComponent('Link: '+location.href+'\n\nI used ServiceChargeSense to audit a service charge.');
+      $('btnMailto').href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    function hydrateWaitlistEndpoint(){
+      const qp = new URLSearchParams(location.search);
+      const fromQuery = qp.get('waitlist');
+      const fromStorage = localStorage.getItem('scs.waitlistEndpoint');
+      const ep = (fromQuery || fromStorage || '').trim();
+      if (ep) $('wlEndpoint').value = ep;
+      if (fromQuery) localStorage.setItem('scs.waitlistEndpoint', fromQuery);
+    }
+
+    // --- Wire up ---
+    $('btnRun').addEventListener('click', runAudit);
+    $('btnReset').addEventListener('click', () => {
+      ['prevCharge','currCharge','inflation','breakdown'].forEach(id=>$(id).value='');
+      $('results').innerHTML='';
+    });
+    $('btnGenerateLetter').addEventListener('click', genLetter);
+    $('btnCopyLetter').addEventListener('click', copyLetter);
+    $('btnDownloadLetter').addEventListener('click', downloadLetterPdf);
+    $('btnDownloadReport').addEventListener('click', downloadReportPdf);
+
+    $('btnWaitlistLocal').addEventListener('click', submitWaitlistLocal);
+    $('btnWaitlistSend').addEventListener('click', submitWaitlistEndpoint);
+    $('btnWaitlistExport').addEventListener('click', exportWaitlistCsv);
+
+    updateMailto();
+    hydrateWaitlistEndpoint();
+
+    // Hydrate saved letter if present
+    const savedLetter = localStorage.getItem('scs.letter');
+    if (savedLetter) $('letter').value = savedLetter;
+  </script>
+</body>
+</html>
