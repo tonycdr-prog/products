@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PayChase Pack — UK invoice chase + LBA generator</title>
+  <meta name="description" content="Generate a Letter Before Action for unpaid invoices, calculate statutory late-payment interest, and download a clean PDF evidence checklist." />
+  <meta name="keywords" content="invoice chase, letter before action, small claims, late payment act, interest calculator" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
+
+    :root{
+      --primary:#1E3A8A; --onPrimary:#fff;
+      --secondary:#1E40AF; --onSecondary:#fff;
+      --accent:#B45309; --onAccent:#fff;
+      --bg:#F8FAFC; --fg:#0F172A;
+      --card:#fff; --muted:#E9EEF5; --mutedFg:#64748B;
+      --border:#CBD5E1; --danger:#DC2626;
+      --shadow: 0 12px 34px rgba(2,6,23,.10);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    body{margin:0; font-family:Lato, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--fg);}
+    .container{max-width:1120px; margin:0 auto; padding:24px;}
+
+    a{color:inherit}
+
+    .nav{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 0;}
+    .brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+    .logo{width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:var(--shadow)}
+    .brand strong{font-family:"EB Garamond", serif; font-size:18px; letter-spacing:.2px;}
+    .navlinks{display:flex; gap:10px; flex-wrap:wrap;}
+
+    .btn{appearance:none; border:1px solid var(--border); background:var(--card); color:var(--fg); padding:10px 14px; border-radius:999px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px;}
+    .btnPrimary{background:var(--primary); color:var(--onPrimary); border-color:transparent;}
+    .btnAccent{background:var(--accent); color:var(--onAccent); border-color:transparent;}
+    .btn:focus{outline:3px solid rgba(30,58,138,.25); outline-offset:2px;}
+
+    .hero{display:grid; grid-template-columns:1.1fr .9fr; gap:18px; margin-top:20px;}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;}}
+
+    .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow)}
+
+    h1{font-family:"EB Garamond", serif; margin:0 0 10px; font-size:44px; line-height:1.06;}
+    @media(max-width:520px){h1{font-size:34px}}
+
+    .sub{color:var(--mutedFg); font-size:18px; line-height:1.5; margin:0 0 14px;}
+
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+    label{display:block; font-weight:700; margin:12px 0 6px;}
+    input, textarea, select{width:100%; padding:12px 12px; border:1px solid var(--border); border-radius:14px; background:#fff; font:inherit;}
+    textarea{min-height:90px; resize:vertical;}
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media(max-width:620px){.row{grid-template-columns:1fr;}}
+
+    .pillRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+    .pill{background:var(--muted); border:1px solid rgba(0,0,0,.04); border-radius:999px; padding:8px 10px; font-size:14px;}
+
+    .results{margin-top:14px; border-top:1px solid rgba(2,6,23,.08); padding-top:14px;}
+    .metric{display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:14px; background:linear-gradient(180deg,#fff,#f7fbff); border:1px solid rgba(0,0,0,.05); margin-top:10px;}
+    .metric strong{font-weight:800}
+    .footer{margin:24px 0 10px; color:var(--mutedFg); font-size:14px;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a class="brand" href="#top">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>PayChase Pack</strong><br/>
+          <span style="color:var(--mutedFg); font-size:13px">Unpaid invoice → LBA + PDF pack</span>
+        </div>
+      </a>
+      <div class="navlinks">
+        <a class="btn" href="#tool">Generate</a>
+        <a class="btn" href="#pricing">Pricing</a>
+        <a class="btn btnPrimary" href="#waitlist">Updates</a>
+      </div>
+    </div>
+
+    <section class="hero" id="top">
+      <div class="card">
+        <h1>Chase unpaid invoices without rewriting the same email <span style="color:var(--accent)">every time</span>.</h1>
+        <p class="sub">Enter the invoice details → get a UK-style Letter Before Action draft, a statutory interest estimate, and a downloadable PDF you can attach to an email.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <a class="btn btnPrimary" href="#tool">Build my LBA</a>
+          <button class="btn btnAccent" id="btnDownloadPack" type="button">Download pack (PDF)</button>
+          <span style="color:var(--mutedFg)">Local-first MVP</span>
+        </div>
+        <div class="pillRow">
+          <div class="pill">Interest estimate</div>
+          <div class="pill">Fixed compensation bands</div>
+          <div class="pill">Evidence checklist</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-family:'EB Garamond',serif; margin:0 0 8px;">What it outputs</h2>
+        <p class="sub" style="margin:0 0 10px; font-size:16px;">A clean, practical bundle:</p>
+        <div class="metric"><span><strong>1)</strong> Letter Before Action</span><span>Copy + PDF</span></div>
+        <div class="metric"><span><strong>2)</strong> Amount due summary</span><span>Totals</span></div>
+        <div class="metric"><span><strong>3)</strong> Evidence checklist</span><span>PDF</span></div>
+      </div>
+    </section>
+
+    <section class="grid" id="tool">
+      <div class="card" id="packRoot">
+        <h2 style="font-family:'EB Garamond',serif; margin:0 0 6px;">Invoice details</h2>
+        <p class="sub" style="margin:0; font-size:16px;">Fill in what you know. This estimates statutory late-payment charges (sanity-check before sending).</p>
+
+        <div class="row">
+          <div>
+            <label for="creditor">Your business / name</label>
+            <input id="creditor" placeholder="e.g. Cordner Consulting Ltd" />
+          </div>
+          <div>
+            <label for="debtor">Debtor (customer) name</label>
+            <input id="debtor" placeholder="e.g. ExampleCo Ltd" />
+          </div>
+        </div>
+
+        <label for="debtorAddress">Debtor address (for the letter)</label>
+        <input id="debtorAddress" placeholder="Company address" />
+
+        <div class="row">
+          <div>
+            <label for="invoiceNo">Invoice number</label>
+            <input id="invoiceNo" placeholder="INV-1042" />
+          </div>
+          <div>
+            <label for="amount">Invoice amount (£)</label>
+            <input id="amount" inputmode="decimal" placeholder="1200" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="issueDate">Invoice issue date</label>
+            <input id="issueDate" type="date" />
+          </div>
+          <div>
+            <label for="dueDate">Due date</label>
+            <input id="dueDate" type="date" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="baseRate">BoE base rate (%) (optional)</label>
+            <input id="baseRate" inputmode="decimal" placeholder="e.g. 5.25" />
+          </div>
+          <div>
+            <label for="claimType">Claim type</label>
+            <select id="claimType">
+              <option value="b2b">B2B (Late Payment of Commercial Debts)</option>
+              <option value="consumer">Consumer (no statutory B2B compensation)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="btn btnPrimary" id="btnCalc" type="button">Calculate</button>
+          <button class="btn" id="btnReset" type="button">Reset</button>
+        </div>
+
+        <div class="results" id="calcResults" aria-live="polite"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-family:'EB Garamond',serif; margin:0 0 6px;">Letter Before Action</h2>
+        <p class="sub" style="margin:0; font-size:16px;">Generates a firm-but-polite draft with a deadline and payment instructions.</p>
+
+        <div class="row">
+          <div>
+            <label for="yourAddress">Your address</label>
+            <input id="yourAddress" placeholder="Your address" />
+          </div>
+          <div>
+            <label for="yourEmail">Your email</label>
+            <input id="yourEmail" placeholder="you@domain.com" />
+          </div>
+        </div>
+
+        <label for="notes">Extra context (optional)</label>
+        <textarea id="notes" placeholder="e.g. Work delivered on 12 Mar, accepted by X, payment reminders sent on..."> </textarea>
+
+        <label for="letter">Generated letter</label>
+        <textarea id="letter"></textarea>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="btn btnAccent" id="btnGenerate" type="button">Generate letter</button>
+          <button class="btn" id="btnCopy" type="button">Copy</button>
+          <button class="btn" id="btnLetterPdf" type="button">Download letter (PDF)</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="card" style="margin-top:16px;">
+      <h2 style="font-family:'EB Garamond',serif; margin:0 0 6px;">Pricing</h2>
+      <p class="sub" style="margin:0;">Suggested model: free generator + paid “pack” exports / reminders.</p>
+
+      <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="card" style="box-shadow:none;">
+          <strong>Free</strong>
+          <div style="font-size:34px; font-weight:800; margin:10px 0;">£0</div>
+          <ul>
+            <li>Calculator</li>
+            <li>Copy/paste letter</li>
+          </ul>
+        </div>
+        <div class="card" style="box-shadow:none; border:2px solid var(--accent)">
+          <strong>Pack</strong>
+          <div style="font-size:34px; font-weight:800; margin:10px 0;">£15</div>
+          <div style="color:var(--mutedFg)">Per invoice</div>
+          <ul>
+            <li>PDF letter</li>
+            <li>Evidence checklist PDF</li>
+            <li>Totals summary</li>
+          </ul>
+          <a class="btn btnPrimary" href="#waitlist">Want this</a>
+        </div>
+        <div class="card" style="box-shadow:none;">
+          <strong>Pro</strong>
+          <div style="font-size:34px; font-weight:800; margin:10px 0;">£9/mo</div>
+          <ul>
+            <li>Invoice reminders timeline</li>
+            <li>Multiple debtors</li>
+            <li>Export history</li>
+          </ul>
+          <a class="btn" href="#waitlist">Join waitlist</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="card" style="margin-top:16px;">
+      <h2 style="font-family:'EB Garamond',serif; margin:0 0 6px;">Get updates</h2>
+      <p class="sub" style="margin:0 0 12px;">Email capture is local-only in this MVP.</p>
+      <div class="row">
+        <div>
+          <label for="email">Email</label>
+          <input id="email" placeholder="you@domain.com" />
+        </div>
+        <div style="display:flex; align-items:end; gap:10px;">
+          <button class="btn btnPrimary" id="btnSaveEmail" type="button">Save locally</button>
+          <a class="btn" id="btnMailto" href="#">Email me the link</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <strong>Disclaimer:</strong> informational only, not legal advice. Verify applicability (consumer vs B2B, interest rules, pre-action protocol expectations).
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.3/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function parseNum(v){
+      const s = String(v||'').replace(/[^0-9.+-]/g,'');
+      const n = parseFloat(s);
+      return isFinite(n) ? n : NaN;
+    }
+    function money(n){
+      if (!isFinite(n)) return '—';
+      return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(n);
+    }
+
+    function daysLate(due){
+      if (!due) return 0;
+      const now = new Date();
+      const dueDate = new Date(due + 'T00:00:00');
+      const ms = now - dueDate;
+      return Math.max(0, Math.floor(ms / (1000*60*60*24)));
+    }
+
+    function fixedComp(amount){
+      if (amount < 1000) return 40;
+      if (amount < 10000) return 70;
+      return 100;
+    }
+
+    function calc(){
+      const amount = parseNum($('amount').value);
+      const due = $('dueDate').value;
+      const baseRate = parseNum($('baseRate').value);
+      const claimType = $('claimType').value;
+
+      const res = $('calcResults');
+      res.innerHTML = '';
+      if (!isFinite(amount) || amount <= 0 || !due){
+        res.innerHTML = `<div class="metric"><strong>Missing info</strong><span>Enter amount + due date</span></div>`;
+        return;
+      }
+
+      const lateDays = daysLate(due);
+      const statutoryRate = isFinite(baseRate) ? (baseRate + 8) : 8; // fallback conservative
+      const interest = (amount * (statutoryRate/100) * (lateDays/365));
+      const comp = claimType === 'b2b' ? fixedComp(amount) : 0;
+      const total = amount + interest + comp;
+
+      const snapshot = { amount, due, lateDays, statutoryRate, interest, comp, total, ts: Date.now() };
+      localStorage.setItem('pch.calc', JSON.stringify(snapshot));
+
+      res.innerHTML = [
+        `<div class="metric"><span>Days late</span><strong>${lateDays}</strong></div>`,
+        `<div class="metric"><span>Interest rate used</span><strong>${statutoryRate.toFixed(2)}%</strong></div>`,
+        `<div class="metric"><span>Estimated interest</span><strong>${money(interest)}</strong></div>`,
+        `<div class="metric"><span>Fixed compensation</span><strong>${money(comp)}</strong></div>`,
+        `<div class="metric"><span><strong>Total claimed</strong></span><strong>${money(total)}</strong></div>`,
+      ].join('');
+    }
+
+    function genLetter(){
+      const snap = JSON.parse(localStorage.getItem('pch.calc') || 'null');
+      const creditor = ($('creditor').value.trim() || '[Your name/business]');
+      const yourAddress = ($('yourAddress').value.trim() || '[Your address]');
+      const yourEmail = ($('yourEmail').value.trim() || '[Your email]');
+      const debtor = ($('debtor').value.trim() || '[Debtor name]');
+      const debtorAddress = ($('debtorAddress').value.trim() || '[Debtor address]');
+      const invoiceNo = ($('invoiceNo').value.trim() || '[Invoice number]');
+      const issueDate = $('issueDate').value;
+      const dueDate = $('dueDate').value;
+      const notes = ($('notes').value || '').trim();
+
+      const today = new Date();
+      const dateStr = today.toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
+      const deadline = new Date(Date.now() + 14*24*60*60*1000).toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
+
+      const amountLine = snap ? `Principal: ${money(snap.amount)}. Estimated interest: ${money(snap.interest)}. Compensation: ${money(snap.comp)}. Total: ${money(snap.total)}.` : `Amount due: [£X].`;
+
+      const letter =
+`From:\n${creditor}\n${yourAddress}\nEmail: ${yourEmail}\n\nTo:\n${debtor}\n${debtorAddress}\n\nDate: ${dateStr}\n\nLETTER BEFORE ACTION\n\nRe: Unpaid invoice ${invoiceNo}${issueDate ? ` (issued ${new Date(issueDate+'T00:00:00').toLocaleDateString('en-GB')})` : ''}${dueDate ? `, due ${new Date(dueDate+'T00:00:00').toLocaleDateString('en-GB')}` : ''}.\n\nDear ${debtor},\n\nDespite previous requests, the invoice referenced above remains unpaid.\n\nClaim summary:\n${amountLine}\n\nIf you disagree with this claim, please set out your reasons in writing immediately.\n\nUnless payment in full is received by ${deadline}, I intend to issue proceedings to recover the debt (and any applicable fees/costs) without further notice.\n\nPayment instructions:\n- Bank transfer: [add details]\n- Reference: ${invoiceNo}\n\n${notes ? `Additional context:\n${notes}\n\n` : ''}Kind regards,\n${creditor}\n\n---\nNote: template only; not legal advice. Check whether consumer vs B2B rules apply.`;
+
+      $('letter').value = letter;
+      localStorage.setItem('pch.letter', letter);
+    }
+
+    function copyLetter(){
+      navigator.clipboard.writeText($('letter').value || '').catch(()=>{});
+    }
+
+    function downloadPdfFromEl(el, filename){
+      const opt = {
+        margin: 10,
+        filename,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(el).save();
+    }
+
+    function downloadLetterPdf(){
+      const wrapper = document.createElement('div');
+      wrapper.style.fontFamily = 'Lato, sans-serif';
+      wrapper.style.padding = '18px';
+      wrapper.innerHTML = `<h2 style="font-family:'EB Garamond',serif; margin:0 0 8px;">PayChase Pack — Letter Before Action</h2>`+
+        `<pre style="white-space:pre-wrap; font-size:12.5px; line-height:1.35;">${escapeHtml($('letter').value || '')}</pre>`;
+      downloadPdfFromEl(wrapper, 'letter-before-action.pdf');
+    }
+
+    function downloadPack(){
+      // Ensure calc snapshot exists for totals
+      calc();
+      const snap = JSON.parse(localStorage.getItem('pch.calc') || 'null');
+      const checklist = [
+        'Invoice PDF / copy of invoice sent',
+        'Contract / statement of work / engagement email',
+        'Proof of delivery (handover email, acceptance, screenshots)',
+        'Reminder emails + dates',
+        'Any dispute emails / complaints from debtor',
+        'Bank details used previously (if any)',
+      ];
+      const wrapper = document.createElement('div');
+      wrapper.style.fontFamily = 'Lato, sans-serif';
+      wrapper.style.padding = '18px';
+      wrapper.innerHTML = `
+        <h2 style="font-family:'EB Garamond',serif; margin:0 0 6px;">PayChase Pack — Evidence bundle</h2>
+        <p style="margin:0 0 10px; color:#334155;">Summary and checklist (template only).</p>
+        <div style="border:1px solid #cbd5e1; border-radius:14px; padding:12px;">
+          <strong>Totals</strong><br/>
+          ${snap ? `Principal: ${money(snap.amount)}<br/>Interest est.: ${money(snap.interest)}<br/>Compensation: ${money(snap.comp)}<br/><strong>Total: ${money(snap.total)}</strong>` : 'Run the calculator first.'}
+        </div>
+        <h3 style="margin:14px 0 6px;">Evidence checklist</h3>
+        <ul>${checklist.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>
+        <p style="color:#64748B; font-size:12px;">Disclaimer: informational only; not legal advice.</p>
+      `;
+      downloadPdfFromEl(wrapper, 'paychase-pack.pdf');
+    }
+
+    function saveEmail(){
+      const email = $('email').value.trim();
+      if (!email) return;
+      const list = JSON.parse(localStorage.getItem('pch.waitlist')||'[]');
+      list.push({email, ts:Date.now()});
+      localStorage.setItem('pch.waitlist', JSON.stringify(list));
+      $('email').value = '';
+      alert('Saved locally. (This MVP does not send anything yet.)');
+    }
+
+    function updateMailto(){
+      const subject = encodeURIComponent('PayChase Pack link');
+      const body = encodeURIComponent('Link: '+location.href+'\n\nI used PayChase Pack to generate a Letter Before Action.');
+      $('btnMailto').href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    $('btnCalc').addEventListener('click', calc);
+    $('btnReset').addEventListener('click', ()=>{ ['creditor','debtor','debtorAddress','invoiceNo','amount','issueDate','dueDate','baseRate','yourAddress','yourEmail','notes','letter'].forEach(id=>{const el=$(id); if(el) el.value='';}); $('calcResults').innerHTML=''; localStorage.removeItem('pch.calc'); localStorage.removeItem('pch.letter');});
+    $('btnGenerate').addEventListener('click', genLetter);
+    $('btnCopy').addEventListener('click', copyLetter);
+    $('btnLetterPdf').addEventListener('click', downloadLetterPdf);
+    $('btnDownloadPack').addEventListener('click', downloadPack);
+    $('btnSaveEmail').addEventListener('click', saveEmail);
+
+    updateMailto();
+    const savedLetter = localStorage.getItem('pch.letter');
+    if (savedLetter) $('letter').value = savedLetter;
+  </script>
+</body>
+</html>
