@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StackDetect Lite — Tech Stack Detector Beyond Wappalyzer (MVP)</title>
+  <meta name="description" content="Detect a site’s tech stack (frameworks, analytics, CDNs, AI vendors) with a best‑effort static scanner. Paste HTML or scan a URL." />
+  <meta property="og:title" content="StackDetect Lite" />
+  <meta property="og:description" content="A best‑effort tech stack detector you can run in your browser." />
+  <meta property="og:type" content="website" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root{
+      --bg:#F0F9FF; --fg:#0C4A6E; --card:#FFFFFF; --muted:#E7EFF5; --muted-fg:#64748B;
+      --primary:#0369A1; --primary-2:#0EA5E9; --accent:#16A34A; --border:#BAE6FD; --danger:#DC2626;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:radial-gradient(1000px 600px at 10% -10%, rgba(14,165,233,0.25), transparent 55%), radial-gradient(900px 520px at 90% 10%, rgba(22,163,74,0.18), transparent 55%), var(--bg); color:var(--fg);}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px;}
+    header{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0 26px; flex-wrap:wrap}
+    .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit}
+    .logo{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 10px 30px rgba(2,132,199,0.22)}
+    .brand b{font-weight:800; letter-spacing:-0.02em}
+    .pill{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border:1px solid var(--border); border-radius:999px; background:rgba(255,255,255,0.55); color:var(--muted-fg); font-size:13px}
+
+    h1{font-size:44px; line-height:1.05; margin:0 0 10px; letter-spacing:-0.03em}
+    h1, h2, h3{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace}
+    .sub{font-size:18px; line-height:1.45; color:rgba(12,74,110,0.88); margin:0 0 18px}
+
+    .hero{display:grid; grid-template-columns:1.15fr 0.85fr; gap:16px; align-items:start}
+    .card{background:rgba(255,255,255,0.72); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:0 20px 70px rgba(2,132,199,0.10)}
+    .ctaRow{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:12px}
+    .btn{appearance:none; border:1px solid transparent; border-radius:14px; padding:12px 14px; font-weight:800; cursor:pointer; letter-spacing:-0.01em; font-family:"JetBrains Mono", monospace}
+    .btnPrimary{background:linear-gradient(180deg,var(--primary-2), var(--primary)); color:#fff}
+    .btnGhost{background:rgba(255,255,255,0.62); border-color:var(--border); color:var(--fg)}
+    .btn:focus,input:focus,textarea:focus{outline:2px solid rgba(3,105,161,0.35); outline-offset:2px}
+
+    label{display:block; font-size:13px; color:rgba(12,74,110,0.9); margin:0 0 6px; font-weight:700}
+    input,textarea{width:100%; padding:11px 12px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,0.9); color:var(--fg); font-size:15px}
+    textarea{min-height:130px; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12.5px}
+    .hint{font-size:12px; color:var(--muted-fg); margin-top:6px; line-height:1.35}
+
+    .bento{display:grid; grid-template-columns:repeat(12, 1fr); gap:12px; margin-top:14px}
+    .bento .tile{grid-column:span 4; padding:14px; border-radius:18px; border:1px solid var(--border); background:rgba(255,255,255,0.72)}
+    .tile h3{margin:0 0 6px; font-size:14px}
+    .tile p{margin:0; color:rgba(12,74,110,0.86); line-height:1.45; font-size:14px}
+
+    .results{margin-top:12px; display:grid; gap:10px}
+    .group{padding:12px; border-radius:16px; border:1px solid var(--border); background:rgba(255,255,255,0.72)}
+    .groupTitle{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
+    .tag{display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; background:var(--muted); border:1px solid rgba(186,230,253,0.7); color:var(--muted-fg); font-size:12px}
+    .chips{display:flex; flex-wrap:wrap; gap:8px}
+    .chip{display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; border:1px solid rgba(186,230,253,0.9); background:#fff; font-weight:700; font-size:13px}
+    .chip small{font-weight:700; color:var(--muted-fg)}
+
+    .pricing{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+    .plan{padding:16px; border-radius:18px; border:1px solid var(--border); background:rgba(255,255,255,0.72)}
+    .plan.reco{border-color:rgba(22,163,74,0.45); box-shadow:0 16px 60px rgba(22,163,74,0.12)}
+    .plan .price{font-size:28px; margin:8px 0 6px}
+    .plan ul{margin:10px 0 0; padding-left:18px; color:rgba(12,74,110,0.88)}
+
+    footer{margin-top:28px; color:var(--muted-fg); font-size:12px; line-height:1.45}
+
+    @media (max-width: 920px){
+      .hero{grid-template-columns:1fr}
+      h1{font-size:38px}
+      .pricing{grid-template-columns:1fr}
+      .bento .tile{grid-column:span 12}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="#top" aria-label="StackDetect home">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <b>StackDetect Lite</b>
+          <div style="font-size:12px;color:var(--muted-fg)">Best-effort static tech stack scan</div>
+        </div>
+      </a>
+      <div class="pill">MVP • No tracking • Runs in your browser</div>
+    </header>
+
+    <main id="top" class="hero">
+      <section>
+        <h1>Detect a site’s stack — including <span style="color:var(--primary)">AI vendors</span> — beyond basic Wappalyzer.</h1>
+        <p class="sub">This MVP is designed for founders, agencies, and sales teams doing quick competitive intel. It’s static (no server), so it’s <b>best-effort</b>. For reliable crawling, you’d run the Pro version server-side.</p>
+
+        <div class="bento" aria-label="feature bento grid">
+          <div class="tile">
+            <h3>Fast scan</h3>
+            <p>Paste HTML or scan a URL via a read-only fetch proxy.</p>
+          </div>
+          <div class="tile">
+            <h3>Actionable categories</h3>
+            <p>Frameworks, analytics, payments, CDN, auth, AI/LLM.</p>
+          </div>
+          <div class="tile">
+            <h3>Explain why</h3>
+            <p>Each detection shows the string/pattern that matched.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h2 style="margin:0 0 8px;font-size:16px">Pricing</h2>
+          <div class="pricing">
+            <div class="plan">
+              <div>Free</div>
+              <div class="price">£0</div>
+              <ul>
+                <li>Paste-mode scan</li>
+                <li>Basic categories</li>
+              </ul>
+            </div>
+            <div class="plan reco">
+              <div>Pro (recommended)</div>
+              <div class="price">£29/mo</div>
+              <ul>
+                <li>Server-side crawler (no CORS limits)</li>
+                <li>Bulk domain lists + exports</li>
+                <li>Change monitoring</li>
+              </ul>
+            </div>
+            <div class="plan">
+              <div>Team</div>
+              <div class="price">£99/mo</div>
+              <ul>
+                <li>Shared workspaces</li>
+                <li>CRM notes</li>
+                <li>API access</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" aria-label="scanner">
+        <h2 style="margin:0 0 10px;font-size:16px">Scan</h2>
+
+        <div>
+          <label for="url">Website URL (optional)</label>
+          <input id="url" placeholder="https://example.com" />
+          <div class="hint">We’ll try to fetch via <code>r.jina.ai</code> proxy. Some sites block it.</div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label for="html">Or paste HTML (recommended for accuracy)</label>
+          <textarea id="html" placeholder="Paste page HTML or a JS bundle here..."></textarea>
+        </div>
+
+        <div class="ctaRow">
+          <button class="btn btnPrimary" type="button" onclick="runScan()">Run scan</button>
+          <button class="btn btnGhost" type="button" onclick="clearAll()">Clear</button>
+        </div>
+
+        <div id="status" class="hint" aria-live="polite"></div>
+
+        <div class="results" id="results" aria-label="results"></div>
+
+        <div class="card" style="margin-top:12px;background:rgba(255,255,255,0.6)">
+          <h2 style="margin:0 0 8px;font-size:14px">Waitlist</h2>
+          <p style="margin:0 0 10px;color:rgba(12,74,110,0.88)">Want bulk scans + monitoring? Drop an email (saved locally in MVP).</p>
+          <form onsubmit="return saveEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:220px">
+              <label for="email">Email</label>
+              <input id="email" type="email" required placeholder="you@company.com" />
+            </div>
+            <div><button class="btn btnPrimary" type="submit">Join</button></div>
+            <div id="emailMsg" class="hint" style="flex-basis:100%"></div>
+          </form>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> StackDetect Lite. Best-effort static scanner. No guarantees.</div>
+      <div>Built for validation: if Tony ships server-side, it becomes real.</div>
+    </footer>
+  </div>
+
+  <script>
+    const patterns = [
+      // Frameworks
+      {cat:'Frameworks', name:'Next.js', re:/__NEXT_DATA__|next\/static\/|next\-route\-announcer/ig, weight:4},
+      {cat:'Frameworks', name:'React', re:/react(\.|\-|\s)dom|__REACT_DEVTOOLS_GLOBAL_HOOK__/ig, weight:2},
+      {cat:'Frameworks', name:'Vue', re:/__VUE__|vue(\.runtime)?\.js/ig, weight:2},
+      {cat:'Frameworks', name:'Svelte', re:/svelte\/(internal|store)|svelte\-hydration/ig, weight:2},
+      {cat:'Frameworks', name:'WordPress', re:/wp\-content|wp\-includes|wordpress/ig, weight:3},
+      {cat:'Frameworks', name:'Shopify', re:/cdn\.shopify\.com|Shopify\.shop/ig, weight:4},
+
+      // Analytics / marketing
+      {cat:'Analytics', name:'Google Analytics (gtag)', re:/www\.googletagmanager\.com\/gtag\/js|gtag\(/ig, weight:3},
+      {cat:'Analytics', name:'Google Tag Manager', re:/www\.googletagmanager\.com\/gtm\.js|GTM\-/ig, weight:3},
+      {cat:'Analytics', name:'Plausible', re:/plausible\.io\/js\/script\.js|plausible\(/ig, weight:2},
+      {cat:'Analytics', name:'Segment', re:/cdn\.segment\.com\/analytics\.js|analytics\.load\(/ig, weight:2},
+      {cat:'Analytics', name:'Hotjar', re:/static\.hotjar\.com|hj\(/ig, weight:2},
+
+      // Payments
+      {cat:'Payments', name:'Stripe', re:/js\.stripe\.com|stripe\.com\/v3|Stripe\(/ig, weight:4},
+
+      // Auth
+      {cat:'Auth', name:'Auth0', re:/auth0\.com|cdn\.auth0\.com/ig, weight:3},
+      {cat:'Auth', name:'Clerk', re:/clerk\.com|__clerk/ig, weight:3},
+
+      // Infra / CDN
+      {cat:'CDN', name:'Cloudflare', re:/cf\-ray|cloudflare/ig, weight:2},
+      {cat:'CDN', name:'Fastly', re:/fastly/ig, weight:2},
+      {cat:'CDN', name:'CloudFront', re:/cloudfront\.net/ig, weight:2},
+
+      // AI / LLM vendors
+      {cat:'AI/LLM', name:'OpenAI', re:/api\.openai\.com|openai\.com\/v1|openai\-sdk|gpt\-3|gpt\-4|chatgpt/ig, weight:4},
+      {cat:'AI/LLM', name:'Anthropic', re:/api\.anthropic\.com|claude\-\w+/ig, weight:4},
+      {cat:'AI/LLM', name:'Azure OpenAI', re:/openai\.azure\.com|\.openai\.azure\.com/ig, weight:4},
+      {cat:'AI/LLM', name:'Google Vertex AI', re:/aiplatform\.googleapis\.com|vertexai/ig, weight:3}
+    ];
+
+    const groupOrder = ['Frameworks','Analytics','Payments','Auth','CDN','AI/LLM'];
+
+    function escapeHtml(s){
+      return (s||'').replace(/[&<>\"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+
+    async function fetchViaProxy(url){
+      // r.jina.ai provides a readable proxy that often bypasses CORS for public pages.
+      // Format: https://r.jina.ai/http(s)://example.com
+      const cleaned = url.trim();
+      if(!cleaned) return '';
+      const withProto = cleaned.startsWith('http') ? cleaned : 'https://' + cleaned;
+      const proxy = 'https://r.jina.ai/' + withProto;
+      const res = await fetch(proxy, {method:'GET'});
+      if(!res.ok) throw new Error('Fetch failed ('+res.status+')');
+      return await res.text();
+    }
+
+    function detect(text){
+      const hits = [];
+      for (const p of patterns){
+        const m = text.match(p.re);
+        if(m && m.length){
+          // Keep a small sample of what matched
+          const sample = m[0];
+          hits.push({cat:p.cat, name:p.name, sample, weight:p.weight});
+        }
+      }
+      return hits;
+    }
+
+    function score(hits){
+      const total = hits.reduce((a,h)=>a+h.weight,0);
+      // squish into 0..100, diminishing returns
+      return Math.round(100*(1 - Math.exp(-total/10)));
+    }
+
+    function render(hits){
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+
+      if(!hits.length){
+        results.innerHTML = `<div class="group"><div class="groupTitle"><strong>No detections</strong><span class="tag">Try paste-mode</span></div><div class="hint">This static MVP can’t reliably fetch or parse all sites. Paste HTML/JS or try another page.</div></div>`;
+        return;
+      }
+
+      const byCat = new Map();
+      for (const h of hits){
+        if(!byCat.has(h.cat)) byCat.set(h.cat, []);
+        // de-dupe by name
+        const arr = byCat.get(h.cat);
+        if(!arr.find(x=>x.name===h.name)) arr.push(h);
+      }
+
+      const conf = score(hits);
+      const top = `<div class="group"><div class="groupTitle"><strong>Scan summary</strong><span class="tag">Confidence: ${conf}/100</span></div><div class="hint">Confidence is based on number/strength of matches, not ground truth.</div></div>`;
+      results.insertAdjacentHTML('beforeend', top);
+
+      for (const cat of groupOrder){
+        if(!byCat.has(cat)) continue;
+        const items = byCat.get(cat);
+        const chips = items.map(i=>`<span class="chip">${escapeHtml(i.name)} <small>${escapeHtml(i.sample).slice(0,28)}${i.sample.length>28?'…':''}</small></span>`).join('');
+        results.insertAdjacentHTML('beforeend', `<div class="group"><div class="groupTitle"><strong>${escapeHtml(cat)}</strong><span class="tag">${items.length} found</span></div><div class="chips">${chips}</div></div>`);
+      }
+    }
+
+    async function runScan(){
+      const status = document.getElementById('status');
+      status.textContent = 'Scanning…';
+      const url = document.getElementById('url').value;
+      let text = document.getElementById('html').value;
+
+      try{
+        if(!text.trim() && url.trim()){
+          status.textContent = 'Fetching via proxy…';
+          text = await fetchViaProxy(url);
+          document.getElementById('html').value = text.slice(0, 120000);
+        }
+        if(!text.trim()){
+          status.textContent = 'Add a URL or paste HTML.';
+          render([]);
+          return;
+        }
+        const hits = detect(text);
+        status.textContent = `Done. ${hits.length} raw matches.`;
+        render(hits);
+      }catch(e){
+        status.textContent = 'Scan failed: ' + (e?.message || 'unknown error') + '. Try paste-mode.';
+        render([]);
+      }
+    }
+
+    function clearAll(){
+      document.getElementById('url').value = '';
+      document.getElementById('html').value = '';
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('status').textContent = '';
+    }
+
+    function saveEmail(e){
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('emailMsg');
+      const list = JSON.parse(localStorage.getItem('stackdetect:waitlist')||'[]');
+      if(!list.includes(email)) list.push(email);
+      localStorage.setItem('stackdetect:waitlist', JSON.stringify(list));
+      msg.textContent = 'Saved locally for MVP. Wire to email provider after validation.';
+      return false;
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
