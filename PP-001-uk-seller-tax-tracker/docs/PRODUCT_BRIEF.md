@@ -1,17 +1,38 @@
 # Product Brief — SideHustle HMRC Tracker
 
-## What it does
-A UK tax‑year aware tracker for side‑hustle sellers. Capture sales, fees, shipping, and costs, view allowance status, and export both entry‑level and monthly summary CSVs for HMRC reporting.
+## Product
+A UK tax‑year aware tracker for side‑hustle sellers.
 
-## Who it’s for
-- Casual sellers on Vinted/eBay/Depop
-- Collectors who sell duplicates
+Capture sales, platform fees, shipping, and costs. See tax‑year totals, a £1,000 trading‑allowance meter, and export clean CSVs.
+
+## Target customer (refined)
+- UK casual sellers on **Vinted / eBay / Depop** who are starting to take selling seriously
+- Collectors selling duplicates who want a simple “did I actually make profit?” view
 - Side‑hustle micro‑business owners who don’t want full accounting suites
 
-## Pricing model
-- Free tier: local tracking + CSV export
-- Plus (£5/mo): auto summaries + reminders
-- Pro (£12/mo): marketplace imports + accountant‑ready reports
+## Problem
+The numbers are scattered across platforms. Fees/shipping get missed. People only reconcile once a year (painful) and can’t answer basic questions quickly.
+
+## Solution
+A lightweight, local‑first tracker that:
+- labels entries by **UK tax year (6 April → 5 April)**
+- shows a simple allowance progress meter
+- exports entries + monthly summary CSVs for an accountant/HMRC prep
+
+## MVP scope (what’s in this build)
+- Add sale/expense entries with date, platform, category, note
+- Automatic UK tax‑year labelling + filtering
+- KPI snapshot + allowance meter
+- Entries CSV export + monthly summary CSV export
+- Local storage (no login)
+- Waitlist capture (JS “Thanks — we’ll be in touch”)
+
+## Pricing model (refined)
+- **Free:** unlimited local tracking + exports
+- **Pro (£9/mo):** imports, reminders, and an “accountant‑ready pack” export (coming soon)
+
+## Distribution tactic (realistic)
+Publish a short, non‑spammy post: **“UK Vinted/eBay/Depop sellers: a free £1,000 trading allowance tracker (runs locally)”** and share it in r/UKPersonalFinance and r/UKSmallBusiness, linking directly to the free tool.
 
 ## Competitive advantage
-Purpose‑built for UK sellers with tax‑year filtering, a trading‑allowance meter, and lightweight inputs that feel faster than full accounting tools.
+UK‑specific (tax year + allowance), fast enough to use daily, and simpler than bookkeeping software.

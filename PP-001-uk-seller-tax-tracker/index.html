@@ -2,392 +2,1064 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SideHustle HMRC Tracker — UK tax‑year aware sales + cost tracker</title>
-  <meta name="description" content="Track marketplace sales, fees, and costs. See tax‑year totals, £1,000 trading allowance status, and export clean CSVs for HMRC reporting." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>SideHustle HMRC Tracker — Know your UK tax-year numbers in minutes</title>
+  <meta name="description" content="A UK tax-year aware tracker for Vinted/eBay/Depop sellers. Add sales + costs, see the £1,000 trading allowance meter, and export clean CSVs for your accountant or HMRC." />
+
   <meta property="og:title" content="SideHustle HMRC Tracker" />
-  <meta property="og:description" content="Track sales, fees, and costs with tax‑year summaries + allowance meter." />
+  <meta property="og:description" content="Track sales + costs by UK tax year, see your £1,000 trading allowance meter, and export clean CSVs." />
+  <meta name="theme-color" content="#FFFBEB" />
+
   <style>
     :root{
-      --primary:#D97706;--on-primary:#fff;--secondary:#F59E0B;--on-secondary:#0F172A;--accent:#059669;--on-accent:#fff;
-      --bg:#FFFBEB;--fg:#0F172A;--card:#fff;--card-fg:#0F172A;--muted:#FCF6F0;--muted-fg:#64748B;--border:#FAEEE1;
+      /* ui-ux-pro-max color recommendation (Habit Tracker) */
+      --primary:#D97706; --on-primary:#FFFFFF;
+      --secondary:#F59E0B; --on-secondary:#0F172A;
+      --accent:#059669; --on-accent:#FFFFFF;
+      --bg:#FFFBEB; --fg:#0F172A;
+      --card:#FFFFFF; --card-fg:#0F172A;
+      --muted:#FCF6F0; --muted-fg:#64748B;
+      --border:#FAEEE1;
+      --danger:#DC2626; --on-danger:#FFFFFF;
+      --ring:rgba(217,119,6,.45);
+
+      /* ui-ux-pro-max typography recommendation (Fintech): Calistoga + Inter + JetBrains Mono
+         No external dependencies: we keep the names for local availability + provide safe fallbacks. */
+      --font-display:"Calistoga", ui-serif, Georgia, "Times New Roman", serif;
+      --font-body:"Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      --font-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --shadow:0 14px 40px rgba(15, 23, 42, .07);
+      --radius:18px;
     }
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial; background:var(--bg); color:var(--fg);}    
-    header{padding:22px 20px; position:sticky; top:0; background:rgba(255,251,235,.9); backdrop-filter:blur(6px); border-bottom:1px solid var(--border); z-index:10}
-    .container{max-width:1200px;margin:0 auto;padding:0 20px;}
-    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:30px 0;}
-    h1{font-size:38px;line-height:1.1;margin:0 0 12px;font-weight:700}
-    h2{margin:0 0 12px}
-    .tag{display:inline-flex;gap:8px;align-items:center;background:var(--muted);color:var(--muted-fg);padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
-    .cta{display:flex;gap:12px;align-items:center;margin-top:18px}
-    .btn{background:var(--primary);color:var(--on-primary);padding:10px 16px;border-radius:12px;border:none;font-weight:600;cursor:pointer}
-    .btn.secondary{background:var(--card);color:var(--fg);border:1px solid var(--border)}
-    .btn.ghost{background:transparent;color:var(--fg);border:1px dashed var(--border)}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 4px 18px rgba(0,0,0,.04)}
-    .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-    .kpi{display:flex;flex-direction:column;gap:4px}
-    .kpi span{font-size:12px;color:var(--muted-fg)}
-    .kpi strong{font-size:18px}
-    .form{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:10px;align-items:end}
-    label{font-size:12px;color:var(--muted-fg)}
-    input,select,textarea{width:100%;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:#fff}
-    textarea{resize:vertical;min-height:36px}
-    table{width:100%;border-collapse:collapse;font-size:14px}
-    th,td{padding:9px;border-bottom:1px solid var(--border);text-align:left}
-    .pill{padding:4px 8px;border-radius:999px;background:var(--muted);color:var(--muted-fg);font-size:12px}
-    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .price{font-size:26px;font-weight:700}
-    .highlight{border:2px solid var(--primary)}
-    footer{padding:40px 0;color:var(--muted-fg)}
-    .allowance{display:flex;gap:10px;align-items:center}
-    progress{width:100%;height:12px;border-radius:999px;overflow:hidden}
-    progress::-webkit-progress-bar{background:#fff0dc}
+
+    *{box-sizing:border-box}
+    html{color-scheme:light}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--font-body);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    a{color:inherit}
+
+    /* Accessibility: visible focus */
+    :where(a, button, input, select, textarea):focus-visible{
+      outline:3px solid var(--ring);
+      outline-offset:2px;
+    }
+
+    .skip-link{
+      position:absolute;
+      left:12px;
+      top:12px;
+      padding:10px 12px;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      transform:translateY(-160%);
+      transition:transform 160ms ease;
+      z-index:100;
+    }
+    .skip-link:focus-visible{transform:translateY(0)}
+
+    .container{max-width:1120px; margin:0 auto; padding:0 20px;}
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      border-bottom:1px solid var(--border);
+      background:rgba(255,251,235,.92);
+      backdrop-filter:blur(8px);
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 0;
+    }
+
+    .brand{display:flex; align-items:center; gap:10px; min-width:0;}
+    .logo{
+      width:34px; height:34px;
+      border-radius:10px;
+      background:linear-gradient(135deg, var(--primary), var(--secondary));
+      box-shadow:0 10px 24px rgba(217,119,6,.22);
+      flex:0 0 auto;
+    }
+    .brand strong{font-family:var(--font-display); font-size:16px; letter-spacing:.2px; white-space:nowrap;}
+    .subbrand{font-size:12px; color:var(--muted-fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+    nav{display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end;}
+    nav a{
+      text-decoration:none;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid transparent;
+      color:var(--muted-fg);
+    }
+    nav a:hover{border-color:var(--border); background:rgba(252,246,240,.7); color:var(--fg)}
+
+    .nav-cta{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+
+    .btn,
+    .btn-pay{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-weight:650;
+      letter-spacing:.2px;
+      padding:10px 14px;
+      border-radius:14px;
+      border:1px solid transparent;
+      cursor:pointer;
+      text-decoration:none;
+      user-select:none;
+      touch-action:manipulation;
+      -webkit-tap-highlight-color:transparent;
+      transition:transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease, border-color 120ms ease;
+      white-space:nowrap;
+    }
+
+    .btn:active,
+    .btn-pay:active{transform:translateY(1px)}
+
+    .btn.primary,
+    .btn-pay{
+      background:var(--primary);
+      color:var(--on-primary);
+      box-shadow:0 10px 22px rgba(217,119,6,.18);
+    }
+    .btn.primary:hover,
+    .btn-pay:hover{background:#C96505}
+
+    .btn.secondary{
+      background:var(--card);
+      border-color:var(--border);
+      color:var(--fg);
+    }
+    .btn.secondary:hover{border-color:#F3D9C1; box-shadow:0 10px 24px rgba(15, 23, 42, .06)}
+
+    .btn.ghost{
+      background:transparent;
+      border-color:rgba(217,119,6,.35);
+      color:var(--fg);
+    }
+    .btn.ghost:hover{background:rgba(217,119,6,.08)}
+
+    main{padding:26px 0 44px}
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      align-items:start;
+      padding:16px 0 8px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:var(--muted);
+      color:var(--muted-fg);
+      font-size:12px;
+      font-family:var(--font-mono);
+      letter-spacing:.4px;
+      text-transform:uppercase;
+    }
+
+    h1{
+      margin:12px 0 10px;
+      font-family:var(--font-display);
+      font-weight:800;
+      font-size:42px;
+      line-height:1.06;
+      text-wrap:balance;
+    }
+
+    .lead{margin:0; font-size:16px; line-height:1.55; color:rgba(15, 23, 42, .82)}
+
+    .benefits{margin:14px 0 0; padding:0; list-style:none; display:grid; gap:10px;}
+    .benefits li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.6);
+    }
+    .tick{
+      width:22px; height:22px;
+      border-radius:999px;
+      background:rgba(5,150,105,.12);
+      border:1px solid rgba(5,150,105,.28);
+      flex:0 0 auto;
+      position:relative;
+    }
+    .tick::after{
+      content:"";
+      position:absolute;
+      left:7px; top:5px;
+      width:6px; height:10px;
+      border-right:2px solid var(--accent);
+      border-bottom:2px solid var(--accent);
+      transform:rotate(45deg);
+    }
+
+    .hero-cta{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px}
+    .microcopy{margin:10px 0 0; color:var(--muted-fg); font-size:13px}
+
+    .card{
+      background:var(--card);
+      color:var(--card-fg);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .panel{padding:16px}
+
+    .kpis{display:grid; grid-template-columns:repeat(4, 1fr); gap:12px;}
+    .kpi{padding:12px; border-radius:16px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(252,246,240,.55));}
+    .kpi .label{font-size:12px; color:var(--muted-fg); letter-spacing:.25px}
+    .kpi .value{margin-top:6px; font-size:22px; font-weight:800; font-variant-numeric:tabular-nums;}
+
+    .allowance{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px dashed var(--border);
+    }
+    .allowance small{color:var(--muted-fg)}
+    progress{width:100%; height:12px; border-radius:999px; overflow:hidden}
+    progress::-webkit-progress-bar{background:#FFF0DC}
     progress::-webkit-progress-value{background:var(--accent)}
-    .split{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-    @media(max-width:1020px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.form{grid-template-columns:1fr 1fr}.pricing{grid-template-columns:1fr}}
+
+    section{scroll-margin-top:84px}
+
+    .chapter{
+      margin:18px 0;
+      padding:14px;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,251,235,.2));
+    }
+    .chapter h2{margin:0 0 8px; font-family:var(--font-display); font-size:22px; text-wrap:balance}
+    .chapter p{margin:0; color:rgba(15, 23, 42, .78); line-height:1.6}
+
+    h2{margin:0 0 12px; font-family:var(--font-display); font-size:26px; text-wrap:balance}
+    h3{margin:0 0 6px; font-size:14px; letter-spacing:.2px}
+
+    .tool-grid{display:grid; grid-template-columns:1.2fr .8fr; gap:16px; align-items:start;}
+
+    label{display:block; font-size:12px; color:var(--muted-fg); margin-bottom:6px}
+    input, select, textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--fg);
+      font-family:var(--font-body);
+    }
+    input[type="number"]{font-variant-numeric:tabular-nums}
+    textarea{resize:vertical; min-height:40px}
+
+    .form{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:12px;
+    }
+
+    .form .full{grid-column:1 / -1}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+
+    .table-wrap{overflow:auto; border-radius:16px; border:1px solid var(--border); background:#fff;}
+    table{width:100%; border-collapse:collapse; font-size:14px}
+    th, td{padding:10px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top}
+    th{font-size:12px; color:var(--muted-fg); letter-spacing:.3px; text-transform:uppercase; font-family:var(--font-mono)}
+
+    .num{font-variant-numeric:tabular-nums; white-space:nowrap}
+    td.note{max-width:280px; overflow-wrap:anywhere}
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:var(--muted);
+      color:var(--muted-fg);
+      font-size:12px;
+      font-family:var(--font-mono);
+    }
+
+    .danger{
+      background:var(--danger);
+      border-color:transparent;
+      color:var(--on-danger);
+    }
+    .danger:hover{background:#B91C1C}
+
+    .pricing{display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; margin-top:10px}
+    .plan{padding:16px}
+    .plan .price{font-size:30px; font-weight:900; font-variant-numeric:tabular-nums; margin:6px 0 4px}
+    .plan ul{margin:10px 0 0; padding-left:18px; color:rgba(15, 23, 42, .82); line-height:1.6}
+    .plan.recommended{border:2px solid rgba(217,119,6,.55)}
+
+    .note-box{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(252,246,240,.75);
+      border:1px solid var(--border);
+      color:var(--muted-fg);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    details{border:1px solid var(--border); border-radius:16px; background:#fff; padding:12px;}
+    details + details{margin-top:10px}
+    summary{cursor:pointer; font-weight:750}
+
+    footer{padding:28px 0 46px; color:var(--muted-fg); font-size:13px; line-height:1.55}
+
+    @media (max-width: 980px){
+      .hero{grid-template-columns:1fr}
+      .tool-grid{grid-template-columns:1fr}
+      .kpis{grid-template-columns:repeat(2, 1fr)}
+      nav{display:none}
+      h1{font-size:38px}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{scroll-behavior:auto !important; transition:none !important;}
+    }
   </style>
 </head>
 <body>
-<header>
-  <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:16px">
-    <strong>SideHustle HMRC Tracker</strong>
-    <div class="split">
-      <select id="taxYearSelect" aria-label="Tax year"></select>
-      <button class="btn secondary" onclick="downloadCSV()">Export entries CSV</button>
-      <button class="btn" onclick="document.getElementById('tracker').scrollIntoView({behavior:'smooth'})">Start tracking</button>
-    </div>
-  </div>
-</header>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-<main class="container">
-  <section class="hero">
-    <div>
-      <span class="tag">UK side‑hustle sellers • tax‑year aware • trading allowance meter</span>
-      <h1>Track sales + fees + costs. Know exactly where you stand for HMRC.</h1>
-      <p>Built for casual Vinted/eBay/Depop sellers who don’t want full accounting software. Capture entries in seconds, view tax‑year totals, and export clean CSVs.</p>
-      <div class="cta">
-        <button class="btn" onclick="document.getElementById('tracker').scrollIntoView({behavior:'smooth'})">Add first entry</button>
-        <button class="btn secondary" onclick="downloadSummaryCSV()">Export monthly summary</button>
+  <header>
+    <div class="container">
+      <div class="nav">
+        <div class="brand" aria-label="SideHustle HMRC Tracker">
+          <div class="logo" aria-hidden="true"></div>
+          <div style="min-width:0">
+            <strong>SideHustle HMRC Tracker</strong>
+            <div class="subbrand">For Vinted/eBay/Depop sellers in the UK</div>
+          </div>
+        </div>
+
+        <nav aria-label="Primary">
+          <a href="#tool">Tracker</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+          <a href="#waitlist">Waitlist</a>
+        </nav>
+
+        <div class="nav-cta">
+          <a class="btn secondary" href="#pricing">See Pricing</a>
+          <a class="btn primary" href="#tool">Start Free</a>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="grid">
-        <div class="kpi"><span>Total sales</span><strong id="kpi-sales">£0.00</strong></div>
-        <div class="kpi"><span>Fees + shipping</span><strong id="kpi-fees">£0.00</strong></div>
-        <div class="kpi"><span>Total costs</span><strong id="kpi-costs">£0.00</strong></div>
-        <div class="kpi"><span>Profit (pre‑tax)</span><strong id="kpi-profit">£0.00</strong></div>
-        <div class="kpi"><span>Sales over £1,000</span><strong id="kpi-allowance">£0.00</strong></div>
+  </header>
+
+  <main id="main" class="container">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <span class="badge">UK tax year • £1,000 allowance • CSV export</span>
+        <h1 id="hero-title">Know your UK tax‑year numbers in minutes — not in spreadsheets.</h1>
+        <p class="lead">Add each sale (and the fees + shipping), add your costs, and get a clean view of where you stand for the tax year. Everything runs locally in your browser.</p>
+
+        <ul class="benefits" aria-label="Key benefits">
+          <li><span class="tick" aria-hidden="true"></span><div><strong>Instant clarity:</strong> see sales, costs and pre‑tax profit for the selected UK tax year.</div></li>
+          <li><span class="tick" aria-hidden="true"></span><div><strong>Allowance meter:</strong> track progress against the £1,000 trading allowance with a simple bar.</div></li>
+          <li><span class="tick" aria-hidden="true"></span><div><strong>Accountant‑friendly export:</strong> download entries + monthly summary CSVs any time.</div></li>
+        </ul>
+
+        <div class="hero-cta">
+          <a class="btn primary" href="#tool">Add Your First Entry</a>
+          <a class="btn ghost" href="#pricing">Get Pro — £9/mo</a>
+        </div>
+        <p class="microcopy">No login. No integrations. Start with 5 demo entries if you want to see it working end‑to‑end.</p>
       </div>
-      <div style="margin-top:10px" class="allowance">
-        <small style="min-width:130px;color:var(--muted-fg)">Trading allowance</small>
-        <progress id="allowanceBar" value="0" max="1000"></progress>
-        <small id="allowanceText" style="color:var(--muted-fg)">£0 / £1,000</small>
+
+      <div class="card">
+        <div class="panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+            <div>
+              <h2 style="margin:0">Your snapshot</h2>
+              <div style="margin-top:4px; color:var(--muted-fg)">Filtered to: <span class="pill" id="selectedTaxYear" translate="no">—</span></div>
+            </div>
+
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+              <label for="taxYearSelect" style="margin:0; color:var(--muted-fg)">Tax year</label>
+              <select id="taxYearSelect" name="tax_year" autocomplete="off" aria-label="Tax year"></select>
+              <button class="btn secondary" id="btnExportEntries" type="button">Export Entries CSV</button>
+            </div>
+          </div>
+
+          <div class="kpis" style="margin-top:12px">
+            <div class="kpi"><div class="label">Sales</div><div class="value" id="kpi-sales">£0.00</div></div>
+            <div class="kpi"><div class="label">Fees + Shipping</div><div class="value" id="kpi-fees">£0.00</div></div>
+            <div class="kpi"><div class="label">Costs</div><div class="value" id="kpi-costs">£0.00</div></div>
+            <div class="kpi"><div class="label">Profit (Pre‑Tax)</div><div class="value" id="kpi-profit">£0.00</div></div>
+          </div>
+
+          <div class="allowance">
+            <small style="min-width:142px">£1,000 Allowance</small>
+            <progress id="allowanceBar" value="0" max="1000" aria-label="Trading allowance progress"></progress>
+            <small id="allowanceText" class="num">£0.00 / £1,000</small>
+          </div>
+
+          <div class="note-box">
+            UK tax year runs 6 April → 5 April. This tool is informational only and not tax advice.
+          </div>
+        </div>
       </div>
-      <p style="margin-top:10px;color:var(--muted-fg)">Tip: this tracker is informational only and not tax advice. UK tax year starts 6 April.</p>
-    </div>
-  </section>
+    </section>
 
-  <section id="tracker" class="card" style="margin:24px 0">
-    <h2>Quick entry</h2>
-    <div class="form">
-      <div><label>Type</label><select id="type"><option value="sale">Sale</option><option value="cost">Cost/Expense</option></select></div>
-      <div><label>Amount (£)</label><input id="amount" type="number" step="0.01" placeholder="12.99" /></div>
-      <div><label>Fees (£)</label><input id="fees" type="number" step="0.01" placeholder="1.20" /></div>
-      <div><label>Shipping (£)</label><input id="shipping" type="number" step="0.01" placeholder="2.80" /></div>
-      <div><label>Platform</label>
-        <select id="platform">
-          <option>Vinted</option><option>eBay</option><option>Depop</option><option>Etsy</option><option>Facebook</option><option>Other</option>
-        </select>
+    <section class="chapter" aria-labelledby="story-1">
+      <h2 id="story-1">Chapter 1 — Stop guessing what “counts”</h2>
+      <p>When you sell across multiple platforms, the “actual number” is hard to see. Capture fees, shipping and costs alongside sales so you can answer the two questions that matter: how much did you sell, and what was the profit?</p>
+    </section>
+
+    <section class="chapter" aria-labelledby="story-2">
+      <h2 id="story-2">Chapter 2 — Track in seconds, not once a year</h2>
+      <p>Add entries as you go. Your totals update instantly. Export a CSV whenever your accountant asks — no “I’ll tidy it up later.”</p>
+    </section>
+
+    <section id="tool" class="card" aria-labelledby="tool-title" style="margin-top:18px">
+      <div class="panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+          <div>
+            <h2 id="tool-title" style="margin:0">The Tracker</h2>
+            <p style="margin:6px 0 0; color:var(--muted-fg)">Add a sale or an expense. Everything saves automatically to your device.</p>
+          </div>
+          <div class="actions" style="margin:0">
+            <button class="btn secondary" id="btnSeedDemo" type="button">Seed Demo Data</button>
+            <button class="btn secondary" id="btnExportSummary" type="button">Export Monthly Summary</button>
+          </div>
+        </div>
+
+        <div class="tool-grid" style="margin-top:14px">
+          <div>
+            <form id="entryForm">
+              <div class="form">
+                <div>
+                  <label for="type">Entry Type</label>
+                  <select id="type" name="type" autocomplete="off">
+                    <option value="sale">Sale</option>
+                    <option value="cost">Cost / Expense</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="date">Date</label>
+                  <input id="date" name="date" type="date" autocomplete="off" />
+                </div>
+
+                <div>
+                  <label for="amount">Amount (£)</label>
+                  <input id="amount" name="amount" type="number" step="0.01" inputmode="decimal" autocomplete="off" placeholder="12.99…" required />
+                </div>
+
+                <div>
+                  <label for="fees">Platform Fees (£)</label>
+                  <input id="fees" name="fees" type="number" step="0.01" inputmode="decimal" autocomplete="off" placeholder="1.20…" />
+                </div>
+
+                <div>
+                  <label for="shipping">Shipping (£)</label>
+                  <input id="shipping" name="shipping" type="number" step="0.01" inputmode="decimal" autocomplete="off" placeholder="2.80…" />
+                </div>
+
+                <div>
+                  <label for="platform">Platform</label>
+                  <select id="platform" name="platform" autocomplete="off">
+                    <option>Vinted</option>
+                    <option>eBay</option>
+                    <option>Depop</option>
+                    <option>Etsy</option>
+                    <option>Facebook</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="category">Category</label>
+                  <select id="category" name="category" autocomplete="off">
+                    <option>Clothing</option>
+                    <option>Electronics</option>
+                    <option>Collectibles</option>
+                    <option>Home</option>
+                    <option>Kids</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                <div class="full">
+                  <label for="note">Item / Note</label>
+                  <input id="note" name="note" type="text" autocomplete="off" placeholder="Vintage jacket…" />
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="btn primary" type="submit">Add Entry</button>
+                <button class="btn secondary" id="btnClearForm" type="button">Clear Form</button>
+              </div>
+
+              <div id="formMessage" aria-live="polite" class="note-box" style="display:none"></div>
+            </form>
+          </div>
+
+          <div>
+            <div class="note-box">
+              <strong>Tip:</strong> If you only track one thing, track <em>fees</em> and <em>shipping</em>. They’re the easiest to forget.
+              <div style="margin-top:8px">
+                <span class="pill" id="count">0 entries</span>
+              </div>
+            </div>
+
+            <div class="note-box" style="margin-top:12px">
+              <strong>What’s coming in Pro:</strong> marketplace imports, reminders, and an “accountant‑ready pack” export.
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+          <h2 style="margin:0; font-size:22px">Entries</h2>
+          <div class="actions" style="margin:0">
+            <button class="btn secondary" id="btnExportEntries2" type="button">Export Entries CSV</button>
+            <button class="btn danger" id="btnClearAll" type="button">Clear All</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:10px; content-visibility:auto">
+          <table aria-label="Entry list">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Fees</th>
+                <th>Shipping</th>
+                <th>Platform</th>
+                <th>Category</th>
+                <th>Note</th>
+                <th>Date</th>
+                <th>Tax Year</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:18px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+          <h2 style="margin:0; font-size:22px">Monthly Summary</h2>
+          <button class="btn secondary" id="btnExportSummary2" type="button">Export Monthly Summary</button>
+        </div>
+
+        <div class="table-wrap" style="margin-top:10px; content-visibility:auto">
+          <table aria-label="Monthly summary">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Sales</th>
+                <th>Fees</th>
+                <th>Shipping</th>
+                <th>Costs</th>
+                <th>Profit</th>
+              </tr>
+            </thead>
+            <tbody id="summaryRows"></tbody>
+          </table>
+        </div>
       </div>
-      <div><label>Category</label>
-        <select id="category">
-          <option>Clothing</option><option>Electronics</option><option>Collectibles</option><option>Home</option><option>Kids</option><option>Other</option>
-        </select>
+    </section>
+
+    <section id="pricing" aria-labelledby="pricing-title" style="margin-top:28px">
+      <h2 id="pricing-title">Pricing</h2>
+      <p class="lead" style="margin-top:-4px">Start free. Upgrade when you want imports, reminders and a cleaner year‑end pack.</p>
+
+      <div class="pricing">
+        <div class="card plan" aria-label="Free plan">
+          <h3>Free</h3>
+          <div class="price">£0</div>
+          <div style="color:var(--muted-fg)">Local tracking + CSV exports.</div>
+          <ul>
+            <li>Unlimited entries on this device</li>
+            <li>UK tax-year filtering</li>
+            <li>Entries CSV + Monthly Summary CSV</li>
+          </ul>
+          <div class="actions" style="margin-top:14px">
+            <a class="btn secondary" href="#tool">Use Free</a>
+          </div>
+        </div>
+
+        <div class="card plan recommended" aria-label="Pro plan">
+          <h3>Pro (Recommended)</h3>
+          <div class="price">£9/mo</div>
+          <div style="color:var(--muted-fg)">Imports + reminders + accountant-ready pack.</div>
+          <ul>
+            <li>Marketplace imports (Vinted/eBay/Depop)</li>
+            <li>Allowance + threshold reminders</li>
+            <li>Cleaner export pack (coming soon)</li>
+          </ul>
+          <div class="actions" style="margin-top:14px">
+            <a href="#stripe-coming-soon" class="btn-pay">Get Pro — £9/mo</a>
+            <a class="btn secondary" href="#waitlist">Join Waitlist</a>
+          </div>
+          <div id="stripe-coming-soon" class="note-box">Payment coming soon — join the waitlist to get early access.</div>
+        </div>
       </div>
-      <div><label>Date</label><input id="date" type="date" /></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:10px;margin-top:10px">
-      <div><label>Item / Note</label><input id="note" type="text" placeholder="Vintage jacket" /></div>
-      <div><button class="btn" onclick="addEntry()">Add</button></div>
-      <div><button class="btn secondary" onclick="clearForm()">Clear</button></div>
-      <div><button class="btn ghost" onclick="seedDemo()">Seed demo</button></div>
-    </div>
-  </section>
+    </section>
 
-  <section class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-      <h2>Entries</h2>
-      <div class="split">
-        <span class="pill" id="count">0 entries</span>
-        <button class="btn secondary" onclick="downloadCSV()">Export entries CSV</button>
-        <button class="btn ghost" onclick="clearAll()">Clear all</button>
+    <section id="faq" aria-labelledby="faq-title" style="margin-top:28px">
+      <h2 id="faq-title">FAQ</h2>
+      <details>
+        <summary>Does this work offline?</summary>
+        <div style="margin-top:8px; color:rgba(15, 23, 42, .8); line-height:1.6">Yes. It’s a single page that runs in your browser and stores data locally on your device.</div>
+      </details>
+      <details>
+        <summary>Is this HMRC-approved?</summary>
+        <div style="margin-top:8px; color:rgba(15, 23, 42, .8); line-height:1.6">It’s not affiliated with HMRC. It’s a simple tracker to help you stay organised. If you’re unsure about your situation, speak to an accountant.</div>
+      </details>
+      <details>
+        <summary>Can I use this for multiple tax years?</summary>
+        <div style="margin-top:8px; color:rgba(15, 23, 42, .8); line-height:1.6">Yes. Your entries are labelled by UK tax year (6 April → 5 April). You can filter the view and exports by tax year.</div>
+      </details>
+    </section>
+
+    <section id="waitlist" class="card" aria-labelledby="waitlist-title" style="margin-top:28px">
+      <div class="panel">
+        <h2 id="waitlist-title">Join the waitlist</h2>
+        <p class="lead">Get an email when Pro payments go live and imports/reminders are ready.</p>
+
+        <form id="waitlistForm" novalidate>
+          <div class="form" style="grid-template-columns:1fr; max-width:520px">
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="you@example.com…" required />
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" type="submit">Join Waitlist</button>
+            <a class="btn secondary" href="mailto:waitlist@example.com?subject=SideHustle%20HMRC%20Tracker%20%E2%80%94%20Waitlist">Email Instead</a>
+          </div>
+          <div id="waitlistMessage" aria-live="polite" class="note-box" style="display:none"></div>
+        </form>
       </div>
-    </div>
-    <div style="overflow:auto">
-      <table>
-        <thead>
-          <tr>
-            <th>Type</th><th>Amount</th><th>Fees</th><th>Shipping</th><th>Platform</th><th>Category</th><th>Note</th><th>Date</th><th>Tax year</th><th></th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-  </section>
+    </section>
 
-  <section class="card" style="margin:24px 0">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-      <h2>Monthly summary (filtered tax year)</h2>
-      <button class="btn secondary" onclick="downloadSummaryCSV()">Export summary CSV</button>
-    </div>
-    <div style="overflow:auto">
-      <table>
-        <thead>
-          <tr>
-            <th>Month</th><th>Sales</th><th>Fees</th><th>Shipping</th><th>Costs</th><th>Profit</th>
-          </tr>
-        </thead>
-        <tbody id="summaryRows"></tbody>
-      </table>
-    </div>
-  </section>
+    <footer>
+      <div class="note-box">
+        <strong>Privacy:</strong> entries are stored locally in your browser (LocalStorage). If you clear site data, entries will be removed.
+      </div>
+      <p style="margin-top:12px">Disclaimer: informational tracker only. Not tax advice.</p>
+    </footer>
+  </main>
 
-  <section style="margin:32px 0">
-    <h2>Pricing</h2>
-    <div class="pricing">
-      <div class="card"><h3>Starter</h3><p class="price">£0</p><p>Local tracking + exports</p><button class="btn secondary">Get started</button></div>
-      <div class="card highlight"><h3>Plus</h3><p class="price">£5/mo</p><p>Auto summaries + reminders</p><button class="btn">Start Plus</button></div>
-      <div class="card"><h3>Pro</h3><p class="price">£12/mo</p><p>Marketplace imports + accountant-ready pack</p><button class="btn secondary">Talk to us</button></div>
-    </div>
-  </section>
+  <script>
+    'use strict';
 
-  <section class="card" style="margin-bottom:24px">
-    <h2>Waitlist</h2>
-    <p>Get notified when marketplace imports and HMRC summary packs ship.</p>
-    <form onsubmit="event.preventDefault(); alert('Thanks! We\'ll be in touch.');">
-      <input id="email" type="email" placeholder="you@email.com" required style="max-width:360px"/>
-      <button class="btn" style="margin-left:8px">Join</button>
-    </form>
-  </section>
-</main>
+    const storageKey = 'sidehustle-hmrc-tracker-entries-v3';
 
-<footer class="container">
-  <small>Disclaimer: informational tracker only. Not tax advice.</small>
-</footer>
+    const GBP = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+    const monthFmt = new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'short' });
+    const dateFmt = new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
 
-<script>
-  const storageKey = 'uk-tax-tracker-entries-v2';
-  const rows = document.getElementById('rows');
-  const summaryRows = document.getElementById('summaryRows');
-  const count = document.getElementById('count');
-  const kpiSales = document.getElementById('kpi-sales');
-  const kpiCosts = document.getElementById('kpi-costs');
-  const kpiFees = document.getElementById('kpi-fees');
-  const kpiProfit = document.getElementById('kpi-profit');
-  const kpiAllowance = document.getElementById('kpi-allowance');
-  const allowanceBar = document.getElementById('allowanceBar');
-  const allowanceText = document.getElementById('allowanceText');
-  const taxYearSelect = document.getElementById('taxYearSelect');
-  const entries = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const els = {
+      rows: document.getElementById('rows'),
+      summaryRows: document.getElementById('summaryRows'),
+      count: document.getElementById('count'),
+      kpiSales: document.getElementById('kpi-sales'),
+      kpiCosts: document.getElementById('kpi-costs'),
+      kpiFees: document.getElementById('kpi-fees'),
+      kpiProfit: document.getElementById('kpi-profit'),
+      allowanceBar: document.getElementById('allowanceBar'),
+      allowanceText: document.getElementById('allowanceText'),
+      taxYearSelect: document.getElementById('taxYearSelect'),
+      selectedTaxYear: document.getElementById('selectedTaxYear'),
+      entryForm: document.getElementById('entryForm'),
+      formMessage: document.getElementById('formMessage'),
+      btnClearForm: document.getElementById('btnClearForm'),
+      btnSeedDemo: document.getElementById('btnSeedDemo'),
+      btnExportEntries: document.getElementById('btnExportEntries'),
+      btnExportEntries2: document.getElementById('btnExportEntries2'),
+      btnExportSummary: document.getElementById('btnExportSummary'),
+      btnExportSummary2: document.getElementById('btnExportSummary2'),
+      btnClearAll: document.getElementById('btnClearAll'),
+      waitlistForm: document.getElementById('waitlistForm'),
+      waitlistMessage: document.getElementById('waitlistMessage'),
+    };
 
-  function taxYearLabel(dateStr){
-    if(!dateStr) return 'Unknown';
-    const d = new Date(dateStr);
-    const y = d.getFullYear();
-    const m = d.getMonth() + 1;
-    const day = d.getDate();
-    const startYear = (m > 4 || (m === 4 && day >= 6)) ? y : y - 1;
-    const endYear = startYear + 1;
-    return `${startYear}/${String(endYear).slice(-2)}`;
-  }
+    const entries = safeParse(localStorage.getItem(storageKey), []);
 
-  function currentTaxYear(){
-    const now = new Date();
-    const m = now.getMonth() + 1;
-    const day = now.getDate();
-    const y = now.getFullYear();
-    const startYear = (m > 4 || (m === 4 && day >= 6)) ? y : y - 1;
-    return `${startYear}/${String(startYear+1).slice(-2)}`;
-  }
+    function safeParse(raw, fallback){
+      try{ return raw ? JSON.parse(raw) : fallback; }
+      catch{ return fallback; }
+    }
 
-  function setupTaxYearOptions(){
-    const years = new Set(entries.map(e => taxYearLabel(e.date)).filter(y => y !== 'Unknown'));
-    years.add(currentTaxYear());
-    const sorted = Array.from(years).sort();
-    taxYearSelect.innerHTML = `<option value="all">All tax years</option>` + sorted.map(y => `<option value="${y}">${y}</option>`).join('');
-    taxYearSelect.value = currentTaxYear();
-  }
+    function taxYearLabel(dateStr){
+      if(!dateStr) return 'Unknown';
+      const d = new Date(dateStr);
+      if(Number.isNaN(d.getTime())) return 'Unknown';
+      const y = d.getFullYear();
+      const m = d.getMonth() + 1;
+      const day = d.getDate();
+      const startYear = (m > 4 || (m === 4 && day >= 6)) ? y : y - 1;
+      const endYear = startYear + 1;
+      return `${startYear}/${String(endYear).slice(-2)}`;
+    }
 
-  function filteredEntries(){
-    const selected = taxYearSelect.value;
-    if(selected === 'all') return entries;
-    return entries.filter(e => taxYearLabel(e.date) === selected);
-  }
+    function currentTaxYear(){
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth() + 1;
+      const day = now.getDate();
+      const startYear = (m > 4 || (m === 4 && day >= 6)) ? y : y - 1;
+      return `${startYear}/${String(startYear + 1).slice(-2)}`;
+    }
 
-  function render(){
-    rows.innerHTML = '';
-    summaryRows.innerHTML = '';
-    const filtered = filteredEntries();
-    let sales = 0, costs = 0, fees = 0, shipping = 0;
+    function setupTaxYearOptions(){
+      const years = new Set(entries.map(e => taxYearLabel(e.date)).filter(y => y !== 'Unknown'));
+      years.add(currentTaxYear());
+      const sorted = Array.from(years).sort();
 
-    filtered.forEach((e,i)=>{
-      if(e.type === 'sale'){
-        sales += e.amount;
-        fees += e.fees || 0;
-        shipping += e.shipping || 0;
-      } else {
-        costs += e.amount;
+      els.taxYearSelect.innerHTML =
+        `<option value="all">All tax years</option>` +
+        sorted.map(y => `<option value="${escapeHtml(y)}">${escapeHtml(y)}</option>`).join('');
+
+      els.taxYearSelect.value = currentTaxYear();
+    }
+
+    function filteredEntries(){
+      const selected = els.taxYearSelect.value;
+      if(selected === 'all') return entries;
+      return entries.filter(e => taxYearLabel(e.date) === selected);
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#39;');
+    }
+
+    function save(){
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+    }
+
+    function fmtMoney(n){
+      return GBP.format(Number.isFinite(n) ? n : 0);
+    }
+
+    function fmtDateDisplay(dateStr){
+      if(!dateStr) return '';
+      const d = new Date(dateStr);
+      if(Number.isNaN(d.getTime())) return dateStr;
+      return dateFmt.format(d);
+    }
+
+    function render(){
+      const filtered = filteredEntries();
+
+      let sales = 0, costs = 0, fees = 0, shipping = 0;
+      for(const e of filtered){
+        if(e.type === 'sale'){
+          sales += e.amount;
+          fees += e.fees || 0;
+          shipping += e.shipping || 0;
+        } else {
+          costs += e.amount;
+        }
       }
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${e.type}</td>
-        <td>£${e.amount.toFixed(2)}</td>
-        <td>£${(e.fees||0).toFixed(2)}</td>
-        <td>£${(e.shipping||0).toFixed(2)}</td>
-        <td>${e.platform||''}</td>
-        <td>${e.category||''}</td>
-        <td>${e.note||''}</td>
-        <td>${e.date||''}</td>
-        <td>${taxYearLabel(e.date)}</td>
-        <td><button onclick="removeEntry(${i})">Delete</button></td>
-      `;
-      rows.appendChild(tr);
-    });
 
-    const profit = sales - costs - fees - shipping;
-    const allowance = 1000;
-    const overAllowance = Math.max(0, sales - allowance);
+      const profit = sales - costs - fees - shipping;
+      const allowance = 1000;
 
-    count.textContent = `${filtered.length} entries`;
-    kpiSales.textContent = `£${sales.toFixed(2)}`;
-    kpiCosts.textContent = `£${costs.toFixed(2)}`;
-    kpiFees.textContent = `£${(fees+shipping).toFixed(2)}`;
-    kpiProfit.textContent = `£${profit.toFixed(2)}`;
-    kpiAllowance.textContent = `£${overAllowance.toFixed(2)}`;
-    allowanceBar.value = Math.min(sales, allowance);
-    allowanceText.textContent = `£${sales.toFixed(2)} / £1,000`;
+      els.selectedTaxYear.textContent = els.taxYearSelect.value === 'all' ? 'All' : els.taxYearSelect.value;
 
-    const monthly = {};
-    filtered.forEach(e => {
-      if(!e.date) return;
-      const key = e.date.slice(0,7);
-      if(!monthly[key]) monthly[key] = {sales:0,fees:0,shipping:0,costs:0};
-      if(e.type === 'sale'){
-        monthly[key].sales += e.amount;
-        monthly[key].fees += e.fees || 0;
-        monthly[key].shipping += e.shipping || 0;
-      } else {
-        monthly[key].costs += e.amount;
+      els.count.textContent = `${filtered.length} entries`;
+      els.kpiSales.textContent = fmtMoney(sales);
+      els.kpiCosts.textContent = fmtMoney(costs);
+      els.kpiFees.textContent = fmtMoney(fees + shipping);
+      els.kpiProfit.textContent = fmtMoney(profit);
+
+      els.allowanceBar.value = Math.min(sales, allowance);
+      els.allowanceText.textContent = `${fmtMoney(sales)} / ${fmtMoney(allowance)}`;
+
+      // Entries table
+      els.rows.innerHTML = '';
+      filtered.forEach((e, indexInFiltered) => {
+        const indexInAll = entries.indexOf(e);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(e.type)}</td>
+          <td class="num">${escapeHtml(fmtMoney(e.amount))}</td>
+          <td class="num">${escapeHtml(fmtMoney(e.fees || 0))}</td>
+          <td class="num">${escapeHtml(fmtMoney(e.shipping || 0))}</td>
+          <td>${escapeHtml(e.platform || '')}</td>
+          <td>${escapeHtml(e.category || '')}</td>
+          <td class="note">${escapeHtml(e.note || '')}</td>
+          <td title="${escapeHtml(e.date || '')}" translate="no">${escapeHtml(fmtDateDisplay(e.date))}</td>
+          <td translate="no">${escapeHtml(taxYearLabel(e.date))}</td>
+          <td>
+            <button class="btn secondary" type="button" data-remove-index="${indexInAll}" aria-label="Delete entry">Delete</button>
+          </td>
+        `;
+        els.rows.appendChild(tr);
+      });
+
+      // Monthly summary
+      const monthly = {};
+      for(const e of filtered){
+        if(!e.date) continue;
+        const key = e.date.slice(0,7); // YYYY-MM
+        if(!monthly[key]) monthly[key] = {sales:0, fees:0, shipping:0, costs:0};
+        if(e.type === 'sale'){
+          monthly[key].sales += e.amount;
+          monthly[key].fees += e.fees || 0;
+          monthly[key].shipping += e.shipping || 0;
+        } else {
+          monthly[key].costs += e.amount;
+        }
       }
+
+      els.summaryRows.innerHTML = '';
+      Object.keys(monthly).sort().forEach(key => {
+        const m = monthly[key];
+        const p = m.sales - m.costs - m.fees - m.shipping;
+        const d = new Date(`${key}-01T00:00:00`);
+        const monthLabel = Number.isNaN(d.getTime()) ? key : monthFmt.format(d);
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td translate="no">${escapeHtml(monthLabel)}</td>
+          <td class="num">${escapeHtml(fmtMoney(m.sales))}</td>
+          <td class="num">${escapeHtml(fmtMoney(m.fees))}</td>
+          <td class="num">${escapeHtml(fmtMoney(m.shipping))}</td>
+          <td class="num">${escapeHtml(fmtMoney(m.costs))}</td>
+          <td class="num">${escapeHtml(fmtMoney(p))}</td>
+        `;
+        els.summaryRows.appendChild(tr);
+      });
+
+      save();
+    }
+
+    function showFormMessage(text){
+      els.formMessage.textContent = text;
+      els.formMessage.style.display = 'block';
+      window.setTimeout(() => { els.formMessage.style.display = 'none'; }, 2400);
+    }
+
+    function clearForm(){
+      els.entryForm.reset();
+      // keep default type selection
+      document.getElementById('type').value = 'sale';
+    }
+
+    function addEntry(form){
+      const type = document.getElementById('type').value;
+      const amount = Number(document.getElementById('amount').value);
+      if(!Number.isFinite(amount) || amount <= 0){
+        showFormMessage('Enter a valid amount.');
+        document.getElementById('amount').focus();
+        return;
+      }
+
+      const fees = Number(document.getElementById('fees').value) || 0;
+      const shipping = Number(document.getElementById('shipping').value) || 0;
+      const platform = document.getElementById('platform').value;
+      const category = document.getElementById('category').value;
+      const note = document.getElementById('note').value;
+      const date = document.getElementById('date').value;
+
+      entries.unshift({ type, amount, fees, shipping, platform, category, note, date });
+      setupTaxYearOptions();
+      render();
+      clearForm();
+      showFormMessage('Added.');
+    }
+
+    function removeEntry(index){
+      if(index < 0 || index >= entries.length) return;
+      const ok = window.confirm('Delete this entry?');
+      if(!ok) return;
+      entries.splice(index, 1);
+      setupTaxYearOptions();
+      render();
+    }
+
+    function clearAll(){
+      const ok = window.confirm('Clear all entries? This cannot be undone.');
+      if(!ok) return;
+      entries.length = 0;
+      setupTaxYearOptions();
+      render();
+    }
+
+    function seedDemo(){
+      const ok = window.confirm('Seed 5 demo entries?');
+      if(!ok) return;
+
+      const today = new Date();
+      const iso = (d) => d.toISOString().slice(0,10);
+
+      entries.unshift(
+        {type:'sale', amount:42.50, fees:2.10, shipping:3.20, platform:'Vinted', category:'Clothing', note:'Denim jacket', date:iso(today)},
+        {type:'cost', amount:4.50, fees:0, shipping:0, platform:'Other', category:'Other', note:'Packaging', date:iso(today)},
+        {type:'sale', amount:18.00, fees:1.00, shipping:2.00, platform:'eBay', category:'Collectibles', note:'Vinyl', date:iso(new Date(today.getTime() - 86400000 * 4))},
+        {type:'cost', amount:6.00, fees:0, shipping:0, platform:'Other', category:'Other', note:'Labels', date:iso(new Date(today.getTime() - 86400000 * 8))},
+        {type:'sale', amount:55.00, fees:2.80, shipping:3.50, platform:'Depop', category:'Clothing', note:'Bundle sale', date:iso(new Date(today.getTime() - 86400000 * 12))},
+      );
+
+      setupTaxYearOptions();
+      render();
+    }
+
+    function csvEscapeCell(v){
+      const s = String(v ?? '');
+      if(/[",\n]/.test(s)) return '"' + s.replaceAll('"','""') + '"';
+      return s;
+    }
+
+    function downloadCSV(filename, header, rows){
+      const lines = [header.map(csvEscapeCell).join(',')];
+      for(const row of rows){
+        lines.push(row.map(csvEscapeCell).join(','));
+      }
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function exportEntriesCSV(){
+      const list = filteredEntries();
+      downloadCSV(
+        'sidehustle-hmrc-tracker-entries.csv',
+        ['type','amount','fees','shipping','platform','category','note','date','tax_year'],
+        list.map(e => [
+          e.type,
+          e.amount,
+          e.fees || 0,
+          e.shipping || 0,
+          e.platform || '',
+          e.category || '',
+          e.note || '',
+          e.date || '',
+          taxYearLabel(e.date),
+        ])
+      );
+    }
+
+    function exportMonthlySummaryCSV(){
+      const filtered = filteredEntries();
+      const monthly = {};
+      for(const e of filtered){
+        if(!e.date) continue;
+        const key = e.date.slice(0,7);
+        if(!monthly[key]) monthly[key] = {sales:0, fees:0, shipping:0, costs:0};
+        if(e.type === 'sale'){
+          monthly[key].sales += e.amount;
+          monthly[key].fees += e.fees || 0;
+          monthly[key].shipping += e.shipping || 0;
+        } else {
+          monthly[key].costs += e.amount;
+        }
+      }
+
+      const rows = Object.keys(monthly).sort().map(key => {
+        const m = monthly[key];
+        const profit = m.sales - m.costs - m.fees - m.shipping;
+        return [key, m.sales, m.fees, m.shipping, m.costs, profit];
+      });
+
+      downloadCSV(
+        'sidehustle-hmrc-tracker-monthly-summary.csv',
+        ['month','sales','fees','shipping','costs','profit'],
+        rows
+      );
+    }
+
+    function handleWaitlistSubmit(evt){
+      evt.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if(!ok){
+        els.waitlistMessage.textContent = 'Enter a valid email address.';
+        els.waitlistMessage.style.display = 'block';
+        document.getElementById('email').focus();
+        return;
+      }
+
+      els.waitlistMessage.textContent = 'Thanks — we’ll be in touch.';
+      els.waitlistMessage.style.display = 'block';
+      els.waitlistForm.reset();
+
+      // Optional: user can also email via the visible mailto link.
+    }
+
+    // Wire events
+    els.taxYearSelect.addEventListener('change', render);
+
+    els.entryForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      addEntry(els.entryForm);
     });
 
-    Object.keys(monthly).sort().forEach(key => {
-      const m = monthly[key];
-      const p = m.sales - m.costs - m.fees - m.shipping;
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${key}</td>
-        <td>£${m.sales.toFixed(2)}</td>
-        <td>£${m.fees.toFixed(2)}</td>
-        <td>£${m.shipping.toFixed(2)}</td>
-        <td>£${m.costs.toFixed(2)}</td>
-        <td>£${p.toFixed(2)}</td>
-      `;
-      summaryRows.appendChild(tr);
+    els.btnClearForm.addEventListener('click', clearForm);
+    els.btnSeedDemo.addEventListener('click', seedDemo);
+
+    els.btnExportEntries.addEventListener('click', exportEntriesCSV);
+    els.btnExportEntries2.addEventListener('click', exportEntriesCSV);
+
+    els.btnExportSummary.addEventListener('click', exportMonthlySummaryCSV);
+    els.btnExportSummary2.addEventListener('click', exportMonthlySummaryCSV);
+
+    els.btnClearAll.addEventListener('click', clearAll);
+
+    els.waitlistForm.addEventListener('submit', handleWaitlistSubmit);
+
+    // Table action: delete
+    els.rows.addEventListener('click', (evt) => {
+      const btn = evt.target.closest('button[data-remove-index]');
+      if(!btn) return;
+      const index = Number(btn.getAttribute('data-remove-index'));
+      if(Number.isFinite(index)) removeEntry(index);
     });
 
-    localStorage.setItem(storageKey, JSON.stringify(entries));
-  }
-
-  function addEntry(){
-    const type = document.getElementById('type').value;
-    const amount = parseFloat(document.getElementById('amount').value);
-    if(isNaN(amount)) return alert('Enter an amount');
-    const fees = parseFloat(document.getElementById('fees').value) || 0;
-    const shipping = parseFloat(document.getElementById('shipping').value) || 0;
-    const platform = document.getElementById('platform').value;
-    const category = document.getElementById('category').value;
-    const note = document.getElementById('note').value;
-    const date = document.getElementById('date').value;
-    entries.unshift({type, amount, fees, shipping, platform, category, note, date});
-    clearForm();
+    // Init
     setupTaxYearOptions();
     render();
-  }
-
-  function clearForm(){
-    document.getElementById('amount').value = '';
-    document.getElementById('fees').value = '';
-    document.getElementById('shipping').value = '';
-    document.getElementById('note').value = '';
-  }
-
-  function seedDemo(){
-    if(!confirm('Seed 5 demo entries?')) return;
-    const today = new Date();
-    const fmt = (d) => d.toISOString().slice(0,10);
-    entries.unshift(
-      {type:'sale', amount:42.5, fees:2.1, shipping:3.2, platform:'Vinted', category:'Clothing', note:'Denim jacket', date:fmt(today)},
-      {type:'cost', amount:4.5, fees:0, shipping:0, platform:'Other', category:'Other', note:'Packaging', date:fmt(today)},
-      {type:'sale', amount:18.0, fees:1.0, shipping:2.0, platform:'eBay', category:'Collectibles', note:'Vinyl', date:fmt(new Date(today.getTime()-86400000*4))},
-      {type:'cost', amount:6.0, fees:0, shipping:0, platform:'Other', category:'Other', note:'Labels', date:fmt(new Date(today.getTime()-86400000*8))},
-      {type:'sale', amount:55.0, fees:2.8, shipping:3.5, platform:'Depop', category:'Clothing', note:'Bundle sale', date:fmt(new Date(today.getTime()-86400000*12))}
-    );
-    setupTaxYearOptions();
-    render();
-  }
-
-  function removeEntry(i){ entries.splice(i,1); render(); }
-
-  function clearAll(){
-    if(!confirm('Clear all entries?')) return;
-    entries.length = 0; render(); setupTaxYearOptions();
-  }
-
-  function downloadCSV(){
-    const header = ['type','amount','fees','shipping','platform','category','note','date','tax_year'];
-    const lines = [header.join(',')].concat(filteredEntries().map(e=>[
-      e.type, e.amount, e.fees||0, e.shipping||0, e.platform||'', e.category||'', (e.note||'').replace(/,/g,' '), e.date||'', taxYearLabel(e.date)
-    ].join(',')));
-    const blob = new Blob([lines.join('\n')], {type:'text/csv'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'sidehustle-tracker-entries.csv';
-    a.click();
-  }
-
-  function downloadSummaryCSV(){
-    const filtered = filteredEntries();
-    const monthly = {};
-    filtered.forEach(e => {
-      if(!e.date) return;
-      const key = e.date.slice(0,7);
-      if(!monthly[key]) monthly[key] = {sales:0,fees:0,shipping:0,costs:0};
-      if(e.type === 'sale'){
-        monthly[key].sales += e.amount;
-        monthly[key].fees += e.fees || 0;
-        monthly[key].shipping += e.shipping || 0;
-      } else {
-        monthly[key].costs += e.amount;
-      }
-    });
-    const header = ['month','sales','fees','shipping','costs','profit'];
-    const lines = [header.join(',')];
-    Object.keys(monthly).sort().forEach(key => {
-      const m = monthly[key];
-      const profit = m.sales - m.costs - m.fees - m.shipping;
-      lines.push([key,m.sales,m.fees,m.shipping,m.costs,profit].join(','));
-    });
-    const blob = new Blob([lines.join('\n')], {type:'text/csv'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'sidehustle-tracker-summary.csv';
-    a.click();
-  }
-
-  taxYearSelect.addEventListener('change', render);
-  setupTaxYearOptions();
-  render();
-</script>
+  </script>
 </body>
 </html>
