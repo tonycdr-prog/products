@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Leasehold Affordability Calculator (UK) — Service Charge Included</title>
+  <meta name="description" content="Work out what flat you can actually afford once service charge + ground rent are included. A UK leasehold affordability calculator." />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="Leasehold Affordability Calculator (UK)" />
+  <meta property="og:description" content="Stop guessing. Include service charge + ground rent and see a realistic monthly budget + max purchase price." />
+  <meta property="og:type" content="website" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+    :root{
+      --bg:#1C1917; --fg:#FFFFFF; --card:#262321; --muted:#2C1E16; --muted-fg:#94A3B8;
+      --primary:#EA580C; --primary-2:#F97316; --accent:#2563EB; --border:rgba(255,255,255,0.08);
+      --danger:#DC2626; --ring:rgba(234,88,12,0.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:"Source Sans 3",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:radial-gradient(1000px 600px at 20% -10%, rgba(234,88,12,0.22), transparent 55%), radial-gradient(900px 520px at 90% 10%, rgba(37,99,235,0.18), transparent 55%), var(--bg); color:var(--fg);}
+    a{color:inherit}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px;}
+    header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0 26px;}
+    .brand{display:flex; gap:10px; align-items:center; text-decoration:none;}
+    .logo{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 10px 30px rgba(0,0,0,0.35);}
+    .brand b{font-family:Lexend,system-ui; letter-spacing:-0.02em}
+    .pill{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border:1px solid var(--border); border-radius:999px; background:rgba(255,255,255,0.03); color:var(--muted-fg); font-size:13px}
+
+    .hero{display:grid; grid-template-columns:1.15fr 0.85fr; gap:20px; align-items:start;}
+    h1{font-family:Lexend,system-ui; font-size:44px; line-height:1.05; margin:0 0 10px; letter-spacing:-0.03em;}
+    .sub{color:rgba(255,255,255,0.82); font-size:18px; line-height:1.45; margin:0 0 18px;}
+    .ctaRow{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:18px 0 14px;}
+    .btn{appearance:none; border:1px solid transparent; border-radius:14px; padding:12px 14px; font-weight:700; cursor:pointer; font-family:Lexend,system-ui; letter-spacing:-0.01em;}
+    .btnPrimary{background:linear-gradient(180deg,var(--primary), #C2410C); color:#fff; box-shadow:0 12px 40px rgba(234,88,12,0.22)}
+    .btnGhost{background:rgba(255,255,255,0.04); border-color:var(--border); color:#fff}
+    .btnPrimary:focus,.btnGhost:focus,input:focus,select:focus{outline:2px solid var(--ring); outline-offset:2px;}
+
+    .card{background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:0 20px 70px rgba(0,0,0,0.35)}
+    .card h2{font-family:Lexend,system-ui; font-size:18px; margin:0 0 8px}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    label{display:block; font-size:13px; color:rgba(255,255,255,0.82); margin:0 0 6px}
+    input,select{width:100%; padding:11px 12px; border-radius:12px; border:1px solid var(--border); background:rgba(0,0,0,0.22); color:#fff; font-size:15px}
+    .hint{font-size:12px; color:var(--muted-fg); margin-top:6px; line-height:1.35}
+
+    .results{display:grid; gap:10px; margin-top:12px}
+    .stat{display:flex; justify-content:space-between; gap:12px; padding:12px; border-radius:14px; background:rgba(0,0,0,0.18); border:1px solid var(--border)}
+    .stat .k{color:rgba(255,255,255,0.72); font-size:13px}
+    .stat .v{font-family:Lexend,system-ui; font-weight:700; letter-spacing:-0.01em}
+
+    .section{margin-top:18px}
+    .sectionTitle{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:22px 0 10px}
+    .sectionTitle h3{margin:0; font-family:Lexend,system-ui; font-size:16px}
+
+    .pricing{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+    .plan{padding:16px; border-radius:18px; border:1px solid var(--border); background:rgba(255,255,255,0.03)}
+    .plan.reco{border-color:rgba(234,88,12,0.55); box-shadow:0 16px 60px rgba(234,88,12,0.18)}
+    .plan .name{font-family:Lexend,system-ui; font-weight:800; letter-spacing:-0.02em}
+    .plan .price{font-family:Lexend,system-ui; font-size:28px; margin:8px 0 6px}
+    .plan ul{margin:10px 0 0; padding-left:18px; color:rgba(255,255,255,0.82)}
+
+    .faq{display:grid; gap:10px}
+    details{border:1px solid var(--border); background:rgba(255,255,255,0.03); border-radius:16px; padding:12px}
+    summary{cursor:pointer; font-family:Lexend,system-ui; font-weight:700}
+    details p{color:rgba(255,255,255,0.82); line-height:1.5}
+
+    footer{margin-top:26px; color:var(--muted-fg); font-size:12px; line-height:1.45}
+
+    @media (max-width: 920px){
+      .hero{grid-template-columns:1fr;}
+      h1{font-size:38px}
+      .pricing{grid-template-columns:1fr;}
+      .grid{grid-template-columns:1fr}
+      header{flex-wrap:wrap}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="#top" aria-label="LeaseholdCalc home">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <b>LeaseholdCalc</b>
+          <div style="font-size:12px;color:var(--muted-fg)">Service charge-aware affordability</div>
+        </div>
+      </a>
+      <div class="pill">UK • Leasehold • Works offline • No login</div>
+    </header>
+
+    <main id="top" class="hero">
+      <section>
+        <h1>What flat can you <span style="color:var(--primary-2)">actually</span> afford… once service charge is included?</h1>
+        <p class="sub">Most mortgage calculators ignore the leasehold reality: service charge, ground rent, and insurance can add hundreds per month. This tool gives you a conservative monthly budget and a maximum purchase price you can sanity-check before you fall in love with a listing.</p>
+
+        <div class="ctaRow">
+          <button class="btn btnPrimary" type="button" onclick="document.getElementById('calc').scrollIntoView({behavior:'smooth'})">Run the calculator</button>
+          <button class="btn btnGhost" type="button" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get the spreadsheet + updates</button>
+        </div>
+
+        <div class="card section">
+          <h2>How it works (conservative on purpose)</h2>
+          <div style="color:rgba(255,255,255,0.82);line-height:1.5;font-size:15px">
+            <ol style="margin:10px 0 0; padding-left:18px">
+              <li>Estimate a <b>safe housing budget</b> (default 33% of net income minus debts).</li>
+              <li>Subtract leasehold costs (service charge + ground rent + buildings insurance).</li>
+              <li>Whatever is left is your <b>mortgage payment budget</b> → we convert that into a max mortgage + max price.</li>
+            </ol>
+            <p class="hint">Not financial advice. Use this as a screening tool before you speak to a broker/lender.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" id="calc">
+        <h2>Calculator</h2>
+        <div class="grid" style="margin-top:10px">
+          <div>
+            <label for="netIncome">Monthly net household income (£)</label>
+            <input id="netIncome" inputmode="decimal" value="5200" />
+            <div class="hint">After tax (both of you combined, if applicable).</div>
+          </div>
+          <div>
+            <label for="debts">Monthly non-housing debts (£)</label>
+            <input id="debts" inputmode="decimal" value="350" />
+            <div class="hint">Loans, car finance, credit cards (minimums).</div>
+          </div>
+
+          <div>
+            <label for="budgetPct">Target housing budget (% of net)</label>
+            <select id="budgetPct">
+              <option value="0.28">28% (very safe)</option>
+              <option value="0.33" selected>33% (default)</option>
+              <option value="0.38">38% (aggressive)</option>
+            </select>
+            <div class="hint">This is the “all-in” housing spend ceiling.</div>
+          </div>
+          <div>
+            <label for="termYears">Mortgage term (years)</label>
+            <select id="termYears">
+              <option>20</option>
+              <option selected>25</option>
+              <option>30</option>
+              <option>35</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="rate">Interest rate (% APR)</label>
+            <input id="rate" inputmode="decimal" value="4.75" />
+            <div class="hint">Use a stress-tested rate, not the teaser fix.</div>
+          </div>
+          <div>
+            <label for="deposit">Deposit (£)</label>
+            <input id="deposit" inputmode="decimal" value="75000" />
+            <div class="hint">Cash deposit (not including fees).</div>
+          </div>
+
+          <div>
+            <label for="serviceCharge">Service charge (monthly £)</label>
+            <input id="serviceCharge" inputmode="decimal" value="250" />
+          </div>
+          <div>
+            <label for="groundRent">Ground rent (monthly £)</label>
+            <input id="groundRent" inputmode="decimal" value="25" />
+          </div>
+
+          <div>
+            <label for="insurance">Buildings insurance (monthly £)</label>
+            <input id="insurance" inputmode="decimal" value="30" />
+            <div class="hint">Some blocks bundle this into service charge—adjust accordingly.</div>
+          </div>
+          <div>
+            <label for="buffer">Maintenance buffer (monthly £)</label>
+            <input id="buffer" inputmode="decimal" value="100" />
+            <div class="hint">Sinking fund gaps, repairs, “surprise” increases.</div>
+          </div>
+        </div>
+
+        <div class="ctaRow" style="margin-top:14px">
+          <button class="btn btnPrimary" type="button" onclick="recalc()">Calculate</button>
+          <button class="btn btnGhost" type="button" onclick="resetDefaults()">Reset</button>
+        </div>
+
+        <div class="results" aria-live="polite">
+          <div class="stat"><div class="k">Safe all-in housing budget</div><div class="v" id="r_budget">—</div></div>
+          <div class="stat"><div class="k">Leasehold costs (monthly)</div><div class="v" id="r_leasehold">—</div></div>
+          <div class="stat"><div class="k">Mortgage payment budget</div><div class="v" id="r_mortgageBudget">—</div></div>
+          <div class="stat"><div class="k">Max mortgage (approx.)</div><div class="v" id="r_maxMortgage">—</div></div>
+          <div class="stat"><div class="k">Max purchase price (mortgage + deposit)</div><div class="v" id="r_maxPrice">—</div></div>
+        </div>
+
+        <div class="hint" style="margin-top:10px">
+          Tip: if you’re comparing two flats, keep everything fixed and only change service charge/ground rent.
+        </div>
+      </aside>
+    </main>
+
+    <section class="section">
+      <div class="sectionTitle"><h3>Pricing</h3><span class="pill">Stripe-ready (not wired)</span></div>
+      <div class="pricing">
+        <div class="plan">
+          <div class="name" style="color:rgba(255,255,255,0.85)">Free</div>
+          <div class="price">£0</div>
+          <div class="hint">Run the calculator. Save 1 scenario locally.</div>
+          <ul>
+            <li>Leasehold-aware budget</li>
+            <li>Stress-test rate toggle</li>
+            <li>Offline / no login</li>
+          </ul>
+          <div class="ctaRow" style="margin-top:12px"><button class="btn btnGhost" type="button" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get updates</button></div>
+        </div>
+        <div class="plan reco">
+          <div class="name">Plus (recommended)</div>
+          <div class="price">£4/mo</div>
+          <div class="hint">For buyers actively viewing flats.</div>
+          <ul>
+            <li>Unlimited saved scenarios</li>
+            <li>Service charge increase projection</li>
+            <li>Export PDF summary for broker</li>
+          </ul>
+          <div class="ctaRow" style="margin-top:12px"><button class="btn btnPrimary" type="button" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join the waitlist</button></div>
+        </div>
+        <div class="plan">
+          <div class="name" style="color:rgba(255,255,255,0.85)">Broker</div>
+          <div class="price">£49/mo</div>
+          <div class="hint">For mortgage brokers / conveyancers.</div>
+          <ul>
+            <li>Client links + scenario sharing</li>
+            <li>White-label exports</li>
+            <li>Referral tracking</li>
+          </ul>
+          <div class="ctaRow" style="margin-top:12px"><button class="btn btnGhost" type="button" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Talk to us</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="waitlist">
+      <div class="sectionTitle"><h3>Get the spreadsheet + updates</h3><span class="pill">Email capture</span></div>
+      <div class="card">
+        <p style="margin:0 0 10px;color:rgba(255,255,255,0.82)">We’re turning this into a sharper UK leasehold toolkit (service charge trends, red-flag rules, export for brokers). Drop your email and we’ll send you a copy when it’s ready.</p>
+        <form onsubmit="return saveEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div style="flex:1;min-width:240px">
+            <label for="email">Email</label>
+            <input id="email" type="email" required placeholder="you@domain.com" />
+          </div>
+          <div>
+            <button class="btn btnPrimary" type="submit">Join waitlist</button>
+          </div>
+          <div id="emailMsg" class="hint" style="flex-basis:100%;margin-top:6px"></div>
+        </form>
+        <p class="hint" style="margin:12px 0 0">No spam. One update when the spreadsheet is ready, then only major releases.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionTitle"><h3>FAQ</h3></div>
+      <div class="faq">
+        <details>
+          <summary>Why use net income instead of gross?</summary>
+          <p>Because your month-to-month cashflow is what gets squeezed by service charge increases. Lenders use gross + stress tests; this tool is for <em>your</em> sanity check.</p>
+        </details>
+        <details>
+          <summary>Does this account for council tax / utilities?</summary>
+          <p>Not yet. We keep it focused on leasehold running costs. In Plus, we’ll add optional council tax + utilities + travel to build a fuller budget.</p>
+        </details>
+        <details>
+          <summary>Is this financial advice?</summary>
+          <p>No. It’s a calculator + rules-of-thumb tool. Always confirm with a broker/lender and read the lease/service charge accounts.</p>
+        </details>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="year"></span> LeaseholdCalc. Built as an MVP for early validation.</div>
+      <div>Disclaimer: estimates only. Rates change; leasehold charges can increase.</div>
+    </footer>
+  </div>
+
+  <script>
+    const fmtGBP = (n) => new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(n);
+    const num = (id) => {
+      const v = String(document.getElementById(id).value || '').replace(/[^0-9.\-]/g,'');
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    // Monthly payment for a fixed-rate mortgage
+    function monthlyPayment(principal, annualRatePct, termYears){
+      const r = (annualRatePct/100)/12;
+      const n = termYears*12;
+      if (principal <= 0) return 0;
+      if (r === 0) return principal / n;
+      return principal * (r*Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
+    }
+
+    // Invert payment->principal via binary search (fast + robust)
+    function principalFromPayment(payment, annualRatePct, termYears){
+      if (payment <= 0) return 0;
+      let lo = 0, hi = 2_000_000; // adjust if needed
+      for (let i=0;i<42;i++){
+        const mid = (lo+hi)/2;
+        const p = monthlyPayment(mid, annualRatePct, termYears);
+        if (p > payment) hi = mid; else lo = mid;
+      }
+      return lo;
+    }
+
+    function recalc(){
+      const netIncome = num('netIncome');
+      const debts = num('debts');
+      const budgetPct = Number(document.getElementById('budgetPct').value);
+      const termYears = Number(document.getElementById('termYears').value);
+      const rate = num('rate');
+      const deposit = num('deposit');
+
+      const serviceCharge = num('serviceCharge');
+      const groundRent = num('groundRent');
+      const insurance = num('insurance');
+      const buffer = num('buffer');
+
+      const housingBudget = Math.max(0, (netIncome * budgetPct) - debts);
+      const leaseholdCosts = Math.max(0, serviceCharge + groundRent + insurance + buffer);
+      const mortgageBudget = Math.max(0, housingBudget - leaseholdCosts);
+
+      const maxMortgage = principalFromPayment(mortgageBudget, rate, termYears);
+      const maxPrice = maxMortgage + Math.max(0, deposit);
+
+      document.getElementById('r_budget').textContent = fmtGBP(housingBudget) + "/mo";
+      document.getElementById('r_leasehold').textContent = fmtGBP(leaseholdCosts) + "/mo";
+      document.getElementById('r_mortgageBudget').textContent = fmtGBP(mortgageBudget) + "/mo";
+      document.getElementById('r_maxMortgage').textContent = fmtGBP(maxMortgage);
+      document.getElementById('r_maxPrice').textContent = fmtGBP(maxPrice);
+
+      // Save last scenario locally
+      try{
+        localStorage.setItem('leaseholdcalc:last', JSON.stringify({netIncome,debts,budgetPct,termYears,rate,deposit,serviceCharge,groundRent,insurance,buffer}));
+      }catch(e){}
+    }
+
+    function resetDefaults(){
+      const defaults = {netIncome:5200,debts:350,rate:4.75,deposit:75000,serviceCharge:250,groundRent:25,insurance:30,buffer:100};
+      for (const [k,v] of Object.entries(defaults)) document.getElementById(k).value = v;
+      document.getElementById('budgetPct').value = '0.33';
+      document.getElementById('termYears').value = '25';
+      recalc();
+    }
+
+    function saveEmail(e){
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('emailMsg');
+      if(!email){ msg.textContent = 'Enter an email.'; return false; }
+      const list = JSON.parse(localStorage.getItem('leaseholdcalc:waitlist')||'[]');
+      if(!list.includes(email)) list.push(email);
+      localStorage.setItem('leaseholdcalc:waitlist', JSON.stringify(list));
+      msg.textContent = 'Saved locally for MVP (no server yet). We’ll wire this to an email provider after validation.';
+      return false;
+    }
+
+    // Load last scenario
+    (function init(){
+      document.getElementById('year').textContent = new Date().getFullYear();
+      try{
+        const last = JSON.parse(localStorage.getItem('leaseholdcalc:last')||'null');
+        if(last){
+          for (const [k,v] of Object.entries(last)){
+            const el = document.getElementById(k);
+            if(el) el.value = v;
+          }
+        }
+      }catch(e){}
+      recalc();
+    })();
+  </script>
+</body>
+</html>
