@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LLM Signal Check — Detect possible ChatGPT/OpenAI usage (MVP)</title>
+  <meta name="description" content="Best-effort detector for LLM vendor signals (OpenAI, Azure OpenAI, Anthropic, Vertex). Paste domains or paste HTML and get a confidence score + evidence." />
+  <meta property="og:title" content="LLM Signal Check" />
+  <meta property="og:description" content="Find likely LLM adoption signals from public web pages. Best-effort MVP." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root{
+      --bg:#FAF5FF; --fg:#0F172A; --card:#FFFFFF; --muted:#F7F3FD; --muted-fg:#64748B;
+      --primary:#7C3AED; --secondary:#6366F1; --accent:#EC4899; --border:#EFE7FC; --danger:#DC2626;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; color:var(--fg);
+      background:radial-gradient(900px 520px at 12% -10%, rgba(124,58,237,0.18), transparent 55%),
+                 radial-gradient(900px 520px at 90% 10%, rgba(236,72,153,0.14), transparent 55%),
+                 var(--bg);
+    }
+    code,kbd,pre,textarea{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px;}
+    header{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0 26px; flex-wrap:wrap}
+    .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit}
+    .logo{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 10px 30px rgba(124,58,237,0.18)}
+    .brand b{font-weight:900; letter-spacing:-0.02em}
+    .pill{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border:1px solid var(--border); border-radius:999px; background:rgba(255,255,255,0.6); color:var(--muted-fg); font-size:13px}
+
+    h1{font-size:44px; line-height:1.05; margin:0 0 10px; letter-spacing:-0.03em}
+    .sub{font-size:18px; line-height:1.45; color:rgba(15,23,42,0.86); margin:0 0 18px}
+
+    .hero{display:grid; grid-template-columns:1.15fr 0.85fr; gap:16px; align-items:start}
+    .card{background:rgba(255,255,255,0.75); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:0 20px 70px rgba(124,58,237,0.10)}
+
+    .ctaRow{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:12px}
+    .btn{appearance:none; border:1px solid transparent; border-radius:14px; padding:12px 14px; font-weight:800; cursor:pointer; letter-spacing:-0.01em;}
+    .btnPrimary{background:linear-gradient(180deg,var(--primary), #5B21B6); color:#fff}
+    .btnGhost{background:rgba(255,255,255,0.62); border-color:var(--border); color:var(--fg)}
+    .btnDanger{background:rgba(220,38,38,0.10); border-color:rgba(220,38,38,0.25); color:#7F1D1D}
+    .btnSmall{padding:8px 10px; border-radius:12px; font-size:13px; font-weight:900}
+    .btn:focus,input:focus,textarea:focus,select:focus{outline:2px solid rgba(124,58,237,0.28); outline-offset:2px}
+
+    label{display:block; font-size:13px; color:rgba(15,23,42,0.9); margin:0 0 6px; font-weight:800}
+    input,textarea,select{width:100%; padding:11px 12px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,0.9); color:var(--fg); font-size:15px}
+    textarea{min-height:160px; font-size:12.5px}
+    .hint{font-size:12px; color:var(--muted-fg); margin-top:6px; line-height:1.35}
+
+    .table{display:grid; gap:10px; margin-top:10px}
+    .row{display:grid; grid-template-columns: 1.1fr 0.5fr 1.4fr; gap:10px; padding:12px; border-radius:16px; border:1px solid var(--border); background:rgba(255,255,255,0.8)}
+    .row b{font-weight:900}
+    .badge{display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:900; border:1px solid var(--border); background:var(--muted); color:var(--muted-fg)}
+    .badge.high{background:rgba(236,72,153,0.12); color:#9D174D; border-color:rgba(236,72,153,0.25)}
+    .badge.mid{background:rgba(124,58,237,0.12); color:#5B21B6; border-color:rgba(124,58,237,0.25)}
+    .badge.low{background:rgba(99,102,241,0.10); color:#3730A3; border-color:rgba(99,102,241,0.22)}
+
+    .pricing{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+    .plan{padding:16px; border-radius:18px; border:1px solid var(--border); background:rgba(255,255,255,0.75)}
+    .plan.reco{border-color:rgba(124,58,237,0.45); box-shadow:0 16px 60px rgba(124,58,237,0.12)}
+    .plan .price{font-size:28px; margin:8px 0 6px}
+    .plan ul{margin:10px 0 0; padding-left:18px; color:rgba(15,23,42,0.86)}
+
+    .modeBox{display:grid; gap:10px; margin:12px 0 0}
+    .modeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .radioPill{display:flex; gap:10px; align-items:center; padding:10px 12px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,0.65)}
+    .radioPill input{width:auto; padding:0; margin:0}
+
+    details{border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,0.65); padding:10px 12px}
+    summary{cursor:pointer; font-weight:900; color:rgba(15,23,42,0.9)}
+
+    footer{margin-top:28px; color:var(--muted-fg); font-size:12px; line-height:1.45}
+
+    @media (max-width: 920px){
+      .hero{grid-template-columns:1fr}
+      h1{font-size:38px}
+      .pricing{grid-template-columns:1fr}
+      .row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="#top" aria-label="LLM Signal Check home">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <b>LLM Signal Check</b>
+          <div style="font-size:12px;color:var(--muted-fg)">Best-effort adoption signals</div>
+        </div>
+      </a>
+      <div class="pill">MVP • Public pages only • No guarantees</div>
+    </header>
+
+    <main id="top" class="hero">
+      <section>
+        <h1>Find companies that likely use <span style="color:var(--primary)">ChatGPT / OpenAI</span> — from public signals.</h1>
+        <p class="sub">This is a lightweight lead-gen helper: scan public HTML for vendor endpoints / SDK strings, then score confidence. If fetch is blocked, use <b>Paste mode</b> (copy page source, paste here, analyze locally).</p>
+
+        <div class="card">
+          <h2 style="margin:0 0 8px;font-size:16px">Lead magnet: the “LLM Signals” checklist</h2>
+          <p style="margin:0;color:rgba(15,23,42,0.86);line-height:1.5">We’re packaging the patterns (SDKs, endpoint domains, JS bundle hints, job-post keywords, privacy-policy strings) into a checklist + weekly watchlist. Join the waitlist to get the first release.</p>
+
+          <div class="pricing" aria-label="pricing">
+            <div class="plan">
+              <div>Free</div>
+              <div class="price">£0</div>
+              <ul>
+                <li>Fetch mode + Paste mode</li>
+                <li>Public HTML signals</li>
+              </ul>
+            </div>
+            <div class="plan reco">
+              <div>Signals Pro (recommended)</div>
+              <div class="price">£49/mo</div>
+              <ul>
+                <li>Bulk lists + exports</li>
+                <li>Job-post monitoring</li>
+                <li>"Recently adopted" heuristics</li>
+              </ul>
+            </div>
+            <div class="plan">
+              <div>Agency</div>
+              <div class="price">£199/mo</div>
+              <ul>
+                <li>Team accounts</li>
+                <li>CRM enrichment</li>
+                <li>API</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" aria-label="checker">
+        <h2 style="margin:0 0 10px;font-size:16px">Check signals</h2>
+
+        <div class="modeBox" aria-label="mode select">
+          <div class="modeRow">
+            <label style="margin:0; min-width:100%">Mode</label>
+            <div class="radioPill">
+              <input id="modeFetch" name="mode" type="radio" value="fetch" checked onchange="renderMode()" />
+              <div>
+                <div style="font-weight:900">Fetch mode</div>
+                <div class="hint" style="margin:2px 0 0">Enter domains; we fetch via <code>r.jina.ai</code> proxy.</div>
+              </div>
+            </div>
+            <div class="radioPill">
+              <input id="modePaste" name="mode" type="radio" value="paste" onchange="renderMode()" />
+              <div>
+                <div style="font-weight:900">Paste mode (fallback)</div>
+                <div class="hint" style="margin:2px 0 0">Paste HTML/JS/text directly; analyze locally (no fetch).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="panelFetch" style="margin-top:12px">
+          <label for="domains">Domains (one per line)</label>
+          <textarea id="domains" placeholder="example.com\ncompany.co.uk\napp.example"></textarea>
+          <div class="hint">Some sites block the proxy; if you see “fetch blocked”, switch to <b>Paste mode</b> and paste the page source.</div>
+
+          <div class="ctaRow">
+            <button class="btn btnPrimary" type="button" onclick="runBulk()">Run check</button>
+            <button class="btn btnGhost" type="button" onclick="fillDemo()">Demo list</button>
+          </div>
+        </div>
+
+        <div id="panelPaste" style="margin-top:12px; display:none">
+          <div style="display:grid; gap:10px">
+            <div>
+              <label for="pasteLabel">Label (domain/company name)</label>
+              <input id="pasteLabel" placeholder="example.com" />
+              <div class="hint">Optional, but it keeps your results readable.</div>
+            </div>
+            <div>
+              <label for="pasteText">Paste HTML / JS bundle / privacy-policy text</label>
+              <textarea id="pasteText" placeholder="Paste page source here…"></textarea>
+              <div class="hint">Tip: open the site → View Source (or DevTools → Network → Response) → copy body → paste here.</div>
+            </div>
+          </div>
+
+          <div class="ctaRow">
+            <button class="btn btnPrimary" type="button" onclick="runPaste()">Analyze paste</button>
+            <button class="btn btnGhost" type="button" onclick="fillPasteDemo()">Demo paste</button>
+            <button class="btn btnDanger btnSmall" type="button" onclick="clearPaste()">Clear paste</button>
+          </div>
+        </div>
+
+        <div class="ctaRow" style="margin-top:10px">
+          <button class="btn btnGhost btnSmall" type="button" onclick="downloadCSV()">Export last results (CSV)</button>
+          <button class="btn btnGhost btnSmall" type="button" onclick="copySummary()">Copy summary</button>
+          <button class="btn btnGhost btnSmall" type="button" onclick="clearResults()">Clear results</button>
+        </div>
+
+        <div id="status" class="hint" aria-live="polite"></div>
+        <div id="out" class="table" aria-label="output"></div>
+
+        <details style="margin-top:12px">
+          <summary>What signals are we looking for?</summary>
+          <div class="hint" style="margin-top:8px">
+            We search for best-effort strings like:
+            <ul style="margin:8px 0 0; padding-left:18px">
+              <li><b>Vendor endpoints</b>: <code>api.openai.com</code>, <code>*.openai.azure.com</code>, <code>api.anthropic.com</code>, Vertex AI endpoints</li>
+              <li><b>SDK strings</b>: <code>@vercel/ai</code>, <code>openai-sdk</code>, <code>langchain</code></li>
+              <li><b>Model names</b>: <code>gpt-4</code>, <code>gpt-3.5</code>, <code>claude-*</code></li>
+            </ul>
+            This does <b>not</b> prove usage — treat it as a prioritization hint.
+          </div>
+        </details>
+
+        <div class="card" style="margin-top:12px;background:rgba(255,255,255,0.65)">
+          <h2 style="margin:0 0 8px;font-size:14px">Waitlist</h2>
+          <p style="margin:0 0 10px;color:rgba(15,23,42,0.86)">If this is useful, drop an email (saved locally in MVP).</p>
+          <form onsubmit="return saveEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:220px">
+              <label for="email">Email</label>
+              <input id="email" type="email" required placeholder="you@company.com" />
+            </div>
+            <div><button class="btn btnPrimary" type="submit">Join</button></div>
+            <div id="emailMsg" class="hint" style="flex-basis:100%"></div>
+          </form>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> LLM Signal Check. Best-effort signals; confirm manually.</div>
+    </footer>
+  </div>
+
+  <script>
+    // --- Detection rules (best-effort heuristics) ---
+    const detectors = [
+      {vendor:'OpenAI', weight:4, re:/api\.openai\.com|openai\.com\/v1|openai\-sdk|\bgpt\-4\b|\bgpt\-3\.5\b|\bchatgpt\b/ig},
+      {vendor:'Azure OpenAI', weight:4, re:/\.openai\.azure\.com|openai\.azure\.com/ig},
+      {vendor:'Anthropic', weight:4, re:/api\.anthropic\.com|\bclaude\-\w+/ig},
+      {vendor:'Google Vertex AI', weight:3, re:/aiplatform\.googleapis\.com|\bvertex\s*ai\b|\bvertexai\b/ig},
+      {vendor:'LangChain', weight:2, re:/\blangchain\b/ig},
+      {vendor:'Vercel AI SDK', weight:2, re:/ai\.vercel\.com|@vercel\/ai/ig}
+    ];
+
+    let lastResults = [];
+
+    function currentMode(){
+      return document.querySelector('input[name="mode"]:checked')?.value || 'fetch';
+    }
+
+    function renderMode(){
+      const mode = currentMode();
+      document.getElementById('panelFetch').style.display = mode === 'fetch' ? '' : 'none';
+      document.getElementById('panelPaste').style.display = mode === 'paste' ? '' : 'none';
+      setStatus(mode === 'paste' ? 'Paste mode ready.' : '');
+    }
+
+    function setStatus(s){
+      document.getElementById('status').textContent = s || '';
+    }
+
+    function badgeFor(score){
+      if(score>=70) return 'high';
+      if(score>=40) return 'mid';
+      return 'low';
+    }
+
+    function scoreFromHits(hits){
+      const total = hits.reduce((a,h)=>a+h.weight,0);
+      return Math.round(100*(1 - Math.exp(-total/6)));
+    }
+
+    async function fetchViaProxy(domain){
+      const d = (domain||'').replace(/^https?:\/\//,'').trim().replace(/\/$/,'');
+      if(!d) throw new Error('empty domain');
+      const url = 'https://r.jina.ai/https://' + d;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('fetch ' + res.status);
+      return await res.text();
+    }
+
+    function scanText(text){
+      const hits=[];
+      const t = String(text||'');
+      for(const d of detectors){
+        const m = t.match(d.re);
+        if(m && m.length){
+          hits.push({vendor:d.vendor, weight:d.weight, sample:m[0]});
+        }
+      }
+      return hits;
+    }
+
+    function escapeHtml(s){
+      return (s||'').replace(/[&<>\"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+
+    function addResult(r){
+      lastResults.push(r);
+      renderRow(r);
+    }
+
+    function renderRow(r){
+      const out = document.getElementById('out');
+      const level = badgeFor(r.score);
+      const note = r.note || (r.hits?.length ? r.hits.map(h=>`${h.vendor}: ${h.sample}`).join(' • ') : 'No obvious public signals found.');
+
+      const extra = r.mode === 'fetch' && r.fetchBlocked
+        ? `<div class="hint" style="margin-top:6px">Fetch blocked. Try <button class="btn btnGhost btnSmall" type="button" onclick="switchToPaste('${escapeHtml(r.label||'')}')">Paste mode</button> and paste page source.</div>`
+        : '';
+
+      out.insertAdjacentHTML('beforeend', `
+        <div class="row">
+          <div>
+            <b>${escapeHtml(r.label||'(unnamed)')}</b>
+            <div class="hint">${escapeHtml(r.mode === 'paste' ? 'Paste mode (local scan)' : 'Fetch mode (public HTML scan)')}</div>
+            ${extra}
+          </div>
+          <div><span class="badge ${level}">${r.score}/100</span></div>
+          <div style="color:rgba(15,23,42,0.86);line-height:1.4">${escapeHtml(note)}</div>
+        </div>
+      `);
+    }
+
+    async function runBulk(){
+      const out = document.getElementById('out');
+      out.innerHTML='';
+      lastResults = [];
+
+      const domains = document.getElementById('domains').value
+        .split(/\r?\n/).map(s=>s.trim()).filter(Boolean)
+        .slice(0, 15);
+
+      if(!domains.length){
+        setStatus('Paste at least one domain.');
+        return;
+      }
+
+      setStatus(`Checking ${domains.length} domain(s)…`);
+
+      for (let i=0;i<domains.length;i++){
+        const domain = domains[i];
+        setStatus(`Checking ${i+1}/${domains.length}: ${domain}`);
+
+        let hits=[], score=0, note='', fetchBlocked=false;
+        try{
+          const html = await fetchViaProxy(domain);
+          hits = scanText(html);
+          score = scoreFromHits(hits);
+          note = hits.length ? hits.map(h=>`${h.vendor}: ${h.sample}`).join(' • ') : 'No obvious public signals found.';
+        }catch(e){
+          fetchBlocked = true;
+          score = 0;
+          note = 'Unknown (fetch blocked). Use Paste mode to analyze page source locally.';
+        }
+
+        addResult({mode:'fetch', label: domain, score, hits, note, fetchBlocked});
+      }
+
+      setStatus('Done.');
+    }
+
+    function runPaste(){
+      const out = document.getElementById('out');
+      out.innerHTML='';
+      lastResults = [];
+
+      const label = (document.getElementById('pasteLabel').value || '').trim() || 'Pasted page';
+      const text = (document.getElementById('pasteText').value || '').trim();
+      if(!text){
+        setStatus('Paste some HTML/JS/text to analyze.');
+        return;
+      }
+
+      setStatus('Analyzing paste…');
+      const hits = scanText(text);
+      const score = scoreFromHits(hits);
+      const note = hits.length ? hits.map(h=>`${h.vendor}: ${h.sample}`).join(' • ') : 'No obvious signals found in pasted text.';
+
+      addResult({mode:'paste', label, score, hits, note});
+      setStatus('Done.');
+    }
+
+    function fillDemo(){
+      document.getElementById('domains').value = 'openai.com\nvercel.com\nstripe.com';
+    }
+
+    function fillPasteDemo(){
+      document.getElementById('pasteLabel').value = 'demo.example';
+      document.getElementById('pasteText').value = [
+        '<html><head>',
+        '<script src="/assets/app.js"></script>',
+        '</head><body>',
+        '<!-- calling api.openai.com/v1/chat/completions -->',
+        'This site uses @vercel/ai and langchain somewhere in the bundle.',
+        '</body></html>'
+      ].join('\n');
+    }
+
+    function clearPaste(){
+      document.getElementById('pasteText').value = '';
+      setStatus('Paste cleared.');
+    }
+
+    function clearResults(){
+      document.getElementById('out').innerHTML = '';
+      lastResults = [];
+      setStatus('Results cleared.');
+    }
+
+    function downloadCSV(){
+      if(!lastResults.length){
+        setStatus('No results to export yet.');
+        return;
+      }
+      const rows = [['label','mode','score','vendors','evidence']];
+      for(const r of lastResults){
+        const vendors = (r.hits||[]).map(h=>h.vendor).join('|');
+        const evidence = (r.hits||[]).map(h=>`${h.vendor}:${h.sample}`).join(' | ');
+        rows.push([r.label||'', r.mode||'', String(r.score??''), vendors, evidence]);
+      }
+      const csv = rows.map(r=>r.map(cell=>{
+        const s = String(cell??'');
+        return /[\n\r,\"]/g.test(s) ? '"' + s.replace(/\"/g,'""') + '"' : s;
+      }).join(',')).join('\n');
+
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'llm-signal-check-results.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setStatus('CSV downloaded.');
+    }
+
+    function copySummary(){
+      if(!lastResults.length){
+        setStatus('No results to copy yet.');
+        return;
+      }
+      const lines = lastResults.map(r=>{
+        const vendors = (r.hits||[]).map(h=>h.vendor).join(', ') || 'none';
+        return `${r.label} — ${r.score}/100 — vendors: ${vendors}`;
+      });
+      const text = lines.join('\n');
+      navigator.clipboard?.writeText(text).then(
+        ()=>setStatus('Summary copied to clipboard.'),
+        ()=>setStatus('Could not access clipboard; copy manually from the page.')
+      );
+    }
+
+    function switchToPaste(label){
+      document.getElementById('modePaste').checked = true;
+      renderMode();
+      if(label) document.getElementById('pasteLabel').value = label;
+      document.getElementById('pasteText').focus();
+    }
+
+    function saveEmail(e){
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('emailMsg');
+      const list = JSON.parse(localStorage.getItem('llmsignal:waitlist')||'[]');
+      if(!list.includes(email)) list.push(email);
+      localStorage.setItem('llmsignal:waitlist', JSON.stringify(list));
+      msg.textContent = 'Saved locally for MVP. Wire to email provider after validation.';
+      return false;
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+    renderMode();
+  </script>
+</body>
+</html>
