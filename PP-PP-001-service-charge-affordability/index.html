@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ServiceChargeSense — UK mortgage affordability with service charges</title>
+  <meta name="description" content="UK affordability calculator that includes leasehold service charges, ground rent, and stamp duty—so you don’t get surprised after offer accepted." />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="ServiceChargeSense" />
+  <meta property="og:description" content="Mortgage affordability that actually includes leasehold service charges." />
+
+  <style>
+    :root{
+      --bg:#1C1917;
+      --fg:#FFFFFF;
+      --muted-fg:#94A3B8;
+      --card:#262321;
+      --border:rgba(255,255,255,0.08);
+      --primary:#EA580C;
+      --primary-2:#F97316;
+      --accent:#2563EB;
+      --danger:#DC2626;
+      --shadow: 0 12px 30px rgba(0,0,0,0.35);
+
+      --radius:16px;
+      --radius-sm:12px;
+
+      --max:1100px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--fg);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(234,88,12,0.22), rgba(0,0,0,0)),
+        radial-gradient(1000px 500px at 90% 10%, rgba(37,99,235,0.20), rgba(0,0,0,0)),
+        var(--bg);
+      line-height:1.5;
+    }
+
+    a{ color:inherit; }
+
+    .container{ max-width:var(--max); margin:0 auto; padding:24px; }
+
+    header{
+      position:sticky;
+      top:0;
+      backdrop-filter:saturate(1.2) blur(10px);
+      background:rgba(28,25,23,0.72);
+      border-bottom:1px solid var(--border);
+      z-index:50;
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:14px 24px;
+      max-width:var(--max);
+      margin:0 auto;
+    }
+
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .logo{
+      width:34px;height:34px;border-radius:10px;
+      background:linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow:0 8px 20px rgba(0,0,0,0.35);
+    }
+    .brand strong{ font-weight:800; letter-spacing:0.2px; }
+
+    .pill{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      padding:6px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      color:var(--muted-fg);
+      background:rgba(255,255,255,0.03);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .cta{ display:flex; gap:10px; align-items:center; }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.04);
+      color:var(--fg);
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+      text-decoration:none;
+      display:inline-flex;
+      justify-content:center;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.16); }
+    .btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(234,88,12,0.35); }
+
+    .btn-primary{
+      background:linear-gradient(135deg, var(--primary), var(--primary-2));
+      border-color:rgba(234,88,12,0.45);
+    }
+
+    main{ padding:26px 0 60px; }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap:22px;
+      align-items:start;
+      padding:20px 0 10px;
+    }
+
+    @media (max-width: 920px){
+      .hero{ grid-template-columns: 1fr; }
+      header{ position:static; }
+      .cta{ flex-wrap:wrap; justify-content:flex-end; }
+    }
+
+    h1{
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      font-size:42px;
+      line-height:1.08;
+      margin:0 0 10px;
+      letter-spacing:0.2px;
+    }
+
+    .lede{ color:rgba(255,255,255,0.84); font-size:18px; margin:0 0 16px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 740px){
+      .grid{ grid-template-columns: 1fr; }
+      h1{ font-size:36px; }
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow);
+    }
+    .card-inner{ padding:16px; }
+
+    .section-title{
+      margin:0 0 10px;
+      font-size:14px;
+      color:var(--muted-fg);
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    label{ display:block; font-weight:700; margin:0 0 6px; }
+    .hint{ font-size:12px; color:var(--muted-fg); margin:6px 0 0; }
+
+    input, select, textarea{
+      width:100%;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(0,0,0,0.20);
+      padding:10px 12px;
+      color:var(--fg);
+      outline:none;
+    }
+    textarea{ min-height:84px; resize:vertical; }
+    input:focus, select:focus, textarea:focus{ box-shadow:0 0 0 3px rgba(37,99,235,0.25); border-color:rgba(37,99,235,0.45); }
+
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .kpi .stat{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,0.03);
+    }
+    .stat .label{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:11px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      color:var(--muted-fg);
+      margin-bottom:6px;
+    }
+    .stat .value{ font-size:20px; font-weight:900; }
+    .stat .sub{ font-size:12px; color:rgba(255,255,255,0.70); margin-top:4px; }
+
+    .callout{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      border:1px dashed rgba(234,88,12,0.45);
+      background:rgba(234,88,12,0.10);
+      color:rgba(255,255,255,0.92);
+    }
+
+    details{
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: rgba(255,255,255,0.03);
+      padding:10px 12px;
+    }
+    details summary{ cursor:pointer; font-weight:800; }
+
+    .pricing{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){ .pricing{ grid-template-columns:1fr; } }
+
+    .plan{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:16px;
+      background:rgba(255,255,255,0.03);
+    }
+    .plan.recommended{ border-color: rgba(234,88,12,0.55); box-shadow:0 12px 30px rgba(234,88,12,0.12); }
+    .plan h3{ margin:0 0 6px; }
+    .price{ font-size:28px; font-weight:900; margin:6px 0 10px; }
+    ul{ padding-left:18px; margin:10px 0 0; color:rgba(255,255,255,0.86); }
+
+    footer{ border-top:1px solid var(--border); color:var(--muted-fg); padding:18px 0 0; margin-top:28px; font-size:12px; }
+
+    .sr-only{ position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
+
+    .toast{ position:fixed; left:24px; bottom:24px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:rgba(0,0,0,0.55); color:rgba(255,255,255,0.92); display:none; max-width:min(520px, calc(100vw - 48px)); }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(0,0,0,0.18);
+      font-size:12px;
+      color:rgba(255,255,255,0.80);
+    }
+
+    @media print{
+      header, .cta, #pricing, #waitlist, .toast { display:none !important; }
+      body{ background:#fff !important; color:#111 !important; }
+      .card, .plan, details{ box-shadow:none !important; background:#fff !important; border-color:#ddd !important; }
+      input, select, textarea, .btn{ display:none !important; }
+      a{ text-decoration:none; color:#111; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav" role="navigation" aria-label="Primary">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>ServiceChargeSense</strong>
+          <div class="pill">UK leasehold reality check</div>
+        </div>
+      </div>
+      <div class="cta">
+        <a class="btn" href="#pricing">Pricing</a>
+        <a class="btn" href="#calculator">Calculator</a>
+        <a class="btn btn-primary" href="#waitlist">Join waitlist</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" aria-label="Hero">
+      <div>
+        <h1>Mortgage affordability that actually includes <span style="color:var(--primary)">service charges</span>.</h1>
+        <p class="lede">Leasehold flats have a hidden second bill: service charge + ground rent (and sometimes major works). This tool shows the <em>real</em> monthly housing cost in under a minute — plus a stress test so you’re not blindsided later.</p>
+
+        <div class="card" id="calculator">
+          <div class="card-inner">
+            <p class="section-title">Calculator</p>
+
+            <div class="grid">
+              <div>
+                <label for="price">Property price (£)</label>
+                <input id="price" inputmode="numeric" value="450000" />
+              </div>
+              <div>
+                <label for="deposit">Deposit (%)</label>
+                <input id="deposit" inputmode="decimal" value="15" />
+              </div>
+              <div>
+                <label for="rate">Interest rate (% APR)</label>
+                <input id="rate" inputmode="decimal" value="5.25" />
+              </div>
+              <div>
+                <label for="term">Term (years)</label>
+                <input id="term" inputmode="numeric" value="30" />
+              </div>
+
+              <div>
+                <label for="serviceAmount">Service charge amount (£)</label>
+                <input id="serviceAmount" inputmode="numeric" value="220" />
+                <p class="hint">Prefer the latest annual budget / accounts if you can get them.</p>
+              </div>
+              <div>
+                <label for="serviceFreq">Service charge frequency</label>
+                <select id="serviceFreq">
+                  <option value="monthly">Monthly</option>
+                  <option value="annual">Annual</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="ground">Ground rent (annual £)</label>
+                <input id="ground" inputmode="numeric" value="250" />
+              </div>
+              <div>
+                <label for="insurance">Building insurance (monthly £)</label>
+                <input id="insurance" inputmode="numeric" value="0" />
+                <p class="hint">Often included in service charge. If unknown, leave 0.</p>
+              </div>
+
+              <div>
+                <label for="majorWorksMonthly">Major works allowance (monthly £)</label>
+                <input id="majorWorksMonthly" inputmode="numeric" value="0" />
+                <p class="hint">If there’s a Section 20 notice / planned roof lift, add a rough monthly allowance.</p>
+              </div>
+              <div>
+                <label for="buyerType">Buyer type (England/NI SDLT)</label>
+                <select id="buyerType">
+                  <option value="first">First-time buyer</option>
+                  <option value="moving">Moving home</option>
+                  <option value="investor">Additional property / investor</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="budget">Your max monthly housing budget (£)</label>
+                <input id="budget" inputmode="numeric" value="" placeholder="Optional" />
+                <p class="hint">Used to show headroom/overage. Leave blank if not sure.</p>
+              </div>
+              <div>
+                <label for="notes">Notes (private, local)</label>
+                <textarea id="notes" placeholder="E.g. 'Agent said service charge going up', 'Lift replacement mentioned'..."></textarea>
+                <p class="hint">Stored only in your browser when you export/copy a report (not sent anywhere).</p>
+              </div>
+            </div>
+
+            <details style="margin-top:14px;">
+              <summary>Stress test (optional)</summary>
+              <div class="grid" style="margin-top:12px;">
+                <div>
+                  <label for="rateShock">Interest rate shock (+pp)</label>
+                  <input id="rateShock" inputmode="decimal" value="1.5" />
+                  <p class="hint">Example: 5.25% → 6.75% is +1.5.</p>
+                </div>
+                <div>
+                  <label for="serviceShockPct">Service charge increase (%)</label>
+                  <input id="serviceShockPct" inputmode="decimal" value="10" />
+                  <p class="hint">Example: +10% next year. Ground rent unchanged (simplified).</p>
+                </div>
+              </div>
+            </details>
+
+            <div class="row" style="margin-top:14px;">
+              <button class="btn btn-primary" id="calc">Calculate</button>
+              <button class="btn" id="share">Copy share link</button>
+              <button class="btn" id="copyReport">Copy buyer report</button>
+              <button class="btn" id="downloadReport">Download report (.txt)</button>
+              <button class="btn" id="printReport">Print</button>
+              <span class="pill" id="assumptions">Assumes repayment mortgage</span>
+            </div>
+            <div class="callout" id="warning" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="card" aria-label="Results">
+        <div class="card-inner">
+          <p class="section-title">Results</p>
+
+          <div class="row" style="margin:-2px 0 12px;">
+            <span class="tag" id="shareableTag">Shareable URL enabled</span>
+            <span class="tag" id="offlineTag">No external dependencies</span>
+          </div>
+
+          <div class="kpi">
+            <div class="stat">
+              <div class="label">Monthly mortgage</div>
+              <div class="value" id="mortgageOut">—</div>
+              <div class="sub" id="loanOut">Loan: —</div>
+            </div>
+            <div class="stat">
+              <div class="label">Monthly non-mortgage</div>
+              <div class="value" id="nonMortgageOut">—</div>
+              <div class="sub" id="nonMortgageDetail">—</div>
+            </div>
+            <div class="stat">
+              <div class="label">Total monthly housing</div>
+              <div class="value" id="totalOut">—</div>
+              <div class="sub" id="budgetOut">Budget: —</div>
+            </div>
+            <div class="stat">
+              <div class="label">Stress-test total monthly</div>
+              <div class="value" id="stressOut">—</div>
+              <div class="sub" id="stressDetail">—</div>
+            </div>
+            <div class="stat">
+              <div class="label">Annual all-in (base)</div>
+              <div class="value" id="annualOut">—</div>
+              <div class="sub" id="serviceShareOut">Service charge share: —</div>
+            </div>
+            <div class="stat">
+              <div class="label">Stamp duty estimate</div>
+              <div class="value" id="sdltOut">—</div>
+              <div class="sub" id="sdltNote">England/NI simplified</div>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top:14px; border-color: rgba(37,99,235,0.45); background: rgba(37,99,235,0.12)">
+            <strong>Ask for:</strong> last 3 years of service charge accounts + the current budget + any Section 20 notices.
+          </div>
+
+          <details style="margin-top:12px;">
+            <summary>Leasehold red‑flag checklist (tick as you go)</summary>
+            <div style="margin-top:10px; color:rgba(255,255,255,0.88)">
+              <label style="display:flex; gap:10px; align-items:flex-start; font-weight:600"><input type="checkbox" id="rf1" style="width:auto; margin-top:4px"> Service charge accounts provided (3 years) and you understand the big line items.</label>
+              <label style="display:flex; gap:10px; align-items:flex-start; font-weight:600"><input type="checkbox" id="rf2" style="width:auto; margin-top:4px"> Major works / Section 20 notices disclosed (or explicitly confirmed none pending).</label>
+              <label style="display:flex; gap:10px; align-items:flex-start; font-weight:600"><input type="checkbox" id="rf3" style="width:auto; margin-top:4px"> Any arrears / disputes / tribunal history disclosed (or explicitly confirmed none).</label>
+              <label style="display:flex; gap:10px; align-items:flex-start; font-weight:600"><input type="checkbox" id="rf4" style="width:auto; margin-top:4px"> Ground rent terms checked (doubling clauses / review schedule).</label>
+              <label style="display:flex; gap:10px; align-items:flex-start; font-weight:600"><input type="checkbox" id="rf5" style="width:auto; margin-top:4px"> Building insurance included? Excess levels reasonable? (If separate, you’ve costed it.)</label>
+              <div class="row" style="margin-top:10px;">
+                <button class="btn" id="copyChecklist">Copy checklist</button>
+              </div>
+            </div>
+          </details>
+
+          <div class="callout" style="margin-top:12px; border-color: rgba(255,255,255,0.16); background: rgba(255,255,255,0.03)">
+            <strong>Disclaimer:</strong> This is a planning tool, not financial advice. SDLT bands change; double-check before exchange.
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="pricing" style="margin-top:18px;">
+      <h2 style="margin:0 0 10px; font-size:30px;">Pricing</h2>
+      <p style="margin:0 0 14px; color:rgba(255,255,255,0.82)">Free calculator today. Paid plans fund accurate UK rule updates + exportable reports for buyers and RTM directors.</p>
+
+      <div class="pricing" role="list">
+        <div class="plan" role="listitem">
+          <h3>Free</h3>
+          <div class="price">£0</div>
+          <button class="btn" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">Use calculator</button>
+          <ul>
+            <li>Monthly cost breakdown</li>
+            <li>Stress test (+rate / +service charge)</li>
+            <li>Shareable link + report export (text)</li>
+          </ul>
+        </div>
+
+        <div class="plan recommended" role="listitem" aria-label="Recommended plan">
+          <h3>Buyer Report</h3>
+          <div class="price">£25</div>
+          <button class="btn btn-primary" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Pre-order (Stripe-ready)</button>
+          <ul>
+            <li>PDF-style summary (server-generated) for broker/solicitor</li>
+            <li>Service charge red-flag checklist + document request pack</li>
+            <li>Saved scenarios &amp; comparisons across properties</li>
+          </ul>
+        </div>
+
+        <div class="plan" role="listitem">
+          <h3>Pro (RTM / Directors)</h3>
+          <div class="price">£59/mo</div>
+          <button class="btn" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Request access</button>
+          <ul>
+            <li>Benchmarking pack templates</li>
+            <li>Export for annual budget comms</li>
+            <li>Section 20 planning checklist</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" style="margin-top:22px;">
+      <div class="card">
+        <div class="card-inner">
+          <p class="section-title">Waitlist</p>
+          <h2 style="margin:0 0 6px; font-size:28px;">Want the proper PDF export + UK rule updates?</h2>
+          <p style="margin:0 0 12px; color:rgba(255,255,255,0.82)">Drop your email. We’ll only email when there’s something useful (no newsletter spam).</p>
+          <form id="waitlistForm" class="row" style="align-items:stretch;">
+            <label class="sr-only" for="email">Email</label>
+            <input id="email" type="email" placeholder="you@domain.com" required style="flex:1; min-width:220px;" />
+            <button class="btn btn-primary" type="submit">Join</button>
+          </form>
+          <p class="hint" id="waitlistMsg" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="year"></span> ServiceChargeSense. Built for UK leasehold buyers. <span class="pill" style="margin-left:10px;">Offline-friendly</span></div>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const fmtGBP0 = (n) => {
+      const num = Number(n);
+      if (!isFinite(num)) return '—';
+      return num.toLocaleString('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0});
+    };
+
+    const fmtGBP2 = (n) => {
+      const num = Number(n);
+      if (!isFinite(num)) return '—';
+      return num.toLocaleString('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:2,maximumFractionDigits:2});
+    };
+
+    function monthlyPayment(principal, annualRatePct, years){
+      const r = (annualRatePct/100)/12;
+      const n = years*12;
+      if (r === 0) return principal/n;
+      return principal * (r * Math.pow(1+r, n)) / (Math.pow(1+r, n) - 1);
+    }
+
+    // England/NI SDLT baseline bands.
+    // NOTE: Simplified; for production, swap to a maintained library.
+    function calcSDLT_EnglandNI(price, buyerType){
+      const p = Math.max(0, price);
+
+      // Standard rates
+      const bandsStandard = [
+        [0, 250000, 0.00],
+        [250000, 925000, 0.05],
+        [925000, 1500000, 0.10],
+        [1500000, Infinity, 0.12],
+      ];
+
+      // First-time buyer relief (simplified)
+      // (If price > 625k, treat as standard)
+      const bandsFTB = [
+        [0, 425000, 0.00],
+        [425000, 625000, 0.05],
+        [625000, Infinity, 0.05], // overridden by rule below
+      ];
+
+      const surcharge = (buyerType === 'investor') ? 0.03 : 0.00;
+
+      let bands = bandsStandard;
+      let note = '';
+      if (buyerType === 'first'){
+        if (p <= 625000){
+          bands = bandsFTB;
+        } else {
+          bands = bandsStandard;
+          note = 'FTB relief not applied (over £625k in this simplified model).';
+        }
+      }
+
+      let tax = 0;
+      for (const [start, end, rate] of bands){
+        const amt = Math.max(0, Math.min(p, end) - start);
+        if (amt <= 0) continue;
+        tax += amt * (rate + surcharge);
+      }
+
+      return { tax, note };
+    }
+
+    function readNumber(id){
+      const el = document.getElementById(id);
+      const v = (el.value||'').toString().replace(/,/g,'').trim();
+      if (v === '') return NaN;
+      const n = Number(v);
+      return isFinite(n) ? n : NaN;
+    }
+
+    function setToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=>{ t.style.display = 'none'; }, 2100);
+    }
+
+    async function copyText(text){
+      // Clipboard API can fail in file:// contexts. Provide a fallback.
+      try{
+        if (navigator.clipboard && window.isSecureContext){
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      }catch{}
+      try{
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok;
+      }catch{ return false; }
+    }
+
+    function compute(){
+      const price = readNumber('price');
+      const depositPct = readNumber('deposit');
+      const rate = readNumber('rate');
+      const term = readNumber('term');
+
+      const serviceAmount = readNumber('serviceAmount');
+      const serviceFreq = document.getElementById('serviceFreq').value;
+
+      const ground = readNumber('ground');
+      const insurance = readNumber('insurance');
+      const majorWorksMonthly = readNumber('majorWorksMonthly');
+
+      const buyerType = document.getElementById('buyerType').value;
+      const budget = readNumber('budget');
+
+      const rateShock = readNumber('rateShock');
+      const serviceShockPct = readNumber('serviceShockPct');
+
+      const warning = document.getElementById('warning');
+      warning.style.display = 'none';
+      warning.textContent = '';
+
+      const issues = [];
+      if (!isFinite(price) || price <= 0) issues.push('Enter a valid property price.');
+      if (!isFinite(depositPct) || depositPct < 0 || depositPct > 100) issues.push('Deposit % must be between 0 and 100.');
+      if (!isFinite(rate) || rate < 0 || rate > 25) issues.push('Interest rate looks off.');
+      if (!isFinite(term) || term < 1 || term > 50) issues.push('Term must be 1–50 years.');
+      if (!isFinite(serviceAmount) || serviceAmount < 0) issues.push('Service charge must be 0 or more.');
+      if (!isFinite(ground) || ground < 0) issues.push('Ground rent must be 0 or more.');
+      if (!isFinite(insurance) || insurance < 0) issues.push('Insurance must be 0 or more.');
+      if (isFinite(majorWorksMonthly) && majorWorksMonthly < 0) issues.push('Major works allowance must be 0 or more.');
+      if (isFinite(budget) && budget < 0) issues.push('Budget must be 0 or more.');
+      if (isFinite(rateShock) && (rateShock < 0 || rateShock > 15)) issues.push('Rate shock looks off.');
+      if (isFinite(serviceShockPct) && (serviceShockPct < 0 || serviceShockPct > 200)) issues.push('Service charge increase looks off.');
+
+      if (issues.length){
+        warning.style.display = 'block';
+        warning.style.borderColor = 'rgba(220,38,38,0.55)';
+        warning.style.background = 'rgba(220,38,38,0.12)';
+        warning.innerHTML = '<strong>Fix:</strong> ' + issues.join(' ');
+        return null;
+      }
+
+      const deposit = price * (depositPct/100);
+      const loan = Math.max(0, price - deposit);
+      const mort = monthlyPayment(loan, rate, term);
+
+      const serviceMonthly = (serviceFreq === 'annual') ? (serviceAmount/12) : serviceAmount;
+      const nonMort = (serviceMonthly||0) + (insurance||0) + (ground||0)/12 + (majorWorksMonthly||0);
+      const total = mort + nonMort;
+
+      const stressRate = rate + (isFinite(rateShock) ? rateShock : 0);
+      const stressServiceMonthly = serviceMonthly * (1 + (isFinite(serviceShockPct) ? serviceShockPct : 0)/100);
+      const stressMort = monthlyPayment(loan, stressRate, term);
+      const stressNonMort = (stressServiceMonthly||0) + (insurance||0) + (ground||0)/12 + (majorWorksMonthly||0);
+      const stressTotal = stressMort + stressNonMort;
+
+      const sdlt = calcSDLT_EnglandNI(price, buyerType);
+
+      const annualAllIn = total * 12;
+      const serviceShare = (total > 0) ? (serviceMonthly / total) : 0;
+
+      return {
+        inputs: {
+          price, depositPct, rate, term,
+          serviceAmount, serviceFreq,
+          serviceMonthly,
+          ground, insurance, majorWorksMonthly,
+          buyerType,
+          budget,
+          rateShock, serviceShockPct,
+        },
+        base: { deposit, loan, mort, nonMort, total, annualAllIn, serviceShare },
+        stress: { stressRate, stressServiceMonthly, stressMort, stressNonMort, stressTotal },
+        sdlt,
+      };
+    }
+
+    function updateUI(model){
+      if (!model) return;
+
+      const { inputs, base, stress, sdlt } = model;
+
+      document.getElementById('mortgageOut').textContent = fmtGBP0(base.mort);
+      document.getElementById('loanOut').textContent = `Loan: ${fmtGBP0(base.loan)} (deposit ${fmtGBP0(base.deposit)})`;
+
+      document.getElementById('nonMortgageOut').textContent = fmtGBP0(base.nonMort);
+      const nonParts = [
+        `service ${fmtGBP0(inputs.serviceMonthly)}/mo`,
+        `ground ${fmtGBP0((inputs.ground||0)/12)}/mo`,
+        `insurance ${fmtGBP0(inputs.insurance||0)}/mo`,
+        `major works ${fmtGBP0(inputs.majorWorksMonthly||0)}/mo`,
+      ];
+      document.getElementById('nonMortgageDetail').textContent = nonParts.join(' · ');
+
+      document.getElementById('totalOut').textContent = fmtGBP0(base.total);
+
+      if (isFinite(inputs.budget)){
+        const delta = inputs.budget - base.total;
+        const sign = delta >= 0 ? 'headroom' : 'over budget';
+        document.getElementById('budgetOut').textContent = `Budget: ${fmtGBP0(inputs.budget)} (${fmtGBP0(Math.abs(delta))} ${sign})`;
+      } else {
+        document.getElementById('budgetOut').textContent = 'Budget: —';
+      }
+
+      document.getElementById('stressOut').textContent = fmtGBP0(stress.stressTotal);
+      document.getElementById('stressDetail').textContent = `@ ${stress.stressRate.toFixed(2)}% + service ${fmtGBP0(stress.stressServiceMonthly)}/mo`;
+
+      document.getElementById('annualOut').textContent = fmtGBP0(base.annualAllIn);
+      document.getElementById('serviceShareOut').textContent = `Service charge share: ${(base.serviceShare*100).toFixed(1)}%`;
+
+      document.getElementById('sdltOut').textContent = fmtGBP0(sdlt.tax);
+      document.getElementById('sdltNote').textContent = sdlt.note ? sdlt.note : 'England/NI simplified';
+
+      const warning = document.getElementById('warning');
+      if (sdlt.note){
+        warning.style.display = 'block';
+        warning.style.borderColor = 'rgba(255,255,255,0.16)';
+        warning.style.background = 'rgba(255,255,255,0.03)';
+        warning.innerHTML = '<strong>Note:</strong> ' + sdlt.note;
+      }
+
+      // Update URL query for sharing
+      const params = new URLSearchParams({
+        price: String(Math.round(inputs.price)),
+        deposit: String(inputs.depositPct),
+        rate: String(inputs.rate),
+        term: String(inputs.term),
+        serviceAmount: String(inputs.serviceAmount),
+        serviceFreq: String(inputs.serviceFreq),
+        ground: String(inputs.ground),
+        insurance: String(inputs.insurance),
+        majorWorksMonthly: String(inputs.majorWorksMonthly||0),
+        buyer: inputs.buyerType,
+        budget: isFinite(inputs.budget) ? String(inputs.budget) : '',
+        rateShock: isFinite(inputs.rateShock) ? String(inputs.rateShock) : '',
+        serviceShockPct: isFinite(inputs.serviceShockPct) ? String(inputs.serviceShockPct) : '',
+      });
+
+      // Remove empty entries for cleaner links
+      for (const [k,v] of [...params.entries()]){
+        if (v === '') params.delete(k);
+      }
+
+      try{
+        history.replaceState(null,'', `${location.pathname}?${params.toString()}#calculator`);
+      }catch{
+        // Some file:// contexts can be strict; sharing still works via manual copy of current URL.
+      }
+    }
+
+    function loadFromQuery(){
+      const p = new URLSearchParams(location.search);
+      const set = (key, id) => { if (p.has(key)) document.getElementById(id).value = p.get(key); };
+      set('price','price');
+      set('deposit','deposit');
+      set('rate','rate');
+      set('term','term');
+      set('serviceAmount','serviceAmount');
+      if (p.has('serviceFreq')) document.getElementById('serviceFreq').value = p.get('serviceFreq');
+      set('ground','ground');
+      set('insurance','insurance');
+      set('majorWorksMonthly','majorWorksMonthly');
+      if (p.has('buyer')) document.getElementById('buyerType').value = p.get('buyer');
+      set('budget','budget');
+      set('rateShock','rateShock');
+      set('serviceShockPct','serviceShockPct');
+    }
+
+    function reportText(model){
+      const { inputs, base, stress, sdlt } = model;
+      const notes = document.getElementById('notes').value.trim();
+
+      const checklist = [
+        ['Service charge accounts (3 years) provided + understood', document.getElementById('rf1').checked],
+        ['Section 20 / major works disclosed (or confirmed none pending)', document.getElementById('rf2').checked],
+        ['Arrears/disputes/tribunal history disclosed (or confirmed none)', document.getElementById('rf3').checked],
+        ['Ground rent terms checked (review/doubling clause)', document.getElementById('rf4').checked],
+        ['Building insurance costed (included vs separate)', document.getElementById('rf5').checked],
+      ].map(([t,ok]) => `${ok ? '[x]' : '[ ]'} ${t}`).join('\n');
+
+      const lines = [];
+      lines.push('ServiceChargeSense — Buyer summary');
+      lines.push(`Generated: ${new Date().toISOString()}`);
+      lines.push('');
+      lines.push('Inputs');
+      lines.push(`- Price: ${fmtGBP0(inputs.price)}`);
+      lines.push(`- Deposit: ${inputs.depositPct}%`);
+      lines.push(`- Rate: ${inputs.rate}% APR`);
+      lines.push(`- Term: ${inputs.term} years`);
+      lines.push(`- Service charge: ${fmtGBP0(inputs.serviceMonthly)}/mo (${inputs.serviceFreq})`);
+      lines.push(`- Ground rent: ${fmtGBP0((inputs.ground||0)/12)}/mo (annual ${fmtGBP0(inputs.ground||0)})`);
+      lines.push(`- Insurance: ${fmtGBP0(inputs.insurance||0)}/mo`);
+      lines.push(`- Major works allowance: ${fmtGBP0(inputs.majorWorksMonthly||0)}/mo`);
+      lines.push(`- Buyer type: ${inputs.buyerType}`);
+      if (isFinite(inputs.budget)) lines.push(`- Budget: ${fmtGBP0(inputs.budget)}/mo`);
+      lines.push('');
+      lines.push('Base results');
+      lines.push(`- Monthly mortgage: ${fmtGBP0(base.mort)} (loan ${fmtGBP0(base.loan)})`);
+      lines.push(`- Monthly non-mortgage: ${fmtGBP0(base.nonMort)}`);
+      lines.push(`- Total monthly housing: ${fmtGBP0(base.total)}`);
+      lines.push(`- Annual all-in: ${fmtGBP0(base.annualAllIn)}`);
+      lines.push(`- Service charge share of total: ${(base.serviceShare*100).toFixed(1)}%`);
+      lines.push('');
+      lines.push('Stress test');
+      lines.push(`- Rate shock: +${isFinite(inputs.rateShock)?inputs.rateShock:0}pp → ${stress.stressRate.toFixed(2)}%`);
+      lines.push(`- Service charge increase: +${isFinite(inputs.serviceShockPct)?inputs.serviceShockPct:0}% → ${fmtGBP0(stress.stressServiceMonthly)}/mo`);
+      lines.push(`- Stress-test total monthly: ${fmtGBP0(stress.stressTotal)}`);
+      lines.push('');
+      lines.push('Stamp duty (estimate)');
+      lines.push(`- SDLT: ${fmtGBP0(sdlt.tax)} (England/NI simplified)`);
+      if (sdlt.note) lines.push(`- Note: ${sdlt.note}`);
+      lines.push('');
+      lines.push('Checklist');
+      lines.push(checklist);
+      lines.push('');
+      lines.push('Notes');
+      lines.push(notes ? notes : '(none)');
+      lines.push('');
+      lines.push('Disclaimer: planning tool only; not financial advice.');
+      lines.push(`Share link: ${location.href}`);
+
+      return lines.join('\n');
+    }
+
+    function downloadText(filename, text){
+      const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function calculateAndRender(){
+      const model = compute();
+      if (!model) return;
+      updateUI(model);
+      return model;
+    }
+
+    // Events
+    document.getElementById('calc').addEventListener('click', () => {
+      calculateAndRender();
+      setToast('Calculated');
+    });
+
+    for (const id of ['price','deposit','rate','term','serviceAmount','serviceFreq','ground','insurance','majorWorksMonthly','buyerType','budget','rateShock','serviceShockPct']){
+      document.getElementById(id).addEventListener('change', () => calculateAndRender());
+    }
+
+    document.getElementById('share').addEventListener('click', async () => {
+      const ok = await copyText(location.href);
+      setToast(ok ? 'Share link copied' : 'Could not copy link');
+    });
+
+    document.getElementById('copyChecklist').addEventListener('click', async () => {
+      const model = calculateAndRender();
+      if (!model) return;
+      const text = reportText(model).split('\n\nChecklist\n')[1].split('\n\nNotes\n')[0].trim();
+      const ok = await copyText(text);
+      setToast(ok ? 'Checklist copied' : 'Could not copy');
+    });
+
+    document.getElementById('copyReport').addEventListener('click', async () => {
+      const model = calculateAndRender();
+      if (!model) return;
+      const text = reportText(model);
+      const ok = await copyText(text);
+      setToast(ok ? 'Buyer report copied' : 'Could not copy');
+    });
+
+    document.getElementById('downloadReport').addEventListener('click', () => {
+      const model = calculateAndRender();
+      if (!model) return;
+      const text = reportText(model);
+      const d = new Date();
+      const fname = `servicechargesense-report-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.txt`;
+      downloadText(fname, text);
+      setToast('Report downloaded');
+    });
+
+    document.getElementById('printReport').addEventListener('click', () => {
+      calculateAndRender();
+      window.print();
+    });
+
+    document.getElementById('waitlistForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      // MVP: store locally. Production would POST to backend.
+      const key = 'scsense_waitlist';
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      if (email && !list.includes(email)) list.push(email);
+      localStorage.setItem(key, JSON.stringify(list));
+      document.getElementById('waitlistMsg').textContent = 'Saved. (This MVP stores locally only.)';
+      document.getElementById('waitlistForm').reset();
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    loadFromQuery();
+    calculateAndRender();
+  </script>
+</body>
+</html>
