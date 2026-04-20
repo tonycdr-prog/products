@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LeaseClauseCheck — quick responsibility hints for UK leaseholders</title>
+  <meta name="description" content="Paste your lease text and get a practical responsibility checklist: roof, lift, windows, structure, common parts, service charge wording." />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="LeaseClauseCheck" />
+  <meta property="og:description" content="A simple, deterministic lease clause checker (not legal advice)." />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Calistoga:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root{
+      --bg:#F8FAFC;
+      --fg:#0F172A;
+      --muted:#F1F2F3;
+      --muted-fg:#64748B;
+      --card:#FFFFFF;
+      --border:#E4E5E7;
+      --primary:#1E293B;
+      --secondary:#334155;
+      --accent:#2563EB;
+      --danger:#DC2626;
+      --ring:#1E293B;
+      --shadow: 0 12px 28px rgba(15,23,42,0.10);
+      --radius:16px;
+      --max:1120px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--fg); background:linear-gradient(180deg, #F8FAFC, #EFF6FF); line-height:1.5; }
+
+    header{ position:sticky; top:0; background:rgba(248,250,252,0.85); backdrop-filter: blur(10px); border-bottom:1px solid var(--border); z-index:10; }
+    .nav{ max-width:var(--max); margin:0 auto; padding:14px 22px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .logo{ width:34px; height:34px; border-radius:12px; background:linear-gradient(135deg, var(--primary), var(--accent)); box-shadow:0 10px 20px rgba(37,99,235,0.18); }
+    .pill{ font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:var(--muted); color:var(--muted-fg); }
+
+    .btn{ appearance:none; border:1px solid var(--border); background:var(--card); color:var(--fg); padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; transition: transform 120ms ease, box-shadow 120ms ease; }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 20px rgba(15,23,42,0.10); }
+    .btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(37,99,235,0.20); }
+    .btn-primary{ background:linear-gradient(135deg, var(--accent), #1D4ED8); color:#fff; border-color: rgba(37,99,235,0.35); }
+
+    main{ max-width:var(--max); margin:0 auto; padding:22px; }
+
+    h1{ font-family:Calistoga, Georgia, serif; font-size:42px; line-height:1.08; margin:0 0 10px; }
+    .lede{ color:rgba(15,23,42,0.78); font-size:18px; margin:0 0 16px; }
+
+    .layout{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap:16px; align-items:start; }
+    @media (max-width: 980px){ .layout{ grid-template-columns:1fr; } header{ position:static; } }
+
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+    .card-inner{ padding:16px; }
+
+    .kicker{ font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted-fg); margin:0 0 10px; }
+
+    textarea{ width:100%; min-height:280px; resize:vertical; border:1px solid var(--border); border-radius:14px; padding:12px; font:inherit; background:#fff; }
+    textarea:focus{ outline:none; box-shadow:0 0 0 3px rgba(37,99,235,0.16); border-color: rgba(37,99,235,0.45); }
+
+    .hint{ font-size:12px; color:var(--muted-fg); margin-top:6px; }
+
+    .tags{ display:flex; flex-wrap:wrap; gap:8px; }
+    .tag{ font-family:"JetBrains Mono", ui-monospace, monospace; font-size:11px; padding:6px 8px; border-radius:999px; border:1px solid var(--border); background:var(--muted); color:rgba(15,23,42,0.80); }
+    .tag.hit{ background:rgba(37,99,235,0.10); border-color:rgba(37,99,235,0.35); }
+
+    .result{ border:1px dashed var(--border); border-radius:14px; padding:12px; background:#F8FAFC; }
+    .result strong{ display:block; margin-bottom:4px; }
+
+    .quote{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; background:#0B1220; color:#E5E7EB; padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.10); white-space:pre-wrap; word-break:break-word; }
+
+    footer{ margin-top:18px; color:var(--muted-fg); font-size:12px; border-top:1px solid var(--border); padding-top:14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav" role="navigation" aria-label="Primary">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>LeaseClauseCheck</strong>
+          <div class="pill">deterministic MVP</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <a class="btn" href="#pricing">Pricing</a>
+        <button class="btn btn-primary" id="runTop">Run check</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="layout" aria-label="Hero">
+      <div>
+        <h1>“Am I responsible for the roof/lift/structure?” — get a practical first pass.</h1>
+        <p class="lede">Paste lease text. This tool highlights common responsibility keywords and gives you a checklist of questions to ask your managing agent or solicitor.</p>
+
+        <div class="card">
+          <div class="card-inner">
+            <p class="kicker">Paste lease text</p>
+            <textarea id="lease" placeholder="Paste relevant lease sections (repairing obligations, service charge, definitions of common parts, demise, etc.)"></textarea>
+            <div class="hint">Nothing is uploaded in this MVP; analysis runs in your browser.</div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+              <button class="btn btn-primary" id="run">Run check</button>
+              <button class="btn" id="clear">Clear</button>
+              <button class="btn" id="example">Load example</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="card" aria-label="Results">
+        <div class="card-inner">
+          <p class="kicker">Results</p>
+          <div class="tags" id="tags"></div>
+
+          <div id="results" style="margin-top:12px; display:grid; gap:10px;"></div>
+
+          <div class="result" style="margin-top:12px; border-color: rgba(220,38,38,0.30); background: rgba(220,38,38,0.05)">
+            <strong>Disclaimer</strong>
+            This is not legal advice and cannot interpret your lease like a solicitor. It simply surfaces keywords and prompts.
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="pricing" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-inner">
+          <p class="kicker">Pricing</p>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+            <div class="result">
+              <strong>Free</strong>
+              Basic keyword checks + checklist.
+            </div>
+            <div class="result" style="border-color: rgba(37,99,235,0.35); background: rgba(37,99,235,0.06)">
+              <strong>Lease Report (£25)</strong>
+              Stripe-ready placeholder: exportable summary, “what to request”, and a clean evidence pack.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>Built for UK leaseholders. If your bill is high or deadlines are tight, get professional advice.</div>
+    </footer>
+  </main>
+
+  <script>
+    const topics = [
+      { key:'roof', label:'Roof', patterns:[/\broof\b/i, /loft/i, /demise/i] },
+      { key:'lift', label:'Lift', patterns:[/\blift\b/i, /elevator/i] },
+      { key:'structure', label:'Structure', patterns:[/\bstructure\b/i, /structural/i, /foundations?/i] },
+      { key:'windows', label:'Windows', patterns:[/\bwindow(s)?\b/i, /glazing/i] },
+      { key:'common', label:'Common parts', patterns:[/common parts?/i, /communal/i] },
+      { key:'service', label:'Service charge', patterns:[/service charge/i, /apportion/i, /percentage of/i, /reserve fund/i] },
+      { key:'repair', label:'Repairing obligation', patterns:[/keep.*repair/i, /tenantable repair/i, /maintain/i, /renew/i, /replace/i] },
+      { key:'insurance', label:'Insurance', patterns:[/insured risks?/i, /insurance/i] },
+      { key:'s20', label:'Section 20 / consultation', patterns:[/section\s*20/i, /consultation/i, /major works/i] },
+    ];
+
+    function snippet(text, re){
+      const m = re.exec(text);
+      if (!m) return null;
+      const i = m.index;
+      const start = Math.max(0, i-140);
+      const end = Math.min(text.length, i+220);
+      return text.slice(start, end).replace(/\s+/g,' ').trim();
+    }
+
+    function renderTags(hitMap){
+      const wrap = document.getElementById('tags');
+      wrap.innerHTML = '';
+      for (const t of topics){
+        const el = document.createElement('span');
+        el.className = 'tag' + (hitMap[t.key] ? ' hit' : '');
+        el.textContent = t.label;
+        wrap.appendChild(el);
+      }
+    }
+
+    function run(){
+      const text = (document.getElementById('lease').value || '').toString();
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+
+      const hitMap = {};
+
+      if (text.trim().length < 40){
+        results.innerHTML = '<div class="result"><strong>Add more text</strong>Paste the lease’s repairing obligations + service charge section for best results.</div>';
+        renderTags(hitMap);
+        return;
+      }
+
+      for (const t of topics){
+        let hits = [];
+        for (const re of t.patterns){
+          const s = snippet(text, re);
+          if (s) hits.push({ re: re.toString(), s });
+        }
+        if (hits.length) hitMap[t.key] = true;
+
+        const box = document.createElement('div');
+        box.className = 'result';
+        const title = document.createElement('strong');
+        title.textContent = t.label + (hits.length ? ' — mentions found' : ' — no obvious mention');
+        box.appendChild(title);
+
+        const checklist = document.createElement('div');
+        checklist.style.color = 'rgba(15,23,42,0.82)';
+
+        // Practical prompts
+        const prompts = [];
+        if (t.key === 'service') prompts.push('What is your apportionment (fixed % vs variable)? Is there a reserve fund?');
+        if (t.key === 'roof') prompts.push('Is the roof within the “demise” of the flat or part of the building/common parts?');
+        if (t.key === 'lift') prompts.push('Does your lease define lifts as common parts? Are you excluded if you have no access?');
+        if (t.key === 'repair') prompts.push('Does it say “keep in repair” vs “renew/replace”? Who pays for replacement?');
+        if (t.key === 'insurance') prompts.push('Is the item covered by insured risks, or treated as wear-and-tear?');
+        if (t.key === 'structure') prompts.push('Who maintains structure/foundations/external walls? Any cost recovery mechanism?');
+        if (!prompts.length) prompts.push('Cross-check the definitions section and any schedules/appendices.');
+
+        checklist.innerHTML = '<em>Checklist:</em> ' + prompts.join(' ');
+        box.appendChild(checklist);
+
+        if (hits.length){
+          const q = document.createElement('div');
+          q.className = 'quote';
+          q.textContent = hits.slice(0,2).map(h=>h.s).join('\n\n---\n\n');
+          box.appendChild(q);
+        } else {
+          const p = document.createElement('div');
+          p.className = 'hint';
+          p.textContent = 'If this isn’t mentioned, look for synonyms or schedules; sometimes obligations are defined elsewhere.';
+          box.appendChild(p);
+        }
+
+        results.appendChild(box);
+      }
+
+      renderTags(hitMap);
+    }
+
+    document.getElementById('run').addEventListener('click', run);
+    document.getElementById('runTop').addEventListener('click', run);
+    document.getElementById('clear').addEventListener('click', () => { document.getElementById('lease').value=''; run(); });
+
+    document.getElementById('example').addEventListener('click', () => {
+      document.getElementById('lease').value = `The demise includes the roof over the said flat.\n\nThe Tenant covenants to keep the Premises in good and tenantable repair including the roof and to renew or replace any part as necessary.\n\nThe Landlord shall maintain the structure and the common parts and may recover a percentage of total estate costs through the Service Charge.\n\nThe Service Charge is apportioned as 12.5% of total expenditure and includes a contribution to the Reserve Fund.\n\nA Section 20 consultation notice has been served in respect of major works to replace the lift.`;
+      run();
+    });
+
+    run();
+  </script>
+</body>
+</html>
