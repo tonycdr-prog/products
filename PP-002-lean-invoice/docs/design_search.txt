@@ -1,0 +1,60 @@
+## UI Pro Max Search Results
+**Domain:** landing | **Query:** freelancer invoicing landing page
+**Source:** landing.csv | **Found:** 2 results
+
+### Result 1
+- **Pattern Name:** Scroll-Triggered Storytelling
+- **Keywords:** storytelling, scroll, narrative, story, immersive
+- **Section Order:** 1. Intro hook, 2. Chapter 1 (problem), 3. Chapter 2 (journey), 4. Chapter 3 (solution), 5. Climax CTA
+- **Primary CTA Placement:** End of each chapter (mini) + Final climax CTA
+- **Color Strategy:** Progressive reveal. Each chapter has distinct color. Building intensity.
+- **Conversion Optimization:** Narrative increases time-on-page 3x. Use progress indicator. Mobile: simplify animations.
+
+### Result 2
+- **Pattern Name:** Pricing Page + CTA
+- **Keywords:** pricing, plans, tiers, comparison, cta
+- **Section Order:** 1. Hero (pricing headline), 2. Price comparison cards, 3. Feature comparison table, 4. FAQ section, 5. Final CTA
+- **Primary CTA Placement:** Each card: CTA button. Sticky CTA in nav
+- **Color Strategy:** Free: Grey, Starter: Blue, Pro: Green/Gold, Enterprise: Dark. Cards: 1px border, shadow
+- **Conversion Optimization:** Recommend starter plan (pre-select/highlight). Show annual discount (20-30%). Use FAQs to address concerns.
+
+## UI Pro Max Search Results
+**Domain:** color | **Query:** fintech invoicing
+**Source:** colors.csv | **Found:** 1 results
+
+### Result 1
+- **Product Type:** Fintech/Crypto
+- **Primary:** #F59E0B
+- **On Primary:** #0F172A
+- **Secondary:** #FBBF24
+- **On Secondary:** #0F172A
+- **Accent:** #8B5CF6
+- **On Accent:** #FFFFFF
+- **Background:** #0F172A
+- **Foreground:** #F8FAFC
+- **Card:** #222735
+- **Card Foreground:** #F8FAFC
+- **Muted:** #272F42
+- **Muted Foreground:** #94A3B8
+- **Border:** #334155
+- **Destructive:** #EF4444
+- **On Destructive:** #FFFFFF
+- **Ring:** #F59E0B
+- **Notes:** Gold trust + purple tech
+
+## UI Pro Max Search Results
+**Domain:** typography | **Query:** saas invoicing
+**Source:** typography.csv | **Found:** 1 results
+
+### Result 1
+- **Font Pairing Name:** Friendly SaaS
+- **Category:** Sans + Sans
+- **Heading Font:** Plus Jakarta Sans
+- **Body Font:** Plus Jakarta Sans
+- **Mood/Style Keywords:** friendly, modern, saas, clean, approachable, professional
+- **Best For:** SaaS products, web apps, dashboards, B2B, productivity tools
+- **Google Fonts URL:** https://fonts.google.com/share?selection.family=Plus+Jakarta+Sans:wght@300;400;500;600;700
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+- **Tailwind Config:** fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+- **Notes:** Single versatile font. Modern alternative to Inter.
+
