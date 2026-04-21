@@ -1,0 +1,40 @@
+## UI Pro Max Search Results
+**Domain:** landing | **Query:** uk self assessment tax landing page
+**Source:** landing.csv | **Found:** 2 results
+
+### Result 1
+- **Pattern Name:** Scroll-Triggered Storytelling
+- **Keywords:** storytelling, scroll, narrative, story, immersive
+- **Section Order:** 1. Intro hook, 2. Chapter 1 (problem), 3. Chapter 2 (journey), 4. Chapter 3 (solution), 5. Climax CTA
+- **Primary CTA Placement:** End of each chapter (mini) + Final climax CTA
+- **Color Strategy:** Progressive reveal. Each chapter has distinct color. Building intensity.
+- **Conversion Optimization:** Narrative increases time-on-page 3x. Use progress indicator. Mobile: simplify animations.
+
+### Result 2
+- **Pattern Name:** Pricing Page + CTA
+- **Keywords:** pricing, plans, tiers, comparison, cta
+- **Section Order:** 1. Hero (pricing headline), 2. Price comparison cards, 3. Feature comparison table, 4. FAQ section, 5. Final CTA
+- **Primary CTA Placement:** Each card: CTA button. Sticky CTA in nav
+- **Color Strategy:** Free: Grey, Starter: Blue, Pro: Green/Gold, Enterprise: Dark. Cards: 1px border, shadow
+- **Conversion Optimization:** Recommend starter plan (pre-select/highlight). Show annual discount (20-30%). Use FAQs to address concerns.
+
+## UI Pro Max Search Results
+**Domain:** color | **Query:** uk tax compliance
+**Source:** colors.csv | **Found:** 0 results
+
+## UI Pro Max Search Results
+**Domain:** typography | **Query:** uk fintech
+**Source:** typography.csv | **Found:** 1 results
+
+### Result 1
+- **Font Pairing Name:** SaaS Mobile Boutique (Calistoga + Inter)
+- **Category:** Display Serif + Sans + Mono
+- **Heading Font:** Calistoga
+- **Body Font:** Inter
+- **Mood/Style Keywords:** saas, boutique, electric, warm, editorial, bold, premium, fintech, business, dual font, human warmth
+- **Best For:** B2B SaaS mobile, fintech apps, analytics dashboards, marketing tools, operations platforms
+- **Google Fonts URL:** https://fonts.google.com/share?selection.family=Calistoga:ital@0;1|Inter:wght@300;400;500;600;700|JetBrains+Mono:wght@400;500
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Calistoga:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+- **Tailwind Config:** fontFamily: { display: ['Calistoga', 'serif'], body: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+- **Notes:** Tri-stack: Calistoga (adds human warmth) for heroes 36–42pt leading-1.1; Inter 400–600 for body/UI 16–18pt; JetBrains Mono 12pt uppercase tracking-[1.5] for data labels and section badges. Scale: Hero 36–42pt, Section H2 28–32pt, Body 16–18pt, Label 12pt. Avoid italic Calistoga except editorial call...
+

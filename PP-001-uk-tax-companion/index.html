@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaxSnap UK — Sole Trader Tax Companion</title>
+  <meta name="description" content="Estimate UK sole trader self-assessment tax, NI, and payment-on-account with income/expense tracking." />
+  <style>
+    :root {
+      --bg: #f6f8fc;
+      --card: #ffffff;
+      --line: #d8e0ef;
+      --text: #13203a;
+      --muted: #5b6b8a;
+      --primary: #2458d3;
+      --primary-2: #1f49b1;
+      --ok: #0f8b5f;
+      --warn: #cc7a00;
+      --danger: #b03030;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+    .hero, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    h1, h2, h3 { margin: 0 0 10px; }
+    .sub { color: var(--muted); margin: 0; line-height: 1.55; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-6 { grid-column: span 6; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+    @media (max-width: 860px) {
+      .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; }
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select, button {
+      width: 100%;
+      border: 1px solid #c8d3ea;
+      border-radius: 10px;
+      font-size: 15px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--text);
+    }
+    input:focus, select:focus, button:focus {
+      outline: 3px solid #bfd2ff;
+      outline-offset: 0;
+    }
+    button {
+      background: var(--primary);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { background: var(--primary-2); }
+    .btn-muted {
+      background: #e9eefb;
+      color: #203861;
+    }
+    .btn-danger {
+      background: var(--danger);
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 860px) {
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+    }
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fbfcff;
+    }
+    .kpi small { color: var(--muted); display: block; margin-bottom: 4px; }
+    .kpi strong { font-size: 20px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    th, td {
+      border-bottom: 1px solid #e5ebf7;
+      text-align: left;
+      padding: 9px 8px;
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; }
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      font-size: 12px;
+      padding: 4px 8px;
+      background: #edf3ff;
+      color: #244b8a;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 860px) {
+      .result-grid { grid-template-columns: 1fr; }
+    }
+    .result-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #f9fbff;
+    }
+    .result-card h3 { margin-bottom: 2px; }
+    .result-card p { margin: 0; color: var(--muted); }
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .footer-note { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>TaxSnap UK</h1>
+      <p class="sub">A practical tax companion for UK sole traders: track income/expenses, estimate Self Assessment tax + NI, and preview Payment on Account dates — all in one local page.</p>
+      <div class="row" style="margin-top:10px">
+        <span class="pill">No sign-up required</span>
+        <span class="pill">Runs offline in browser</span>
+        <span class="pill">CSV export for accountant</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>1) Tax profile</h2>
+      <div class="grid">
+        <div class="col-4">
+          <label for="taxYear">Tax year</label>
+          <select id="taxYear">
+            <option value="2025-26">2025/26</option>
+            <option value="2024-25">2024/25</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label for="otherIncome">Other taxable income (£, optional)</label>
+          <input id="otherIncome" type="number" min="0" step="0.01" value="0" />
+        </div>
+        <div class="col-4">
+          <label for="studentLoan">Student loan plan</label>
+          <select id="studentLoan">
+            <option value="none">None</option>
+            <option value="plan1">Plan 1</option>
+            <option value="plan2">Plan 2</option>
+            <option value="plan4">Plan 4 (Scotland)</option>
+          </select>
+        </div>
+      </div>
+      <p class="footer-note">These calculations are estimates to support planning, not tax advice.</p>
+    </section>
+
+    <section class="card">
+      <h2>2) Add income + expenses</h2>
+      <div class="grid">
+        <div class="col-6">
+          <h3 style="margin-bottom:8px">Income entry</h3>
+          <div class="grid">
+            <div class="col-4">
+              <label for="incomeDate">Date</label>
+              <input id="incomeDate" type="date" />
+            </div>
+            <div class="col-4">
+              <label for="incomeSource">Source</label>
+              <input id="incomeSource" placeholder="Client / Platform" />
+            </div>
+            <div class="col-4">
+              <label for="incomeAmount">Amount (£)</label>
+              <input id="incomeAmount" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="col-12 row">
+              <button id="addIncome" type="button">Add income</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <h3 style="margin-bottom:8px">Expense entry</h3>
+          <div class="grid">
+            <div class="col-4">
+              <label for="expenseDate">Date</label>
+              <input id="expenseDate" type="date" />
+            </div>
+            <div class="col-4">
+              <label for="expenseCategory">Category</label>
+              <select id="expenseCategory">
+                <option>Software</option>
+                <option>Travel</option>
+                <option>Equipment</option>
+                <option>Marketing</option>
+                <option>Office</option>
+                <option>Training</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="col-4">
+              <label for="expenseAmount">Amount (£)</label>
+              <input id="expenseAmount" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="col-12 row">
+              <button id="addExpense" type="button">Add expense</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpis" style="margin-top:14px">
+        <div class="kpi"><small>Total income</small><strong id="kpiIncome">£0</strong></div>
+        <div class="kpi"><small>Total expenses</small><strong id="kpiExpenses">£0</strong></div>
+        <div class="kpi"><small>Estimated profit</small><strong id="kpiProfit">£0</strong></div>
+        <div class="kpi"><small>Tax + NI reserve target</small><strong id="kpiReserve">£0</strong></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3) Tax estimate</h2>
+      <div class="row">
+        <button id="runEstimate" type="button">Calculate estimate</button>
+        <button id="seedDemo" class="btn-muted" type="button">Load demo data</button>
+        <button id="clearAll" class="btn-danger" type="button">Clear all data</button>
+      </div>
+
+      <div class="result-grid" id="results" style="margin-top:12px"></div>
+      <div id="poaSchedule" style="margin-top:12px"></div>
+    </section>
+
+    <section class="card">
+      <h2>4) Ledger + export</h2>
+      <div class="row">
+        <button id="exportIncome" class="btn-muted" type="button">Export income CSV</button>
+        <button id="exportExpenses" class="btn-muted" type="button">Export expenses CSV</button>
+        <button id="saveState" class="btn-muted" type="button">Save snapshot</button>
+      </div>
+
+      <h3 style="margin-top:14px">Income ledger</h3>
+      <table id="incomeTable">
+        <thead><tr><th>Date</th><th>Source</th><th>Amount</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <h3 style="margin-top:14px">Expense ledger</h3>
+      <table id="expenseTable">
+        <thead><tr><th>Date</th><th>Category</th><th>Amount</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>5) Waitlist</h2>
+      <p class="sub">Want accountant export packs + quarterly reminder emails? Join the beta.</p>
+      <div class="grid" style="margin-top:8px">
+        <div class="col-8">
+          <label for="waitlistEmail">Email</label>
+          <input id="waitlistEmail" type="email" placeholder="you@business.co.uk" />
+        </div>
+        <div class="col-4" style="align-self:end">
+          <button id="joinWaitlist" type="button">Join waitlist</button>
+        </div>
+      </div>
+      <p id="waitlistMsg" class="footer-note"></p>
+    </section>
+  </main>
+
+  <script>
+    const £ = (n) => `£${Number(n || 0).toLocaleString('en-GB', { maximumFractionDigits: 2 })}`;
+
+    const incomeDate = document.getElementById('incomeDate');
+    const incomeSource = document.getElementById('incomeSource');
+    const incomeAmount = document.getElementById('incomeAmount');
+    const expenseDate = document.getElementById('expenseDate');
+    const expenseCategory = document.getElementById('expenseCategory');
+    const expenseAmount = document.getElementById('expenseAmount');
+    const taxYear = document.getElementById('taxYear');
+    const otherIncome = document.getElementById('otherIncome');
+    const studentLoan = document.getElementById('studentLoan');
+
+    const addIncome = document.getElementById('addIncome');
+    const addExpense = document.getElementById('addExpense');
+    const runEstimate = document.getElementById('runEstimate');
+    const seedDemo = document.getElementById('seedDemo');
+    const clearAll = document.getElementById('clearAll');
+
+    const kpiIncome = document.getElementById('kpiIncome');
+    const kpiExpenses = document.getElementById('kpiExpenses');
+    const kpiProfit = document.getElementById('kpiProfit');
+    const kpiReserve = document.getElementById('kpiReserve');
+    const results = document.getElementById('results');
+    const poaSchedule = document.getElementById('poaSchedule');
+
+    const incomeTable = document.getElementById('incomeTable');
+    const expenseTable = document.getElementById('expenseTable');
+    const exportIncome = document.getElementById('exportIncome');
+    const exportExpenses = document.getElementById('exportExpenses');
+    const saveState = document.getElementById('saveState');
+
+    const waitlistEmail = document.getElementById('waitlistEmail');
+    const joinWaitlist = document.getElementById('joinWaitlist');
+    const waitlistMsg = document.getElementById('waitlistMsg');
+
+    const today = new Date().toISOString().slice(0, 10);
+    incomeDate.value = today;
+    expenseDate.value = today;
+
+    const state = {
+      income: [],
+      expenses: [],
+      waitlist: [],
+      profile: { taxYear: '2025-26', otherIncome: 0, studentLoan: 'none' }
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem('taxsnap-uk-v2');
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          Object.assign(state, parsed);
+        }
+      } catch (_) {}
+      hydrateFormFromState();
+    }
+
+    function persistState() {
+      localStorage.setItem('taxsnap-uk-v2', JSON.stringify(state));
+    }
+
+    function hydrateFormFromState() {
+      taxYear.value = state.profile.taxYear || '2025-26';
+      otherIncome.value = state.profile.otherIncome || 0;
+      studentLoan.value = state.profile.studentLoan || 'none';
+    }
+
+    function syncProfileFromForm() {
+      state.profile = {
+        taxYear: taxYear.value,
+        otherIncome: Number(otherIncome.value || 0),
+        studentLoan: studentLoan.value
+      };
+      persistState();
+    }
+
+    function addIncomeEntry() {
+      const amount = Number(incomeAmount.value || 0);
+      if (!amount || amount < 0) return alert('Enter a valid income amount.');
+      state.income.push({
+        id: crypto.randomUUID(),
+        date: incomeDate.value || today,
+        source: (incomeSource.value || 'Income').trim(),
+        amount
+      });
+      incomeAmount.value = '';
+      incomeSource.value = '';
+      afterDataChange();
+    }
+
+    function addExpenseEntry() {
+      const amount = Number(expenseAmount.value || 0);
+      if (!amount || amount < 0) return alert('Enter a valid expense amount.');
+      state.expenses.push({
+        id: crypto.randomUUID(),
+        date: expenseDate.value || today,
+        category: expenseCategory.value,
+        amount
+      });
+      expenseAmount.value = '';
+      afterDataChange();
+    }
+
+    function removeEntry(type, id) {
+      state[type] = state[type].filter(x => x.id !== id);
+      afterDataChange();
+    }
+
+    function totals() {
+      const incomeTotal = state.income.reduce((s, x) => s + Number(x.amount || 0), 0);
+      const expenseTotal = state.expenses.reduce((s, x) => s + Number(x.amount || 0), 0);
+      const businessProfit = Math.max(0, incomeTotal - expenseTotal);
+      return { incomeTotal, expenseTotal, businessProfit };
+    }
+
+    function taxRules(year) {
+      if (year === '2024-25') {
+        return {
+          personalAllowance: 12570,
+          basicBand: 37700,
+          class2Threshold: 6725,
+          class2Annual: 179.4,
+          class4Lower: 12570,
+          class4Upper: 50270,
+          class4MainRate: 0.06,
+          class4HigherRate: 0.02,
+          studentLoan: { plan1: 24990, plan2: 27295, plan4: 31395 },
+          studentLoanRate: 0.09
+        };
+      }
+      return {
+        personalAllowance: 12570,
+        basicBand: 37700,
+        class2Threshold: 6725,
+        class2Annual: 179.4,
+        class4Lower: 12570,
+        class4Upper: 50270,
+        class4MainRate: 0.06,
+        class4HigherRate: 0.02,
+        studentLoan: { plan1: 24990, plan2: 28470, plan4: 31695 },
+        studentLoanRate: 0.09
+      };
+    }
+
+    function estimate() {
+      syncProfileFromForm();
+      const { incomeTotal, expenseTotal, businessProfit } = totals();
+      const rules = taxRules(state.profile.taxYear);
+      const totalIncome = businessProfit + state.profile.otherIncome;
+
+      const allowanceReduction = totalIncome > 100000 ? Math.min(rules.personalAllowance, (totalIncome - 100000) / 2) : 0;
+      const allowance = Math.max(0, rules.personalAllowance - allowanceReduction);
+      const taxable = Math.max(0, totalIncome - allowance);
+
+      const basicTaxable = Math.min(rules.basicBand, taxable);
+      const higherTaxable = Math.max(0, taxable - basicTaxable);
+      const incomeTax = basicTaxable * 0.2 + higherTaxable * 0.4;
+
+      const class2 = businessProfit >= rules.class2Threshold ? rules.class2Annual : 0;
+      const class4Base = Math.max(0, businessProfit - rules.class4Lower);
+      const class4MainSlice = Math.min(class4Base, rules.class4Upper - rules.class4Lower);
+      const class4HigherSlice = Math.max(0, class4Base - class4MainSlice);
+      const class4 = class4MainSlice * rules.class4MainRate + class4HigherSlice * rules.class4HigherRate;
+
+      let studentLoan = 0;
+      if (state.profile.studentLoan !== 'none') {
+        const threshold = rules.studentLoan[state.profile.studentLoan] || Infinity;
+        studentLoan = Math.max(0, (totalIncome - threshold) * rules.studentLoanRate);
+      }
+
+      const totalDue = incomeTax + class2 + class4 + studentLoan;
+      const reserveMonthly = totalDue / 12;
+      const poaEach = (incomeTax + class4) * 0.5;
+
+      return {
+        incomeTotal,
+        expenseTotal,
+        businessProfit,
+        totalIncome,
+        allowance,
+        incomeTax,
+        class2,
+        class4,
+        studentLoan,
+        totalDue,
+        reserveMonthly,
+        poaEach,
+        poaRequired: (incomeTax + class4) > 1000
+      };
+    }
+
+    function renderKpis(result) {
+      kpiIncome.textContent = £(result.incomeTotal);
+      kpiExpenses.textContent = £(result.expenseTotal);
+      kpiProfit.textContent = £(result.businessProfit);
+      kpiReserve.textContent = £(result.totalDue);
+    }
+
+    function renderResults(result) {
+      const cards = [
+        ['Estimated Income Tax', result.incomeTax, 'Based on total taxable income after allowance.'],
+        ['Class 2 NI', result.class2, 'Flat annual amount if profit exceeds threshold.'],
+        ['Class 4 NI', result.class4, 'Main + higher NI bands applied to business profit.'],
+        ['Student Loan', result.studentLoan, 'Optional estimate based on selected plan.'],
+        ['Total due (estimate)', result.totalDue, 'Set aside this amount across the tax year.'],
+        ['Monthly reserve target', result.reserveMonthly, 'Suggested monthly cash buffer.']
+      ];
+      results.innerHTML = cards.map(([title, amount, note]) => `
+        <article class="result-card">
+          <h3>${title}</h3>
+          <p><strong>${£(amount)}</strong></p>
+          <p>${note}</p>
+        </article>
+      `).join('');
+
+      const yearEnd = state.profile.taxYear.split('-')[1];
+      const jan31 = `31 Jan 20${yearEnd}`;
+      const jul31 = `31 Jul 20${Number(yearEnd) + 1}`;
+
+      if (result.poaRequired) {
+        poaSchedule.innerHTML = `
+          <div class="result-card">
+            <h3>Payment on Account schedule</h3>
+            <p class="warn"><strong>POA likely required.</strong> Estimated two instalments of <span class="mono">${£(result.poaEach)}</span>.</p>
+            <p>• First payment: ${jan31}<br/>• Second payment: ${jul31}</p>
+            <p class="footer-note">Final balancing payment is due the next 31 Jan once actuals are filed.</p>
+          </div>
+        `;
+      } else {
+        poaSchedule.innerHTML = `
+          <div class="result-card">
+            <h3>Payment on Account schedule</h3>
+            <p class="ok"><strong>POA may not be required</strong> at this estimate level.</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderTables() {
+      incomeTable.querySelector('tbody').innerHTML = state.income.map(row => `
+        <tr>
+          <td>${row.date}</td>
+          <td>${escapeHtml(row.source)}</td>
+          <td>${£(row.amount)}</td>
+          <td><button class="btn-danger" style="width:auto;padding:6px 9px" data-remove="income:${row.id}">Delete</button></td>
+        </tr>
+      `).join('');
+
+      expenseTable.querySelector('tbody').innerHTML = state.expenses.map(row => `
+        <tr>
+          <td>${row.date}</td>
+          <td>${escapeHtml(row.category)}</td>
+          <td>${£(row.amount)}</td>
+          <td><button class="btn-danger" style="width:auto;padding:6px 9px" data-remove="expenses:${row.id}">Delete</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function afterDataChange() {
+      persistState();
+      renderTables();
+      const result = estimate();
+      renderKpis(result);
+      renderResults(result);
+    }
+
+    function exportCsv(rows, headers, filename) {
+      const csv = [headers.join(','), ...rows.map(r => headers.map(h => csvSafe(r[h])).join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvSafe(v) {
+      const val = String(v ?? '');
+      return /[",\n]/.test(val) ? `"${val.replace(/"/g, '""')}"` : val;
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
+    }
+
+    function seedDemoData() {
+      state.income = [
+        { id: crypto.randomUUID(), date: '2026-05-12', source: 'Retainer - Studio Oak', amount: 3200 },
+        { id: crypto.randomUUID(), date: '2026-06-14', source: 'Project - GrowthSprint', amount: 1850 },
+        { id: crypto.randomUUID(), date: '2026-07-05', source: 'Template sales', amount: 420 }
+      ];
+      state.expenses = [
+        { id: crypto.randomUUID(), date: '2026-05-04', category: 'Software', amount: 79 },
+        { id: crypto.randomUUID(), date: '2026-05-16', category: 'Marketing', amount: 140 },
+        { id: crypto.randomUUID(), date: '2026-06-02', category: 'Travel', amount: 52 }
+      ];
+      afterDataChange();
+    }
+
+    addIncome.addEventListener('click', addIncomeEntry);
+    addExpense.addEventListener('click', addExpenseEntry);
+    runEstimate.addEventListener('click', afterDataChange);
+    seedDemo.addEventListener('click', seedDemoData);
+
+    clearAll.addEventListener('click', () => {
+      if (!confirm('Clear all saved income, expense, and profile data?')) return;
+      state.income = [];
+      state.expenses = [];
+      state.profile = { taxYear: '2025-26', otherIncome: 0, studentLoan: 'none' };
+      hydrateFormFromState();
+      afterDataChange();
+    });
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-remove]');
+      if (!btn) return;
+      const [type, id] = btn.getAttribute('data-remove').split(':');
+      removeEntry(type, id);
+    });
+
+    exportIncome.addEventListener('click', () => {
+      exportCsv(state.income, ['date', 'source', 'amount'], 'taxsnap-income.csv');
+    });
+
+    exportExpenses.addEventListener('click', () => {
+      exportCsv(state.expenses, ['date', 'category', 'amount'], 'taxsnap-expenses.csv');
+    });
+
+    saveState.addEventListener('click', () => {
+      syncProfileFromForm();
+      persistState();
+      alert('Saved to this browser.');
+    });
+
+    joinWaitlist.addEventListener('click', () => {
+      const email = waitlistEmail.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        waitlistMsg.textContent = 'Enter a valid email address.';
+        return;
+      }
+      const unique = !state.waitlist.includes(email.toLowerCase());
+      if (unique) state.waitlist.push(email.toLowerCase());
+      persistState();
+      waitlistMsg.textContent = unique
+        ? `Saved. You're #${state.waitlist.length} on this browser waitlist.`
+        : 'Already saved on this browser.';
+      waitlistEmail.value = '';
+    });
+
+    [taxYear, otherIncome, studentLoan].forEach(el => el.addEventListener('change', afterDataChange));
+
+    loadState();
+    if (!state.income.length && !state.expenses.length) seedDemoData();
+    else afterDataChange();
+  </script>
+</body>
+</html>
