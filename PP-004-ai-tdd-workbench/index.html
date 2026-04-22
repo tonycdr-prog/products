@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI TDD Workbench</title>
+  <meta name="description" content="Turn product requirements into acceptance criteria, test cases, and implementation tasks in one local, no-login tool." />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a31;
+      --panel-2: #1a2542;
+      --text: #e8ecf8;
+      --muted: #9fb0d6;
+      --line: #2c3a61;
+      --accent: #67e8f9;
+      --accent-2: #a78bfa;
+      --danger: #fb7185;
+      --ok: #34d399;
+      --warning: #fbbf24;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top right, #162347 0, var(--bg) 48%);
+      color: var(--text);
+      font: 15px/1.45 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    h1, h2, h3 { margin: 0 0 8px; }
+    p { margin: 0 0 10px; color: var(--muted); }
+
+    .hero {
+      background: linear-gradient(160deg, #131f3f 0%, #0f1730 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero h1 { font-size: 26px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      border: 1px solid #365088;
+      color: #d9e2fb;
+      background: #1a2850;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .panel + .panel { margin-top: 14px; }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid #394970;
+      background: #0e162d;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font: inherit;
+      margin-bottom: 10px;
+    }
+
+    textarea { min-height: 110px; resize: vertical; }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: 9px;
+      padding: 8px 11px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0 6px 8px 0;
+    }
+
+    .primary { background: var(--accent); color: #04202a; }
+    .secondary { background: #263863; color: #dce6ff; border-color: #3e578e; }
+    .ghost { background: transparent; color: #bbccf3; border-color: #445e96; }
+    .danger { background: #3e1d2a; color: #fecdd3; border-color: #7a3046; }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .metric {
+      background: var(--panel-2);
+      border: 1px solid #344d84;
+      border-radius: 8px;
+      padding: 8px;
+      min-height: 70px;
+    }
+
+    .metric .k { color: var(--muted); font-size: 12px; }
+    .metric .v { font-size: 20px; font-weight: 700; margin-top: 2px; }
+
+    .output {
+      background: #0e162d;
+      border: 1px solid #394970;
+      border-radius: 8px;
+      padding: 10px;
+      min-height: 110px;
+      overflow: auto;
+      white-space: pre-wrap;
+      font-family: ui-monospace, Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .tab {
+      background: #172447;
+      color: #cfe0ff;
+      border: 1px solid #38548d;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .tab.active { background: #29437c; }
+
+    .list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border: 1px solid #394970;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .list li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 8px 10px;
+      border-bottom: 1px solid #2c3f67;
+      background: #0e162d;
+    }
+    .list li:last-child { border-bottom: none; }
+
+    .list input[type="checkbox"] { width: 16px; height: 16px; margin-top: 3px; }
+
+    .tiny { font-size: 12px; color: var(--muted); }
+    .status { margin-top: 6px; min-height: 18px; font-size: 13px; }
+    .status.ok { color: var(--ok); }
+    .status.warn { color: var(--warning); }
+    .status.err { color: var(--danger); }
+
+    @media (max-width: 1040px) {
+      .grid { grid-template-columns: 1fr; }
+      .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>AI TDD Workbench</h1>
+      <p>Paste a requirement, pick output style, and generate test-ready artifacts you can use immediately.</p>
+      <div class="chips">
+        <span class="chip">No backend required</span>
+        <span class="chip">Runs fully in browser</span>
+        <span class="chip">Saves locally</span>
+        <span class="chip">Exports Markdown</span>
+      </div>
+    </section>
+
+    <div class="grid">
+      <main>
+        <section class="panel">
+          <h2>1) Requirement Input</h2>
+          <div class="row">
+            <div>
+              <label for="featureName">Feature name</label>
+              <input id="featureName" placeholder="Password reset via expiring email link" />
+            </div>
+            <div>
+              <label for="persona">Primary actor</label>
+              <input id="persona" placeholder="Registered user" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="testStyle">Test style</label>
+              <select id="testStyle">
+                <option value="jest">Jest/Vitest style</option>
+                <option value="gherkin">Gherkin / BDD style</option>
+              </select>
+            </div>
+            <div>
+              <label for="priority">Priority</label>
+              <select id="priority">
+                <option value="P1">P1 (critical path)</option>
+                <option value="P2" selected>P2 (important)</option>
+                <option value="P3">P3 (nice to have)</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="requirement">Requirement (one sentence per line)</label>
+          <textarea id="requirement" placeholder="User can request password reset from login page.
+System sends one-time reset link by email.
+Reset link expires in 15 minutes.
+User sees clear error when token is invalid or expired."></textarea>
+
+          <label for="constraints">Constraints / edge cases (optional, one per line)</label>
+          <textarea id="constraints" placeholder="Rate limit: max 3 reset emails per hour per account.
+Log all reset attempts for audit.
+Do not reveal whether email exists."></textarea>
+
+          <button class="primary" id="generateBtn">Generate Workbench Outputs</button>
+          <button class="secondary" id="seedBtn">Load Demo</button>
+          <button class="ghost" id="saveBtn">Save Session</button>
+          <button class="ghost" id="loadBtn">Load Session</button>
+          <button class="danger" id="clearBtn">Clear</button>
+          <div id="status" class="status"></div>
+        </section>
+
+        <section class="panel">
+          <h2>2) Generated Outputs</h2>
+          <div class="meta">
+            <div class="metric"><div class="k">Acceptance Criteria</div><div class="v" id="countAc">0</div></div>
+            <div class="metric"><div class="k">Test Cases</div><div class="v" id="countTests">0</div></div>
+            <div class="metric"><div class="k">Edge Cases</div><div class="v" id="countEdge">0</div></div>
+            <div class="metric"><div class="k">Implementation Tasks</div><div class="v" id="countTasks">0</div></div>
+          </div>
+
+          <div class="tabs" id="tabs">
+            <button class="tab active" data-tab="acceptance">Acceptance</button>
+            <button class="tab" data-tab="tests">Tests</button>
+            <button class="tab" data-tab="impl">Implementation</button>
+            <button class="tab" data-tab="prompt">AI Prompt</button>
+          </div>
+
+          <div id="acceptance" class="output"></div>
+          <div id="tests" class="output" style="display:none"></div>
+          <div id="impl" class="output" style="display:none"></div>
+          <div id="prompt" class="output" style="display:none"></div>
+
+          <button class="secondary" id="copyBtn">Copy Active Tab</button>
+          <button class="secondary" id="downloadMdBtn">Download Markdown Spec</button>
+        </section>
+      </main>
+
+      <aside>
+        <section class="panel">
+          <h2>3) QA Checklist</h2>
+          <p class="tiny">Auto-generated checklist. Tick items as you complete them.</p>
+          <ul id="qaList" class="list"></ul>
+        </section>
+
+        <section class="panel">
+          <h2>4) Session Notes</h2>
+          <textarea id="notes" placeholder="Decisions, risks, or open questions..."></textarea>
+          <button class="secondary" id="exportJsonBtn">Export JSON Session</button>
+          <p class="tiny">Tip: Share JSON + Markdown in a PR to speed up review.</p>
+        </section>
+
+        <section class="panel">
+          <h3>Pricing Concept</h3>
+          <p><strong>£19/mo</strong> solo developer</p>
+          <p><strong>£79/mo</strong> team workspace + templates</p>
+          <p><strong>£249/mo</strong> CI policy checks + audit logs</p>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const els = {
+      featureName: document.getElementById('featureName'),
+      persona: document.getElementById('persona'),
+      testStyle: document.getElementById('testStyle'),
+      priority: document.getElementById('priority'),
+      requirement: document.getElementById('requirement'),
+      constraints: document.getElementById('constraints'),
+      notes: document.getElementById('notes'),
+      acceptance: document.getElementById('acceptance'),
+      tests: document.getElementById('tests'),
+      impl: document.getElementById('impl'),
+      prompt: document.getElementById('prompt'),
+      qaList: document.getElementById('qaList'),
+      status: document.getElementById('status'),
+      countAc: document.getElementById('countAc'),
+      countTests: document.getElementById('countTests'),
+      countEdge: document.getElementById('countEdge'),
+      countTasks: document.getElementById('countTasks')
+    };
+
+    let activeTab = 'acceptance';
+    let current = null;
+
+    const splitLines = (txt) => txt.split('\n').map(s => s.trim()).filter(Boolean);
+
+    function setStatus(msg, kind = 'ok') {
+      els.status.textContent = msg;
+      els.status.className = `status ${kind}`;
+    }
+
+    function pickVerb(line) {
+      const l = line.toLowerCase();
+      if (l.includes('reset')) return 'reset credentials';
+      if (l.includes('send')) return 'send notification';
+      if (l.includes('expire') || l.includes('timeout')) return 'enforce expiry';
+      if (l.includes('error') || l.includes('invalid')) return 'handle invalid path';
+      return 'fulfil requirement';
+    }
+
+    function toAcceptance(requirements, constraints) {
+      const ac = [];
+      requirements.forEach((line, i) => {
+        ac.push(`AC${i + 1}. Given valid context, when ${line.charAt(0).toLowerCase()}${line.slice(1)}, then system behaviour is correct and observable.`);
+      });
+      constraints.forEach((line, i) => {
+        ac.push(`EC${i + 1}. System respects constraint: ${line}.`);
+      });
+      return ac;
+    }
+
+    function toTests(requirements, constraints, style, feature) {
+      if (style === 'gherkin') {
+        const stories = [];
+        requirements.forEach((line, i) => {
+          stories.push(`Scenario: ${feature} - rule ${i + 1}\n  Given the system is ready\n  When ${line.charAt(0).toLowerCase()}${line.slice(1)}\n  Then expected outcome is confirmed`);
+        });
+        constraints.forEach((line, i) => {
+          stories.push(`Scenario: ${feature} - edge ${i + 1}\n  Given edge condition applies\n  When processing request\n  Then ${line.charAt(0).toLowerCase()}${line.slice(1)}`);
+        });
+        return 'Feature: ' + feature + '\n\n' + stories.join('\n\n');
+      }
+
+      const tests = [];
+      requirements.forEach((line, i) => {
+        tests.push(
+`test('TC${i + 1}: ${line.toLowerCase()}', async () => {
+  // arrange
+  // act
+  // assert
+});`);
+      });
+      constraints.forEach((line, i) => {
+        tests.push(
+`test('EC${i + 1}: ${line.toLowerCase()}', async () => {
+  // arrange edge condition
+  // act
+  // assert safety + messaging
+});`);
+      });
+      return tests.join('\n\n');
+    }
+
+    function toTasks(requirements, constraints) {
+      const tasks = [];
+      requirements.forEach((line, i) => tasks.push(`[ ] Task ${i + 1}: Implement logic to ${pickVerb(line)}.`));
+      constraints.forEach((line, i) => tasks.push(`[ ] Hardening ${i + 1}: Enforce "${line}".`));
+      tasks.push('[ ] Add telemetry/logging for each critical action.');
+      tasks.push('[ ] Add user-facing error messages and validation text.');
+      tasks.push('[ ] Run regression checklist before merge.');
+      return tasks;
+    }
+
+    function toPrompt(data) {
+      return [
+        `You are a senior test engineer.`,
+        `Feature: ${data.feature}`,
+        `Actor: ${data.persona}`,
+        `Priority: ${data.priority}`,
+        `Requirements:\n- ${data.requirements.join('\n- ')}`,
+        data.constraints.length ? `Constraints:\n- ${data.constraints.join('\n- ')}` : 'Constraints: none',
+        `Output required:`,
+        `1) Refined acceptance criteria`,
+        `2) Test cases (${data.style === 'gherkin' ? 'Gherkin' : 'Jest/Vitest'})`,
+        `3) Risk list`,
+        `4) Suggested implementation order`
+      ].join('\n\n');
+    }
+
+    function renderChecklist(tasks) {
+      els.qaList.innerHTML = '';
+      tasks.forEach((task, idx) => {
+        const li = document.createElement('li');
+        const id = 'q' + idx;
+        li.innerHTML = `<input type="checkbox" id="${id}"><label for="${id}" style="margin:0;font-weight:500">${task.replace('[ ] ', '')}</label>`;
+        els.qaList.appendChild(li);
+      });
+    }
+
+    function generate() {
+      const requirements = splitLines(els.requirement.value);
+      const constraints = splitLines(els.constraints.value);
+      const feature = (els.featureName.value || 'Untitled Feature').trim();
+      const persona = (els.persona.value || 'User').trim();
+      const style = els.testStyle.value;
+      const priority = els.priority.value;
+
+      if (!requirements.length) {
+        setStatus('Add at least one requirement line before generating.', 'err');
+        return;
+      }
+
+      const acceptance = toAcceptance(requirements, constraints);
+      const tests = toTests(requirements, constraints, style, feature);
+      const tasks = toTasks(requirements, constraints);
+
+      current = {
+        createdAt: new Date().toISOString(),
+        feature,
+        persona,
+        style,
+        priority,
+        requirements,
+        constraints,
+        acceptance,
+        tests,
+        tasks,
+        notes: els.notes.value.trim()
+      };
+
+      els.acceptance.textContent = acceptance.join('\n');
+      els.tests.textContent = tests;
+      els.impl.textContent = tasks.join('\n');
+      els.prompt.textContent = toPrompt(current);
+
+      els.countAc.textContent = acceptance.length;
+      els.countTests.textContent = requirements.length + constraints.length;
+      els.countEdge.textContent = constraints.length;
+      els.countTasks.textContent = tasks.length;
+
+      renderChecklist(tasks);
+      setStatus('Generated acceptance criteria, tests, tasks, and AI prompt.', 'ok');
+    }
+
+    function saveSession() {
+      const payload = {
+        featureName: els.featureName.value,
+        persona: els.persona.value,
+        testStyle: els.testStyle.value,
+        priority: els.priority.value,
+        requirement: els.requirement.value,
+        constraints: els.constraints.value,
+        notes: els.notes.value,
+        current
+      };
+      localStorage.setItem('ai_tdd_workbench_session', JSON.stringify(payload));
+      setStatus('Session saved to localStorage.', 'ok');
+    }
+
+    function loadSession() {
+      const raw = localStorage.getItem('ai_tdd_workbench_session');
+      if (!raw) {
+        setStatus('No saved session found.', 'warn');
+        return;
+      }
+      const data = JSON.parse(raw);
+      els.featureName.value = data.featureName || '';
+      els.persona.value = data.persona || '';
+      els.testStyle.value = data.testStyle || 'jest';
+      els.priority.value = data.priority || 'P2';
+      els.requirement.value = data.requirement || '';
+      els.constraints.value = data.constraints || '';
+      els.notes.value = data.notes || '';
+      if (data.current) {
+        current = data.current;
+        els.acceptance.textContent = (current.acceptance || []).join('\n');
+        els.tests.textContent = current.tests || '';
+        els.impl.textContent = (current.tasks || []).join('\n');
+        els.prompt.textContent = toPrompt(current);
+        renderChecklist(current.tasks || []);
+        els.countAc.textContent = (current.acceptance || []).length;
+        els.countTests.textContent = (current.requirements || []).length + (current.constraints || []).length;
+        els.countEdge.textContent = (current.constraints || []).length;
+        els.countTasks.textContent = (current.tasks || []).length;
+      }
+      setStatus('Session loaded.', 'ok');
+    }
+
+    function clearAll() {
+      if (!confirm('Clear all current inputs and outputs?')) return;
+      els.featureName.value = '';
+      els.persona.value = '';
+      els.requirement.value = '';
+      els.constraints.value = '';
+      els.notes.value = '';
+      els.acceptance.textContent = '';
+      els.tests.textContent = '';
+      els.impl.textContent = '';
+      els.prompt.textContent = '';
+      els.qaList.innerHTML = '';
+      els.countAc.textContent = '0';
+      els.countTests.textContent = '0';
+      els.countEdge.textContent = '0';
+      els.countTasks.textContent = '0';
+      current = null;
+      setStatus('Cleared.', 'warn');
+    }
+
+    function activeOutputElement() {
+      return document.getElementById(activeTab);
+    }
+
+    async function copyActiveTab() {
+      const text = activeOutputElement().textContent.trim();
+      if (!text) {
+        setStatus('Nothing to copy yet.', 'warn');
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus('Copied active tab output to clipboard.', 'ok');
+      } catch {
+        setStatus('Clipboard blocked by browser; copy manually.', 'warn');
+      }
+    }
+
+    function asMarkdown() {
+      if (!current) return '# AI TDD Workbench\n\nNo generated content yet.';
+      return [
+        '# AI TDD Workbench Output',
+        '',
+        `- Feature: ${current.feature}`,
+        `- Actor: ${current.persona}`,
+        `- Priority: ${current.priority}`,
+        `- Style: ${current.style}`,
+        `- Generated: ${current.createdAt}`,
+        '',
+        '## Requirements',
+        ...current.requirements.map(r => `- ${r}`),
+        '',
+        '## Constraints',
+        ...(current.constraints.length ? current.constraints.map(c => `- ${c}`) : ['- None']),
+        '',
+        '## Acceptance Criteria',
+        ...current.acceptance.map(a => `- ${a}`),
+        '',
+        '## Tests',
+        '```',
+        current.tests,
+        '```',
+        '',
+        '## Implementation Tasks',
+        ...current.tasks.map(t => `- ${t.replace('[ ] ', '')}`),
+        '',
+        '## Notes',
+        current.notes || '-'
+      ].join('\n');
+    }
+
+    function downloadFile(filename, text, type = 'text/plain') {
+      const blob = new Blob([text], { type });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function downloadMarkdown() {
+      downloadFile('ai-tdd-workbench-spec.md', asMarkdown(), 'text/markdown');
+      setStatus('Markdown spec downloaded.', 'ok');
+    }
+
+    function exportJson() {
+      const payload = {
+        featureName: els.featureName.value,
+        persona: els.persona.value,
+        testStyle: els.testStyle.value,
+        priority: els.priority.value,
+        requirement: els.requirement.value,
+        constraints: els.constraints.value,
+        notes: els.notes.value,
+        generated: current
+      };
+      downloadFile('ai-tdd-workbench-session.json', JSON.stringify(payload, null, 2), 'application/json');
+      setStatus('Session JSON exported.', 'ok');
+    }
+
+    function loadDemo() {
+      els.featureName.value = 'Password reset via expiring email link';
+      els.persona.value = 'Registered user';
+      els.testStyle.value = 'jest';
+      els.priority.value = 'P1';
+      els.requirement.value = [
+        'User can request password reset from login page.',
+        'System sends one-time reset link by email.',
+        'Reset link expires in 15 minutes.',
+        'User can set a new password that meets policy rules.',
+        'User sees clear feedback when token is invalid or expired.'
+      ].join('\n');
+      els.constraints.value = [
+        'Do not reveal whether email exists.',
+        'Rate limit to 3 reset requests per hour per account.',
+        'Log all reset attempts for audit compliance.'
+      ].join('\n');
+      els.notes.value = 'Need analytics event for reset start, success, and failure.';
+      generate();
+      setStatus('Demo data loaded and generated.', 'ok');
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', generate);
+    document.getElementById('saveBtn').addEventListener('click', saveSession);
+    document.getElementById('loadBtn').addEventListener('click', loadSession);
+    document.getElementById('clearBtn').addEventListener('click', clearAll);
+    document.getElementById('copyBtn').addEventListener('click', copyActiveTab);
+    document.getElementById('downloadMdBtn').addEventListener('click', downloadMarkdown);
+    document.getElementById('exportJsonBtn').addEventListener('click', exportJson);
+    document.getElementById('seedBtn').addEventListener('click', loadDemo);
+
+    document.getElementById('tabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('.tab');
+      if (!btn) return;
+      const tab = btn.dataset.tab;
+      ['acceptance', 'tests', 'impl', 'prompt'].forEach(id => {
+        document.getElementById(id).style.display = id === tab ? 'block' : 'none';
+      });
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      activeTab = tab;
+    });
+
+    loadSession();
+  </script>
+</body>
+</html>
