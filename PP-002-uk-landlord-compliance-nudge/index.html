@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compliance Nudge UK — Landlord Compliance Tracker</title>
+  <meta name="description" content="Track UK landlord compliance deadlines (CP12, EPC, EICR, deposit) across a portfolio." />
+  <style>
+    :root{
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#475569;
+      --line:#dbe4f0;
+      --teal:#0f766e;
+      --amber:#b45309;
+      --red:#b91c1c;
+      --blue:#1d4ed8;
+      --pill:#e2e8f0;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:1160px;margin:0 auto;padding:24px}
+    .hero{background:linear-gradient(135deg,#0f766e,#115e59);color:#fff;border-radius:16px;padding:24px;margin-bottom:16px}
+    .hero h1{margin:0 0 8px;font-size:28px}
+    .hero p{margin:0;opacity:.95;max-width:760px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .card{grid-column:span 12;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 2px 6px rgba(15,23,42,.04)}
+    @media(min-width:980px){
+      .card.half{grid-column:span 6}
+      .card.third{grid-column:span 4}
+      .card.twoThirds{grid-column:span 8}
+    }
+    h2,h3{margin:0 0 12px}
+    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+    .kpi{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px}
+    .kpi .v{font-size:24px;font-weight:800}
+    .kpi .l{font-size:13px;color:var(--muted)}
+    label{font-size:13px;font-weight:600;color:#1e293b;display:block;margin-bottom:6px}
+    input,select,textarea,button{font:inherit}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid #b6c3d6;border-radius:10px;background:#fff}
+    textarea{min-height:96px;resize:vertical}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+    .actions{display:flex;flex-wrap:wrap;gap:8px}
+    .btn{border:0;background:var(--teal);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#334155}
+    .btn.light{background:#e2e8f0;color:#0f172a}
+    .btn.warn{background:var(--amber)}
+    .btn.danger{background:var(--red)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
+    th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#334155}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--pill);font-size:12px;font-weight:700}
+    .risk-ok{color:var(--teal)}
+    .risk-watch{color:var(--amber)}
+    .risk-bad{color:var(--red)}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;white-space:pre-wrap;background:#f8fafc;border:1px solid var(--line);padding:10px;border-radius:10px}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+    .split{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+    .note{font-size:13px;color:var(--muted);margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Compliance Nudge UK</h1>
+      <p>Track CP12, EPC, EICR, deposit protection, and How to Rent evidence across your UK rental portfolio. Prioritise risks, generate action queues, and draft tenant/contractor reminders in one place.</p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Portfolio health</h2>
+        <div class="kpis" id="kpis"></div>
+        <p class="note">Risk logic: overdue = critical, due in ≤30 days = watch, missing required evidence = critical.</p>
+      </section>
+
+      <section class="card twoThirds">
+        <div class="split">
+          <h2>Add / update property</h2>
+          <div class="actions">
+            <button class="btn light" id="seedBtn">Load demo</button>
+            <button class="btn light" id="clearBtn">Clear all</button>
+          </div>
+        </div>
+        <form id="propertyForm">
+          <div class="form-grid">
+            <div>
+              <label for="name">Property name or address</label>
+              <input id="name" required placeholder="Flat 3, 21 King St, Bristol" />
+            </div>
+            <div>
+              <label for="tenant">Tenant name</label>
+              <input id="tenant" placeholder="Alex Turner" />
+            </div>
+            <div>
+              <label for="tenantEmail">Tenant email</label>
+              <input id="tenantEmail" type="email" placeholder="tenant@email.com" />
+            </div>
+            <div>
+              <label for="cp12">CP12 expiry</label>
+              <input id="cp12" type="date" />
+            </div>
+            <div>
+              <label for="epc">EPC expiry</label>
+              <input id="epc" type="date" />
+            </div>
+            <div>
+              <label for="eicr">EICR expiry</label>
+              <input id="eicr" type="date" />
+            </div>
+            <div>
+              <label for="deposit">Deposit protected?</label>
+              <select id="deposit">
+                <option value="">Select…</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="n/a">N/A (no deposit)</option>
+              </select>
+            </div>
+            <div>
+              <label for="howToRent">How to Rent proof served?</label>
+              <select id="howToRent">
+                <option value="">Select…</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div>
+              <label for="lastGasVisit">Last gas engineer visit</label>
+              <input id="lastGasVisit" type="date" />
+            </div>
+          </div>
+          <p class="actions" style="margin-top:10px">
+            <button class="btn" type="submit" id="saveBtn">Save property</button>
+            <button class="btn secondary" type="button" id="cancelEditBtn" hidden>Cancel edit</button>
+          </p>
+        </form>
+      </section>
+
+      <section class="card third">
+        <h2>Waitlist capture</h2>
+        <label for="waitlistEmail">Email</label>
+        <input id="waitlistEmail" type="email" placeholder="landlord@email.com" />
+        <p class="actions" style="margin-top:8px"><button class="btn" id="waitlistBtn">Save lead</button></p>
+        <p class="small muted" id="waitlistStatus">Stored locally for now.</p>
+      </section>
+
+      <section class="card">
+        <div class="split">
+          <h2>Property register</h2>
+          <div class="actions">
+            <button class="btn light" id="exportCsvBtn">Export CSV</button>
+            <button class="btn light" id="exportJsonBtn">Export JSON</button>
+          </div>
+        </div>
+        <div style="overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>CP12</th>
+                <th>EPC</th>
+                <th>EICR</th>
+                <th>Deposit</th>
+                <th>How to Rent</th>
+                <th>Risk</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card half">
+        <h2>Action queue (next 30 days)</h2>
+        <div id="actionQueue" class="mono">No urgent tasks yet.</div>
+      </section>
+
+      <section class="card half">
+        <h2>Reminder generator</h2>
+        <div class="form-grid">
+          <div>
+            <label for="reminderProperty">Property</label>
+            <select id="reminderProperty"></select>
+          </div>
+          <div>
+            <label for="reminderType">Reminder type</label>
+            <select id="reminderType">
+              <option value="tenant-access">Tenant access request (inspection/contractor)</option>
+              <option value="gas-engineer">Gas safety appointment</option>
+              <option value="epc-assessor">EPC renewal booking</option>
+              <option value="eicr-electrician">EICR renewal booking</option>
+            </select>
+          </div>
+        </div>
+        <p class="actions" style="margin-top:10px">
+          <button class="btn" id="generateReminderBtn">Generate message</button>
+          <button class="btn light" id="copyReminderBtn">Copy</button>
+        </p>
+        <div id="reminderOut" class="mono">Select a property, choose reminder type, then generate.</div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'pp2_landlord_compliance_v2';
+    const LEADS_KEY = 'pp2_landlord_compliance_waitlist';
+    const DAY = 86400000;
+
+    const state = { properties: [], editingId: null };
+
+    const el = {
+      kpis: document.getElementById('kpis'),
+      form: document.getElementById('propertyForm'),
+      rows: document.getElementById('rows'),
+      actionQueue: document.getElementById('actionQueue'),
+      reminderProperty: document.getElementById('reminderProperty'),
+      reminderType: document.getElementById('reminderType'),
+      reminderOut: document.getElementById('reminderOut'),
+      waitlistEmail: document.getElementById('waitlistEmail'),
+      waitlistStatus: document.getElementById('waitlistStatus'),
+      cancelEditBtn: document.getElementById('cancelEditBtn'),
+    };
+
+    function uid(){ return Math.random().toString(36).slice(2,10); }
+    function todayIso(){ return new Date().toISOString().slice(0,10); }
+    function esc(s=''){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    function daysUntil(dateStr){
+      if(!dateStr) return null;
+      const now = new Date(todayIso() + 'T00:00:00');
+      const target = new Date(dateStr + 'T00:00:00');
+      return Math.round((target - now) / DAY);
+    }
+
+    function badgeForDays(days){
+      if(days === null) return '<span class="pill risk-bad">Missing</span>';
+      if(days < 0) return `<span class="pill risk-bad">Overdue ${Math.abs(days)}d</span>`;
+      if(days <= 30) return `<span class="pill risk-watch">Due ${days}d</span>`;
+      return `<span class="pill risk-ok">OK ${days}d</span>`;
+    }
+
+    function complianceSnapshot(p){
+      const cp12 = daysUntil(p.cp12);
+      const epc = daysUntil(p.epc);
+      const eicr = daysUntil(p.eicr);
+      let score = 100;
+      const docs = [{k:'CP12',v:cp12},{k:'EPC',v:epc},{k:'EICR',v:eicr}];
+
+      docs.forEach(d => {
+        if(d.v === null) score -= 28;
+        else if(d.v < 0) score -= 35;
+        else if(d.v <= 30) score -= 15;
+      });
+
+      if(p.deposit !== 'yes' && p.deposit !== 'n/a') score -= 20;
+      if(p.howToRent !== 'yes') score -= 15;
+      score = Math.max(0, score);
+
+      let risk = 'Healthy';
+      let riskClass = 'risk-ok';
+      if(score < 80){ risk = 'Watch'; riskClass = 'risk-watch'; }
+      if(score < 55){ risk = 'Critical'; riskClass = 'risk-bad'; }
+
+      return {cp12,epc,eicr,score,risk,riskClass};
+    }
+
+    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.properties)); }
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        state.properties = raw ? JSON.parse(raw) : [];
+      }catch{
+        state.properties = [];
+      }
+    }
+
+    function resetForm(){
+      state.editingId = null;
+      el.form.reset();
+      document.getElementById('saveBtn').textContent = 'Save property';
+      el.cancelEditBtn.hidden = true;
+    }
+
+    function field(id){ return document.getElementById(id); }
+
+    function upsertProperty(){
+      const propertyName = field('name').value.trim();
+      if(!propertyName){
+        alert('Property name/address is required.');
+        return;
+      }
+      const property = {
+        id: state.editingId || uid(),
+        name: propertyName,
+        tenant: field('tenant').value.trim(),
+        tenantEmail: field('tenantEmail').value.trim(),
+        cp12: field('cp12').value,
+        epc: field('epc').value,
+        eicr: field('eicr').value,
+        deposit: field('deposit').value,
+        howToRent: field('howToRent').value,
+        lastGasVisit: field('lastGasVisit').value,
+        updatedAt: new Date().toISOString()
+      };
+
+      const idx = state.properties.findIndex(p => p.id === property.id);
+      if(idx >= 0) state.properties[idx] = property;
+      else state.properties.push(property);
+
+      save();
+      resetForm();
+      render();
+    }
+
+    function editProperty(id){
+      const p = state.properties.find(x => x.id === id);
+      if(!p) return;
+      state.editingId = id;
+      field('name').value = p.name || '';
+      field('tenant').value = p.tenant || '';
+      field('tenantEmail').value = p.tenantEmail || '';
+      field('cp12').value = p.cp12 || '';
+      field('epc').value = p.epc || '';
+      field('eicr').value = p.eicr || '';
+      field('deposit').value = p.deposit || '';
+      field('howToRent').value = p.howToRent || '';
+      field('lastGasVisit').value = p.lastGasVisit || '';
+      document.getElementById('saveBtn').textContent = 'Update property';
+      el.cancelEditBtn.hidden = false;
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function deleteProperty(id){
+      if(!confirm('Delete this property entry?')) return;
+      state.properties = state.properties.filter(p => p.id !== id);
+      save();
+      if(state.editingId === id) resetForm();
+      render();
+    }
+
+    function renderKpis(){
+      const snapshots = state.properties.map(complianceSnapshot);
+      const total = snapshots.length;
+      const critical = snapshots.filter(s => s.risk === 'Critical').length;
+      const watch = snapshots.filter(s => s.risk === 'Watch').length;
+      const dueSoon = snapshots.flatMap(s => [s.cp12,s.epc,s.eicr]).filter(d => d !== null && d >= 0 && d <= 30).length;
+      const overdue = snapshots.flatMap(s => [s.cp12,s.epc,s.eicr]).filter(d => d !== null && d < 0).length;
+      const avg = total ? Math.round(snapshots.reduce((a,b)=>a+b.score,0)/total) : 0;
+
+      el.kpis.innerHTML = `
+        <div class="kpi"><div class="v">${total}</div><div class="l">Properties tracked</div></div>
+        <div class="kpi"><div class="v risk-bad">${critical}</div><div class="l">Critical risk properties</div></div>
+        <div class="kpi"><div class="v risk-watch">${watch}</div><div class="l">Watchlist properties</div></div>
+        <div class="kpi"><div class="v">${dueSoon}</div><div class="l">Certificates due ≤30 days</div></div>
+        <div class="kpi"><div class="v risk-bad">${overdue}</div><div class="l">Overdue certificates</div></div>
+        <div class="kpi"><div class="v">${avg}/100</div><div class="l">Portfolio avg score</div></div>
+      `;
+    }
+
+    function renderRows(){
+      if(!state.properties.length){
+        el.rows.innerHTML = '<tr><td colspan="8" class="muted">No properties yet. Add one above.</td></tr>';
+        return;
+      }
+
+      el.rows.innerHTML = state.properties.map(p => {
+        const s = complianceSnapshot(p);
+        const dep = p.deposit ? p.deposit.toUpperCase() : 'Unknown';
+        const htr = p.howToRent === 'yes' ? '<span class="pill risk-ok">Yes</span>' : '<span class="pill risk-bad">No/Unknown</span>';
+        return `
+          <tr>
+            <td>
+              <strong>${esc(p.name || 'Untitled')}</strong><br>
+              <span class="small muted">${esc(p.tenant || 'No tenant name')} ${p.tenantEmail ? '&middot; ' + esc(p.tenantEmail) : ''}</span>
+            </td>
+            <td>${badgeForDays(s.cp12)}</td>
+            <td>${badgeForDays(s.epc)}</td>
+            <td>${badgeForDays(s.eicr)}</td>
+            <td><span class="pill ${dep==='YES' || dep==='N/A' ? 'risk-ok' : 'risk-bad'}">${esc(dep)}</span></td>
+            <td>${htr}</td>
+            <td><strong class="${s.riskClass}">${s.risk}</strong><br><span class="small muted">${s.score}/100</span></td>
+            <td>
+              <div class="actions">
+                <button class="btn light" onclick="editProperty('${p.id}')">Edit</button>
+                <button class="btn danger" onclick="deleteProperty('${p.id}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderActionQueue(){
+      const tasks = [];
+      state.properties.forEach(p => {
+        const s = complianceSnapshot(p);
+        const pushTask = (priority, text) => tasks.push({priority, text});
+
+        if(s.cp12 === null) pushTask(1, `${p.name}: Add CP12 expiry date.`);
+        if(s.cp12 !== null && s.cp12 < 0) pushTask(0, `${p.name}: CP12 overdue by ${Math.abs(s.cp12)} days — book Gas Safe engineer now.`);
+        if(s.cp12 !== null && s.cp12 >= 0 && s.cp12 <= 30) pushTask(2, `${p.name}: CP12 due in ${s.cp12} days — schedule gas safety visit.`);
+
+        if(s.epc === null) pushTask(1, `${p.name}: Add EPC expiry date.`);
+        if(s.epc !== null && s.epc < 0) pushTask(0, `${p.name}: EPC expired ${Math.abs(s.epc)} days ago — arrange assessor immediately.`);
+        if(s.epc !== null && s.epc >= 0 && s.epc <= 30) pushTask(2, `${p.name}: EPC due in ${s.epc} days — request renewal quote.`);
+
+        if(s.eicr === null) pushTask(1, `${p.name}: Add EICR expiry date.`);
+        if(s.eicr !== null && s.eicr < 0) pushTask(0, `${p.name}: EICR overdue by ${Math.abs(s.eicr)} days — book electrician.`);
+        if(s.eicr !== null && s.eicr >= 0 && s.eicr <= 30) pushTask(2, `${p.name}: EICR due in ${s.eicr} days — schedule inspection.`);
+
+        if(p.deposit !== 'yes' && p.deposit !== 'n/a') pushTask(0, `${p.name}: Deposit protection status missing/not protected — fix immediately.`);
+        if(p.howToRent !== 'yes') pushTask(1, `${p.name}: Serve and evidence 'How to Rent' guide.`);
+      });
+
+      tasks.sort((a,b)=>a.priority-b.priority);
+      if(!tasks.length){
+        el.actionQueue.textContent = 'No urgent tasks yet.';
+        return;
+      }
+      const lines = tasks.slice(0,20).map((t,i)=>`${i+1}. ${t.text}`);
+      el.actionQueue.textContent = lines.join('\n');
+    }
+
+    function renderReminderProperties(){
+      const opts = state.properties.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+      el.reminderProperty.innerHTML = opts || '<option value="">No properties yet</option>';
+    }
+
+    function generateReminder(){
+      const id = el.reminderProperty.value;
+      const p = state.properties.find(x=>x.id===id);
+      if(!p){
+        el.reminderOut.textContent = 'Add a property first.';
+        return;
+      }
+
+      const templates = {
+        'tenant-access': `Subject: Access request for compliance visit — ${p.name}\n\nHi ${p.tenant || 'Tenant'},\n\nI hope you’re well. I need to arrange a compliance visit at ${p.name} to keep the property certificates up to date.\n\nCould you please share 2-3 suitable time windows in the next 7 days?\n\nThanks,\nLandlord`,
+        'gas-engineer': `Subject: Gas safety certificate renewal request — ${p.name}\n\nHi,\n\nPlease provide your earliest appointment options to complete a CP12 gas safety inspection at ${p.name}.\n\nCurrent tenant: ${p.tenant || 'N/A'}\nPreferred window: within 7 days.\n\nThanks,`,
+        'epc-assessor': `Subject: EPC renewal quote request — ${p.name}\n\nHi,\n\nI need to renew the EPC for ${p.name}. Please send your next available appointment and total quote.\n\nThanks,`,
+        'eicr-electrician': `Subject: EICR inspection booking — ${p.name}\n\nHi,\n\nPlease share availability for an EICR inspection at ${p.name}. I need this completed before the current certificate expires.\n\nThanks,`
+      };
+
+      const text = templates[el.reminderType.value] || 'No template selected.';
+      el.reminderOut.textContent = text;
+    }
+
+    function download(name, content, type='text/plain'){
+      const blob = new Blob([content], {type});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function exportCsv(){
+      if(!state.properties.length){ alert('Nothing to export.'); return; }
+      const headers = ['name','tenant','tenantEmail','cp12','epc','eicr','deposit','howToRent','lastGasVisit','updatedAt'];
+      const rows = state.properties.map(p => headers.map(h => `"${String(p[h] ?? '').replaceAll('"','""')}"`).join(','));
+      download(`compliance-portfolio-${todayIso()}.csv`, [headers.join(','),...rows].join('\n'), 'text/csv');
+    }
+
+    function exportJson(){
+      download(`compliance-portfolio-${todayIso()}.json`, JSON.stringify(state.properties, null, 2), 'application/json');
+    }
+
+    function copyReminder(){
+      const text = el.reminderOut.textContent.trim();
+      if(!text || text.startsWith('Select a property')) return;
+      navigator.clipboard?.writeText(text)
+        .then(()=>alert('Reminder copied.'))
+        .catch(()=>alert('Clipboard blocked. Copy manually from the box.'));
+    }
+
+    function saveWaitlist(){
+      const email = el.waitlistEmail.value.trim();
+      if(!/.+@.+\..+/.test(email)){
+        el.waitlistStatus.textContent = 'Enter a valid email first.';
+        return;
+      }
+      const leads = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
+      leads.push({email, createdAt:new Date().toISOString()});
+      localStorage.setItem(LEADS_KEY, JSON.stringify(leads));
+      el.waitlistEmail.value = '';
+      el.waitlistStatus.textContent = `Saved locally (${leads.length} leads).`;
+    }
+
+    function loadDemo(){
+      state.properties = [
+        {
+          id: uid(),
+          name:'Flat 3, King St, Bristol',
+          tenant:'Alex Turner',
+          tenantEmail:'alex@example.com',
+          cp12: new Date(Date.now()+12*DAY).toISOString().slice(0,10),
+          epc: new Date(Date.now()-15*DAY).toISOString().slice(0,10),
+          eicr: new Date(Date.now()+240*DAY).toISOString().slice(0,10),
+          deposit:'yes',
+          howToRent:'yes',
+          lastGasVisit: new Date(Date.now()-300*DAY).toISOString().slice(0,10),
+          updatedAt:new Date().toISOString()
+        },
+        {
+          id: uid(),
+          name:'24 Oak Road, Leeds',
+          tenant:'Priya Shah',
+          tenantEmail:'priya@example.com',
+          cp12: '',
+          epc: new Date(Date.now()+70*DAY).toISOString().slice(0,10),
+          eicr: new Date(Date.now()+20*DAY).toISOString().slice(0,10),
+          deposit:'no',
+          howToRent:'no',
+          lastGasVisit: '',
+          updatedAt:new Date().toISOString()
+        }
+      ];
+      save();
+      resetForm();
+      render();
+    }
+
+    function clearAll(){
+      if(!confirm('Clear all portfolio data?')) return;
+      state.properties = [];
+      save();
+      resetForm();
+      render();
+    }
+
+    function render(){
+      renderKpis();
+      renderRows();
+      renderActionQueue();
+      renderReminderProperties();
+    }
+
+    // Expose row action handlers
+    window.editProperty = editProperty;
+    window.deleteProperty = deleteProperty;
+
+    // Events
+    el.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      upsertProperty();
+    });
+    el.cancelEditBtn.addEventListener('click', resetForm);
+    document.getElementById('generateReminderBtn').addEventListener('click', generateReminder);
+    document.getElementById('copyReminderBtn').addEventListener('click', copyReminder);
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+    document.getElementById('exportJsonBtn').addEventListener('click', exportJson);
+    document.getElementById('waitlistBtn').addEventListener('click', saveWaitlist);
+    document.getElementById('seedBtn').addEventListener('click', loadDemo);
+    document.getElementById('clearBtn').addEventListener('click', clearAll);
+
+    // Boot
+    load();
+    render();
+  </script>
+</body>
+</html>
