@@ -1,101 +1,332 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Products</title>
   <style>
-    :root { color-scheme: dark; --bg:#0b0f14; --text:#e6edf3; --muted:#9aa7b6; --accent:#58a6ff; --border:#243041; }
+    :root { --bg:#0b0d10; --panel:#12161b; --text:#e7edf5; --muted:#a7b3c2; --accent:#7dd3fc; --border:#1f2630; }
     * { box-sizing: border-box; }
-    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background: radial-gradient(1200px 600px at 20% -10%, #162033 0%, var(--bg) 55%); color:var(--text); min-height:100vh; }
-    .wrap { max-width:1080px; margin:0 auto; padding:48px 20px 64px; }
-    h1 { margin:0 0 8px; font-size:clamp(1.8rem, 2.5vw, 2.5rem); letter-spacing:-0.02em; }
-    .sub { margin:0 0 28px; color:var(--muted); }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:14px; }
-    .card { display:block; text-decoration:none; color:inherit; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--border); border-radius:14px; padding:16px; transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease; min-height:130px; }
-    .card:hover { transform:translateY(-2px); border-color:var(--accent); box-shadow:0 6px 24px rgba(0,0,0,.25); }
-    .card h2 { margin:0 0 8px; font-size:1.05rem; line-height:1.35; color:#f0f6fc; }
-    .card p { margin:0; color:var(--muted); font-size:.95rem; line-height:1.45; }
+    body { margin:0; font-family: Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:radial-gradient(1200px 700px at 80% -10%, #152235 0%, var(--bg) 55%); color:var(--text); min-height:100vh; }
+    .wrap { max-width:1100px; margin:0 auto; padding:48px 20px 64px; }
+    h1 { margin:0 0 10px; font-size:2rem; }
+    .sub { color:var(--muted); margin:0 0 28px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+    .card { display:block; text-decoration:none; color:inherit; background:linear-gradient(180deg,#131922,var(--panel)); border:1px solid var(--border); border-radius:14px; padding:16px; min-height:128px; transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease; }
+    .card:hover { transform:translateY(-2px); border-color:#2e3a4a; box-shadow:0 8px 24px rgba(0,0,0,.28); }
+    .card h2 { margin:0 0 8px; font-size:1.06rem; color:var(--accent); }
+    .card p { margin:0; color:var(--muted); line-height:1.45; }
   </style>
 </head>
 <body>
   <main class="wrap">
     <h1>Products</h1>
-    <p class="sub">Auto-deployed builds on GitHub Pages.</p>
+    <p class="sub">Auto-published builds on GitHub Pages.</p>
     <section class="grid">
-      <a class="card" href="/PP-001-arch-diagram-polish/">\n        <h2>Arch Diagram Polish</h2>\n        <p>PRODUCT_BRIEF</p>\n      </a>
-      <a class="card" href="/PP-001-bookmarknest/">\n        <h2>Bookmarknest</h2>\n        <p>BookmarkNest auto-categorizes bookmarks and generates a concise summary, making saved links searchable and easy to revisit.</p>\n      </a>
-      <a class="card" href="/PP-001-carousel-maker/">\n        <h2>Carousel Maker</h2>\n        <p>Creates LinkedIn-ready carousel slides with correct 4:5 sizing, simple themes, and one-click PNG exports. Eliminates the "resize Canva/Gamma" workflow.</p>\n      </a>
-      <a class="card" href="/PP-001-chaserflow/">\n        <h2>Chaserflow</h2>\n        <p>Automates polite invoice reminder sequences (UK‑friendly) so freelancers and SMEs get paid faster without manual chasing. Includes a lightweight tracker to calculate days overdue and generate ready‑to‑send emails.</p>\n      </a>
-      <a class="card" href="/PP-001-cod-commission-tracker/">\n        <h2>Cod Commission Tracker</h2>\n        <p>Product Brief — COD Commission Tracker</p>\n      </a>
-      <a class="card" href="/PP-001-competitor-price-tracker/">\n        <h2>Competitor Price Tracker</h2>\n        <p>Quickly turns a competitor price list into clear pricing actions and alert-ready exports. Helps small ecommerce sellers avoid hours of manual checking.</p>\n      </a>
-      <a class="card" href="/PP-001-docstack/">\n        <h2>Docstack</h2>\n        <p>DocStack combines proposals, contracts, and invoices into a single workflow for small businesses.</p>\n      </a>
-      <a class="card" href="/PP-001-freelance-invoice-rescue/">\n        <h2>Freelance Invoice Rescue</h2>\n        <p>PRODUCT_BRIEF</p>\n      </a>
-      <a class="card" href="/PP-001-invoice-chaser-lite/">\n        <h2>Invoice Chaser Lite</h2>\n        <p>Product Brief — Invoice Chaser Lite</p>\n      </a>
-      <a class="card" href="/PP-001-invoice-preflight/">\n        <h2>Invoice Preflight</h2>\n        <p>Turns messy OCR/pasted invoice text into structured fields (vendor, invoice number, date, subtotal, VAT, total). Designed for SMEs who need accuracy before posting invoices to accounting systems.</p>\n      </a>
-      <a class="card" href="/PP-001-leasehold-affordability/">\n        <h2>Leasehold Affordability</h2>\n        <p>A UK-focused affordability calculator for leasehold flats that includes service charge, ground rent, insurance, and a buffer when estimating:</p>\n      </a>
-      <a class="card" href="/PP-001-maintenance-nagger/">\n        <h2>Maintenance Nagger</h2>\n        <p>Maintainly is a lightweight maintenance scheduler for small UK landlords. It tracks recurring safety tasks (boiler service, PAT tests, smoke alarms), nags on overdue items, and keeps a simple completion log for compliance.</p>\n      </a>
-      <a class="card" href="/PP-001-noteforge/">\n        <h2>Noteforge</h2>\n        <p>NoteForge is a lightweight, affordable Evernote-style note vault with built‑in OCR search. Users can capture notes, attach images, and search across text + OCR without paying heavy subscription fees.</p>\n      </a>
-      <a class="card" href="/PP-001-notes-ocr/">\n        <h2>Notes OCR</h2>\n        <p>Lightweight notes app with OCR search for images and receipts, designed as an affordable Evernote alternative.</p>\n      </a>
-      <a class="card" href="/PP-001-partial-payment-chaser/">\n        <h2>Partial Payment Chaser</h2>\n        <p>A lightweight MVP with a conversion-focused landing page, pricing, waitlist capture, and working interactive core workflow.</p>\n      </a>
-      <a class="card" href="/PP-001-saas-stack-map/">\n        <h2>SAAS Stack Map</h2>\n        <p>Lightweight inventory of all services behind your SaaS: domain registrars, hosting, email, databases, analytics, payments, and renewals.</p>\n      </a>
-      <a class="card" href="/PP-001-seo-visibility/">\n        <h2>Seo Visibility</h2>\n        <p>Affordable SEO visibility tracker with a simple visibility score and AI‑mention checks for small sites.</p>\n      </a>
-      <a class="card" href="/PP-001-solo-marketing-planner/">\n        <h2>Solo Marketing Planner</h2>\n        <p>SoloSignal turns a solo founder’s marketing goal into a 7‑day execution plan, channel task board, and KPI tracker. It’s a focused planning workspace you can run in a browser without a full CRM or agency overhead.</p>\n      </a>
-      <a class="card" href="/PP-001-uk-seller-tax-tracker/">\n        <h2>UK Seller Tax Tracker</h2>\n        <p>Product Brief — SideHustle HMRC Tracker</p>\n      </a>
-      <a class="card" href="/PP-001-uk-tax-companion/">\n        <h2>UK Tax Companion</h2>\n        <p>TaxSnap UK is a lightweight self-assessment planning app for UK sole traders. It lets users:</p>\n      </a>
-      <a class="card" href="/PP-001-whatsapp-booking-assistant/">\n        <h2>WhatsApp Booking Assistant</h2>\n        <p>Lightweight booking workflow for tour and service businesses using WhatsApp. Captures booking details, generates confirmation + voucher templates, and exports a daily CSV.</p>\n      </a>
-      <a class="card" href="/PP-002-ai-hiring-scorecard/">\n        <h2>AI Hiring Scorecard</h2>\n        <p>Generates AI-aware hiring scorecards with role-specific rubrics, tasks, and policy guidance.</p>\n      </a>
-      <a class="card" href="/PP-002-bsa-checklist/">\n        <h2>BSA Checklist</h2>\n        <p>A UK‑specific Building Safety Act checklist and document tracker for landlords, managing agents, and leaseholders. It guides users through required steps and highlights missing documents.</p>\n      </a>
-      <a class="card" href="/PP-002-cgt-reporting/">\n        <h2>CGT Reporting</h2>\n        <p>Interactive calculator that handles multiple disposal dates, annual exempt allocation, and basic‑rate band usage for UK CGT. Produces per‑disposal totals and an exportable CSV summary.</p>\n      </a>
-      <a class="card" href="/PP-002-fee-link-optimizer/">\n        <h2>Fee Link Optimizer</h2>\n        <p>Calculates true payment fees and generates a payment link + QR so clients can pay with the lowest overhead.</p>\n      </a>
-      <a class="card" href="/PP-002-fieldkit/">\n        <h2>Fieldkit</h2>\n        <p>FieldKit is a lightweight CRM and job scheduler for local service businesses (plumbers, cleaners, electricians).</p>\n      </a>
-      <a class="card" href="/PP-002-freelance-invoicing/">\n        <h2>Freelance Invoicing</h2>\n        <p>Lightweight freelancer CRM + invoicing replacement for Fiverr Workspace (AND.CO). Lets users import client data, create invoices, and manage billing in one hub.</p>\n      </a>
-      <a class="card" href="/PP-002-lean-invoice/">\n        <h2>Lean Invoice</h2>\n        <p>PRODUCT_BRIEF</p>\n      </a>
-      <a class="card" href="/PP-002-micro-automation-layer/">\n        <h2>Micro Automation Layer</h2>\n        <p>Product Brief — Micro‑Automation Layer</p>\n      </a>
-      <a class="card" href="/PP-002-perma-qr-link/">\n        <h2>Perma QR Link</h2>\n        <p>Generates a QR code and a self‑hosted redirect page so printed QR codes can point to a permanent, editable destination.</p>\n      </a>
-      <a class="card" href="/PP-002-prooflite/">\n        <h2>Prooflite</h2>\n        <p>Generates lightweight social proof widgets (testimonials + logo wall) with clean HTML/CSS, no iFrames.</p>\n      </a>
-      <a class="card" href="/PP-002-safe-lead-scout/">\n        <h2>Safe Lead Scout</h2>\n        <p>Builds compliant lead discovery workflows without auto‑DM spam. Generates search links across Reddit/HN/IndieHackers, qualifying checklists, and polite outreach templates.</p>\n      </a>
-      <a class="card" href="/PP-002-scheduleflow/">\n        <h2>Scheduleflow</h2>\n        <p>ScheduleFlow is a lightweight scheduling tool that recalculates delivery dates daily based on real progress. Teams can lock a baseline schedule, log today’s progress/blockers, and see drift instantly without heavyweight PM suites.</p>\n      </a>
-      <a class="card" href="/PP-002-smb-competitor-tracker/">\n        <h2>Smb Competitor Tracker</h2>\n        <p>A lightweight, browser‑based tracker for SMB operators to log competitor pricing, feature releases, and hiring signals. It stores everything locally (LocalStorage) and provides alerts when changes exceed thresholds.</p>\n      </a>
-      <a class="card" href="/PP-002-stackdetect-lite/">\n        <h2>Stackdetect Lite</h2>\n        <p>A best-effort, browser-run tech stack detector:</p>\n      </a>
-      <a class="card" href="/PP-002-typeback/">\n        <h2>Typeback</h2>\n        <p>TypeBack is a privacy-first typed text recall tool. It stores recent typing locally so users can recover lost snippets without relying on clipboard history.</p>\n      </a>
-      <a class="card" href="/PP-002-typed-history/">\n        <h2>Typed History</h2>\n        <p>Local-first typed text history that captures snippets as you type (not just clipboard) so you can recall lost text.</p>\n      </a>
-      <a class="card" href="/PP-002-typing-recall/">\n        <h2>Typing Recall</h2>\n        <p>Captures and recalls typed text locally (not just clipboard). Users can search and copy previous snippets. MVP is in‑browser; desktop apps later.</p>\n      </a>
-      <a class="card" href="/PP-002-uk-landlord-compliance-nudge/">\n        <h2>UK Landlord Compliance Nudge</h2>\n        <p>Tracks each property’s CP12, EPC, and EICR expiry dates</p>\n      </a>
-      <a class="card" href="/PP-002-waitlist-outreach-planner/">\n        <h2>Waitlist Outreach Planner</h2>\n        <p>Product Brief — Organic Waitlist Planner</p>\n      </a>
-      <a class="card" href="/PP-002-whatsapp-booking/">\n        <h2>WhatsApp Booking</h2>\n        <p>Simple slot manager for small tour operators to prevent overbooking and speed up WhatsApp replies. Generates ready-to-send templates and tracks capacity.</p>\n      </a>
-      <a class="card" href="/PP-002-whatsapp-booking-bot/">\n        <h2>WhatsApp Booking Bot</h2>\n        <p>Turns WhatsApp conversations into a self‑serve appointment flow. Customers choose services and times via WhatsApp; staff receive confirmed bookings.</p>\n      </a>
-      <a class="card" href="/PP-003-ai-credit-guard/">\n        <h2>AI Credit Guard</h2>\n        <p>Tracks AI API usage errors, estimates refundable credits, and generates dispute-ready summaries for provider support teams.</p>\n      </a>
-      <a class="card" href="/PP-003-arxiv-quality-ranker/">\n        <h2>Arxiv Quality Ranker</h2>\n        <p>Product Brief — arXiv Quality Ranker</p>\n      </a>
-      <a class="card" href="/PP-003-cashflow-clarity/">\n        <h2>Cashflow Clarity</h2>\n        <p>A simple monthly cashflow + P&L tracker built for owners who want clarity without accounting fluff.</p>\n      </a>
-      <a class="card" href="/PP-003-flyerforge/">\n        <h2>Flyerforge</h2>\n        <p>Simple, web‑based desktop‑publishing replacement for Microsoft Publisher. Create flyers/brochures and export to PNG/PDF.</p>\n      </a>
-      <a class="card" href="/PP-003-freelance-cashflow-copilot/">\n        <h2>Freelance Cashflow Copilot</h2>\n        <p>A lightweight MVP with a conversion-focused landing page, pricing, waitlist capture, and working interactive core workflow.</p>\n      </a>
-      <a class="card" href="/PP-003-hn-monitor/">\n        <h2>HN Monitor</h2>\n        <p>SignalHunt monitors new Hacker News posts and scores them against example pains you provide. It highlights high-similarity posts, lets you filter by signals (recency, points, comments), and generates reply drafts so you can engage early.</p>\n      </a>
-      <a class="card" href="/PP-003-hn-recall/">\n        <h2>HN Recall</h2>\n        <p>HN Recall is a memory‑friendly search layer for Hacker News. Users search with fuzzy prompts, apply filters (time, points, comments, category), save searches, and rerun them later.</p>\n      </a>
-      <a class="card" href="/PP-003-invoice-ocr-lite/">\n        <h2>Invoice OCR Lite</h2>\n        <p>Product Brief — Invoice OCR Lite</p>\n      </a>
-      <a class="card" href="/PP-003-leadbeam/">\n        <h2>Leadbeam</h2>\n        <p>LeadBeam is a lightweight CRM that imports curated leads, tracks follow‑ups with next‑action dates, and generates discovery playbooks to find similar prospects. It replaces messy Notion + Gmail setups with a focused pipeline.</p>\n      </a>
-      <a class="card" href="/PP-003-llm-signal-check/">\n        <h2>LLM Signal Check</h2>\n        <p>A lead-gen helper that tries to detect public web signals of LLM usage.</p>\n      </a>
-      <a class="card" href="/PP-003-memory-vault/">\n        <h2>Memory Vault</h2>\n        <p>Encrypts/decrypts AI memory files locally in the browser using Web Crypto (AES‑GCM). No uploads.</p>\n      </a>
-      <a class="card" href="/PP-003-outbound-one/">\n        <h2>Outbound One</h2>\n        <p>PRODUCT_BRIEF</p>\n      </a>
-      <a class="card" href="/PP-003-parallel-sessions/">\n        <h2>Parallel Sessions</h2>\n        <p>A lightweight orchestration layer for running multiple coding-agent sessions in parallel without losing context. Users create focus slots, attach goals, store handoff notes, and export summary prompts for each lane.</p>\n      </a>
-      <a class="card" href="/PP-003-rent-vs-buy-uk-sanity/">\n        <h2>Rent Vs Buy UK Sanity</h2>\n        <p>PRODUCT_BRIEF</p>\n      </a>
-      <a class="card" href="/PP-003-telemetryguard/">\n        <h2>Telemetryguard</h2>\n        <p>TelemetryGuard generates PR-time telemetry checklists and OpenTelemetry starter snippets so teams stop shipping uninstrumented code.</p>\n      </a>
-      <a class="card" href="/PP-003-uk-boundary-checker/">\n        <h2>UK Boundary Checker</h2>\n        <p>Estimates boundary discrepancies from title plan vs on‑site measurements, then generates a copy‑ready surveyor brief and evidence checklist.</p>\n      </a>
-      <a class="card" href="/PP-003-uk-cgt-isa/">\n        <h2>UK CGT ISA</h2>\n        <p>UK CGT calculator and Bed & ISA planner for GIA investors. Generates a clean summary for self‑assessment.</p>\n      </a>
-      <a class="card" href="/PP-003-whatsapp-business-setup/">\n        <h2>WhatsApp Business Setup</h2>\n        <p>Guides SMEs through a setup checklist and generates ready‑to‑paste greeting/away messages and quick replies.</p>\n      </a>
-      <a class="card" href="/PP-003-workflow-health/">\n        <h2>Workflow Health</h2>\n        <p>Scores automation workflows for breakage risk and generates a self-healing checklist. Targets SMEs whose DIY automations fail on edge cases.</p>\n      </a>
-      <a class="card" href="/PP-004-ai-tdd-workbench/">\n        <h2>AI TDD Workbench</h2>\n        <p>AI TDD Workbench converts plain-English product requirements into:</p>\n      </a>
-      <a class="card" href="/PP-004-clawconfig-guard/">\n        <h2>Clawconfig Guard</h2>\n        <p>Schema-aware editor for OpenClaw settings.json with automatic backups, version history, and rollback.</p>\n      </a>
-      <a class="card" href="/PP-004-planpulse/">\n        <h2>Planpulse</h2>\n        <p>PlanPulse tracks AI subscription plans and shows daily comparisons across vendors.</p>\n      </a>
-      <a class="card" href="/PP-PP-001-repair-log-pack/">\n        <h2>Repair Log Pack</h2>\n        <p>A tenant-controlled repair log and escalation pack generator.</p>\n      </a>
-      <a class="card" href="/PP-PP-001-service-charge-affordability/">\n        <h2>Service Charge Affordability</h2>\n        <p>A UK-focused affordability calculator for leasehold buyers that includes service charges and ground rent (plus a simple stamp duty estimate) so buyers don’t underestimate monthly costs.</p>\n      </a>
-      <a class="card" href="/PP-PP-002-service-charge-audit/">\n        <h2>Service Charge Audit</h2>\n        <p>A UK-focused service charge audit helper for leaseholders.</p>\n      </a>
-      <a class="card" href="/PP-PP-003-invoice-chase-pack/">\n        <h2>Invoice Chase Pack</h2>\n        <p>Turns an unpaid invoice into a ready-to-send chase bundle:</p>\n      </a>
-      <a class="card" href="/PP-PP-003-section20-toolkit/">\n        <h2>Section20 Toolkit</h2>\n        <p>A UK leaseholder “major works” toolkit:</p>\n      </a>
-      <a class="card" href="/PP-PP-004-lease-clause-checker/">\n        <h2>Lease Clause Checker</h2>\n        <p>A deterministic “first pass” lease clause checker:</p>\n      </a>
-      <a class="card" href="/competency-matrix-app/">\n        <h2>Competency Matrix App</h2>\n        <p>Competency Matrix (Web)</p>\n      </a>
-      <a class="card" href="/dns-email-audit/">\n        <h2>DNS Email Audit</h2>\n        <p>A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report. Built for fast pre‑flight checks during DNS migrations and nameserver changes.</p>\n      </a>
-      <a class="card" href="/ifc-automator/">\n        <h2>IFC Automator</h2>\n        <p>IFC Automator</p>\n      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-arch-diagram-polish/">
+        <h2>PP 001 Arch Diagram Polish</h2>
+        <p>PP-001-arch-diagram-polish</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-bookmarknest/">
+        <h2>PP 001 Bookmarknest</h2>
+        <p>PP-001-bookmarknest</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-carousel-maker/">
+        <h2>PP 001 Carousel Maker</h2>
+        <p>PP-001-carousel-maker</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-chaserflow/">
+        <h2>PP 001 Chaserflow</h2>
+        <p>PP-001-chaserflow</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-cod-commission-tracker/">
+        <h2>PP 001 Cod Commission Tracker</h2>
+        <p>PP-001-cod-commission-tracker</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-competitor-price-tracker/">
+        <h2>PP 001 Competitor Price Tracker</h2>
+        <p>PP-001-competitor-price-tracker</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-docstack/">
+        <h2>PP 001 Docstack</h2>
+        <p>PP-001-docstack</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-freelance-invoice-rescue/">
+        <h2>PP 001 Freelance Invoice Rescue</h2>
+        <p>PP-001-freelance-invoice-rescue</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-invoice-chaser-lite/">
+        <h2>PP 001 Invoice Chaser Lite</h2>
+        <p>PP-001-invoice-chaser-lite</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-invoice-preflight/">
+        <h2>PP 001 Invoice Preflight</h2>
+        <p>PP-001-invoice-preflight</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-leasehold-affordability/">
+        <h2>PP 001 Leasehold Affordability</h2>
+        <p>PP-001-leasehold-affordability</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-lesson-ledger/">
+        <h2>PP 001 Lesson Ledger</h2>
+        <p>PP-001-lesson-ledger</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-maintenance-nagger/">
+        <h2>PP 001 Maintenance Nagger</h2>
+        <p>PP-001-maintenance-nagger</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-noteforge/">
+        <h2>PP 001 Noteforge</h2>
+        <p>PP-001-noteforge</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-notes-ocr/">
+        <h2>PP 001 Notes Ocr</h2>
+        <p>PP-001-notes-ocr</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-partial-payment-chaser/">
+        <h2>PP 001 Partial Payment Chaser</h2>
+        <p>PP-001-partial-payment-chaser</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-saas-stack-map/">
+        <h2>PP 001 Saas Stack Map</h2>
+        <p>PP-001-saas-stack-map</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-seo-visibility/">
+        <h2>PP 001 Seo Visibility</h2>
+        <p>PP-001-seo-visibility</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-solo-marketing-planner/">
+        <h2>PP 001 Solo Marketing Planner</h2>
+        <p>PP-001-solo-marketing-planner</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-uk-seller-tax-tracker/">
+        <h2>PP 001 Uk Seller Tax Tracker</h2>
+        <p>PP-001-uk-seller-tax-tracker</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-uk-tax-companion/">
+        <h2>PP 001 Uk Tax Companion</h2>
+        <p>PP-001-uk-tax-companion</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-001-whatsapp-booking-assistant/">
+        <h2>PP 001 Whatsapp Booking Assistant</h2>
+        <p>PP-001-whatsapp-booking-assistant</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-ai-hiring-scorecard/">
+        <h2>PP 002 Ai Hiring Scorecard</h2>
+        <p>PP-002-ai-hiring-scorecard</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-bsa-checklist/">
+        <h2>PP 002 Bsa Checklist</h2>
+        <p>PP-002-bsa-checklist</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-cgt-reporting/">
+        <h2>PP 002 Cgt Reporting</h2>
+        <p>PP-002-cgt-reporting</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-fee-link-optimizer/">
+        <h2>PP 002 Fee Link Optimizer</h2>
+        <p>PP-002-fee-link-optimizer</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-fieldkit/">
+        <h2>PP 002 Fieldkit</h2>
+        <p>PP-002-fieldkit</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-freelance-invoicing/">
+        <h2>PP 002 Freelance Invoicing</h2>
+        <p>PP-002-freelance-invoicing</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-hmrc-plan-forecaster/">
+        <h2>PP 002 Hmrc Plan Forecaster</h2>
+        <p>PP-002-hmrc-plan-forecaster</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-lean-invoice/">
+        <h2>PP 002 Lean Invoice</h2>
+        <p>PP-002-lean-invoice</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-micro-automation-layer/">
+        <h2>PP 002 Micro Automation Layer</h2>
+        <p>PP-002-micro-automation-layer</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-perma-qr-link/">
+        <h2>PP 002 Perma Qr Link</h2>
+        <p>PP-002-perma-qr-link</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-prooflite/">
+        <h2>PP 002 Prooflite</h2>
+        <p>PP-002-prooflite</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-safe-lead-scout/">
+        <h2>PP 002 Safe Lead Scout</h2>
+        <p>PP-002-safe-lead-scout</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-scheduleflow/">
+        <h2>PP 002 Scheduleflow</h2>
+        <p>PP-002-scheduleflow</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-smb-competitor-tracker/">
+        <h2>PP 002 Smb Competitor Tracker</h2>
+        <p>PP-002-smb-competitor-tracker</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-stackdetect-lite/">
+        <h2>PP 002 Stackdetect Lite</h2>
+        <p>PP-002-stackdetect-lite</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-typeback/">
+        <h2>PP 002 Typeback</h2>
+        <p>PP-002-typeback</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-typed-history/">
+        <h2>PP 002 Typed History</h2>
+        <p>PP-002-typed-history</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-typing-recall/">
+        <h2>PP 002 Typing Recall</h2>
+        <p>PP-002-typing-recall</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-uk-landlord-compliance-nudge/">
+        <h2>PP 002 Uk Landlord Compliance Nudge</h2>
+        <p>PP-002-uk-landlord-compliance-nudge</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-waitlist-outreach-planner/">
+        <h2>PP 002 Waitlist Outreach Planner</h2>
+        <p>PP-002-waitlist-outreach-planner</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-whatsapp-booking/">
+        <h2>PP 002 Whatsapp Booking</h2>
+        <p>PP-002-whatsapp-booking</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-002-whatsapp-booking-bot/">
+        <h2>PP 002 Whatsapp Booking Bot</h2>
+        <p>PP-002-whatsapp-booking-bot</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-ai-credit-guard/">
+        <h2>PP 003 Ai Credit Guard</h2>
+        <p>PP-003-ai-credit-guard</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-arxiv-quality-ranker/">
+        <h2>PP 003 Arxiv Quality Ranker</h2>
+        <p>PP-003-arxiv-quality-ranker</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-blockcare-escalator/">
+        <h2>PP 003 Blockcare Escalator</h2>
+        <p>PP-003-blockcare-escalator</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-cashflow-clarity/">
+        <h2>PP 003 Cashflow Clarity</h2>
+        <p>PP-003-cashflow-clarity</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-flyerforge/">
+        <h2>PP 003 Flyerforge</h2>
+        <p>PP-003-flyerforge</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-freelance-cashflow-copilot/">
+        <h2>PP 003 Freelance Cashflow Copilot</h2>
+        <p>PP-003-freelance-cashflow-copilot</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-hn-monitor/">
+        <h2>PP 003 Hn Monitor</h2>
+        <p>PP-003-hn-monitor</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-hn-recall/">
+        <h2>PP 003 Hn Recall</h2>
+        <p>PP-003-hn-recall</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-invoice-ocr-lite/">
+        <h2>PP 003 Invoice Ocr Lite</h2>
+        <p>PP-003-invoice-ocr-lite</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-leadbeam/">
+        <h2>PP 003 Leadbeam</h2>
+        <p>PP-003-leadbeam</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-llm-signal-check/">
+        <h2>PP 003 Llm Signal Check</h2>
+        <p>PP-003-llm-signal-check</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-memory-vault/">
+        <h2>PP 003 Memory Vault</h2>
+        <p>PP-003-memory-vault</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-outbound-one/">
+        <h2>PP 003 Outbound One</h2>
+        <p>PP-003-outbound-one</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-parallel-sessions/">
+        <h2>PP 003 Parallel Sessions</h2>
+        <p>PP-003-parallel-sessions</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-rent-vs-buy-uk-sanity/">
+        <h2>PP 003 Rent Vs Buy Uk Sanity</h2>
+        <p>PP-003-rent-vs-buy-uk-sanity</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-telemetryguard/">
+        <h2>PP 003 Telemetryguard</h2>
+        <p>PP-003-telemetryguard</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-uk-boundary-checker/">
+        <h2>PP 003 Uk Boundary Checker</h2>
+        <p>PP-003-uk-boundary-checker</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-uk-cgt-isa/">
+        <h2>PP 003 Uk Cgt Isa</h2>
+        <p>PP-003-uk-cgt-isa</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-whatsapp-business-setup/">
+        <h2>PP 003 Whatsapp Business Setup</h2>
+        <p>PP-003-whatsapp-business-setup</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-003-workflow-health/">
+        <h2>PP 003 Workflow Health</h2>
+        <p>PP-003-workflow-health</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-004-ai-tdd-workbench/">
+        <h2>PP 004 Ai Tdd Workbench</h2>
+        <p>PP-004-ai-tdd-workbench</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-004-clawconfig-guard/">
+        <h2>PP 004 Clawconfig Guard</h2>
+        <p>PP-004-clawconfig-guard</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-004-planpulse/">
+        <h2>PP 004 Planpulse</h2>
+        <p>PP-004-planpulse</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-PP-001-repair-log-pack/">
+        <h2>PP PP 001 Repair Log Pack</h2>
+        <p>PP-PP-001-repair-log-pack</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-PP-001-service-charge-affordability/">
+        <h2>PP PP 001 Service Charge Affordability</h2>
+        <p>PP-PP-001-service-charge-affordability</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-PP-002-service-charge-audit/">
+        <h2>PP PP 002 Service Charge Audit</h2>
+        <p>PP-PP-002-service-charge-audit</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-PP-003-invoice-chase-pack/">
+        <h2>PP PP 003 Invoice Chase Pack</h2>
+        <p>PP-PP-003-invoice-chase-pack</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-PP-003-section20-toolkit/">
+        <h2>PP PP 003 Section20 Toolkit</h2>
+        <p>PP-PP-003-section20-toolkit</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/PP-PP-004-lease-clause-checker/">
+        <h2>PP PP 004 Lease Clause Checker</h2>
+        <p>PP-PP-004-lease-clause-checker</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/competency-matrix-app/">
+        <h2>Competency Matrix App</h2>
+        <p>competency-matrix-app</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/dns-email-audit/">
+        <h2>Dns Email Audit</h2>
+        <p>dns-email-audit</p>
+      </a>
+      <a class="card" href="https://tonycdr-prog.github.io/products/ifc-automator/">
+        <h2>Ifc Automator</h2>
+        <p>ifc-automator</p>
+      </a>
     </section>
   </main>
 </body>
