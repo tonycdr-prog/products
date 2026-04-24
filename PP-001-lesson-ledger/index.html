@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LessonLedger — Tutor Lesson Credits + Invoice Nudges</title>
+  <meta name="description" content="Track purchased lesson credits, delivered sessions, and outstanding balances for tutoring clients." />
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#475569;
+      --line:#dbe2ea;
+      --brand:#2563eb;
+      --brand-2:#1d4ed8;
+      --ok:#0f766e;
+      --warn:#b45309;
+      --bad:#b91c1c;
+      --shadow:0 12px 30px rgba(15, 23, 42, .08);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:1180px;margin:0 auto;padding:24px}
+    .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .hero{padding:24px;margin-bottom:16px}
+    .hero h1{margin:0 0 10px;font-size:clamp(1.4rem,2.4vw,2rem)}
+    .hero p{margin:0;color:var(--muted)}
+    .grid{display:grid;gap:14px}
+    .grid.two{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+    .grid.three{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+    .card{padding:16px}
+    h2{margin:0 0 12px;font-size:1.1rem}
+    h3{margin:0 0 10px;font-size:1rem}
+    label{font-size:.82rem;font-weight:600;color:#334155;display:block;margin-bottom:6px}
+    input,select,textarea,button{font:inherit}
+    input,select,textarea{
+      width:100%;padding:10px;border:1px solid #c9d4df;border-radius:10px;background:#fff;color:var(--ink)
+    }
+    textarea{min-height:80px;resize:vertical}
+    button{border:none;background:var(--brand);color:white;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+    button:hover{background:var(--brand-2)}
+    button.ghost{background:#eef2ff;color:#1e3a8a}
+    button.warn{background:#fef3c7;color:#854d0e}
+    button.danger{background:#fee2e2;color:#991b1b}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+    .kpi{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px}
+    .kpi .label{font-size:.78rem;color:var(--muted)}
+    .kpi .value{font-size:1.1rem;font-weight:700;margin-top:4px}
+    table{width:100%;border-collapse:collapse;font-size:.93rem}
+    th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+    th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:#475569;background:#f8fafc}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.78rem;font-weight:700}
+    .pill.ok{background:#dcfce7;color:#166534}
+    .pill.warn{background:#fef3c7;color:#92400e}
+    .pill.bad{background:#fee2e2;color:#991b1b}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .small{font-size:.84rem;color:var(--muted)}
+    .split{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+    @media (max-width:980px){.split{grid-template-columns:1fr}}
+    pre{white-space:pre-wrap;background:#0b1020;color:#dbeafe;padding:12px;border-radius:10px;font-size:.85rem;max-height:360px;overflow:auto}
+    .footer{margin-top:14px;color:#64748b;font-size:.8rem}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>LessonLedger</h1>
+      <p>Offline-first tracker for tutor lesson credits, delivered sessions, and invoice nudges. Open this file and start using it immediately.</p>
+      <div class="kpis" id="globalKpis"></div>
+    </section>
+
+    <section class="grid two">
+      <article class="card">
+        <h2>1) Add / update client</h2>
+        <div class="grid three">
+          <div><label for="clientName">Client name</label><input id="clientName" placeholder="e.g. Alice Brown" /></div>
+          <div><label for="clientEmail">Email</label><input id="clientEmail" placeholder="alice@email.com" /></div>
+          <div><label for="hourlyRate">Default £ per lesson</label><input id="hourlyRate" type="number" min="0" step="0.01" placeholder="45" /></div>
+        </div>
+        <div class="actions">
+          <button id="saveClientBtn">Save client</button>
+          <button id="clearClientBtn" class="ghost">Clear</button>
+        </div>
+        <p class="small">Tip: default lesson rate is used when adding lesson packs quickly.</p>
+      </article>
+
+      <article class="card">
+        <h2>2) Add lesson pack purchase</h2>
+        <div class="grid three">
+          <div><label for="purchaseClient">Client</label><select id="purchaseClient"></select></div>
+          <div><label for="purchaseDate">Date</label><input id="purchaseDate" type="date" /></div>
+          <div><label for="purchaseLessons">Lessons purchased</label><input id="purchaseLessons" type="number" min="1" step="1" value="4" /></div>
+          <div><label for="purchaseAmount">Amount (£)</label><input id="purchaseAmount" type="number" min="0" step="0.01" placeholder="180" /></div>
+          <div><label for="purchaseNotes">Notes</label><input id="purchaseNotes" placeholder="Term 1 top-up" /></div>
+        </div>
+        <div class="actions"><button id="addPurchaseBtn">Add purchase</button></div>
+      </article>
+    </section>
+
+    <section class="grid two" style="margin-top:14px;">
+      <article class="card">
+        <h2>3) Log delivered lesson</h2>
+        <div class="grid three">
+          <div><label for="sessionClient">Client</label><select id="sessionClient"></select></div>
+          <div><label for="sessionDate">Date</label><input id="sessionDate" type="date" /></div>
+          <div><label for="sessionCount">Lessons delivered</label><input id="sessionCount" type="number" min="1" step="1" value="1" /></div>
+          <div style="grid-column:1/-1"><label for="sessionNotes">Session notes (optional)</label><input id="sessionNotes" placeholder="GCSE maths mock prep" /></div>
+        </div>
+        <div class="actions"><button id="addSessionBtn">Log lesson</button></div>
+      </article>
+
+      <article class="card">
+        <h2>4) Log payment received</h2>
+        <div class="grid three">
+          <div><label for="paymentClient">Client</label><select id="paymentClient"></select></div>
+          <div><label for="paymentDate">Date</label><input id="paymentDate" type="date" /></div>
+          <div><label for="paymentAmount">Amount (£)</label><input id="paymentAmount" type="number" min="0" step="0.01" placeholder="180" /></div>
+          <div><label for="paymentMethod">Method</label><select id="paymentMethod"><option>Bank transfer</option><option>Cash</option><option>Card</option><option>PayPal</option></select></div>
+          <div style="grid-column:span 2"><label for="paymentNotes">Notes</label><input id="paymentNotes" placeholder="Invoice #LL-012" /></div>
+        </div>
+        <div class="actions"><button id="addPaymentBtn">Log payment</button></div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2>Client balance table</h2>
+      <div class="small">Status is based on both lesson credits and outstanding £. Credit debt means lessons were delivered before top-up.</div>
+      <div style="overflow:auto;margin-top:10px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Purchased lessons</th>
+              <th>Delivered</th>
+              <th>Lesson balance</th>
+              <th>Purchased £</th>
+              <th>Paid £</th>
+              <th>Outstanding £</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clientRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="split" style="margin-top:14px;">
+      <article class="card">
+        <h2>Recent activity</h2>
+        <div class="small">Latest purchases, sessions, and payments across all clients.</div>
+        <div style="overflow:auto;margin-top:10px;max-height:320px;">
+          <table>
+            <thead><tr><th>Date</th><th>Type</th><th>Client</th><th>Details</th></tr></thead>
+            <tbody id="activityRows"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Statement + invoice nudge</h2>
+        <label for="statementClient">Client</label>
+        <select id="statementClient"></select>
+        <div class="actions">
+          <button id="generateStatementBtn">Generate text</button>
+          <button id="copyStatementBtn" class="ghost">Copy</button>
+        </div>
+        <pre id="statementOutput">Select a client and click “Generate text”.</pre>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2>Data controls</h2>
+      <div class="actions">
+        <button id="seedBtn" class="ghost">Load demo data</button>
+        <button id="exportCsvBtn" class="ghost">Export client balances CSV</button>
+        <button id="exportJsonBtn" class="ghost">Export full JSON backup</button>
+        <button id="importJsonBtn" class="warn">Import JSON backup</button>
+        <button id="clearAllBtn" class="danger">Clear all data</button>
+      </div>
+      <input id="jsonImportInput" type="file" accept="application/json" style="display:none" />
+      <p class="footer">Data is saved in your browser (localStorage key: <span class="mono">lessonledger_v2</span>).</p>
+    </section>
+  </div>
+
+  <script>
+    const KEY = 'lessonledger_v2';
+    const today = () => new Date().toISOString().slice(0,10);
+    const id = () => Math.random().toString(36).slice(2,10);
+    const money = n => `£${Number(n || 0).toFixed(2)}`;
+
+    const state = loadState();
+
+    function loadState(){
+      try {
+        const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+        return {
+          clients: Array.isArray(saved.clients) ? saved.clients : [],
+          purchases: Array.isArray(saved.purchases) ? saved.purchases : [],
+          sessions: Array.isArray(saved.sessions) ? saved.sessions : [],
+          payments: Array.isArray(saved.payments) ? saved.payments : []
+        };
+      } catch {
+        return { clients:[], purchases:[], sessions:[], payments:[] };
+      }
+    }
+
+    function saveState(){
+      localStorage.setItem(KEY, JSON.stringify(state));
+    }
+
+    function getClient(clientId){
+      return state.clients.find(c => c.id === clientId);
+    }
+
+    function totalsByClient(clientId){
+      const purchasedLessons = state.purchases.filter(p => p.clientId === clientId).reduce((s,p)=>s + Number(p.lessons || 0), 0);
+      const deliveredLessons = state.sessions.filter(s => s.clientId === clientId).reduce((s,x)=>s + Number(x.lessons || 0), 0);
+      const purchasedAmount = state.purchases.filter(p => p.clientId === clientId).reduce((s,p)=>s + Number(p.amount || 0), 0);
+      const paidAmount = state.payments.filter(p => p.clientId === clientId).reduce((s,p)=>s + Number(p.amount || 0), 0);
+      return {
+        purchasedLessons,
+        deliveredLessons,
+        lessonBalance: purchasedLessons - deliveredLessons,
+        purchasedAmount,
+        paidAmount,
+        outstanding: purchasedAmount - paidAmount
+      };
+    }
+
+    function getStatus(t){
+      if (t.lessonBalance < 0 || t.outstanding > 0.009) return {text:'Needs nudge', cls:'bad'};
+      if (t.lessonBalance <= 1) return {text:'Top-up soon', cls:'warn'};
+      return {text:'Healthy', cls:'ok'};
+    }
+
+    function refreshClientOptions(){
+      const selects = [purchaseClient, sessionClient, paymentClient, statementClient];
+      selects.forEach(sel => {
+        const keep = sel.value;
+        sel.innerHTML = '';
+        if (!state.clients.length){
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'Add a client first';
+          sel.appendChild(opt);
+          return;
+        }
+        state.clients.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.name;
+          sel.appendChild(opt);
+        });
+        if ([...sel.options].some(o => o.value === keep)) sel.value = keep;
+      });
+    }
+
+    function renderKpis(){
+      const totalClients = state.clients.length;
+      const totalOutstanding = state.clients.reduce((sum,c)=>sum + totalsByClient(c.id).outstanding,0);
+      const lessonDebtClients = state.clients.filter(c => totalsByClient(c.id).lessonBalance < 0).length;
+      const lowCreditClients = state.clients.filter(c => {
+        const t = totalsByClient(c.id);
+        return t.lessonBalance >= 0 && t.lessonBalance <= 1;
+      }).length;
+      const sessionsThisMonth = state.sessions.filter(s => s.date && s.date.slice(0,7) === today().slice(0,7)).reduce((n,s)=>n + Number(s.lessons || 0),0);
+
+      const items = [
+        ['Clients', totalClients],
+        ['Outstanding', money(totalOutstanding)],
+        ['Credit debt clients', lessonDebtClients],
+        ['Low credits (≤1)', lowCreditClients],
+        ['Lessons this month', sessionsThisMonth]
+      ];
+
+      globalKpis.innerHTML = items.map(([label,val]) => `
+        <div class="kpi">
+          <div class="label">${label}</div>
+          <div class="value">${val}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderClients(){
+      if (!state.clients.length){
+        clientRows.innerHTML = '<tr><td colspan="9" class="small">No clients yet.</td></tr>';
+        return;
+      }
+
+      clientRows.innerHTML = state.clients.map(c => {
+        const t = totalsByClient(c.id);
+        const st = getStatus(t);
+        return `
+          <tr>
+            <td><strong>${escapeHtml(c.name)}</strong><br><span class="small">${escapeHtml(c.email || '—')}</span></td>
+            <td>${t.purchasedLessons}</td>
+            <td>${t.deliveredLessons}</td>
+            <td>${t.lessonBalance}</td>
+            <td>${money(t.purchasedAmount)}</td>
+            <td>${money(t.paidAmount)}</td>
+            <td>${money(t.outstanding)}</td>
+            <td><span class="pill ${st.cls}">${st.text}</span></td>
+            <td><button class="ghost" data-edit-client="${c.id}">Edit</button></td>
+          </tr>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-edit-client]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const c = getClient(btn.dataset.editClient);
+          if (!c) return;
+          clientName.value = c.name || '';
+          clientEmail.value = c.email || '';
+          hourlyRate.value = c.rate || '';
+          saveClientBtn.dataset.editingId = c.id;
+          saveClientBtn.textContent = 'Update client';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+    }
+
+    function collectActivity(){
+      const purchaseRows = state.purchases.map(p => ({
+        date: p.date,
+        type: 'Purchase',
+        client: getClient(p.clientId)?.name || 'Unknown',
+        details: `${p.lessons} lessons for ${money(p.amount)}${p.notes ? ` — ${p.notes}` : ''}`
+      }));
+      const sessionRows = state.sessions.map(s => ({
+        date: s.date,
+        type: 'Lesson',
+        client: getClient(s.clientId)?.name || 'Unknown',
+        details: `${s.lessons} delivered${s.notes ? ` — ${s.notes}` : ''}`
+      }));
+      const paymentRows = state.payments.map(p => ({
+        date: p.date,
+        type: 'Payment',
+        client: getClient(p.clientId)?.name || 'Unknown',
+        details: `${money(p.amount)} via ${p.method}${p.notes ? ` — ${p.notes}` : ''}`
+      }));
+
+      return [...purchaseRows, ...sessionRows, ...paymentRows]
+        .sort((a,b) => String(b.date).localeCompare(String(a.date)))
+        .slice(0, 40);
+    }
+
+    function renderActivity(){
+      const rows = collectActivity();
+      if (!rows.length){
+        activityRows.innerHTML = '<tr><td colspan="4" class="small">No activity logged yet.</td></tr>';
+        return;
+      }
+      activityRows.innerHTML = rows.map(r => `
+        <tr>
+          <td>${escapeHtml(r.date || '—')}</td>
+          <td>${escapeHtml(r.type)}</td>
+          <td>${escapeHtml(r.client)}</td>
+          <td>${escapeHtml(r.details)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function escapeHtml(s){
+      return String(s ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    }
+
+    function render(){
+      refreshClientOptions();
+      renderKpis();
+      renderClients();
+      renderActivity();
+      saveState();
+    }
+
+    function resetClientForm(){
+      clientName.value = '';
+      clientEmail.value = '';
+      hourlyRate.value = '';
+      delete saveClientBtn.dataset.editingId;
+      saveClientBtn.textContent = 'Save client';
+    }
+
+    function requireClientId(val){
+      if (!val) {
+        alert('Add a client first.');
+        return false;
+      }
+      return true;
+    }
+
+    function addClient(){
+      const name = clientName.value.trim();
+      const email = clientEmail.value.trim();
+      const rate = Number(hourlyRate.value || 0);
+      const editingId = saveClientBtn.dataset.editingId;
+
+      if (!name) return alert('Client name is required.');
+      if (email && !/.+@.+\..+/.test(email)) return alert('Client email looks invalid.');
+
+      if (editingId){
+        const c = getClient(editingId);
+        if (!c) return;
+        c.name = name;
+        c.email = email;
+        c.rate = rate;
+      } else {
+        state.clients.push({ id:id(), name, email, rate });
+      }
+      resetClientForm();
+      render();
+    }
+
+    function addPurchase(){
+      const clientId = purchaseClient.value;
+      if (!requireClientId(clientId)) return;
+      const date = purchaseDate.value || today();
+      const lessons = Number(purchaseLessons.value || 0);
+      let amount = Number(purchaseAmount.value || 0);
+      const notes = purchaseNotes.value.trim();
+
+      if (lessons <= 0) return alert('Lessons purchased must be > 0.');
+      if (amount <= 0){
+        const c = getClient(clientId);
+        amount = Number(c?.rate || 0) * lessons;
+      }
+      if (amount <= 0) return alert('Enter amount (£) or set a default lesson rate for this client.');
+
+      state.purchases.push({ id:id(), clientId, date, lessons, amount, notes });
+      purchaseLessons.value = '4';
+      purchaseAmount.value = '';
+      purchaseNotes.value = '';
+      render();
+    }
+
+    function addSession(){
+      const clientId = sessionClient.value;
+      if (!requireClientId(clientId)) return;
+      const date = sessionDate.value || today();
+      const lessons = Number(sessionCount.value || 0);
+      const notes = sessionNotes.value.trim();
+      if (lessons <= 0) return alert('Lessons delivered must be > 0.');
+
+      state.sessions.push({ id:id(), clientId, date, lessons, notes });
+      sessionCount.value = '1';
+      sessionNotes.value = '';
+      render();
+    }
+
+    function addPayment(){
+      const clientId = paymentClient.value;
+      if (!requireClientId(clientId)) return;
+      const date = paymentDate.value || today();
+      const amount = Number(paymentAmount.value || 0);
+      const method = paymentMethod.value;
+      const notes = paymentNotes.value.trim();
+
+      if (amount <= 0) return alert('Payment amount must be > 0.');
+
+      state.payments.push({ id:id(), clientId, date, amount, method, notes });
+      paymentAmount.value = '';
+      paymentNotes.value = '';
+      render();
+    }
+
+    function generateStatement(){
+      const clientId = statementClient.value;
+      if (!requireClientId(clientId)) return;
+      const client = getClient(clientId);
+      const t = totalsByClient(clientId);
+
+      const recentLessons = state.sessions
+        .filter(s => s.clientId === clientId)
+        .sort((a,b)=>String(b.date).localeCompare(String(a.date)))
+        .slice(0,6);
+
+      const lines = [];
+      lines.push(`Subject: Lesson balance update — ${client.name}`);
+      lines.push('');
+      lines.push(`Hi ${client.name},`);
+      lines.push('');
+      lines.push('Quick balance update from LessonLedger:');
+      lines.push(`- Lessons purchased: ${t.purchasedLessons}`);
+      lines.push(`- Lessons delivered: ${t.deliveredLessons}`);
+      lines.push(`- Remaining lesson credits: ${t.lessonBalance}`);
+      lines.push(`- Total billed: ${money(t.purchasedAmount)}`);
+      lines.push(`- Total paid: ${money(t.paidAmount)}`);
+      lines.push(`- Outstanding: ${money(t.outstanding)}`);
+      lines.push('');
+
+      if (recentLessons.length){
+        lines.push('Recent lessons logged:');
+        recentLessons.forEach(s => lines.push(`- ${s.date}: ${s.lessons} lesson(s)${s.notes ? ` (${s.notes})` : ''}`));
+        lines.push('');
+      }
+
+      if (t.lessonBalance < 0 || t.outstanding > 0.009){
+        lines.push('Could you please top up this week so we can keep sessions running smoothly?');
+      } else if (t.lessonBalance <= 1){
+        lines.push('You are down to your last lesson credit — worth topping up now to lock in your preferred slot.');
+      } else {
+        lines.push('Everything is in good shape. I will keep this tracker updated after each lesson.');
+      }
+
+      lines.push('');
+      lines.push('Thanks!');
+      lines.push('');
+      lines.push('— Sent from LessonLedger');
+
+      statementOutput.textContent = lines.join('\n');
+    }
+
+    function copyStatement(){
+      const text = statementOutput.textContent.trim();
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        copyStatementBtn.textContent = 'Copied';
+        setTimeout(()=>copyStatementBtn.textContent='Copy',1200);
+      }).catch(() => alert('Copy failed. You can still select text manually.'));
+    }
+
+    function exportCsv(){
+      const header = ['Client','Email','PurchasedLessons','DeliveredLessons','LessonBalance','PurchasedAmount','PaidAmount','Outstanding'];
+      const rows = state.clients.map(c => {
+        const t = totalsByClient(c.id);
+        return [c.name, c.email || '', t.purchasedLessons, t.deliveredLessons, t.lessonBalance, t.purchasedAmount.toFixed(2), t.paidAmount.toFixed(2), t.outstanding.toFixed(2)];
+      });
+      const csv = [header, ...rows]
+        .map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+        .join('\n');
+      download('lessonledger-balances.csv', csv, 'text/csv;charset=utf-8');
+    }
+
+    function exportJson(){
+      const payload = JSON.stringify(state, null, 2);
+      download(`lessonledger-backup-${today()}.json`, payload, 'application/json');
+    }
+
+    function download(filename, text, type){
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function importJson(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (!parsed || typeof parsed !== 'object') throw new Error('Invalid JSON');
+          state.clients = Array.isArray(parsed.clients) ? parsed.clients : [];
+          state.purchases = Array.isArray(parsed.purchases) ? parsed.purchases : [];
+          state.sessions = Array.isArray(parsed.sessions) ? parsed.sessions : [];
+          state.payments = Array.isArray(parsed.payments) ? parsed.payments : [];
+          render();
+          alert('Backup imported.');
+        } catch {
+          alert('Could not import file. Ensure it is a LessonLedger JSON backup.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function clearAll(){
+      if (!confirm('Delete all LessonLedger data in this browser?')) return;
+      state.clients = [];
+      state.purchases = [];
+      state.sessions = [];
+      state.payments = [];
+      render();
+      statementOutput.textContent = 'Select a client and click “Generate text”.';
+      resetClientForm();
+    }
+
+    function loadDemo(){
+      const a = {id:id(), name:'Alice Brown', email:'alice.parent@example.com', rate:45};
+      const b = {id:id(), name:'Noah Patel', email:'noah.parent@example.com', rate:40};
+      state.clients = [a,b];
+      state.purchases = [
+        {id:id(), clientId:a.id, date:today(), lessons:6, amount:270, notes:'April pack'},
+        {id:id(), clientId:b.id, date:today(), lessons:4, amount:160, notes:'Weekly top-up'}
+      ];
+      state.sessions = [
+        {id:id(), clientId:a.id, date:today(), lessons:2, notes:'A-level calculus'},
+        {id:id(), clientId:b.id, date:today(), lessons:3, notes:'GCSE revision sprint'}
+      ];
+      state.payments = [
+        {id:id(), clientId:a.id, date:today(), amount:200, method:'Bank transfer', notes:'Partial payment'},
+        {id:id(), clientId:b.id, date:today(), amount:160, method:'Bank transfer', notes:'Paid in full'}
+      ];
+      render();
+    }
+
+    // wire up
+    saveClientBtn.addEventListener('click', addClient);
+    clearClientBtn.addEventListener('click', resetClientForm);
+    addPurchaseBtn.addEventListener('click', addPurchase);
+    addSessionBtn.addEventListener('click', addSession);
+    addPaymentBtn.addEventListener('click', addPayment);
+    generateStatementBtn.addEventListener('click', generateStatement);
+    copyStatementBtn.addEventListener('click', copyStatement);
+    exportCsvBtn.addEventListener('click', exportCsv);
+    exportJsonBtn.addEventListener('click', exportJson);
+    importJsonBtn.addEventListener('click', () => jsonImportInput.click());
+    jsonImportInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (file) importJson(file);
+      e.target.value = '';
+    });
+    clearAllBtn.addEventListener('click', clearAll);
+    seedBtn.addEventListener('click', loadDemo);
+
+    purchaseDate.value = today();
+    sessionDate.value = today();
+    paymentDate.value = today();
+
+    render();
+  </script>
+</body>
+</html>
