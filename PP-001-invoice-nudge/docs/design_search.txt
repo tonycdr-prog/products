@@ -1,0 +1,68 @@
+## UI Pro Max Search Results
+**Domain:** landing | **Query:** invoicing automation landing page
+**Source:** landing.csv | **Found:** 2 results
+
+### Result 1
+- **Pattern Name:** Scroll-Triggered Storytelling
+- **Keywords:** storytelling, scroll, narrative, story, immersive
+- **Section Order:** 1. Intro hook, 2. Chapter 1 (problem), 3. Chapter 2 (journey), 4. Chapter 3 (solution), 5. Climax CTA
+- **Primary CTA Placement:** End of each chapter (mini) + Final climax CTA
+- **Color Strategy:** Progressive reveal. Each chapter has distinct color. Building intensity.
+- **Conversion Optimization:** Narrative increases time-on-page 3x. Use progress indicator. Mobile: simplify animations.
+
+### Result 2
+- **Pattern Name:** Pricing Page + CTA
+- **Keywords:** pricing, plans, tiers, comparison, cta
+- **Section Order:** 1. Hero (pricing headline), 2. Price comparison cards, 3. Feature comparison table, 4. FAQ section, 5. Final CTA
+- **Primary CTA Placement:** Each card: CTA button. Sticky CTA in nav
+- **Color Strategy:** Free: Grey, Starter: Blue, Pro: Green/Gold, Enterprise: Dark. Cards: 1px border, shadow
+- **Conversion Optimization:** Recommend starter plan (pre-select/highlight). Show annual discount (20-30%). Use FAQs to address concerns.
+
+## UI Pro Max Search Results
+**Domain:** color | **Query:** invoicing automation
+**Source:** colors.csv | **Found:** 0 results
+
+## UI Pro Max Search Results
+**Domain:** typography | **Query:** invoicing automation
+**Source:** typography.csv | **Found:** 0 results
+
+## UI Pro Max Search Results
+**Domain:** color | **Query:** saas
+**Source:** colors.csv | **Found:** 1 results
+
+### Result 1
+- **Product Type:** Micro SaaS
+- **Primary:** #6366F1
+- **On Primary:** #FFFFFF
+- **Secondary:** #818CF8
+- **On Secondary:** #0F172A
+- **Accent:** #059669
+- **On Accent:** #FFFFFF
+- **Background:** #F5F3FF
+- **Foreground:** #1E1B4B
+- **Card:** #FFFFFF
+- **Card Foreground:** #1E1B4B
+- **Muted:** #EBEFF9
+- **Muted Foreground:** #64748B
+- **Border:** #E0E7FF
+- **Destructive:** #DC2626
+- **On Destructive:** #FFFFFF
+- **Ring:** #6366F1
+- **Notes:** Indigo primary + emerald CTA [Accent adjusted from #10B981 for WCAG 3:1]
+
+## UI Pro Max Search Results
+**Domain:** typography | **Query:** modern
+**Source:** typography.csv | **Found:** 1 results
+
+### Result 1
+- **Font Pairing Name:** Geometric Modern
+- **Category:** Sans + Sans
+- **Heading Font:** Outfit
+- **Body Font:** Work Sans
+- **Mood/Style Keywords:** geometric, modern, clean, balanced, contemporary, versatile
+- **Best For:** General purpose, portfolios, agencies, modern brands, landing pages
+- **Google Fonts URL:** https://fonts.google.com/share?selection.family=Outfit:wght@300;400;500;600;700|Work+Sans:wght@300;400;500;600;700
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&display=swap');
+- **Tailwind Config:** fontFamily: { heading: ['Outfit', 'sans-serif'], body: ['Work Sans', 'sans-serif'] }
+- **Notes:** Both geometric but Outfit more distinctive for headings.
+
