@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TriageDesk — Support Inbox Prioritiser</title>
+  <meta name="description" content="Paste support tickets, auto-triage by urgency and revenue risk, assign owners, and generate response drafts." />
+  <style>
+    :root{--bg:#0b1020;--card:#121a31;--muted:#8fa0c5;--text:#e8eeff;--line:#243153;--ok:#2dd4bf;--warn:#f59e0b;--bad:#ef4444;--pri0:#ef4444;--pri1:#f97316;--pri2:#eab308;--pri3:#22c55e}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#0b1020,#0e1630);color:var(--text)}
+    .wrap{max-width:1150px;margin:0 auto;padding:20px}
+    h1{margin:6px 0 8px;font-size:1.7rem} p{color:var(--muted)}
+    .grid{display:grid;gap:12px}.g2{grid-template-columns:1.2fr .8fr}.g3{grid-template-columns:repeat(3,1fr)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+    textarea,input,select,button{width:100%;border-radius:10px;border:1px solid #2a3a63;background:#0e1530;color:var(--text);padding:10px;font:inherit}
+    textarea{min-height:120px;resize:vertical} button{background:#1d4ed8;border-color:#1e40af;font-weight:700;cursor:pointer}
+    button.alt{background:#0f213f} button.good{background:#0d9488} button.warn{background:#b45309}
+    .row{display:flex;gap:8px;flex-wrap:wrap}.row > *{flex:1 1 150px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{padding:10px;background:#0d1530;border-radius:10px;border:1px solid #243153}
+    .k{font-size:.78rem;color:var(--muted)} .v{font-size:1.1rem;font-weight:700;margin-top:4px}
+    table{width:100%;border-collapse:collapse;font-size:.92rem} th,td{padding:8px;border-bottom:1px solid #233154;text-align:left;vertical-align:top}
+    th{font-size:.78rem;letter-spacing:.03em;color:#b8c7eb;text-transform:uppercase}
+    .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.75rem;font-weight:700}
+    .P0{background:color-mix(in oklab,var(--pri0) 22%, transparent);color:#fecaca}
+    .P1{background:color-mix(in oklab,var(--pri1) 24%, transparent);color:#fed7aa}
+    .P2{background:color-mix(in oklab,var(--pri2) 25%, transparent);color:#fde68a}
+    .P3{background:color-mix(in oklab,var(--pri3) 20%, transparent);color:#bbf7d0}
+    .muted{color:var(--muted)} .small{font-size:.8rem}
+    .goodTxt{color:var(--ok)} .warnTxt{color:var(--warn)} .badTxt{color:var(--bad)}
+    @media (max-width:900px){.g2,.g3,.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>TriageDesk</h1>
+    <p>Turn raw inbound tickets into a ranked action queue with SLA targets, owners, and response drafts.</p>
+
+    <div class="grid g2">
+      <section class="card">
+        <h3>1) Paste tickets</h3>
+        <p class="small muted">Format: <code>subject | message | customerTier(enterprise/pro/smb) | mrr</code></p>
+        <textarea id="tickets">Billing failed after renewal | Customer says they were charged twice and access is locked | enterprise | 3200
+App crash on login | iOS app crashes immediately after FaceID | pro | 280
+Need SSO support | Can you add SAML SSO for Okta? | enterprise | 1800
+Change billing email | Please update invoice recipient address | smb | 39</textarea>
+        <div class="row" style="margin-top:8px">
+          <button onclick="triageAll()">Triage inbox</button>
+          <button class="alt" onclick="seed()">Load sample</button>
+          <button class="alt" onclick="saveLocal()">Save snapshot</button>
+          <button class="alt" onclick="loadLocal()">Load snapshot</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>2) Filters & exports</h3>
+        <div class="row">
+          <select id="fPriority" onchange="render()">
+            <option value="">All priorities</option><option>P0</option><option>P1</option><option>P2</option><option>P3</option>
+          </select>
+          <select id="fCategory" onchange="render()">
+            <option value="">All categories</option><option>Security</option><option>Billing</option><option>Outage/Bug</option><option>Account</option><option>Feature Request</option><option>General</option>
+          </select>
+          <select id="fStatus" onchange="render()">
+            <option value="">Any status</option><option>New</option><option>In Progress</option><option>Waiting</option><option>Resolved</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button class="good" onclick="exportCsv()">Export CSV</button>
+          <button class="warn" onclick="copyStandup()">Copy standup summary</button>
+        </div>
+        <hr style="border-color:#233154;border-style:solid;border-width:1px 0 0;margin:12px 0">
+        <label class="small muted">Team email for draft replies</label>
+        <input id="teamEmail" placeholder="support@yourcompany.com" value="support@triagedesk.app" />
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:12px">
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <h3>Prioritised queue</h3>
+      <div style="overflow:auto">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th>Ticket</th><th>Category</th><th>Priority</th><th>Revenue Risk</th><th>SLA target</th><th>Owner</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid g2" style="margin-top:12px">
+      <div class="card">
+        <h3>Response draft</h3>
+        <p class="small muted">Click “Draft” in any row to generate a customer-ready reply.</p>
+        <textarea id="draft" placeholder="Draft appears here..."></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="good" onclick="copyDraft()">Copy draft</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Waitlist</h3>
+        <input id="waitlistEmail" placeholder="founder@saas.com" />
+        <button style="margin-top:8px" onclick="joinWaitlist()">Join waitlist</button>
+        <p id="waitlistMsg" class="small muted"></p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const state={tickets:[]};
+
+    function uid(){return Math.random().toString(36).slice(2,9)}
+    function esc(s=''){return s.replace(/[&<>\"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m]))}
+
+    function classify(subject,message,tier,mrr){
+      const t=(subject+' '+message).toLowerCase();
+      let category='General',priority='P3',conf=0.62,revenue='Low',sla='24h';
+
+      if(/security|breach|hacked|leak|gdpr|vulnerability/.test(t)) {category='Security';priority='P0';conf=0.93;revenue='Critical';sla='15m'}
+      else if(/charged|refund|invoice|payment|billing|card|cancel/.test(t)) {category='Billing';priority='P1';conf=0.88;revenue='High';sla='1h'}
+      else if(/crash|down|outage|error|broken|fail|cannot login|can\'t login/.test(t)) {category='Outage/Bug';priority='P1';conf=0.9;revenue='High';sla='1h'}
+      else if(/account|access|password|2fa|locked/.test(t)) {category='Account';priority='P2';conf=0.78;revenue='Medium';sla='4h'}
+      else if(/feature|roadmap|would love|please add|integrat/.test(t)) {category='Feature Request';priority='P3';conf=0.74;revenue='Low';sla='48h'}
+
+      const n=Number(mrr)||0;
+      if((tier||'').toLowerCase()==='enterprise' || n>=1000){
+        if(priority==='P2') priority='P1';
+        if(priority==='P3') priority='P2';
+        if(revenue==='Low') revenue='Medium';
+        if(revenue==='Medium') revenue='High';
+      }
+
+      if(priority==='P0') revenue='Critical';
+      return {category,priority,confidence:Math.round(conf*100),revenue,sla};
+    }
+
+    function triageAll(){
+      const lines=document.getElementById('tickets').value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+      state.tickets=lines.map(line=>{
+        const [subject='',message='',tier='smb',mrr='0']=line.split('|').map(x=>(x||'').trim());
+        const c=classify(subject,message,tier,mrr);
+        return {id:uid(),subject,message,tier,mrr:Number(mrr)||0,owner:suggestOwner(c.category),status:'New',...c};
+      });
+      sortTickets();
+      render();
+    }
+
+    function suggestOwner(category){
+      if(category==='Security') return 'Security On-call';
+      if(category==='Billing') return 'Finance Ops';
+      if(category==='Outage/Bug') return 'Support Engineer';
+      if(category==='Account') return 'CX Specialist';
+      return 'Support Agent';
+    }
+
+    function sortTickets(){
+      const w={P0:0,P1:1,P2:2,P3:3};
+      state.tickets.sort((a,b)=>w[a.priority]-w[b.priority]||b.mrr-a.mrr||b.confidence-a.confidence);
+    }
+
+    function render(){
+      const fp=document.getElementById('fPriority').value;
+      const fc=document.getElementById('fCategory').value;
+      const fs=document.getElementById('fStatus').value;
+
+      const list=state.tickets.filter(t=>(!fp||t.priority===fp)&&(!fc||t.category===fc)&&(!fs||t.status===fs));
+      const tb=document.querySelector('#tbl tbody');
+      tb.innerHTML=list.map(t=>`<tr>
+        <td><b>${esc(t.subject)}</b><div class='small muted'>${esc(t.message)}</div><div class='small muted'>${esc(t.tier)} · £${t.mrr}/mo · ${t.confidence}% conf.</div></td>
+        <td>${t.category}</td>
+        <td><span class='pill ${t.priority}'>${t.priority}</span></td>
+        <td>${riskBadge(t.revenue)}</td>
+        <td>${t.sla}</td>
+        <td><input value="${esc(t.owner)}" onchange="update('${t.id}','owner',this.value)"></td>
+        <td>
+          <select onchange="update('${t.id}','status',this.value)">
+            ${['New','In Progress','Waiting','Resolved'].map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </td>
+        <td><button class='alt' onclick="draft('${t.id}')">Draft</button></td>
+      </tr>`).join('') || `<tr><td colspan='8' class='muted'>No tickets match the current filters.</td></tr>`;
+
+      renderStats();
+    }
+
+    function riskBadge(r){
+      const cls=r==='Critical'?'badTxt':r==='High'?'warnTxt':'goodTxt';
+      return `<span class='${cls}'>${r}</span>`;
+    }
+
+    function renderStats(){
+      const s=state.tickets;
+      const open=s.filter(x=>x.status!=='Resolved').length;
+      const p0p1=s.filter(x=>x.priority==='P0'||x.priority==='P1').length;
+      const risk=s.filter(x=>x.revenue==='Critical'||x.revenue==='High').reduce((a,b)=>a+b.mrr,0);
+      const now=new Date();
+      const next=s.find(x=>x.status==='New' && (x.priority==='P0'||x.priority==='P1'));
+      const stats=[
+        ['Open tickets',open],
+        ['P0/P1 queue',p0p1],
+        ['MRR at risk (est.)',`£${risk.toLocaleString()}`],
+        ['Next high-priority action',next?`${next.priority} · ${next.sla}`:'None']
+      ];
+      document.getElementById('stats').innerHTML=stats.map(([k,v])=>`<div class='stat'><div class='k'>${k}</div><div class='v'>${v}</div></div>`).join('');
+    }
+
+    function update(id,key,val){
+      const t=state.tickets.find(x=>x.id===id); if(!t) return;
+      t[key]=val; sortTickets(); render();
+    }
+
+    function draft(id){
+      const t=state.tickets.find(x=>x.id===id); if(!t) return;
+      const eta=t.priority==='P0'?'within 15 minutes':t.priority==='P1'?'within 1 hour':t.priority==='P2'?'today':'within 2 business days';
+      const txt=`Subject: Re: ${t.subject}\n\nHi there,\n\nThanks for reporting this — we’ve marked your ticket as ${t.priority} (${t.category}) and assigned it to ${t.owner}.\n\nCurrent status: ${t.status}. You can expect our next update ${eta}.\n\nIf this blocks revenue-impacting activity on your side, reply with “business impact” and we’ll escalate immediately.\n\nBest,\nTriageDesk Support\n${document.getElementById('teamEmail').value || 'support@yourcompany.com'}`;
+      document.getElementById('draft').value=txt;
+    }
+
+    function copyDraft(){
+      const t=document.getElementById('draft').value.trim(); if(!t) return;
+      navigator.clipboard?.writeText(t).catch(()=>{});
+    }
+
+    function exportCsv(){
+      const rows=[['subject','message','tier','mrr','category','priority','revenue','sla','owner','status','confidence']]
+        .concat(state.tickets.map(t=>[t.subject,t.message,t.tier,t.mrr,t.category,t.priority,t.revenue,t.sla,t.owner,t.status,t.confidence]));
+      const csv=rows.map(r=>r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(',')).join('\n');
+      const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='triagedesk-queue.csv'; a.click();
+    }
+
+    function copyStandup(){
+      const lines=[];
+      const open=state.tickets.filter(t=>t.status!=='Resolved');
+      const urgent=open.filter(t=>t.priority==='P0'||t.priority==='P1');
+      lines.push(`Support standup: ${open.length} open, ${urgent.length} urgent.`);
+      urgent.slice(0,5).forEach(t=>lines.push(`- ${t.priority} ${t.category}: ${t.subject} (${t.owner}, SLA ${t.sla})`));
+      const txt=lines.join('\n');
+      navigator.clipboard?.writeText(txt).catch(()=>{});
+      alert('Standup summary copied.');
+    }
+
+    function saveLocal(){
+      localStorage.setItem('triagedesk_state_v2',JSON.stringify({tickets:state.tickets,input:document.getElementById('tickets').value,teamEmail:document.getElementById('teamEmail').value}));
+      alert('Snapshot saved locally.');
+    }
+
+    function loadLocal(){
+      const raw=localStorage.getItem('triagedesk_state_v2');
+      if(!raw){alert('No local snapshot found.');return;}
+      try{
+        const d=JSON.parse(raw);
+        state.tickets=Array.isArray(d.tickets)?d.tickets:[];
+        document.getElementById('tickets').value=d.input||'';
+        document.getElementById('teamEmail').value=d.teamEmail||'support@triagedesk.app';
+        sortTickets(); render();
+      }catch{alert('Snapshot could not be loaded.');}
+    }
+
+    function joinWaitlist(){
+      const email=document.getElementById('waitlistEmail').value.trim();
+      const msg=document.getElementById('waitlistMsg');
+      if(!/^\S+@\S+\.\S+$/.test(email)){msg.textContent='Enter a valid email.';return;}
+      const list=JSON.parse(localStorage.getItem('triagedesk_waitlist')||'[]');
+      if(!list.includes(email)) list.push(email);
+      localStorage.setItem('triagedesk_waitlist',JSON.stringify(list));
+      msg.textContent='Saved locally for beta outreach.';
+    }
+
+    function seed(){
+      document.getElementById('tickets').value=`Potential breach report | Customer noticed unknown admin access from new IP | enterprise | 4500\nInvoice mismatch | VAT amount appears incorrect on latest invoice | pro | 210\nImport fails on CSV upload | Upload returns 500 error after submit | smb | 79\nFeature request: HubSpot sync | Need contact + deal sync in app | pro | 320`;
+      triageAll();
+    }
+
+    triageAll();
+  </script>
+</body>
+</html>
