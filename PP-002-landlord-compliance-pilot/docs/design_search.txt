@@ -1,0 +1,100 @@
+## UI Pro Max Search Results
+**Domain:** landing | **Query:** property compliance landing page
+**Source:** landing.csv | **Found:** 2 results
+
+### Result 1
+- **Pattern Name:** Scroll-Triggered Storytelling
+- **Keywords:** storytelling, scroll, narrative, story, immersive
+- **Section Order:** 1. Intro hook, 2. Chapter 1 (problem), 3. Chapter 2 (journey), 4. Chapter 3 (solution), 5. Climax CTA
+- **Primary CTA Placement:** End of each chapter (mini) + Final climax CTA
+- **Color Strategy:** Progressive reveal. Each chapter has distinct color. Building intensity.
+- **Conversion Optimization:** Narrative increases time-on-page 3x. Use progress indicator. Mobile: simplify animations.
+
+### Result 2
+- **Pattern Name:** Pricing Page + CTA
+- **Keywords:** pricing, plans, tiers, comparison, cta
+- **Section Order:** 1. Hero (pricing headline), 2. Price comparison cards, 3. Feature comparison table, 4. FAQ section, 5. Final CTA
+- **Primary CTA Placement:** Each card: CTA button. Sticky CTA in nav
+- **Color Strategy:** Free: Grey, Starter: Blue, Pro: Green/Gold, Enterprise: Dark. Cards: 1px border, shadow
+- **Conversion Optimization:** Recommend starter plan (pre-select/highlight). Show annual discount (20-30%). Use FAQs to address concerns.
+
+## UI Pro Max Search Results
+**Domain:** color | **Query:** UK property compliance
+**Source:** colors.csv | **Found:** 1 results
+
+### Result 1
+- **Product Type:** Real Estate/Property
+- **Primary:** #0F766E
+- **On Primary:** #FFFFFF
+- **Secondary:** #14B8A6
+- **On Secondary:** #0F172A
+- **Accent:** #0369A1
+- **On Accent:** #FFFFFF
+- **Background:** #F0FDFA
+- **Foreground:** #134E4A
+- **Card:** #FFFFFF
+- **Card Foreground:** #134E4A
+- **Muted:** #E8F0F3
+- **Muted Foreground:** #64748B
+- **Border:** #99F6E4
+- **Destructive:** #DC2626
+- **On Destructive:** #FFFFFF
+- **Ring:** #0F766E
+- **Notes:** Trust teal + professional blue
+
+## UI Pro Max Search Results
+**Domain:** typography | **Query:** property compliance
+**Source:** typography.csv | **Found:** 1 results
+
+### Result 1
+- **Font Pairing Name:** Real Estate Luxury
+- **Category:** Serif + Sans
+- **Heading Font:** Cinzel
+- **Body Font:** Josefin Sans
+- **Mood/Style Keywords:** real estate, luxury, elegant, sophisticated, property, premium
+- **Best For:** Real estate, luxury properties, architecture, interior design
+- **Google Fonts URL:** https://fonts.google.com/share?selection.family=Cinzel:wght@400;500;600;700|Josefin+Sans:wght@300;400;500;600;700
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap');
+- **Tailwind Config:** fontFamily: { serif: ['Cinzel', 'serif'], sans: ['Josefin Sans', 'sans-serif'] }
+- **Notes:** Cinzel's elegance for headlines. Josefin for modern body.
+
+## UI Pro Max Search Results
+**Domain:** color | **Query:** saas
+**Source:** colors.csv | **Found:** 1 results
+
+### Result 1
+- **Product Type:** Micro SaaS
+- **Primary:** #6366F1
+- **On Primary:** #FFFFFF
+- **Secondary:** #818CF8
+- **On Secondary:** #0F172A
+- **Accent:** #059669
+- **On Accent:** #FFFFFF
+- **Background:** #F5F3FF
+- **Foreground:** #1E1B4B
+- **Card:** #FFFFFF
+- **Card Foreground:** #1E1B4B
+- **Muted:** #EBEFF9
+- **Muted Foreground:** #64748B
+- **Border:** #E0E7FF
+- **Destructive:** #DC2626
+- **On Destructive:** #FFFFFF
+- **Ring:** #6366F1
+- **Notes:** Indigo primary + emerald CTA [Accent adjusted from #10B981 for WCAG 3:1]
+
+## UI Pro Max Search Results
+**Domain:** typography | **Query:** professional
+**Source:** typography.csv | **Found:** 1 results
+
+### Result 1
+- **Font Pairing Name:** Modern Professional
+- **Category:** Sans + Sans
+- **Heading Font:** Poppins
+- **Body Font:** Open Sans
+- **Mood/Style Keywords:** modern, professional, clean, corporate, friendly, approachable
+- **Best For:** SaaS, corporate sites, business apps, startups, professional services
+- **Google Fonts URL:** https://fonts.google.com/share?selection.family=Open+Sans:wght@300;400;500;600;700|Poppins:wght@400;500;600;700
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+- **Tailwind Config:** fontFamily: { heading: ['Poppins', 'sans-serif'], body: ['Open Sans', 'sans-serif'] }
+- **Notes:** Geometric Poppins for headings, humanist Open Sans for readability.
+
