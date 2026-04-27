@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leasehold Charge Stress Tester</title>
+  <meta name="description" content="Stress-test UK leasehold service charge increases, model affordability impact, and generate a challenge prep report." />
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111935; --ink:#eef3ff; --muted:#aab8df;
+      --line:#2a3b6b; --accent:#4f8cff; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b1020,#111a33);color:var(--ink);line-height:1.45}
+    main{max-width:1100px;margin:0 auto;padding:22px}
+    h1,h2,h3{line-height:1.2;margin:.2rem 0 0.8rem}
+    p{margin:.3rem 0;color:var(--muted)}
+    .grid{display:grid;gap:14px}
+    .two{grid-template-columns:2fr 1fr}
+    .cards{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+    .card{background:rgba(17,25,53,.92);border:1px solid var(--line);border-radius:14px;padding:14px}
+    .hero{padding:10px 0 4px}
+    .price{font-size:1.45rem;font-weight:800}
+    .kpi{font-size:1.3rem;font-weight:750}
+    .kpi.bad{color:#ff9e9e}.kpi.warn{color:#ffd27a}.kpi.good{color:#8ef0b0}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    label{display:block;font-size:.88rem;color:#dbe5ff;margin-bottom:4px}
+    input,select,textarea{
+      width:100%;min-height:42px;padding:9px 10px;border-radius:10px;
+      border:1px solid #30457c;background:#0d1735;color:white;font-size:.96rem;
+    }
+    textarea{min-height:95px;resize:vertical}
+    button{min-height:42px;border:0;border-radius:10px;padding:10px 14px;background:var(--accent);color:white;cursor:pointer;font-weight:650}
+    button.alt{background:#223661;border:1px solid #3a528c}
+    button.warn{background:#b45309}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.82rem;border:1px solid #37529a;background:#13244e;color:#dbe7ff}
+    .list{margin:0;padding-left:18px}
+    .small{font-size:.86rem;color:var(--muted)}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .muted-box{background:#0c1631;border:1px dashed #334a82;border-radius:10px;padding:10px}
+    .table{width:100%;border-collapse:collapse;font-size:.9rem}
+    .table th,.table td{border-bottom:1px solid #2d3f73;padding:7px;text-align:left;vertical-align:top}
+    .danger{color:#ffb4b4}
+    .ok{color:#9ff0bc}
+    a{color:#9ec3ff}
+    @media (max-width:900px){.two{grid-template-columns:1fr}.split{grid-template-columns:1fr}}
+    @media (max-width:700px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Leasehold Charge Stress Tester</h1>
+      <p>Model service-charge increases, see affordability risk instantly, and generate a ready-to-edit challenge prep note.</p>
+      <div class="grid cards" aria-label="pricing">
+        <div class="card"><div class="price">£9/mo</div><p class="small">Starter · single property + saved scenarios</p></div>
+        <div class="card"><div class="price">£29/mo</div><p class="small">Pro · exports, advisor notes, portfolio mode</p></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>1) Enter your numbers</h2>
+        <div class="row">
+          <div><label for="scenarioName">Scenario name</label><input id="scenarioName" value="My Flat — 2026 notice" /></div>
+          <div><label for="propertyPostcode">Property postcode (optional)</label><input id="propertyPostcode" placeholder="SE10 9XX" /></div>
+        </div>
+        <div class="row">
+          <div><label for="currentMonthly">Current monthly service charge (£)</label><input id="currentMonthly" type="number" min="0" value="350" /></div>
+          <div><label for="increasePct">Proposed increase (%)</label><input id="increasePct" type="number" min="0" value="40" /></div>
+        </div>
+        <div class="row">
+          <div><label for="monthlyIncome">Household net monthly income (£)</label><input id="monthlyIncome" type="number" min="0" value="3500" /></div>
+          <div><label for="otherHousing">Other monthly housing costs (£)</label><input id="otherHousing" type="number" min="0" value="1300" /></div>
+        </div>
+        <div class="row">
+          <div><label for="fixedBills">Other fixed monthly bills (£)</label><input id="fixedBills" type="number" min="0" value="950" /></div>
+          <div><label for="reserve">Emergency reserve (£)</label><input id="reserve" type="number" min="0" value="6000" /></div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="noticeType">Notice type</label>
+            <select id="noticeType">
+              <option value="budget">Annual budget estimate</option>
+              <option value="balancing">Balancing charge demand</option>
+              <option value="majorworks">Major works demand</option>
+            </select>
+          </div>
+          <div><label for="oneOffDemand">One-off demand this year (£, optional)</label><input id="oneOffDemand" type="number" min="0" value="0" /></div>
+        </div>
+        <div class="row">
+          <div><label for="incomeShock">Expected income change in next 6 months (%)</label><input id="incomeShock" type="number" value="0" /></div>
+          <div><label for="confidence">How sure are your numbers?</label>
+            <select id="confidence">
+              <option value="high">High confidence</option>
+              <option value="medium" selected>Medium confidence</option>
+              <option value="low">Low confidence</option>
+            </select>
+          </div>
+        </div>
+        <p class="actions">
+          <button id="runBtn">Run stress test</button>
+          <button class="alt" id="saveBtn">Save scenario</button>
+          <button class="alt" id="exportBtn">Export report (.txt)</button>
+          <button class="warn" id="demoBtn">Load tougher demo</button>
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>2) Risk output</h2>
+        <p id="riskBadge" class="pill">No result yet</p>
+        <div class="grid cards" style="margin-top:8px">
+          <div><p class="small">New service charge</p><div id="newCharge" class="kpi">—</div></div>
+          <div><p class="small">Housing burden</p><div id="housingBurden" class="kpi">—</div></div>
+          <div><p class="small">Monthly free cash</p><div id="freeCash" class="kpi">—</div></div>
+          <div><p class="small">Reserve runway</p><div id="runway" class="kpi">—</div></div>
+        </div>
+
+        <div class="muted-box" style="margin-top:10px">
+          <h3 style="margin-top:0">Challenge prep checklist</h3>
+          <ul class="list" id="checklist"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid two" style="margin-top:14px">
+      <div class="card">
+        <h2>3) What this means</h2>
+        <p id="insight">Run the stress test to get recommendations.</p>
+        <div class="split" style="margin-top:8px">
+          <div>
+            <h3>12-month projection</h3>
+            <table class="table" id="projectionTable" aria-label="Monthly projection table"></table>
+          </div>
+          <div>
+            <h3>Draft challenge note</h3>
+            <textarea id="challengeNote" aria-label="Draft challenge note"></textarea>
+            <p class="actions" style="margin-top:8px">
+              <button class="alt" id="copyNoteBtn">Copy note</button>
+              <button class="alt" id="downloadDataBtn">Download scenario JSON</button>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Saved scenarios</h2>
+        <p class="small">Stored in your browser on this device.</p>
+        <table class="table" id="savedTable"></table>
+        <p class="actions" style="margin-top:10px">
+          <button class="alt" id="clearSavedBtn">Clear saved scenarios</button>
+        </p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Early access</h2>
+      <p>Get the hosted version with advisor sharing + PDF exports.</p>
+      <div class="row">
+        <div><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" /></div>
+        <div><label for="role">Role</label><input id="role" placeholder="Leaseholder / Managing agent / Advisor" /></div>
+      </div>
+      <p class="actions"><button id="waitlistBtn">Join waitlist</button></p>
+      <p id="waitlistMsg" class="small"></p>
+    </section>
+  </main>
+
+  <script>
+    const pounds = (n) => `£${Number(n || 0).toLocaleString('en-GB', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`;
+    const percent = (n) => `${Number(n || 0).toFixed(1)}%`;
+
+    const ids = [
+      'scenarioName','propertyPostcode','currentMonthly','increasePct','monthlyIncome','otherHousing','fixedBills',
+      'reserve','noticeType','oneOffDemand','incomeShock','confidence'
+    ];
+
+    const el = (id) => document.getElementById(id);
+
+    function getInput() {
+      const data = {};
+      ids.forEach(id => data[id] = el(id).value);
+      ['currentMonthly','increasePct','monthlyIncome','otherHousing','fixedBills','reserve','oneOffDemand','incomeShock']
+        .forEach(k => data[k] = Number(data[k] || 0));
+      return data;
+    }
+
+    function classifyRisk(burdenPct, freeCash, runwayMonths, confidence) {
+      let score = 0;
+      if (burdenPct > 55) score += 45;
+      else if (burdenPct > 45) score += 28;
+      else if (burdenPct > 35) score += 12;
+
+      if (freeCash < 0) score += 35;
+      else if (freeCash < 250) score += 18;
+
+      if (runwayMonths < 6) score += 20;
+      else if (runwayMonths < 12) score += 10;
+
+      if (confidence === 'low') score += 8;
+
+      if (score >= 65) return {label:'High stress risk', tone:'bad'};
+      if (score >= 38) return {label:'Medium stress risk', tone:'warn'};
+      return {label:'Lower stress risk', tone:'good'};
+    }
+
+    function challengeChecklist(input, metrics, risk) {
+      const items = [];
+      items.push('Request line-by-line service charge budget + prior year actuals');
+      if (input.noticeType === 'majorworks' || input.oneOffDemand > 250) {
+        items.push('Check Section 20 consultation documents for qualifying works (>£250 contribution)');
+      }
+      items.push('Ask for reserve fund balance and planned major works schedule (3–5 years)');
+      if (metrics.deltaMonthly > 150) items.push('Request payment plan options due to significant monthly jump');
+      items.push('Collect comparable charges from similar local blocks to benchmark reasonableness');
+      if (risk.label !== 'Lower stress risk') items.push('Prepare affordability evidence (income, fixed costs, reserve runway) before responding');
+      return items;
+    }
+
+    function buildProjection(input, newSvc, adjIncome) {
+      const rows = [['Month','Projected free cash']];
+      for (let m=1; m<=12; m++) {
+        const oneOff = m === 1 ? input.oneOffDemand : 0;
+        const freeCash = adjIncome - (input.otherHousing + input.fixedBills + newSvc + oneOff);
+        rows.push([String(m), pounds(freeCash)]);
+      }
+      return rows;
+    }
+
+    function tableFromRows(table, rows) {
+      if (!rows.length) { table.innerHTML = ''; return; }
+      const [head, ...body] = rows;
+      table.innerHTML = `
+        <thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${body.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+      `;
+    }
+
+    function setRiskUI(risk, metrics) {
+      const badge = el('riskBadge');
+      badge.textContent = risk.label;
+      badge.style.borderColor = risk.tone === 'bad' ? '#7f1d1d' : risk.tone === 'warn' ? '#854d0e' : '#166534';
+      badge.style.background = risk.tone === 'bad' ? '#3b0f14' : risk.tone === 'warn' ? '#3a2309' : '#0f2b1b';
+
+      const kpis = {
+        newCharge: pounds(metrics.newSvc),
+        housingBurden: percent(metrics.burdenPct),
+        freeCash: pounds(metrics.freeCash),
+        runway: `${metrics.runway.toFixed(1)} months`
+      };
+      Object.entries(kpis).forEach(([id, txt]) => {
+        const node = el(id);
+        node.textContent = txt;
+        node.className = `kpi ${risk.tone}`;
+      });
+    }
+
+    function generateChallengeNote(input, metrics, risk, checklist) {
+      return `Subject: Request for detailed review of service charge increase\n\n` +
+        `Property: ${input.propertyPostcode || '[postcode]'}\n` +
+        `Scenario: ${input.scenarioName}\n\n` +
+        `I have received notice of a proposed service charge increase from ${pounds(input.currentMonthly)} to ${pounds(metrics.newSvc)} per month (${input.increasePct.toFixed(1)}%). ` +
+        `This changes my housing-cost burden to approximately ${percent(metrics.burdenPct)} of monthly net income.\n\n` +
+        `Before I can agree to this increase, please provide:\n- ${checklist.join('\n- ')}\n\n` +
+        `Given the financial impact shown above, I would also like to discuss staged payment options while this is reviewed.\n\n` +
+        `Kind regards,\n[Your Name]`;
+    }
+
+    function runStressTest() {
+      const input = getInput();
+      const newSvc = input.currentMonthly * (1 + input.increasePct / 100);
+      const adjIncome = input.monthlyIncome * (1 + input.incomeShock / 100);
+      const totalHousing = newSvc + input.otherHousing;
+      const freeCash = adjIncome - (totalHousing + input.fixedBills + input.oneOffDemand / 12);
+      const burdenPct = adjIncome > 0 ? (totalHousing / adjIncome) * 100 : 0;
+      const deltaMonthly = newSvc - input.currentMonthly;
+      const runway = deltaMonthly > 0 ? input.reserve / deltaMonthly : 99;
+      const risk = classifyRisk(burdenPct, freeCash, runway, input.confidence);
+
+      const metrics = { newSvc, burdenPct, freeCash, runway, deltaMonthly, adjIncome };
+      setRiskUI(risk, metrics);
+
+      const checklist = challengeChecklist(input, metrics, risk);
+      el('checklist').innerHTML = checklist.map(i => `<li>${i}</li>`).join('');
+
+      const insight = [
+        `Increase impact: ${pounds(deltaMonthly)} more per month (${pounds(deltaMonthly * 12)} yearly).`,
+        `Projected housing burden: ${percent(burdenPct)}.`,
+        freeCash < 0 ? 'Warning: current plan implies negative monthly cashflow.' : `Projected free cash after fixed costs: ${pounds(freeCash)}.`
+      ];
+      if (input.noticeType === 'majorworks' || input.oneOffDemand > 250) {
+        insight.push('Major-works threshold likely relevant: verify Section 20 consultation trail.');
+      }
+      el('insight').textContent = insight.join(' ');
+
+      const projection = buildProjection(input, newSvc, adjIncome);
+      tableFromRows(el('projectionTable'), projection);
+
+      const note = generateChallengeNote(input, metrics, risk, checklist);
+      el('challengeNote').value = note;
+
+      window.__lastResult = { input, metrics, risk, checklist, generatedAt: new Date().toISOString() };
+      return window.__lastResult;
+    }
+
+    function getSaved() {
+      try { return JSON.parse(localStorage.getItem('leasehold-scenarios') || '[]'); }
+      catch { return []; }
+    }
+
+    function setSaved(items) {
+      localStorage.setItem('leasehold-scenarios', JSON.stringify(items.slice(0, 30)));
+      renderSaved();
+    }
+
+    function renderSaved() {
+      const rows = [['Scenario','Risk','Updated','Action']];
+      const saved = getSaved();
+      saved.forEach((s, i) => {
+        rows.push([
+          s.input.scenarioName || `Scenario ${i+1}`,
+          s.risk.label,
+          new Date(s.generatedAt).toLocaleString('en-GB'),
+          `<button class="alt" onclick="loadSaved(${i})">Load</button>`
+        ]);
+      });
+      if (saved.length === 0) rows.push(['No saved scenarios yet','—','—','—']);
+      tableFromRows(el('savedTable'), rows);
+    }
+
+    function loadSaved(i) {
+      const saved = getSaved()[i];
+      if (!saved) return;
+      Object.entries(saved.input).forEach(([k,v]) => {
+        if (el(k)) el(k).value = v;
+      });
+      runStressTest();
+    }
+    window.loadSaved = loadSaved;
+
+    function exportTxt() {
+      const result = window.__lastResult || runStressTest();
+      const lines = [
+        'Leasehold Charge Stress Test Report',
+        `Generated: ${new Date(result.generatedAt).toLocaleString('en-GB')}`,
+        '',
+        `Scenario: ${result.input.scenarioName}`,
+        `Postcode: ${result.input.propertyPostcode || '-'}`,
+        `Risk: ${result.risk.label}`,
+        `New service charge: ${pounds(result.metrics.newSvc)}`,
+        `Housing burden: ${percent(result.metrics.burdenPct)}`,
+        `Free cash: ${pounds(result.metrics.freeCash)}`,
+        `Reserve runway: ${result.metrics.runway.toFixed(1)} months`,
+        '',
+        'Checklist:',
+        ...result.checklist.map((i) => `- ${i}`),
+        '',
+        'Draft challenge note:',
+        el('challengeNote').value
+      ];
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const safe = (result.input.scenarioName || 'leasehold-report').replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase();
+      a.download = `${safe || 'leasehold-report'}.txt`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function downloadJSON() {
+      const result = window.__lastResult || runStressTest();
+      const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'leasehold-scenario.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function copyChallengeNote() {
+      navigator.clipboard.writeText(el('challengeNote').value)
+        .then(()=>alert('Challenge note copied.'))
+        .catch(()=>alert('Copy failed — select text manually.'));
+    }
+
+    function saveCurrent() {
+      const result = window.__lastResult || runStressTest();
+      const saved = getSaved();
+      const existing = saved.findIndex(s => s.input.scenarioName === result.input.scenarioName);
+      if (existing >= 0) saved[existing] = result;
+      else saved.unshift(result);
+      setSaved(saved);
+      alert('Scenario saved locally.');
+    }
+
+    function loadDemo() {
+      const demo = {
+        scenarioName:'Demo — severe increase', propertyPostcode:'E14 6XX', currentMonthly:420, increasePct:72,
+        monthlyIncome:3200, otherHousing:1450, fixedBills:1050, reserve:3500,
+        noticeType:'majorworks', oneOffDemand:1200, incomeShock:-8, confidence:'medium'
+      };
+      Object.entries(demo).forEach(([k,v]) => { if (el(k)) el(k).value = v; });
+      runStressTest();
+    }
+
+    function joinWaitlist() {
+      const email = el('email').value.trim();
+      const role = el('role').value.trim();
+      if (!email || !email.includes('@')) {
+        el('waitlistMsg').innerHTML = '<span class="danger">Enter a valid email to join.</span>';
+        return;
+      }
+      const payload = { email, role, ts: new Date().toISOString() };
+      const list = JSON.parse(localStorage.getItem('leasehold-waitlist') || '[]');
+      list.push(payload);
+      localStorage.setItem('leasehold-waitlist', JSON.stringify(list));
+      el('waitlistMsg').innerHTML = `<span class="ok">Saved locally. ${list.length} waitlist signups on this browser.</span>`;
+      el('email').value = '';
+      el('role').value = '';
+    }
+
+    el('runBtn').addEventListener('click', runStressTest);
+    el('saveBtn').addEventListener('click', saveCurrent);
+    el('exportBtn').addEventListener('click', exportTxt);
+    el('downloadDataBtn').addEventListener('click', downloadJSON);
+    el('copyNoteBtn').addEventListener('click', copyChallengeNote);
+    el('demoBtn').addEventListener('click', loadDemo);
+    el('waitlistBtn').addEventListener('click', joinWaitlist);
+    el('clearSavedBtn').addEventListener('click', () => {
+      if (confirm('Clear all saved scenarios on this browser?')) {
+        localStorage.removeItem('leasehold-scenarios');
+        renderSaved();
+      }
+    });
+
+    renderSaved();
+    runStressTest();
+  </script>
+</body>
+</html>
