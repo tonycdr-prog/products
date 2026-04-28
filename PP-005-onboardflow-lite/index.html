@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OnboardFlow Lite — Resumable SaaS Onboarding Forms</title>
+  <meta name="description" content="Embeddable onboarding wizard with draft/resume links and CS handoff pack generation.">
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#111935;
+      --card2:#0f1730;
+      --line:#2b3b74;
+      --txt:#eef4ff;
+      --muted:#95a6cc;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --accent:#a78bfa;
+      --accent2:#22d3ee;
+      --danger:#f87171;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      color:var(--txt);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:
+        radial-gradient(1200px 700px at 10% -20%, #263a7a66, transparent 65%),
+        radial-gradient(1000px 600px at 95% 10%, #0ea5e955, transparent 60%),
+        var(--bg);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    .hero{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:end}
+    h1{margin:0 0 6px;font-size:clamp(1.5rem,3vw,2.2rem)}
+    .muted{color:var(--muted)}
+    .pill{display:inline-flex;gap:8px;align-items:center;background:#0f1b3f;border:1px solid #334c8f;border-radius:999px;padding:6px 10px;color:#dbe7ff;font-size:12px}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}
+    .card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:14px;padding:16px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:13px;color:#c9d7fb;margin:8px 0 6px}
+    input,select,textarea{
+      width:100%;padding:10px 11px;border:1px solid #364a85;border-radius:10px;background:#0c1330;color:#f8fbff;outline:none
+    }
+    textarea{min-height:86px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:#79b0ff;box-shadow:0 0 0 3px #79b0ff22}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    button{border:0;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}
+    .btn-main{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#081228}
+    .btn-ghost{background:#182652;color:#dfe9ff;border:1px solid #334987}
+    .btn-danger{background:#321a2a;color:#ffd8d8;border:1px solid #6b2f4d}
+    .steps{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px}
+    .step{font-size:12px;padding:5px 9px;border-radius:999px;border:1px solid #3d4d87;color:#bdd0ff;background:#0e1840}
+    .step.active{background:#223777;border-color:#79a3ff;color:#fff}
+    .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .kpi{padding:10px;border:1px solid #33467e;border-radius:10px;background:#0f1c45}
+    .kpi b{font-size:1.1rem}
+    .out{white-space:pre-wrap;background:#0a122d;border:1px solid #33467e;padding:11px;border-radius:10px;min-height:150px}
+    .tiny{font-size:12px}
+    .ok{color:var(--ok)}
+    .warn{color:var(--warn)}
+    .danger{color:var(--danger)}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+    .footer{margin-top:14px;font-size:12px;color:#9db1df}
+    @media (max-width:920px){
+      .grid{grid-template-columns:1fr}
+      .row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>OnboardFlow Lite</h1>
+        <div class="muted">Resumable onboarding wizard with automatic customer-success handoff pack.</div>
+      </div>
+      <div class="pill">Starter £15/mo · Growth £49/mo</div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="steps" id="steps"></div>
+
+        <div id="step-1" class="form-step">
+          <h3>1) Company profile</h3>
+          <div class="row">
+            <div>
+              <label for="company">Company name</label>
+              <input id="company" placeholder="Acme Analytics Ltd">
+            </div>
+            <div>
+              <label for="domain">Website domain</label>
+              <input id="domain" placeholder="acme.io">
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="teamSize">Team size</label>
+              <select id="teamSize">
+                <option value="">Choose...</option>
+                <option>1-5</option><option>6-20</option><option>21-100</option><option>100+</option>
+              </select>
+            </div>
+            <div>
+              <label for="plan">Plan picked</label>
+              <select id="plan">
+                <option>Starter</option>
+                <option>Growth</option>
+                <option>Enterprise trial</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="step-2" class="form-step" hidden>
+          <h3>2) Goals & blockers</h3>
+          <label for="goal">Primary onboarding goal</label>
+          <select id="goal">
+            <option>Activate users faster</option>
+            <option>Improve qualification quality</option>
+            <option>Reduce support tickets</option>
+            <option>Increase trial-to-paid conversion</option>
+          </select>
+          <label for="successMetric">Success metric in 30 days</label>
+          <input id="successMetric" placeholder="e.g. 20% faster time-to-value">
+          <label for="blockers">Current blockers</label>
+          <textarea id="blockers" placeholder="What keeps onboarding stuck today?"></textarea>
+        </div>
+
+        <div id="step-3" class="form-step" hidden>
+          <h3>3) Handoff setup</h3>
+          <div class="row">
+            <div>
+              <label for="owner">Internal owner</label>
+              <input id="owner" placeholder="Nina Patel">
+            </div>
+            <div>
+              <label for="ownerEmail">Owner email</label>
+              <input id="ownerEmail" placeholder="nina@acme.io">
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="goLive">Target go-live date</label>
+              <input id="goLive" type="date">
+            </div>
+            <div>
+              <label for="risk">Implementation risk</label>
+              <select id="risk">
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+              </select>
+            </div>
+          </div>
+          <label for="notes">CS notes</label>
+          <textarea id="notes" placeholder="Optional handover context for your CS team..."></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn-ghost" id="prevBtn">← Previous</button>
+          <button class="btn-main" id="nextBtn">Next →</button>
+          <button class="btn-ghost" id="saveBtn">Save draft</button>
+          <button class="btn-ghost" id="resumeBtn">Load by token</button>
+          <button class="btn-main" id="submitBtn">Generate handoff pack</button>
+          <button class="btn-danger" id="clearBtn">Clear</button>
+        </div>
+        <div class="footer tiny">
+          Drafts are stored in localStorage for this demo. Resume token can be shared internally.
+        </div>
+      </section>
+
+      <aside class="card">
+        <h3 style="margin-top:0">Live output</h3>
+        <div class="kpis">
+          <div class="kpi"><div class="tiny muted">Completion</div><b id="completion">0%</b></div>
+          <div class="kpi"><div class="tiny muted">Lead quality</div><b id="quality">—</b></div>
+          <div class="kpi"><div class="tiny muted">Risk flag</div><b id="riskFlag">—</b></div>
+          <div class="kpi"><div class="tiny muted">Resume token</div><b id="tokenOut" class="mono">—</b></div>
+        </div>
+
+        <h4>Handoff summary</h4>
+        <div id="summary" class="out tiny">No submission yet.</div>
+
+        <div class="actions">
+          <button class="btn-ghost" id="copyBtn">Copy summary</button>
+          <button class="btn-ghost" id="downloadBtn">Download JSON</button>
+        </div>
+
+        <h4>Embed snippet</h4>
+        <div class="out tiny mono" id="embedSnippet"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'onboardflow_lite_records_v2';
+    const LAST_TOKEN_KEY = 'onboardflow_lite_last_token';
+
+    const stepEls = [...document.querySelectorAll('.form-step')];
+    const stepsWrap = document.getElementById('steps');
+    const fields = ['company','domain','teamSize','plan','goal','successMetric','blockers','owner','ownerEmail','goLive','risk','notes'];
+    let currentStep = 0;
+    let activeToken = '';
+    let latestPayload = null;
+
+    function $(id){ return document.getElementById(id); }
+
+    function initSteps(){
+      stepsWrap.innerHTML = ['Company','Goals','Handoff'].map((name, idx)=>
+        `<span class="step ${idx===0?'active':''}" data-step="${idx}">${idx+1}. ${name}</span>`
+      ).join('');
+      stepsWrap.querySelectorAll('.step').forEach(el=>{
+        el.addEventListener('click', ()=>showStep(Number(el.dataset.step)));
+      });
+    }
+
+    function showStep(n){
+      currentStep = Math.max(0, Math.min(stepEls.length-1, n));
+      stepEls.forEach((el, idx)=>el.hidden = idx!==currentStep);
+      [...document.querySelectorAll('.step')].forEach((el, idx)=>el.classList.toggle('active', idx===currentStep));
+      $('prevBtn').disabled = currentStep===0;
+      $('nextBtn').disabled = currentStep===stepEls.length-1;
+      refreshCompletion();
+    }
+
+    function getData(){
+      const data = {};
+      fields.forEach(f => data[f] = $(f).value.trim());
+      return data;
+    }
+
+    function setData(data={}){
+      fields.forEach(f => $(f).value = data[f] || '');
+      refreshCompletion();
+    }
+
+    function computeCompletion(data){
+      const filled = fields.filter(f => (data[f]||'').length > 0).length;
+      return Math.round((filled / fields.length) * 100);
+    }
+
+    function leadScore(data){
+      let score = 0;
+      if(data.company) score += 15;
+      if(data.domain && data.domain.includes('.')) score += 10;
+      if(['21-100','100+'].includes(data.teamSize)) score += 20;
+      if(data.successMetric) score += 15;
+      if(data.ownerEmail && data.ownerEmail.includes('@')) score += 20;
+      if(data.goLive) score += 10;
+      if(data.blockers.length >= 20) score += 10;
+      return Math.min(score, 100);
+    }
+
+    function qualityBand(score){
+      if(score >= 75) return {label:'High', cls:'ok'};
+      if(score >= 45) return {label:'Medium', cls:'warn'};
+      return {label:'Low', cls:'danger'};
+    }
+
+    function makeToken(){
+      return 'obf-' + Math.random().toString(36).slice(2,8) + '-' + Date.now().toString(36).slice(-4);
+    }
+
+    function loadRecords(){
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+      catch { return {}; }
+    }
+
+    function saveRecords(records){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function persistDraft(token){
+      const records = loadRecords();
+      const data = getData();
+      records[token] = {
+        token,
+        savedAt: new Date().toISOString(),
+        data
+      };
+      saveRecords(records);
+      localStorage.setItem(LAST_TOKEN_KEY, token);
+      activeToken = token;
+      $('tokenOut').textContent = token;
+      renderEmbedSnippet(token);
+    }
+
+    function refreshCompletion(){
+      const data = getData();
+      const completion = computeCompletion(data);
+      const score = leadScore(data);
+      const band = qualityBand(score);
+      $('completion').textContent = completion + '%';
+      $('quality').textContent = `${score}/100 (${band.label})`;
+      $('quality').className = band.cls;
+      $('riskFlag').textContent = data.risk || '—';
+      $('riskFlag').className = data.risk === 'High' ? 'danger' : data.risk === 'Medium' ? 'warn' : 'ok';
+    }
+
+    function renderSummary(payload){
+      latestPayload = payload;
+      const d = payload.data;
+      const summary = [
+        `Company: ${d.company || '—'} (${d.domain || '—'})`,
+        `Team: ${d.teamSize || '—'} | Plan: ${d.plan || '—'}`,
+        `Goal: ${d.goal || '—'}`,
+        `Metric: ${d.successMetric || '—'}`,
+        `Owner: ${d.owner || '—'} <${d.ownerEmail || '—'}>`,
+        `Go-live: ${d.goLive || '—'} | Risk: ${d.risk || '—'}`,
+        `Lead score: ${payload.leadScore}/100 (${payload.qualityBand})`,
+        '',
+        'Blockers:',
+        d.blockers || 'n/a',
+        '',
+        'CS notes:',
+        d.notes || 'n/a'
+      ].join('\n');
+      $('summary').textContent = summary;
+    }
+
+    function renderEmbedSnippet(token){
+      const snippet = `<iframe\n  src="https://yourdomain.com/onboardflow-lite?resume=${token}"\n  width="100%"\n  height="820"\n  style="border:0;border-radius:12px;"\n></iframe>`;
+      $('embedSnippet').textContent = snippet;
+    }
+
+    function saveDraft(){
+      const token = activeToken || makeToken();
+      persistDraft(token);
+      refreshCompletion();
+      alert(`Draft saved. Resume token: ${token}`);
+    }
+
+    function resumeByToken(){
+      const token = prompt('Enter resume token (e.g. obf-abc123-x9z2):', activeToken || localStorage.getItem(LAST_TOKEN_KEY) || '');
+      if(!token) return;
+      const rec = loadRecords()[token];
+      if(!rec){ alert('No draft found for that token.'); return; }
+      activeToken = token;
+      setData(rec.data);
+      $('tokenOut').textContent = token;
+      renderEmbedSnippet(token);
+      renderSummary({
+        token,
+        submittedAt: rec.savedAt,
+        leadScore: leadScore(rec.data),
+        qualityBand: qualityBand(leadScore(rec.data)).label,
+        data: rec.data
+      });
+      alert('Draft loaded.');
+    }
+
+    function submitForm(){
+      const data = getData();
+      if(!data.company){ alert('Company name is required.'); showStep(0); return; }
+      if(!data.ownerEmail || !data.ownerEmail.includes('@')){ alert('Owner email is required for handoff.'); showStep(2); return; }
+
+      const token = activeToken || makeToken();
+      persistDraft(token);
+      const score = leadScore(data);
+      const payload = {
+        token,
+        submittedAt: new Date().toISOString(),
+        leadScore: score,
+        qualityBand: qualityBand(score).label,
+        data
+      };
+      renderSummary(payload);
+      refreshCompletion();
+      alert('Handoff pack generated.');
+    }
+
+    function clearAll(){
+      if(!confirm('Clear the current form?')) return;
+      setData({});
+      activeToken = '';
+      latestPayload = null;
+      $('summary').textContent = 'No submission yet.';
+      $('tokenOut').textContent = '—';
+      renderEmbedSnippet('new-token');
+      showStep(0);
+    }
+
+    function copySummary(){
+      const txt = $('summary').textContent.trim();
+      if(!txt || txt === 'No submission yet.') { alert('Nothing to copy yet.'); return; }
+      navigator.clipboard.writeText(txt).then(()=>alert('Summary copied to clipboard.'));
+    }
+
+    function downloadJSON(){
+      if(!latestPayload){ alert('Generate handoff pack first.'); return; }
+      const blob = new Blob([JSON.stringify(latestPayload, null, 2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `onboardflow-handoff-${latestPayload.token}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    fields.forEach(id => $(id).addEventListener('input', refreshCompletion));
+    $('prevBtn').addEventListener('click', ()=>showStep(currentStep - 1));
+    $('nextBtn').addEventListener('click', ()=>showStep(currentStep + 1));
+    $('saveBtn').addEventListener('click', saveDraft);
+    $('resumeBtn').addEventListener('click', resumeByToken);
+    $('submitBtn').addEventListener('click', submitForm);
+    $('clearBtn').addEventListener('click', clearAll);
+    $('copyBtn').addEventListener('click', copySummary);
+    $('downloadBtn').addEventListener('click', downloadJSON);
+
+    initSteps();
+    const qsToken = new URLSearchParams(location.search).get('resume');
+    if(qsToken && loadRecords()[qsToken]){
+      activeToken = qsToken;
+      setData(loadRecords()[qsToken].data);
+      $('tokenOut').textContent = qsToken;
+      renderEmbedSnippet(qsToken);
+    } else {
+      const last = localStorage.getItem(LAST_TOKEN_KEY) || 'new-token';
+      renderEmbedSnippet(last);
+    }
+    showStep(0);
+  </script>
+</body>
+</html>
