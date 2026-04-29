@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Planning Alerts Desk — UK Planning Comment Tracker</title>
+  <meta name="description" content="Track UK planning applications, comment deadlines, and follow-up alerts in one offline-friendly page." />
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111935;
+      --panel-2:#162146;
+      --ink:#ecf1ff;
+      --muted:#9fb0dd;
+      --line:#2c3f78;
+      --ok:#38d39f;
+      --warn:#ffcc66;
+      --bad:#ff6b6b;
+      --accent:#7aa2ff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0a0f1f,#101a38);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    h1{margin:0 0 8px;font-size:1.7rem}
+    p{color:var(--muted)}
+    .grid{display:grid;gap:14px}
+    .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media (max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+    label{font-size:.85rem;color:var(--muted);display:block;margin-bottom:4px}
+    input,select,textarea,button{width:100%;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);padding:10px}
+    textarea{min-height:70px;resize:vertical}
+    .row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    @media (max-width:700px){.row{grid-template-columns:1fr}}
+    .btn{cursor:pointer;background:#1b2a57}
+    .btn.primary{background:var(--accent);color:#081127;border-color:#88adff;font-weight:600}
+    .btn.ghost{background:transparent}
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    @media (max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    .kpi{padding:10px;border:1px solid var(--line);border-radius:10px;background:#0c1430}
+    .kpi .n{font-size:1.3rem;font-weight:700}
+    .chip{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.75rem;border:1px solid}
+    .ok{color:var(--ok);border-color:rgba(56,211,159,.5);background:rgba(56,211,159,.12)}
+    .warn{color:var(--warn);border-color:rgba(255,204,102,.5);background:rgba(255,204,102,.12)}
+    .bad{color:var(--bad);border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.12)}
+    table{width:100%;border-collapse:collapse;font-size:.93rem}
+    th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{color:#c7d4ff;font-weight:600}
+    .small{font-size:.84rem;color:var(--muted)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .actions button{width:auto;padding:8px 10px}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Planning Alerts Desk</h1>
+    <p>Track planning applications, comment deadlines, and next actions. Everything saves locally in your browser.</p>
+
+    <section class="card">
+      <h2 style="margin-top:0">Add / update application</h2>
+      <div class="grid g3">
+        <div>
+          <label for="ref">Application reference</label>
+          <input id="ref" placeholder="e.g. 24/01234/FUL" />
+        </div>
+        <div>
+          <label for="council">Council</label>
+          <input id="council" placeholder="e.g. Camden" />
+        </div>
+        <div>
+          <label for="status">Status</label>
+          <select id="status">
+            <option>Watching</option>
+            <option>Comment drafted</option>
+            <option>Comment submitted</option>
+            <option>Decision pending</option>
+            <option>Approved</option>
+            <option>Refused</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label for="address">Site address</label>
+          <input id="address" placeholder="1 High Street, N1" />
+        </div>
+        <div>
+          <label for="url">Application URL</label>
+          <input id="url" placeholder="https://..." />
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label for="validated">Validated date</label>
+          <input id="validated" type="date" />
+        </div>
+        <div>
+          <label for="commentWindow">Comment window (days)</label>
+          <input id="commentWindow" type="number" value="21" min="1" />
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <label for="notes">Notes / concerns</label>
+        <textarea id="notes" placeholder="Noise, parking, overshadowing, heritage impact..."></textarea>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn primary" id="saveBtn">Save application</button>
+        <button class="btn" id="seedBtn">Load demo data</button>
+        <button class="btn ghost" id="clearBtn">Clear form</button>
+      </div>
+      <p class="small" id="formMsg"></p>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2 style="margin-top:0">Portfolio snapshot</h2>
+      <div class="kpis">
+        <div class="kpi"><div class="small">Total tracked</div><div class="n" id="kTotal">0</div></div>
+        <div class="kpi"><div class="small">Deadlines in 7 days</div><div class="n" id="kSoon">0</div></div>
+        <div class="kpi"><div class="small">Overdue comments</div><div class="n" id="kOver">0</div></div>
+        <div class="kpi"><div class="small">Pending decisions</div><div class="n" id="kPending">0</div></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="actions" style="justify-content:space-between">
+        <h2 style="margin:0">Applications</h2>
+        <div class="actions">
+          <button class="btn" id="copySummaryBtn">Copy summary</button>
+          <button class="btn" id="exportCsvBtn">Export CSV</button>
+          <button class="btn" id="exportJsonBtn">Export JSON</button>
+          <button class="btn ghost" id="wipeBtn">Delete all</button>
+        </div>
+      </div>
+      <div style="overflow:auto;margin-top:8px">
+        <table>
+          <thead>
+            <tr>
+              <th>Reference</th><th>Council / Address</th><th>Status</th><th>Comment deadline</th><th>Alert</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p class="small" id="tableMsg"></p>
+    </section>
+  </div>
+
+  <script>
+    const KEY = 'planning_alerts_desk_v2';
+    let items = [];
+    let editId = null;
+
+    const el = id => document.getElementById(id);
+    const today = () => new Date().toISOString().slice(0,10);
+
+    function parseDate(d){ return d ? new Date(d + 'T00:00:00') : null; }
+    function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
+
+    function deadline(validated,windowDays){
+      const vd = parseDate(validated);
+      if(!vd) return null;
+      const out = new Date(vd);
+      out.setDate(out.getDate() + Number(windowDays || 21));
+      return out;
+    }
+
+    function alertState(item){
+      const dl = deadline(item.validated, item.commentWindow);
+      if(!dl) return {label:'No date', cls:'warn'};
+      const d = daysBetween(new Date(today()+'T00:00:00'), dl);
+      if(d < 0 && !['Comment submitted','Approved','Refused'].includes(item.status)) return {label:`Overdue ${Math.abs(d)}d`, cls:'bad'};
+      if(d <= 7 && !['Comment submitted','Approved','Refused'].includes(item.status)) return {label:`Due in ${d}d`, cls:'warn'};
+      return {label: d >= 0 ? `${d}d left` : `${Math.abs(d)}d ago`, cls:'ok'};
+    }
+
+    function saveStore(){ localStorage.setItem(KEY, JSON.stringify(items)); }
+    function loadStore(){
+      try{ items = JSON.parse(localStorage.getItem(KEY) || '[]'); }
+      catch{ items = []; }
+    }
+
+    function resetForm(){
+      ['ref','council','address','url','validated','notes'].forEach(i => el(i).value='');
+      el('status').value='Watching';
+      el('commentWindow').value='21';
+      editId = null;
+      el('saveBtn').textContent = 'Save application';
+    }
+
+    function upsert(){
+      const obj = {
+        id: editId || crypto.randomUUID(),
+        ref: el('ref').value.trim(),
+        council: el('council').value.trim(),
+        address: el('address').value.trim(),
+        status: el('status').value,
+        url: el('url').value.trim(),
+        validated: el('validated').value,
+        commentWindow: Number(el('commentWindow').value || 21),
+        notes: el('notes').value.trim(),
+        updatedAt: new Date().toISOString()
+      };
+      if(!obj.ref || !obj.council || !obj.validated){
+        el('formMsg').textContent = 'Need at least reference, council, and validated date.';
+        return;
+      }
+      const idx = items.findIndex(x => x.id === obj.id);
+      if(idx >= 0) items[idx] = obj; else items.unshift(obj);
+      saveStore(); render(); resetForm();
+      el('formMsg').textContent = idx >= 0 ? 'Application updated.' : 'Application saved.';
+    }
+
+    function render(){
+      const tbody = el('rows');
+      tbody.innerHTML = '';
+      if(!items.length){
+        tbody.innerHTML = `<tr><td colspan="6" class="small">No applications yet. Add one above.</td></tr>`;
+      }
+      items.forEach(it => {
+        const dl = deadline(it.validated,it.commentWindow);
+        const al = alertState(it);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div class="mono">${escapeHtml(it.ref)}</div><div class="small">Validated: ${it.validated || '—'}</div></td>
+          <td>${escapeHtml(it.council)}<br><span class="small">${escapeHtml(it.address || '—')}</span></td>
+          <td>${escapeHtml(it.status)}</td>
+          <td>${dl ? dl.toISOString().slice(0,10) : '—'}</td>
+          <td><span class="chip ${al.cls}">${al.label}</span></td>
+          <td>
+            <div class="actions">
+              <button class="btn" data-edit="${it.id}">Edit</button>
+              <button class="btn" data-note="${it.id}">Copy note</button>
+              <button class="btn ghost" data-del="${it.id}">Delete</button>
+            </div>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+      refreshKpis();
+    }
+
+    function refreshKpis(){
+      const pendingSet = new Set(['Watching','Comment drafted','Comment submitted','Decision pending']);
+      let soon=0, over=0, pending=0;
+      items.forEach(it=>{
+        const a = alertState(it);
+        if(a.cls==='warn') soon++;
+        if(a.cls==='bad') over++;
+        if(pendingSet.has(it.status)) pending++;
+      });
+      el('kTotal').textContent = items.length;
+      el('kSoon').textContent = soon;
+      el('kOver').textContent = over;
+      el('kPending').textContent = pending;
+    }
+
+    function editItem(id){
+      const it = items.find(x=>x.id===id); if(!it) return;
+      editId = it.id;
+      el('ref').value = it.ref;
+      el('council').value = it.council;
+      el('address').value = it.address || '';
+      el('status').value = it.status;
+      el('url').value = it.url || '';
+      el('validated').value = it.validated || '';
+      el('commentWindow').value = it.commentWindow || 21;
+      el('notes').value = it.notes || '';
+      el('saveBtn').textContent = 'Update application';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function deleteItem(id){
+      items = items.filter(x=>x.id!==id); saveStore(); render();
+    }
+
+    function copyNote(id){
+      const it = items.find(x=>x.id===id); if(!it) return;
+      const dl = deadline(it.validated,it.commentWindow);
+      const txt = `Planning application ${it.ref} (${it.council})\nAddress: ${it.address || '—'}\nStatus: ${it.status}\nComment deadline: ${dl ? dl.toISOString().slice(0,10) : '—'}\nURL: ${it.url || '—'}\nNotes: ${it.notes || '—'}`;
+      copyText(txt, 'Application note copied.');
+    }
+
+    function escapeHtml(s){
+      return String(s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    function toCsv(){
+      const headers = ['ref','council','address','status','validated','commentDeadline','commentWindow','url','notes','updatedAt'];
+      const rows = items.map(it=>{
+        const dl = deadline(it.validated,it.commentWindow);
+        return [it.ref,it.council,it.address,it.status,it.validated,dl?dl.toISOString().slice(0,10):'',it.commentWindow,it.url,it.notes,it.updatedAt]
+          .map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',');
+      });
+      return [headers.join(','), ...rows].join('\n');
+    }
+
+    function download(name, content, type){
+      const blob = new Blob([content],{type:type||'text/plain;charset=utf-8'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    async function copyText(txt, ok='Copied.'){
+      try{ await navigator.clipboard.writeText(txt); el('tableMsg').textContent=ok; }
+      catch{
+        const t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+        el('tableMsg').textContent=ok;
+      }
+    }
+
+    function copySummary(){
+      const lines = items.map(it=>{
+        const dl = deadline(it.validated,it.commentWindow);
+        const al = alertState(it);
+        return `- ${it.ref} | ${it.council} | ${it.status} | deadline ${dl ? dl.toISOString().slice(0,10) : '—'} | ${al.label}`;
+      });
+      const txt = `Planning Alerts Desk summary\nTotal: ${items.length}\n${lines.join('\n') || '- No applications tracked yet.'}`;
+      copyText(txt,'Summary copied.');
+    }
+
+    function seedDemo(){
+      items = [
+        {id:crypto.randomUUID(),ref:'24/01234/FUL',council:'Camden',address:'1 High St, NW1',status:'Watching',url:'https://example.com/app1',validated:today(),commentWindow:21,notes:'Potential overshadowing to rear garden',updatedAt:new Date().toISOString()},
+        {id:crypto.randomUUID(),ref:'24/09876/HSE',council:'Hackney',address:'18 Park Rd, E8',status:'Comment drafted',url:'https://example.com/app2',validated:new Date(Date.now()-10*86400000).toISOString().slice(0,10),commentWindow:21,notes:'Parking + bin access concerns',updatedAt:new Date().toISOString()}
+      ];
+      saveStore(); render();
+      el('formMsg').textContent = 'Demo data loaded.';
+    }
+
+    el('saveBtn').addEventListener('click', upsert);
+    el('seedBtn').addEventListener('click', seedDemo);
+    el('clearBtn').addEventListener('click', resetForm);
+    el('exportCsvBtn').addEventListener('click', ()=>download('planning-alerts.csv', toCsv(), 'text/csv;charset=utf-8'));
+    el('exportJsonBtn').addEventListener('click', ()=>download('planning-alerts.json', JSON.stringify(items,null,2), 'application/json'));
+    el('copySummaryBtn').addEventListener('click', copySummary);
+    el('wipeBtn').addEventListener('click', ()=>{
+      if(!confirm('Delete all tracked applications from this browser?')) return;
+      items=[]; saveStore(); render(); el('tableMsg').textContent='All items deleted.';
+    });
+
+    el('rows').addEventListener('click', e=>{
+      const btn = e.target.closest('button'); if(!btn) return;
+      if(btn.dataset.edit) return editItem(btn.dataset.edit);
+      if(btn.dataset.del) return deleteItem(btn.dataset.del);
+      if(btn.dataset.note) return copyNote(btn.dataset.note);
+    });
+
+    loadStore(); render();
+  </script>
+</body>
+</html>
