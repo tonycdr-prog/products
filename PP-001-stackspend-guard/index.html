@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="StackSpend Guard audits AI tooling spend, flags waste, and generates a team AI budget policy in minutes.">
+  <meta name="theme-color" content="#06111f">
+  <title>StackSpend Guard — AI Tooling Spend Audit</title>
+  <style>
+    :root{--bg:#06111f;--panel:#0b1628;--panel2:#111f35;--ink:#f8fafc;--muted:#9fb0c7;--line:#2b3f5d;--green:#33d17a;--yellow:#ffd166;--red:#ff6b6b;--blue:#67e8f9;--shadow:0 22px 80px rgba(0,0,0,.28)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% 0%,rgba(51,209,122,.18),transparent 32rem),radial-gradient(circle at 90% 6%,rgba(103,232,249,.14),transparent 28rem),var(--bg);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:inherit}.skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;padding:.7rem 1rem;background:var(--panel);border:1px solid var(--line);border-radius:.8rem;z-index:5}.wrap{max-width:1180px;margin:auto;padding:24px}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.03em}.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--blue));color:#06111f}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);color:var(--muted);font-size:.9rem}.hero{display:grid;grid-template-columns:1.04fr .96fr;gap:28px;align-items:center;padding:58px 0 34px}h1{font-size:clamp(2.4rem,6vw,5.7rem);line-height:.92;margin:14px 0 18px;letter-spacing:-.075em;text-wrap:balance}h2{font-size:clamp(1.65rem,3vw,2.5rem);line-height:1.05;margin:0 0 10px;letter-spacing:-.04em}h3{margin:.2rem 0 .5rem}.lead{font-size:1.18rem;color:#c7d4e8;max-width:62ch}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:999px;background:var(--green);color:#06111f;font-weight:900;padding:13px 18px;cursor:pointer;text-decoration:none;box-shadow:0 14px 34px rgba(51,209,122,.22)}.btn.secondary{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}.btn.warn{background:var(--yellow)}.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}.card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:var(--shadow)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:var(--panel2);border:1px solid var(--line);border-radius:18px;padding:14px}.stat b{font-size:1.55rem;display:block;font-variant-numeric:tabular-nums}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}.stack{display:grid;gap:14px}.row{display:grid;grid-template-columns:1.25fr .8fr .65fr .75fr 40px;gap:8px;align-items:end;margin-bottom:8px}.row.head{color:var(--muted);font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.08em}label{display:grid;gap:6px;font-weight:800;color:#dbeafe}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:13px;background:#07101d;color:var(--ink);padding:11px 12px;font:inherit}textarea{min-height:164px;resize:vertical}.iconbtn{height:42px;border:1px solid var(--line);background:#101d31;color:var(--ink);border-radius:12px;cursor:pointer}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.summary .stat{min-height:104px}.good{color:var(--green)}.risk{color:var(--yellow)}.bad{color:var(--red)}.report{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92rem;background:#06101c;border:1px solid var(--line);border-radius:18px;padding:16px;min-height:360px}.checklist{display:grid;gap:10px}.check{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}.check input{width:auto;margin-top:4px}.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}.price{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px}.price strong{font-size:2rem}.footer{padding:26px 0 38px;color:var(--muted);font-size:.92rem}.toast{position:fixed;right:18px;bottom:18px;max-width:340px;padding:13px 16px;border-radius:16px;background:#0d2137;border:1px solid var(--line);box-shadow:var(--shadow);transform:translateY(140%);transition:transform .2s ease}.toast.show{transform:translateY(0)}@media(max-width:900px){.hero,.grid{grid-template-columns:1fr}.summary,.stats,.pricing{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 1fr}.row.head{display:none}.row .iconbtn{grid-column:2}}@media(max-width:560px){.wrap{padding:18px}.nav{align-items:flex-start;flex-direction:column}.summary,.stats,.pricing{grid-template-columns:1fr}.actions .btn{width:100%}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#audit">Skip to audit</a>
+<header class="wrap nav" aria-label="Top navigation">
+  <div class="brand"><span class="logo">£</span><span>StackSpend Guard</span></div>
+  <a class="pill" href="#audit">Free local audit · no signup</a>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <span class="pill">AI FinOps for small teams</span>
+      <h1>Stop AI tool sprawl before the invoice lands.</h1>
+      <p class="lead">Enter your team's AI subscriptions, usage costs, trials, and owners. StackSpend Guard calculates budget risk, finds obvious waste, and generates a copy-ready AI spending policy.</p>
+      <div class="actions"><a class="btn" href="#audit">Run the audit</a><button class="btn secondary" id="loadDemo" type="button">Load demo stack</button></div>
+    </div>
+    <aside class="card" aria-label="Example output">
+      <div class="stats">
+        <div class="stat"><b id="heroSpend">£0</b><span class="muted">monthly spend</span></div>
+        <div class="stat"><b id="heroWaste">£0</b><span class="muted">likely waste</span></div>
+        <div class="stat"><b id="heroRisk">—</b><span class="muted">risk level</span></div>
+      </div>
+      <p class="muted">Tonight's iteration adds editable tool rows, local save/load, cancellation checks, policy text, CSV export, and a downloadable Markdown report.</p>
+    </aside>
+  </section>
+
+  <section id="audit" class="grid" aria-label="AI spend audit tool">
+    <aside class="panel stack">
+      <h2>Audit settings</h2>
+      <label>Company / team name <input id="teamName" value="Acme Studio"></label>
+      <label>Team members using AI <input id="members" type="number" min="1" value="8"></label>
+      <label>Monthly target per active user (£) <input id="target" type="number" min="0" value="95"></label>
+      <label>Policy owner <input id="owner" value="Ops lead"></label>
+      <label>Review cadence <select id="cadence"><option>Weekly</option><option selected>Fortnightly</option><option>Monthly</option></select></label>
+      <div class="actions"><button class="btn" id="addTool" type="button">Add tool</button><button class="btn secondary" id="save" type="button">Save locally</button><button class="btn secondary" id="reset" type="button">Reset</button></div>
+      <div class="checklist" id="checks" aria-label="Policy checklist"></div>
+    </aside>
+
+    <section class="stack">
+      <div class="card stack">
+        <div>
+          <h2>Tool stack</h2>
+          <p class="muted">Use one row per subscription or usage bucket. Mark trials and duplicates so the policy can recommend action.</p>
+        </div>
+        <div class="row head"><span>Tool</span><span>Owner</span><span>£/mo</span><span>Status</span><span></span></div>
+        <div id="rows"></div>
+      </div>
+
+      <div class="summary" aria-live="polite">
+        <div class="stat"><b id="total">£0</b><span class="muted">total / month</span></div>
+        <div class="stat"><b id="perHead">£0</b><span class="muted">per active user</span></div>
+        <div class="stat"><b id="budgetGap">£0</b><span class="muted">vs target budget</span></div>
+        <div class="stat"><b id="riskScore">0/100</b><span class="muted">sprawl score</span></div>
+      </div>
+
+      <div class="card stack">
+        <div class="nav" style="padding:0">
+          <div><h2>Generated report</h2><p class="muted">Copy this into Slack/Notion or download as Markdown.</p></div>
+          <div class="actions" style="margin:0"><button class="btn secondary" id="copy" type="button">Copy</button><button class="btn warn" id="download" type="button">Download .md</button><button class="btn secondary" id="csv" type="button">Download CSV</button></div>
+        </div>
+        <pre class="report" id="report"></pre>
+      </div>
+    </section>
+  </section>
+
+  <section class="wrap" style="padding-left:0;padding-right:0">
+    <h2>Pricing path</h2>
+    <div class="pricing">
+      <div class="price"><h3>Free audit</h3><strong>£0</strong><p class="muted">Browser-only calculator, copy report, CSV export.</p></div>
+      <div class="price"><h3>Team Guard</h3><strong>£29/mo</strong><p class="muted">Saved history, renewal alerts, Slack reminders, policy templates.</p></div>
+      <div class="price"><h3>Agency</h3><strong>£99/mo</strong><p class="muted">Multi-client dashboards, white-label exports, monthly review packs.</p></div>
+    </div>
+  </section>
+</main>
+<footer class="wrap footer">StackSpend Guard MVP · all calculations run locally in your browser · no trackers, no external scripts.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const $=s=>document.querySelector(s);const rows=$('#rows');const fmt=n=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(Number(n)||0);const clean=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const demo=[['Cursor','Engineering',256,'Active'],['ChatGPT Team','Product',240,'Active'],['Claude Team','Engineering',180,'Duplicate'],['Midjourney','Marketing',28,'Trial'],['Fireflies','Sales',72,'Forgotten'],['PR review bot','Engineering',160,'Active']];
+const checks=[['Every paid tool has a named owner','owner'],['Trials must be cancelled or approved 48h before renewal','trial'],['Duplicate tools need a written reason or one gets cut','duplicate'],['New AI spend over £50/mo needs policy owner approval','approval'],['Monthly export posted to finance or leadership channel','export']];
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2400)}
+function row(tool='New tool',owner='Owner',cost=25,status='Active'){const div=document.createElement('div');div.className='row';div.innerHTML=`<label><span>Tool</span><input class="tool" value="${clean(tool)}"></label><label><span>Owner</span><input class="owner" value="${clean(owner)}"></label><label><span>£/mo</span><input class="cost" type="number" min="0" value="${Number(cost)||0}"></label><label><span>Status</span><select class="status"><option>Active</option><option>Trial</option><option>Duplicate</option><option>Forgotten</option><option>Cancel</option></select></label><button class="iconbtn" type="button" aria-label="Remove row">×</button>`;div.querySelector('.status').value=status;div.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',calc));div.querySelector('button').addEventListener('click',()=>{div.remove();calc()});rows.appendChild(div)}
+function getTools(){return [...rows.querySelectorAll('.row')].map(r=>({tool:r.querySelector('.tool').value.trim(),owner:r.querySelector('.owner').value.trim(),cost:+r.querySelector('.cost').value||0,status:r.querySelector('.status').value})).filter(x=>x.tool)}
+function checkedIds(){return [...document.querySelectorAll('#checks input:checked')].map(x=>x.value)}
+function renderChecks(){checks.forEach(([label,id])=>{const d=document.createElement('label');d.className='check';d.innerHTML=`<input type="checkbox" value="${id}" ${['owner','trial'].includes(id)?'checked':''}> <span>${label}</span>`;d.querySelector('input').addEventListener('change',calc);$('#checks').appendChild(d)})}
+function reportText(data){const riskWord=data.score>=70?'High':data.score>=40?'Medium':'Low';const actions=[];if(data.forgotten.length)actions.push(`Cancel or justify forgotten tools: ${data.forgotten.map(x=>x.tool).join(', ')}.`);if(data.duplicates.length)actions.push(`Pick a default and remove duplicates: ${data.duplicates.map(x=>x.tool).join(', ')}.`);if(data.trials.length)actions.push(`Decide before renewal: ${data.trials.map(x=>x.tool).join(', ')}.`);if(data.gap>0)actions.push(`Reduce spend by ${fmt(data.gap)} to hit the ${fmt(data.target*data.members)}/mo team budget.`);if(!actions.length)actions.push('Spend is inside policy. Keep the review cadence and approval rule.');
+return `# StackSpend Guard audit — ${clean($('#teamName').value)}\n\nGenerated: ${new Date().toLocaleString('en-GB')}\nPolicy owner: ${clean($('#owner').value)}\nReview cadence: ${$('#cadence').value}\n\n## Snapshot\n- Monthly AI spend: ${fmt(data.total)}\n- Active users: ${data.members}\n- Spend per active user: ${fmt(data.perHead)}\n- Target budget: ${fmt(data.target)} per user / ${fmt(data.target*data.members)} total\n- Budget gap: ${data.gap>0?fmt(data.gap)+' over target':fmt(Math.abs(data.gap))+' under target'}\n- Sprawl score: ${data.score}/100 (${riskWord})\n- Likely removable waste: ${fmt(data.waste)}\n\n## Tool list\n${data.tools.map(t=>`- ${t.tool} — ${fmt(t.cost)}/mo — owner: ${t.owner||'unassigned'} — ${t.status}`).join('\n')}\n\n## Recommended actions\n${actions.map((a,i)=>`${i+1}. ${a}`).join('\n')}\n\n## Draft AI spend policy\n1. ${clean($('#owner').value)||'Policy owner'} owns the AI tooling register and reviews it ${$('#cadence').value.toLowerCase()}.\n2. Every AI tool must have a named owner, monthly cost, and approved use case.\n3. Trials must be approved or cancelled before renewal; no silent rollovers.\n4. Duplicate tools require a written exception, otherwise the cheaper/default tool wins.\n5. New spend above £50/mo requires approval before purchase.\n6. This report should be exported monthly and shared with finance/leadership.\n\n## Missing controls\n${data.missing.length?data.missing.map(x=>`- ${x}`).join('\n'):'- None flagged in this audit.'}\n`;}
+function calc(){const tools=getTools();const members=Math.max(1,+$('#members').value||1);const target=+$('#target').value||0;const total=tools.reduce((s,t)=>s+t.cost,0);const perHead=total/members;const gap=total-(target*members);const forgotten=tools.filter(t=>t.status==='Forgotten'||t.status==='Cancel');const duplicates=tools.filter(t=>t.status==='Duplicate');const trials=tools.filter(t=>t.status==='Trial');const waste=forgotten.concat(duplicates).reduce((s,t)=>s+t.cost,0);const checked=checkedIds();const missing=checks.filter(([,id])=>!checked.includes(id)).map(([label])=>label);const score=Math.min(100,Math.round((gap>0?30:0)+(duplicates.length*12)+(forgotten.length*18)+(trials.length*7)+(missing.length*8)+(tools.length>members?12:0)));const data={tools,members,target,total,perHead,gap,forgotten,duplicates,trials,waste,missing,score};$('#total').textContent=fmt(total);$('#perHead').textContent=fmt(perHead);$('#budgetGap').textContent=gap>0?fmt(gap)+' over':fmt(Math.abs(gap))+' under';$('#budgetGap').className=gap>0?'bad':'good';$('#riskScore').textContent=score+'/100';$('#riskScore').className=score>=70?'bad':score>=40?'risk':'good';$('#heroSpend').textContent=fmt(total);$('#heroWaste').textContent=fmt(waste);$('#heroRisk').textContent=score>=70?'High':score>=40?'Medium':'Low';$('#heroRisk').className=score>=70?'bad':score>=40?'risk':'good';$('#report').textContent=reportText(data);return data}
+function loadDemo(){rows.innerHTML='';demo.forEach(x=>row(...x));calc()}function state(){return {teamName:$('#teamName').value,members:$('#members').value,target:$('#target').value,owner:$('#owner').value,cadence:$('#cadence').value,tools:getTools(),checks:checkedIds()}}
+function restore(s){if(!s)return;['teamName','members','target','owner','cadence'].forEach(id=>{if(s[id]!=null)$('#'+id).value=s[id]});rows.innerHTML='';(s.tools&&s.tools.length?s.tools:demo).forEach(t=>row(t.tool,t.owner,t.cost,t.status));if(s.checks){document.querySelectorAll('#checks input').forEach(x=>x.checked=s.checks.includes(x.value))}calc()}
+function download(name,type,content){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(a.href);a.remove()}
+renderChecks();const savedState=JSON.parse(localStorage.getItem('stackspend-state')||'null');if(savedState){restore(savedState)}else{loadDemo()}['teamName','members','target','owner','cadence'].forEach(id=>$('#'+id).addEventListener('input',calc));$('#addTool').addEventListener('click',()=>{row();calc()});$('#loadDemo').addEventListener('click',loadDemo);$('#reset').addEventListener('click',()=>{localStorage.removeItem('stackspend-state');loadDemo();toast('Reset to demo stack')});$('#save').addEventListener('click',()=>{localStorage.setItem('stackspend-state',JSON.stringify(state()));toast('Audit saved in this browser')});$('#copy').addEventListener('click',async()=>{await navigator.clipboard.writeText($('#report').textContent);toast('Report copied')});$('#download').addEventListener('click',()=>download('stackspend-audit.md','text/markdown',$('#report').textContent));$('#csv').addEventListener('click',()=>{const csv='Tool,Owner,Monthly cost,Status\n'+getTools().map(t=>[t.tool,t.owner,t.cost,t.status].map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');download('stackspend-tools.csv','text/csv',csv)});calc();
+</script>
+</body>
+</html>
