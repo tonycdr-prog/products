@@ -11,6 +11,14 @@
     header { margin-bottom:32px; }
     h1 { font-size:clamp(2.25rem,6vw,4.5rem); line-height:1; margin:0 0 12px; letter-spacing:-0.06em; }
     .lede { color:#aab6ca; font-size:1.1rem; margin:0; max-width:680px; }
+    .search { margin:28px 0 8px; display:grid; gap:8px; max-width:680px; }
+    .search label { color:#d8e2f3; font-weight:700; font-size:.95rem; }
+    .search input { width:100%; box-sizing:border-box; border:1px solid rgba(255,255,255,.16); border-radius:16px; background:rgba(7,9,15,.72); color:#f4f7fb; font:inherit; padding:14px 16px; outline:none; box-shadow:0 12px 40px rgba(0,0,0,.18); }
+    .search input:focus { border-color:rgba(130,180,255,.78); box-shadow:0 0 0 4px rgba(130,180,255,.14), 0 12px 40px rgba(0,0,0,.18); }
+    .search input::placeholder { color:#7f8ba1; }
+    .result-count { color:#8f9db2; font-size:.92rem; margin:0 0 22px; min-height:1.3em; }
+    .empty { display:none; border:1px dashed rgba(255,255,255,.18); border-radius:22px; padding:28px; color:#b9c4d6; background:rgba(255,255,255,.04); }
+    .empty.visible { display:block; }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
     .card { display:block; text-decoration:none; color:inherit; padding:22px; border:1px solid rgba(255,255,255,.11); border-radius:22px; background:rgba(255,255,255,.06); box-shadow:0 18px 70px rgba(0,0,0,.25); backdrop-filter:blur(16px); transition:transform .18s ease,border-color .18s ease,background .18s ease; }
     .card:hover { transform:translateY(-3px); border-color:rgba(130,180,255,.55); background:rgba(255,255,255,.09); }
@@ -23,6 +31,11 @@
     <header>
       <h1>Products</h1>
       <p class="lede">A live shelf of deployed product builds.</p>
+      <div class="search" role="search">
+        <label for="product-search">Search products</label>
+        <input id="product-search" type="search" placeholder="Try “invoice”, “leasehold”, “AI”…" autocomplete="off" />
+      </div>
+      <p class="result-count" id="result-count" aria-live="polite"></p>
     </header>
     <section class="grid" aria-label="Product builds">
       <a class="card" href="/products/PP-001-arch-diagram-polish/">
@@ -438,6 +451,39 @@
         <p>IFC Automator Target customer: UK compliance and maintenance teams handling smoke control, fire dampers, ventilation and PPM upgrades. Pricing model: Per‑company SaaS, tiered by number of IFC packs/month.</p>
       </a>
     </section>
+    <p class="empty" id="empty-state">No products match that search. Try a broader keyword.</p>
   </main>
+  <script>
+    const searchInput = document.getElementById('product-search');
+    const resultCount = document.getElementById('result-count');
+    const emptyState = document.getElementById('empty-state');
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const total = cards.length;
+
+    function pluralise(count) {
+      return count === 1 ? 'product' : 'products';
+    }
+
+    function updateResults() {
+      const query = searchInput.value.trim().toLowerCase();
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const text = card.textContent.toLowerCase();
+        const href = card.getAttribute('href').toLowerCase();
+        const match = !query || text.includes(query) || href.includes(query);
+        card.hidden = !match;
+        if (match) visible += 1;
+      });
+
+      resultCount.textContent = query
+        ? `${visible} ${pluralise(visible)} found for “${searchInput.value.trim()}”`
+        : `${total} ${pluralise(total)}`;
+      emptyState.classList.toggle('visible', visible === 0);
+    }
+
+    searchInput.addEventListener('input', updateResults);
+    updateResults();
+  </script>
 </body>
 </html>
