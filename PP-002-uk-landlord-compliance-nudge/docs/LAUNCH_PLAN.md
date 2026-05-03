@@ -1,62 +1,46 @@
-# LAUNCH_PLAN
+# LAUNCH_PLAN — Compliance Nudge UK
 
-## Week 1 Distribution Plan
+## Week 1 Distribution
 
-### Day 1–2: Reddit (problem-first launch)
-Post in:
-- **r/UKLandlords**
-- **r/landlord**
-- **r/PropertyManagement**
+### Day 1 — Reddit Feedback Post
+- `r/UKLandlords`
+- `r/PropertyInvesting`
+- `r/LegalAdviceUK` only if framed as a non-legal checklist tool and not promotional
 
-Angle: free UK compliance risk checker for CP12/EPC/EICR + tenancy-proof checklist.
+### Day 2 — Indie Builder Launch
+- Hacker News: Show HN
+- IndieHackers: Product Hunt / Building in Public group
+- LinkedIn: post from a founder/operator angle aimed at UK landlords and small agents
 
-### Day 3: Hacker News
-- Post as **Show HN**
-- Title suggestion: `Show HN: UK landlord compliance checker (CP12/EPC/EICR risk in 30 seconds)`
-- Include: what pain it solves, how fast it is, what is free now, and what is planned for Pro.
+### Day 3–5 — Niche Communities
+- UK landlord Facebook groups that allow useful free tools
+- Property118 community comments where compliance/admin pain is being discussed
+- Small letting-agent newsletters or local property investor association groups
 
-### Day 4: Indie Hackers
-- Post in Product Showcase + build-in-public update
-- Ask for feedback on pricing (`£9/month`) and where reminders add most value.
+## First Post Template
 
-### Day 5–7: Follow-up comments + DM outreach
-- Reply to every comment with specific examples
-- Share one mini case example (before/after checklist clarity)
-- Convert interested users to waitlist
+**Title:** I made a free 5-minute UK landlord compliance risk checker
 
----
+I built a tiny browser-based tool for self-managing UK landlords who track CP12, EPC, EICR, deposit protection, and “How to Rent” proof in spreadsheets or email threads.
 
-## First Post Template (Ready to Paste)
+It does one thing: enter one property, add the key dates/evidence status, and it gives you a risk score, ranked checklist, and copy-ready reminder template.
 
-**Title:** Free UK Landlord Compliance Checker (CP12/EPC/EICR) — feedback wanted
+No signup. No legal advice. Nothing uploaded — it runs locally in the browser.
 
-I built a simple tool called **Compliance Nudge UK** for self-managing landlords.
+I’m trying to learn whether this is actually useful for landlords with 2–25 properties before I build the paid reminder queue.
 
-You enter one property and it instantly shows:
-- a compliance risk score
-- what is urgent vs safe
-- a next-step checklist for CP12, EPC, EICR, deposit protection and “How to Rent” proof
+Free checker: https://tonycdr-prog.github.io/products/PP-002-uk-landlord-compliance-nudge/
 
-It is free to test right now. Pro is planned at **£9/month** for multi-property tracking + weekly reminders.
+If you self-manage rentals, what certificate/evidence item would you expect this to include that I’ve missed?
 
-I built it because too many deadlines are trapped in spreadsheets and last-minute panic bookings.
+## 3 Cold Outreach Targets
 
-If you manage rentals in the UK, I would really value blunt feedback on:
-1) what is missing,
-2) what you would never pay for,
-3) what would make £9/month an easy yes.
+1. **Portfolio Landlord Coach** — LinkedIn. Ask for feedback on whether their audience would use a free risk checker before a compliance webinar.
+2. **Letting Agency Operations Manager** — LinkedIn. Position as a lightweight pre-audit checklist for small agencies still working from spreadsheets.
+3. **Property Accountant / Bookkeeper Serving Landlords** — X/Twitter or LinkedIn. Offer the free checker as a useful client-resource link during tax/compliance season.
 
-Link: https://tonycdr-prog.github.io/products/PP-002-uk-landlord-compliance-nudge/
-
----
-
-## 3 Cold Outreach Targets (Role + Platform)
-
-1. **Job title:** Independent Buy-to-Let Portfolio Manager  
-   **Platform:** LinkedIn
-
-2. **Job title:** Lettings Agency Branch Manager  
-   **Platform:** LinkedIn
-
-3. **Job title:** Property Compliance Administrator  
-   **Platform:** Facebook Groups (UK landlord/lettings communities)
+## Success Criteria
+- 3 community posts published.
+- 20+ unique visitors to the checker.
+- 5+ qualitative comments from landlords/agents.
+- 3+ Pro waitlist emails or direct replies asking for reminders/export.

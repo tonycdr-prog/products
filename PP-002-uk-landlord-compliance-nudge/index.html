@@ -1,848 +1,601 @@
 <!doctype html>
-<html lang="en-GB">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Never Miss a UK Landlord Compliance Deadline — Compliance Nudge UK</title>
-  <meta name="description" content="Compliance Nudge UK helps self-managing landlords track CP12, EPC, EICR and proof requirements in minutes, then shows the next action before deadlines become legal risk.">
-  <meta property="og:title" content="Never Miss a UK Landlord Compliance Deadline — Compliance Nudge UK">
-  <meta property="og:description" content="Track CP12, EPC, EICR and tenancy evidence with a clear risk score, instant action checklist and weekly reminders.">
-  <meta name="theme-color" content="#F0FDFA">
+  <meta name="theme-color" content="#f8fafc">
+  <title>Compliance Nudge UK — Landlord Certificate Risk Checker</title>
+  <meta name="description" content="Check UK landlord compliance deadlines in 5 minutes. Score CP12, EPC, EICR, deposit protection, and How to Rent evidence before they become expensive misses.">
+  <meta property="og:title" content="Compliance Nudge UK — Stop Missing Landlord Compliance Deadlines">
+  <meta property="og:description" content="A fast browser-based risk checker for self-managing UK landlords. Enter one property, get a risk score, and copy your next action checklist.">
   <style>
     :root {
-      --primary: #0F766E;
-      --primary-hover: #0b5f59;
-      --secondary: #14B8A6;
-      --accent: #0369A1;
-      --bg: #F0FDFA;
-      --surface: #FFFFFF;
-      --ink: #134E4A;
-      --ink-strong: #052e2b;
-      --muted: #64748B;
-      --muted-surface: #E8F0F3;
-      --border: #99F6E4;
-      --danger: #DC2626;
-      --ok: #065F46;
-      --warning: #9A3412;
-      --ring: #0F766E;
-      --radius-sm: 10px;
-      --radius-md: 16px;
-      --radius-lg: 22px;
-      --space-2: 8px;
-      --space-3: 12px;
-      --space-4: 16px;
-      --space-6: 24px;
-      --space-8: 32px;
-      --space-10: 40px;
-      --max-width: 1120px;
+      color-scheme: light;
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-strong: #eff6ff;
+      --text: #1e293b;
+      --muted: #475569;
+      --line: #cbd5e1;
+      --primary: #2563eb;
+      --primary-strong: #1d4ed8;
+      --secondary: #3b82f6;
+      --cta: #c2410c;
+      --cta-strong: #9a3412;
+      --accent: #f97316;
+      --ok: #15803d;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 24px 80px rgba(30, 41, 59, .14);
+      --radius: 24px;
+      --space: clamp(1rem, 2vw, 1.5rem);
+      font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-{ box-sizing: border-box; }
 
-    html, body {
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
       margin: 0;
-      padding: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: "Plus Jakarta Sans", "Inter", "Segoe UI", Roboto, Arial, sans-serif;
-      line-height: 1.5;
-      -webkit-text-size-adjust: 100%;
-      -webkit-tap-highlight-color: rgba(3, 105, 161, 0.2);
-      touch-action: manipulation;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, .14), transparent 34rem),
+        linear-gradient(180deg, #f8fafc 0%, #eef6ff 42%, #ffffff 100%);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
       overflow-x: hidden;
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
-      padding-bottom: env(safe-area-inset-bottom);
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(37, 99, 235, .18);
     }
 
-    main { display: block; }
-
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: var(--primary-strong); }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(194, 65, 12, .62);
+      outline-offset: 3px;
+    }
+    button, .button, .btn-pay { cursor: pointer; min-height: 44px; }
     .skip-link {
       position: absolute;
-      left: -9999px;
-      top: var(--space-2);
-      background: var(--surface);
-      border: 2px solid var(--ring);
-      color: var(--ink-strong);
-      padding: var(--space-2) var(--space-3);
-      border-radius: var(--radius-sm);
-      z-index: 1000;
-      text-decoration: none;
-      font-weight: 700;
-    }
-    .skip-link:focus-visible { left: var(--space-2); }
-
-    .container {
-      width: min(var(--max-width), 100% - 2rem);
-      margin-inline: auto;
-    }
-
-    h1, h2, h3 {
-      margin: 0;
-      color: var(--ink-strong);
-      text-wrap: balance;
-      scroll-margin-top: 84px;
-    }
-
-    h1 { font-size: clamp(1.9rem, 3.2vw, 3rem); line-height: 1.15; }
-    h2 { font-size: clamp(1.5rem, 2.4vw, 2rem); line-height: 1.2; }
-    h3 { font-size: clamp(1.1rem, 1.8vw, 1.28rem); line-height: 1.3; }
-
-    p { margin: 0; color: var(--ink); }
-
-    .muted { color: var(--muted); }
-
-    .hero {
-      padding: var(--space-10) 0 var(--space-8);
-      background: linear-gradient(135deg, #ecfeff 0%, #ccfbf1 100%);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .story-eyebrow {
-      display: inline-block;
-      background: #d1fae5;
-      color: #065f46;
-      border: 1px solid #6ee7b7;
+      left: 1rem;
+      top: .75rem;
+      z-index: 50;
+      transform: translateY(-140%);
+      background: var(--text);
+      color: #fff;
+      padding: .75rem 1rem;
       border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: var(--space-4);
+      transition: transform .18s ease;
     }
-
-    .hero-grid {
+    .skip-link:focus { transform: translateY(0); }
+    .wrap { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(248, 250, 252, .88);
+      border-bottom: 1px solid rgba(203, 213, 225, .72);
+    }
+    nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem 0; }
+    .brand { display: flex; align-items: center; gap: .7rem; font-weight: 800; letter-spacing: -.03em; }
+    .brand-mark {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: var(--space-8);
-      align-items: start;
-    }
-
-    .lead {
-      font-size: clamp(1rem, 1.6vw, 1.2rem);
-      max-width: 65ch;
-      margin-top: var(--space-4);
-    }
-
-    .benefits {
-      list-style: none;
-      margin: var(--space-6) 0 0;
-      padding: 0;
-      display: grid;
-      gap: var(--space-3);
-    }
-
-    .benefits li {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: var(--space-4);
-      box-shadow: 0 1px 1px rgba(15, 118, 110, 0.06);
-    }
-
-    .chapter {
-      padding: var(--space-10) 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .chapter:last-of-type { border-bottom: 0; }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-6);
-      box-shadow: 0 6px 20px rgba(19, 78, 74, 0.08);
-      min-width: 0;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-4);
-      margin-top: var(--space-6);
-    }
-
-    .field {
-      display: grid;
-      gap: 6px;
-      min-width: 0;
-    }
-
-    .field.full { grid-column: 1 / -1; }
-
-    label {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--ink-strong);
-      cursor: pointer;
-    }
-
-    input, select, textarea, button, a {
-      font: inherit;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid #84dccf;
-      border-radius: var(--radius-sm);
-      background: #ffffff;
-      color: var(--ink-strong);
-      padding: 11px 12px;
-      transition: border-color .2s ease, box-shadow .2s ease;
-    }
-
-    select {
-      background-color: #ffffff;
-      color: var(--ink-strong);
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #6b7d8c;
-      opacity: 1;
-    }
-
-    input:focus-visible,
-    select:focus-visible,
-    textarea:focus-visible,
-    button:focus-visible,
-    a:focus-visible {
-      outline: 3px solid color-mix(in oklab, var(--ring) 30%, white);
-      outline-offset: 1px;
-      border-color: var(--ring);
-      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.15);
-    }
-
-    .actions {
-      display: flex;
-      gap: var(--space-3);
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: var(--space-6);
-    }
-
-    .btn,
-    .btn-pay {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 12px;
-      border: 1px solid transparent;
-      font-weight: 800;
-      padding: 11px 16px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform .15s ease, background-color .2s ease, border-color .2s ease;
-    }
-
-    .btn:hover,
-    .btn-pay:hover { transform: translateY(-1px); }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .btn-primary:hover { background: var(--primary-hover); }
-
-    .btn-secondary {
-      border-color: #9dd9d0;
-      color: #0f5250;
-      background: #e6fffa;
-    }
-
-    .btn-secondary:hover { background: #d5fbf4; }
-
-    .btn-pay {
-      background: #0b7f73;
-      color: #ffffff;
-      border-color: #09685f;
-    }
-
-    .pill {
-      display: inline-block;
-      font-size: 0.82rem;
-      font-weight: 800;
-      border-radius: 999px;
-      padding: 4px 10px;
-    }
-
-    .pill-ok { background: #dcfce7; color: var(--ok); }
-    .pill-warning { background: #ffedd5; color: var(--warning); }
-    .pill-danger { background: #fee2e2; color: #991b1b; }
-
-    .result {
-      margin-top: var(--space-6);
-      padding: var(--space-4);
-      border: 1px dashed #65cfc0;
-      border-radius: var(--radius-md);
-      background: #f0fdfa;
-      min-height: 120px;
-    }
-
-    .result p + p { margin-top: 8px; }
-
-    .checklist {
-      margin: var(--space-3) 0 0;
-      padding-left: 20px;
-      display: grid;
-      gap: 6px;
-    }
-
-    .mono {
-      white-space: pre-wrap;
-      border: 1px solid #bae8df;
-      border-radius: var(--radius-md);
-      background: #fbfffe;
-      padding: var(--space-4);
-      margin-top: var(--space-4);
-      color: #0f3e3a;
-      overflow-wrap: anywhere;
-    }
-
-    .price-grid {
-      margin-top: var(--space-6);
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-4);
-    }
-
-    .price-card {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: var(--space-6);
-      background: var(--surface);
-      min-width: 0;
-    }
-
-    .price-card.highlight {
-      border-color: #0ea5a4;
-      box-shadow: 0 8px 24px rgba(15, 118, 110, 0.15);
-      background: linear-gradient(180deg, #ffffff 0%, #f0fffc 100%);
-    }
-
-    .price {
-      font-size: 2rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      margin-top: var(--space-3);
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, .28);
       font-variant-numeric: tabular-nums;
     }
+    .nav-links { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { padding: .58rem .78rem; border-radius: 999px; color: var(--muted); font-weight: 700; }
+    .nav-links a:hover { background: #e0edff; color: var(--primary-strong); }
+    .nav-cta { background: var(--text) !important; color: #fff !important; }
 
-    .price small { font-size: 1rem; font-weight: 700; color: var(--muted); }
-
-    .price-list {
-      margin: var(--space-4) 0 0;
-      padding-left: 18px;
-      display: grid;
-      gap: 8px;
+    main, section { scroll-margin-top: 88px; }
+    .hero { padding: clamp(3rem, 7vw, 6.6rem) 0 3rem; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr); gap: clamp(1.6rem, 4vw, 3.2rem); align-items: center; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      max-width: 100%;
+      padding: .42rem .76rem;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: .88rem;
+      font-weight: 800;
+      text-wrap: balance;
     }
-
-    .note {
-      margin-top: var(--space-3);
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
-    .status {
-      margin-top: var(--space-3);
-      font-size: 0.95rem;
-      min-height: 1.2em;
-      color: #0f5f59;
-    }
-
-    .faq-list {
-      margin-top: var(--space-6);
-      display: grid;
-      gap: var(--space-4);
-    }
-
-    .faq-item {
-      border: 1px solid #b8ece3;
-      border-radius: var(--radius-md);
-      background: #fcfffe;
-      padding: var(--space-4);
-    }
-
-    .foot-cta {
-      margin-top: var(--space-8);
-      background: #083b39;
-      color: #dffefa;
-      border-radius: var(--radius-lg);
-      padding: var(--space-8);
-      text-align: center;
-    }
-
-    .foot-cta h2,
-    .foot-cta p { color: #e5fffb; }
-
-    .foot-cta .actions { justify-content: center; }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
+    h1, h2, h3 { line-height: 1.05; letter-spacing: -.055em; text-wrap: balance; }
+    h1 { margin: 1rem 0; font-size: clamp(2.55rem, 6vw, 5.45rem); max-width: 11ch; }
+    h2 { margin: 0 0 1rem; font-size: clamp(2rem, 4vw, 3.5rem); }
+    h3 { margin: 0 0 .65rem; font-size: clamp(1.25rem, 2vw, 1.55rem); }
+    p { margin: 0; color: var(--muted); text-wrap: pretty; }
+    .lead { max-width: 62ch; font-size: clamp(1.08rem, 1.7vw, 1.3rem); color: #334155; }
+    .hero-actions { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .button, .btn-pay {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
       border: 0;
-      white-space: nowrap;
+      border-radius: 999px;
+      padding: .86rem 1.12rem;
+      font-weight: 850;
+      transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease;
     }
+    .button:hover, .btn-pay:hover { transform: translateY(-1px); }
+    .button-primary { background: var(--cta); color: #fff; box-shadow: 0 12px 30px rgba(194, 65, 12, .26); }
+    .button-primary:hover { background: var(--cta-strong); color: #fff; }
+    .button-secondary { background: #e0edff; color: #1e40af; }
+    .button-secondary:hover { background: #c7ddff; }
+    .trust-row { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.45rem; color: #334155; font-size: .94rem; }
+    .trust-pill { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem .7rem; background: rgba(255,255,255,.76); border: 1px solid var(--line); border-radius: 999px; }
+    .icon { width: 18px; height: 18px; flex: 0 0 auto; }
 
-    @media (max-width: 920px) {
-      .hero-grid,
-      .form-grid,
-      .price-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero { padding-top: var(--space-8); }
-      .chapter { padding: var(--space-8) 0; }
+    .panel {
+      background: rgba(255, 255, 255, .92);
+      border: 1px solid rgba(203, 213, 225, .82);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
     }
+    .hero-card { padding: clamp(1rem, 2.6vw, 1.6rem); }
+    .score-preview { display: grid; gap: 1rem; }
+    .meter { height: 14px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+    .meter span { display: block; width: 72%; height: 100%; background: linear-gradient(90deg, var(--ok), var(--warn), var(--danger)); border-radius: inherit; }
+    .status-list { display: grid; gap: .72rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+    .status-list li { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem; border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; min-width: 0; }
+    .badge { display: inline-flex; align-items: center; justify-content: center; min-height: 28px; border-radius: 999px; padding: .2rem .55rem; font-size: .78rem; font-weight: 850; white-space: nowrap; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+    .badge-warn { background: #fef3c7; color: #92400e; }
+    .badge-ok { background: #dcfce7; color: #166534; }
 
+    .benefits { padding: 2rem 0; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    .card { padding: 1.25rem; border: 1px solid var(--line); border-radius: 22px; background: #fff; min-width: 0; }
+    .card p, .card h3 { overflow-wrap: anywhere; }
+    .card .icon-wrap { display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: 1rem; border-radius: 16px; background: #eff6ff; color: var(--primary); }
+
+    .tool { padding: clamp(2.5rem, 6vw, 5rem) 0; }
+    .tool-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 1rem; align-items: start; }
+    form { display: grid; gap: 1rem; }
+    .field { display: grid; gap: .42rem; }
+    label { color: #334155; font-weight: 800; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #94a3b8;
+      border-radius: 16px;
+      background: #fff;
+      color: var(--text);
+      padding: .88rem .95rem;
+      min-height: 48px;
+      font: inherit;
+    }
+    input::placeholder, textarea::placeholder { color: #64748b; }
+    .form-card, .result-card { padding: clamp(1rem, 2vw, 1.4rem); }
+    .inline-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+    .hint, .error { font-size: .9rem; }
+    .hint { color: #64748b; }
+    .error { display: none; color: var(--danger); font-weight: 750; }
+    .risk-number { font-size: clamp(3rem, 7vw, 5rem); line-height: 1; letter-spacing: -.07em; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--primary-strong); }
+    .output-list { display: grid; gap: .7rem; padding: 0; margin: 1rem 0 0; list-style: none; }
+    .output-list li { padding: .8rem; border-left: 4px solid var(--primary); background: #f8fafc; border-radius: 14px; overflow-wrap: anywhere; }
+    .actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1rem; }
+    .live-region { min-height: 1.5rem; color: var(--ok); font-weight: 800; }
+
+    .pricing { padding: clamp(2.5rem, 6vw, 5rem) 0; background: linear-gradient(180deg, rgba(239, 246, 255, .4), rgba(255,255,255,.85)); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.2rem; }
+    .price-card { position: relative; padding: 1.4rem; border-radius: 26px; border: 1px solid var(--line); background: #fff; min-width: 0; }
+    .price-card.recommended { border: 2px solid var(--accent); box-shadow: 0 18px 55px rgba(249, 115, 22, .16); }
+    .price { margin: .6rem 0 1rem; font-size: 2.6rem; line-height: 1; font-weight: 900; letter-spacing: -.06em; font-variant-numeric: tabular-nums; }
+    .price small { font-size: 1rem; color: var(--muted); letter-spacing: 0; }
+    .feature-list { display: grid; gap: .65rem; padding: 0; margin: 1rem 0; list-style: none; }
+    .feature-list li { display: flex; gap: .55rem; min-width: 0; }
+    .feature-list svg { color: var(--ok); margin-top: .18rem; }
+    .note { margin-top: .55rem; color: #92400e; font-weight: 750; }
+
+    .faq { padding: 2.5rem 0 5rem; }
+    details { padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    summary { cursor: pointer; font-weight: 850; color: var(--text); }
+    details p { margin-top: .6rem; }
+    footer { padding: 1.6rem 0; border-top: 1px solid var(--line); color: var(--muted); }
+    .footer-row { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+    @media (max-width: 860px) {
+      .hero-grid, .tool-grid { grid-template-columns: 1fr; }
+      .cards, .pricing-grid { grid-template-columns: 1fr; }
+      h1 { max-width: 13ch; }
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { width: min(100% - 1rem, 1120px); }
+      .inline-grid { grid-template-columns: 1fr; }
+      .hero-actions .button, .hero-actions .btn-pay, .actions .button { width: 100%; }
+      .status-list li { flex-direction: column; align-items: flex-start; }
+    }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
-
-      .btn:hover,
-      .btn-pay:hover { transform: none; }
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
     }
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to main content</a>
-
-  <header class="hero">
-    <div class="container hero-grid">
-      <div>
-        <span class="story-eyebrow" translate="no">Built for UK Landlords (1–25 Properties)</span>
-        <h1>Stop Compliance Slips Before They Become Expensive Legal Risk</h1>
-        <p class="lead">Compliance Nudge UK gives you one simple control panel for CP12, EPC, EICR, deposit protection and “How to Rent” proof, so you always know what needs doing next.</p>
-        <ul class="benefits">
-          <li><strong>See risk in 30 seconds:</strong> enter one property and get an instant risk score with a plain-English action list.</li>
-          <li><strong>Prioritise what matters:</strong> overdue tasks and near-deadline certificates are ranked for you automatically.</li>
-          <li><strong>Stay audit-ready:</strong> generate a tenant-safe reminder message you can send today.</li>
-        </ul>
-      </div>
-      <aside class="card" aria-labelledby="hero-card-heading">
-        <h2 id="hero-card-heading">Fast Start</h2>
-        <p class="muted" style="margin-top: 8px;">Run the free risk check below. If it helps, join Pro and get weekly reminders.</p>
-        <div class="actions">
-          <a class="btn btn-primary" href="#risk-check">Run Free Check</a>
-          <a class="btn btn-secondary" href="#pricing">View Pricing</a>
+  <a class="skip-link" href="#main">Skip To Main Content</a>
+  <header>
+    <div class="wrap">
+      <nav aria-label="Primary Navigation">
+        <a class="brand" href="#top" translate="no" aria-label="Compliance Nudge UK Home">
+          <span class="brand-mark" aria-hidden="true">CN</span>
+          <span>Compliance Nudge UK</span>
+        </a>
+        <div class="nav-links">
+          <a href="#checker">Risk Checker</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+          <a class="nav-cta" href="#checker">Check One Property</a>
         </div>
-      </aside>
+      </nav>
     </div>
   </header>
 
   <main id="main">
-    <section class="chapter" id="risk-check">
-      <div class="container">
-        <div class="card">
-          <h2>Free Tool: Property Compliance Risk Checker</h2>
-          <p class="muted" style="margin-top: 10px;">Chapter 1: Enter one property. Chapter 2: See risk. Chapter 3: Get your next actions.</p>
-
-          <form id="riskForm" novalidate>
-            <div class="form-grid">
-              <div class="field full">
-                <label for="propertyName">Property Address</label>
-                <input id="propertyName" name="propertyName" type="text" placeholder="e.g. Flat 2, 12 Park Lane, Leeds…" autocomplete="off" required>
-                <p class="muted" id="propertyNameError" aria-live="polite"></p>
-              </div>
-
-              <div class="field">
-                <label for="cp12Date">CP12 Expiry Date</label>
-                <input id="cp12Date" name="cp12Date" type="date" autocomplete="off" required>
-                <p class="muted" id="cp12DateError" aria-live="polite"></p>
-              </div>
-
-              <div class="field">
-                <label for="epcDate">EPC Expiry Date</label>
-                <input id="epcDate" name="epcDate" type="date" autocomplete="off" required>
-                <p class="muted" id="epcDateError" aria-live="polite"></p>
-              </div>
-
-              <div class="field">
-                <label for="eicrDate">EICR Expiry Date</label>
-                <input id="eicrDate" name="eicrDate" type="date" autocomplete="off" required>
-                <p class="muted" id="eicrDateError" aria-live="polite"></p>
-              </div>
-
-              <div class="field">
-                <label for="depositProtected">Deposit Protected?</label>
-                <select id="depositProtected" name="depositProtected" autocomplete="off" required>
-                  <option value="">Choose status…</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                  <option value="na">No deposit</option>
-                </select>
-                <p class="muted" id="depositProtectedError" aria-live="polite"></p>
-              </div>
-
-              <div class="field full">
-                <label for="howToRentProof">Proof “How to Rent” Was Served?</label>
-                <select id="howToRentProof" name="howToRentProof" autocomplete="off" required>
-                  <option value="">Choose status…</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                <p class="muted" id="howToRentProofError" aria-live="polite"></p>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button class="btn btn-primary" id="checkButton" type="submit">Check Risk Now</button>
-              <button class="btn btn-secondary" id="sampleButton" type="button">Load Sample Data</button>
-            </div>
-          </form>
-
-          <div class="result" id="result" aria-live="polite">
-            <p><strong>Your result appears here.</strong></p>
-            <p class="muted">Fill the form and choose “Check Risk Now” to get an instant compliance score.</p>
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-2.9 8.7-7 10-4.1-1.3-7-5.5-7-10V6l7-3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            Built For UK Self-Managing Landlords
+          </span>
+          <h1 id="hero-title">Stop Compliance Deadlines Becoming Expensive Surprises</h1>
+          <p class="lead">Enter one property and get a clear CP12, EPC, EICR, deposit protection, and How to Rent risk score before a missed document turns into legal exposure or a last-minute scramble.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#checker">Run The Free Risk Check</a>
+            <a class="button button-secondary" href="#pricing">See Pricing</a>
           </div>
+          <div class="trust-row" aria-label="Trust Signals">
+            <span class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>No Login Required</span>
+            <span class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Local Browser Tool</span>
+            <span class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/></svg>5-Minute Setup</span>
+          </div>
+        </div>
+        <aside class="panel hero-card" aria-label="Example Compliance Score">
+          <div class="score-preview">
+            <div>
+              <p class="hint">Example Portfolio Risk</p>
+              <div class="risk-number">72</div>
+              <p><strong>High attention needed:</strong> 2 deadlines are inside the next 30 days and 1 proof item is missing.</p>
+            </div>
+            <div class="meter" aria-hidden="true"><span></span></div>
+            <ul class="status-list">
+              <li><span>Gas Safety <span translate="no">CP12</span></span><span class="badge badge-danger">14 Days</span></li>
+              <li><span>Electrical <span translate="no">EICR</span></span><span class="badge badge-warn">68 Days</span></li>
+              <li><span>Deposit Proof</span><span class="badge badge-ok">Stored</span></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
 
-          <div class="mono" id="messageTemplate" aria-live="polite">Reminder template appears here after your risk check.</div>
+    <section class="benefits" aria-labelledby="benefits-title">
+      <div class="wrap">
+        <h2 id="benefits-title">Know What To Fix First</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h3>One Property, One Ranked Checklist</h3>
+            <p>Turn scattered expiry dates into a simple action list ordered by urgency and evidence gaps.</p>
+          </article>
+          <article class="card">
+            <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 6v6l4 2M21 12A9 9 0 113 12a9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h3>Spot The 30-Day Danger Zone</h3>
+            <p>See what is expired, nearly due, or missing proof before it blocks a tenancy or dispute response.</p>
+          </article>
+          <article class="card">
+            <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 8h10M7 12h10M7 16h6M5 4h14v16H5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h3>Copy A Reminder Template</h3>
+            <p>Generate a practical booking or evidence-chase message you can send to yourself, an agent, or a contractor.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="chapter" id="pricing">
-      <div class="container">
-        <div class="card">
-          <h2>Simple Pricing for Self-Managing Landlords</h2>
-          <p class="muted" style="margin-top: 10px;">Start free. Upgrade when you want recurring reminders and portfolio-wide tracking.</p>
-
-          <div class="price-grid">
-            <article class="price-card" aria-labelledby="free-tier-heading">
-              <h3 id="free-tier-heading">Free Tier</h3>
-              <p class="price">£0 <small>/ forever</small></p>
-              <ul class="price-list">
-                <li>1 property risk check</li>
-                <li>Instant action checklist</li>
-                <li>Basic reminder message template</li>
-              </ul>
-            </article>
-
-            <article class="price-card highlight" aria-labelledby="pro-tier-heading">
-              <span class="pill pill-ok">Most Popular</span>
-              <h3 id="pro-tier-heading" style="margin-top: 10px;">Pro Tier</h3>
-              <p class="price">£9 <small>/ month</small></p>
-              <ul class="price-list">
-                <li>Up to 25 properties</li>
-                <li>Weekly deadline reminders</li>
-                <li>Priority risk queue &amp; export</li>
-              </ul>
-              <div class="actions">
-                <a href="#stripe-coming-soon" class="btn-pay">Get Pro — £9/mo</a>
-              </div>
-              <p class="note" id="stripe-coming-soon">Payment  — join the waitlist.</p>
-            </article>
-          </div>
+    <section class="tool" id="checker" aria-labelledby="checker-title">
+      <div class="wrap tool-grid">
+        <div>
+          <h2 id="checker-title">Run Your Free Compliance Risk Check</h2>
+          <p class="lead">Use approximate dates if you need to. The checker is deterministic, local, and designed to make the next action obvious.</p>
         </div>
-      </div>
-    </section>
-
-    <section class="chapter" id="waitlist">
-      <div class="container">
-        <div class="card">
-          <h2>Join the Early Access Waitlist</h2>
-          <p class="muted" style="margin-top: 10px;">Get launch updates and an invite when the paid version opens.</p>
-
-          <form id="waitlistForm" novalidate style="margin-top: 16px;">
-            <div class="form-grid">
-              <div class="field full">
-                <label for="waitlistEmail">Email Address</label>
-                <input id="waitlistEmail" name="waitlistEmail" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="you@yourdomain.co.uk…" required>
-                <p class="muted" id="waitlistEmailError" aria-live="polite"></p>
+        <div class="panel form-card">
+          <form id="risk-form" novalidate>
+            <div class="field">
+              <label for="property-name">Property Name</label>
+              <input id="property-name" name="propertyName" type="text" autocomplete="off" placeholder="Example: Flat 2, King Street…" required>
+              <p class="error" id="property-error">Enter a property name so the checklist is easy to reuse.</p>
+            </div>
+            <div class="inline-grid">
+              <div class="field">
+                <label for="cp12-date">Gas Safety <span translate="no">CP12</span> Expiry</label>
+                <input id="cp12-date" name="cp12Date" type="date" autocomplete="off" required>
+                <p class="error" id="cp12-error">Add the CP12 expiry date, even if approximate.</p>
+              </div>
+              <div class="field">
+                <label for="eicr-date">Electrical <span translate="no">EICR</span> Expiry</label>
+                <input id="eicr-date" name="eicrDate" type="date" autocomplete="off" required>
+                <p class="error" id="eicr-error">Add the EICR expiry date, even if approximate.</p>
               </div>
             </div>
-
-            <div class="actions">
-              <button class="btn btn-primary" id="waitlistSubmit" type="submit">Join Waitlist</button>
-              <a class="btn btn-secondary" href="mailto:hello@compliancenudge.co.uk?subject=Compliance%20Nudge%20UK%20Waitlist">Email Instead</a>
+            <div class="inline-grid">
+              <div class="field">
+                <label for="epc-rating"><span translate="no">EPC</span> Rating</label>
+                <select id="epc-rating" name="epcRating" autocomplete="off">
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D" selected>D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="evidence-status">Deposit & “How To Rent” Proof</label>
+                <select id="evidence-status" name="evidenceStatus" autocomplete="off">
+                  <option value="stored">Both stored</option>
+                  <option value="partial" selected>One item missing</option>
+                  <option value="missing">Both missing</option>
+                </select>
+              </div>
             </div>
-
-            <p class="status" id="waitlistStatus" aria-live="polite"></p>
+            <button class="button button-primary" type="submit" id="check-button">Calculate Risk Score</button>
+            <p class="live-region" id="form-status" aria-live="polite"></p>
           </form>
         </div>
+        <div class="panel result-card" aria-labelledby="result-title">
+          <h3 id="result-title">Your Action Plan</h3>
+          <div class="risk-number" id="risk-score">—</div>
+          <p id="risk-summary">Complete the form to generate a ranked compliance checklist and reminder template.</p>
+          <ul class="output-list" id="action-list"></ul>
+          <textarea id="reminder-template" name="reminderTemplate" rows="7" readonly aria-label="Generated reminder template" spellcheck="true" placeholder="Your copy-ready reminder appears here…"></textarea>
+          <div class="actions">
+            <button class="button button-secondary" type="button" id="copy-template">Copy Reminder Template</button>
+            <button class="button button-secondary" type="button" id="save-check">Save In This Browser</button>
+          </div>
+          <p class="live-region" id="result-status" aria-live="polite"></p>
+        </div>
       </div>
     </section>
 
-    <section class="chapter" id="faq">
-      <div class="container">
-        <div class="card">
-          <h2>Common Questions</h2>
-          <div class="faq-list">
-            <div class="faq-item">
-              <h3>Is this legal advice?</h3>
-              <p class="muted" style="margin-top: 6px;">No. It is an operations reminder tool to help you organise deadlines and next actions.</p>
-            </div>
-            <div class="faq-item">
-              <h3>Can you share data with letting agents?</h3>
-              <p class="muted" style="margin-top: 6px;">Yes. Pro includes export-ready portfolio summaries so agents and contractors get the same timeline.</p>
-            </div>
-            <div class="faq-item">
-              <h3>How long does setup take?</h3>
-              <p class="muted" style="margin-top: 6px;">Most landlords finish their first property in under 5 minutes.</p>
-            </div>
-          </div>
-
-          <div class="foot-cta">
-            <h2>Get Ahead of the Next Certificate Deadline</h2>
-            <p style="margin-top: 10px;">Run the free checker now, then join the waitlist for Pro reminders.</p>
-            <div class="actions">
-              <a class="btn btn-primary" href="#risk-check">Run Free Check</a>
-              <a class="btn btn-secondary" href="#waitlist">Join Waitlist</a>
-            </div>
-          </div>
+    <section class="pricing" id="pricing" aria-labelledby="pricing-title">
+      <div class="wrap">
+        <span class="eyebrow">Simple Pricing</span>
+        <h2 id="pricing-title">Start Free, Upgrade When You Track More Than One Property</h2>
+        <p class="lead">The free checker proves the workflow. Pro is for landlords who need repeat reminders and a clean portfolio queue.</p>
+        <div class="pricing-grid">
+          <article class="price-card">
+            <h3>Free</h3>
+            <p>For checking one property before you organise the documents.</p>
+            <div class="price">£0</div>
+            <ul class="feature-list">
+              <li><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Single-property risk score</span></li>
+              <li><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Ranked action checklist</span></li>
+              <li><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Copy-ready reminder template</span></li>
+            </ul>
+            <a class="button button-secondary" href="#checker">Use Free Checker</a>
+          </article>
+          <article class="price-card recommended">
+            <span class="badge badge-warn">Recommended</span>
+            <h3>Pro</h3>
+            <p>For self-managing landlords with 2–25 properties.</p>
+            <div class="price">£9 <small>/mo</small></div>
+            <ul class="feature-list">
+              <li><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Up to 25 properties</span></li>
+              <li><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Weekly deadline reminder queue</span></li>
+              <li><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Export-ready compliance summary</span></li>
+            </ul>
+            <a href="#stripe-coming-soon" class="btn-pay button-primary">Get Pro — £9/mo</a>
+            <p class="note" id="stripe-coming-soon">Payment coming soon — join the waitlist</p>
+          </article>
         </div>
+        <form id="waitlist-form" aria-label="Join The Pro Waitlist" style="margin-top:1.2rem" novalidate>
+          <div class="inline-grid">
+            <div class="field">
+              <label for="waitlist-email">Email Address</label>
+              <input id="waitlist-email" name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="you@example.com…" required>
+              <p class="error" id="waitlist-error">Enter a valid email address to join the waitlist.</p>
+            </div>
+            <div class="field">
+              <label for="waitlist-properties">Properties Managed</label>
+              <input id="waitlist-properties" name="properties" type="number" inputmode="numeric" min="1" max="250" autocomplete="off" placeholder="Example: 4…">
+            </div>
+          </div>
+          <button class="button button-primary" type="submit" id="waitlist-button">Join The Waitlist</button>
+          <p class="live-region" id="waitlist-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="faq" id="faq" aria-labelledby="faq-title">
+      <div class="wrap">
+        <h2 id="faq-title">Questions Landlords Ask First</h2>
+        <details>
+          <summary>Does This Replace Legal Advice?</summary>
+          <p>No. It is a practical deadline and evidence organiser, not legal advice. Use it to spot obvious risks and prepare better questions for qualified advisers.</p>
+        </details>
+        <details>
+          <summary>Where Does My Data Go?</summary>
+          <p>The current checker runs in your browser. Saved checks use local storage on this device only.</p>
+        </details>
+        <details>
+          <summary>What Happens In Pro?</summary>
+          <p>Pro adds a multi-property queue, reminder emails, and exportable compliance summaries for landlords who manage more than one unit.</p>
+        </details>
       </div>
     </section>
   </main>
 
+  <footer>
+    <div class="wrap footer-row">
+      <span translate="no">Compliance Nudge UK</span>
+      <span>Built for fast UK landlord compliance triage. Not legal advice.</span>
+    </div>
+  </footer>
+
   <script>
-    (function () {
-      const DAY_MS = 86400000;
-      const riskForm = document.getElementById('riskForm');
-      const sampleButton = document.getElementById('sampleButton');
-      const checkButton = document.getElementById('checkButton');
-      const result = document.getElementById('result');
-      const messageTemplate = document.getElementById('messageTemplate');
-      const waitlistForm = document.getElementById('waitlistForm');
-      const waitlistSubmit = document.getElementById('waitlistSubmit');
-      const waitlistStatus = document.getElementById('waitlistStatus');
+    const currency = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+    const daysFormatter = new Intl.NumberFormat('en-GB');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-      let riskFormDirty = false;
+    const form = document.querySelector('#risk-form');
+    const waitlistForm = document.querySelector('#waitlist-form');
+    const actionList = document.querySelector('#action-list');
+    const riskScore = document.querySelector('#risk-score');
+    const riskSummary = document.querySelector('#risk-summary');
+    const reminderTemplate = document.querySelector('#reminder-template');
+    const resultStatus = document.querySelector('#result-status');
+    const formStatus = document.querySelector('#form-status');
 
-      const fieldIds = [
-        'propertyName', 'cp12Date', 'epcDate', 'eicrDate', 'depositProtected', 'howToRentProof'
-      ];
+    function daysUntil(value) {
+      const date = new Date(`${value}T00:00:00`);
+      return Math.ceil((date - today) / 86400000);
+    }
 
-      fieldIds.forEach(function (id) {
-        const input = document.getElementById(id);
-        input.addEventListener('input', function () {
-          riskFormDirty = true;
-          clearError(id);
-        });
-        input.addEventListener('change', function () {
-          riskFormDirty = true;
-          clearError(id);
-        });
+    function dateLabel(days) {
+      if (days < 0) return `${daysFormatter.format(Math.abs(days))} days overdue`;
+      if (days === 0) return 'due today';
+      return `${daysFormatter.format(days)} days left`;
+    }
+
+    function dateRisk(days) {
+      if (days < 0) return 34;
+      if (days <= 30) return 26;
+      if (days <= 90) return 14;
+      return 4;
+    }
+
+    function setError(id, show) {
+      const el = document.querySelector(id);
+      if (el) el.style.display = show ? 'block' : 'none';
+    }
+
+    function buildChecklist(propertyName, cp12Days, eicrDays, epcRating, evidenceStatus) {
+      const items = [];
+      if (cp12Days <= 30) items.push(`Book or verify Gas Safety CP12 now: ${dateLabel(cp12Days)}.`);
+      else items.push(`CP12 looks lower risk: ${dateLabel(cp12Days)}. Set a 60-day reminder.`);
+      if (eicrDays <= 90) items.push(`Check EICR booking window: ${dateLabel(eicrDays)}.`);
+      else items.push(`EICR has runway: ${dateLabel(eicrDays)}. Keep certificate proof with tenancy docs.`);
+      if (['E', 'F', 'G'].includes(epcRating)) items.push(`Review EPC rating ${epcRating}. Confirm current minimum requirements before marketing or renewal.`);
+      else items.push(`EPC rating ${epcRating} is recorded. Store the certificate link with the property pack.`);
+      if (evidenceStatus === 'missing') items.push('Deposit protection and How To Rent proof are both missing. Rebuild the evidence pack before any notice or dispute.');
+      if (evidenceStatus === 'partial') items.push('One tenancy proof item is missing. Locate it or recreate a dated evidence note this week.');
+      if (evidenceStatus === 'stored') items.push('Tenancy proof is stored. Add a quick note showing where the files live.');
+      items.push(`Save this checklist under ${propertyName} and review again after each tenancy change.`);
+      return items;
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const button = document.querySelector('#check-button');
+      button.disabled = true;
+      button.textContent = 'Calculating…';
+      const data = new FormData(form);
+      const propertyName = String(data.get('propertyName') || '').trim();
+      const cp12Date = String(data.get('cp12Date') || '');
+      const eicrDate = String(data.get('eicrDate') || '');
+      const firstInvalid = !propertyName ? '#property-name' : !cp12Date ? '#cp12-date' : !eicrDate ? '#eicr-date' : '';
+      setError('#property-error', !propertyName);
+      setError('#cp12-error', !cp12Date);
+      setError('#eicr-error', !eicrDate);
+      if (firstInvalid) {
+        document.querySelector(firstInvalid).focus();
+        formStatus.textContent = 'Fix the highlighted fields, then run the check again.';
+        button.disabled = false;
+        button.textContent = 'Calculate Risk Score';
+        return;
+      }
+
+      const cp12Days = daysUntil(cp12Date);
+      const eicrDays = daysUntil(eicrDate);
+      const epcRating = String(data.get('epcRating'));
+      const evidenceStatus = String(data.get('evidenceStatus'));
+      const epcRisk = { A: 0, B: 0, C: 2, D: 7, E: 15, F: 24, G: 30 }[epcRating] || 0;
+      const evidenceRisk = { stored: 0, partial: 12, missing: 24 }[evidenceStatus] || 0;
+      const score = Math.min(100, dateRisk(cp12Days) + dateRisk(eicrDays) + epcRisk + evidenceRisk);
+      const level = score >= 70 ? 'High' : score >= 38 ? 'Moderate' : 'Low';
+      const checklist = buildChecklist(propertyName, cp12Days, eicrDays, epcRating, evidenceStatus);
+
+      riskScore.textContent = String(score);
+      riskSummary.textContent = `${level} risk for ${propertyName}. Prioritise certificates inside 30 days and any missing tenancy proof.`;
+      actionList.replaceChildren();
+      checklist.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        actionList.appendChild(li);
       });
+      reminderTemplate.value = `Compliance reminder for ${propertyName}\n\nRisk score: ${score}/100 (${level})\n\nNext actions:\n- ${checklist.join('\n- ')}\n\nPlease confirm the latest certificate dates and where the evidence pack is stored.`;
+      formStatus.textContent = 'Risk check complete.';
+      button.disabled = false;
+      button.textContent = 'Calculate Risk Score';
+    });
 
-      window.addEventListener('beforeunload', function (event) {
-        if (!riskFormDirty) return;
+    document.querySelector('#copy-template').addEventListener('click', async () => {
+      if (!reminderTemplate.value.trim()) {
+        resultStatus.textContent = 'Run the risk check before copying a template.';
+        return;
+      }
+      await navigator.clipboard.writeText(reminderTemplate.value);
+      resultStatus.textContent = 'Reminder template copied.';
+    });
+
+    document.querySelector('#save-check').addEventListener('click', () => {
+      if (!reminderTemplate.value.trim()) {
+        resultStatus.textContent = 'Run the risk check before saving.';
+        return;
+      }
+      localStorage.setItem('compliance-nudge-last-check', reminderTemplate.value);
+      resultStatus.textContent = 'Saved in this browser.';
+    });
+
+    waitlistForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const email = document.querySelector('#waitlist-email');
+      const status = document.querySelector('#waitlist-status');
+      const error = document.querySelector('#waitlist-error');
+      const button = document.querySelector('#waitlist-button');
+      if (!email.checkValidity()) {
+        error.style.display = 'block';
+        email.focus();
+        status.textContent = 'Enter a valid email to join the waitlist.';
+        return;
+      }
+      error.style.display = 'none';
+      button.disabled = true;
+      button.textContent = 'Joining…';
+      const properties = document.querySelector('#waitlist-properties').value || 'not specified';
+      localStorage.setItem('compliance-nudge-waitlist', JSON.stringify({ email: email.value, properties, createdAt: new Date().toISOString() }));
+      const mailto = `mailto:tonycdr@gmail.com?subject=Compliance%20Nudge%20UK%20waitlist&body=${encodeURIComponent(`Email: ${email.value}\nProperties: ${properties}`)}`;
+      status.replaceChildren();
+      status.append('Thanks — we’ll be in touch. ');
+      const emailLink = document.createElement('a');
+      emailLink.href = mailto;
+      emailLink.textContent = 'Send details by email';
+      status.appendChild(emailLink);
+      button.disabled = false;
+      button.textContent = 'Join The Waitlist';
+      waitlistForm.reset();
+    });
+
+    window.addEventListener('beforeunload', (event) => {
+      if (reminderTemplate.value.trim() && !localStorage.getItem('compliance-nudge-last-check')) {
         event.preventDefault();
         event.returnValue = '';
-      });
-
-      function daysUntil(dateValue) {
-        const today = new Date();
-        const dayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-        const target = new Date(dateValue + 'T00:00:00').getTime();
-        return Math.round((target - dayStart) / DAY_MS);
       }
-
-      function clearError(fieldId) {
-        const el = document.getElementById(fieldId + 'Error');
-        if (el) {
-          el.textContent = '';
-          el.style.color = 'var(--muted)';
-        }
-      }
-
-      function setError(fieldId, message) {
-        const el = document.getElementById(fieldId + 'Error');
-        if (el) {
-          el.textContent = message;
-          el.style.color = 'var(--danger)';
-        }
-      }
-
-      function validateRiskForm() {
-        const values = {};
-        let firstInvalid = null;
-
-        fieldIds.forEach(function (id) {
-          const input = document.getElementById(id);
-          values[id] = input.value.trim();
-          clearError(id);
-        });
-
-        if (!values.propertyName) {
-          setError('propertyName', 'Enter the property address to continue.');
-          firstInvalid = firstInvalid || document.getElementById('propertyName');
-        }
-
-        ['cp12Date', 'epcDate', 'eicrDate'].forEach(function (id) {
-          if (!values[id]) {
-            setError(id, 'Add this expiry date to get an accurate risk score.');
-            firstInvalid = firstInvalid || document.getElementById(id);
-          }
-        });
-
-        if (!values.depositProtected) {
-          setError('depositProtected', 'Choose the deposit status.');
-          firstInvalid = firstInvalid || document.getElementById('depositProtected');
-        }
-
-        if (!values.howToRentProof) {
-          setError('howToRentProof', 'Choose whether proof has been served.');
-          firstInvalid = firstInvalid || document.getElementById('howToRentProof');
-        }
-
-        if (firstInvalid) {
-          firstInvalid.focus();
-          return null;
-        }
-
-        return values;
-      }
-
-      function buildChecklist(lines) {
-        return '<ol class="checklist">' + lines.map(function (line) {
-          return '<li>' + line + '</li>';
-        }).join('') + '</ol>';
-      }
-
-      function runRiskCheck(values) {
-        const cp12Days = daysUntil(values.cp12Date);
-        const epcDays = daysUntil(values.epcDate);
-        const eicrDays = daysUntil(values.eicrDate);
-
-        let score = 100;
-        const actions = [];
-
-        function evaluate(name, days) {
-          if (days < 0) {
-            score -= 30;
-            actions.push('<strong>' + name + '</strong> is overdue by ' + Math.abs(days) + ' days — book this now.');
-          } else if (days <= 30) {
-            score -= 12;
-            actions.push('<strong>' + name + '</strong> expires in ' + days + ' days — schedule this week.');
-          }
-        }
-
-        evaluate('CP12', cp12Days);
-        evaluate('EPC', epcDays);
-        evaluate('EICR', eicrDays);
-
-        if (values.depositProtected === 'no') {
-          score -= 20;
-          actions.push('<strong>Deposit protection</strong> is not marked complete — resolve immediately.');
-        }
-
-        if (values.howToRentProof === 'no') {
-          score -= 14;
-          actions.push('<strong>How to Rent proof</strong> is missing — serve and log evidence.');
-        }
-
-        score = Math.max(0, score);
-
-        let bandClass = 'pill-ok';
-        let bandText = 'Low Risk';
-
-        if (score < 80) {
-          bandClass = 'pill-warning';
-          bandText = 'Watch Closely';
-        }
-
-        if (score < 55) {
-          bandClass = 'pill-danger';
-          bandText = 'High Risk';
-        }
-
-        const formattedScore = new Intl.NumberFormat('en-GB').format(score);
-
-        if (actions.length === 0) {
-          actions.push('Everything looks current. Set weekly reminders to keep this status.');
-        }
-
-        result.innerHTML = [
-          '<p><span class="pill ' + bandClass + '">' + bandText + '</span></p>',
-          '<p><strong>Risk Score:</strong> ' + formattedScore + '/100 for ' + values.propertyName + '</p>',
-          buildChecklist(actions)
-        ].join('');
-
-        messageTemplate.textContent = [
-          'Subject: Compliance Appointment Request',
-          '',
-          'Hi,',
-          '',
-          'Please share your earliest slot for compliance work at ' + values.propertyName + '.',
-          'Priority items from today\'s review:',
-          '- CP12 days remaining: ' + cp12Days,
-          '- EPC days remaining: ' + epcDays,
-          '- EICR days remaining: ' + eicrDays,
-          '',
-          'Thanks.'
-        ].join('\n');
-      }
-
-      riskForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        const values = validateRiskForm();
-        if (!values) return;
-
-        checkButton.disabled = true;
-        checkButton.textContent = 'Checking…';
-
-        window.setTimeout(function () {
-          runRiskCheck(values);
-          riskFormDirty = false;
-          checkButton.disabled = false;
-          checkButton.textContent = 'Check Risk Now';
-        }, 280);
-      });
-
-      sampleButton.addEventListener('click', function () {
-        document.getElementById('propertyName').value = 'Flat 5, 19 Queen Street, Manchester';
-        document.getElementById('cp12Date').value = new Date(Date.now() + 16 * DAY_MS).toISOString().slice(0, 10);
-        document.getElementById('epcDate').value = new Date(Date.now() - 14 * DAY_MS).toISOString().slice(0, 10);
-        document.getElementById('eicrDate').value = new Date(Date.now() + 58 * DAY_MS).toISOString().slice(0, 10);
-        document.getElementById('depositProtected').value = 'yes';
-        document.getElementById('howToRentProof').value = 'no';
-        riskFormDirty = true;
-      });
-
-      waitlistForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const emailInput = document.getElementById('waitlistEmail');
-        const emailValue = emailInput.value.trim();
-        const emailError = document.getElementById('waitlistEmailError');
-
-        emailError.textContent = '';
-        emailError.style.color = 'var(--muted)';
-
-        if (!emailValue) {
-          emailError.textContent = 'Enter your email so you can get the launch invite.';
-          emailError.style.color = 'var(--danger)';
-          emailInput.focus();
-          return;
-        }
-
-        if (!emailInput.checkValidity()) {
-          emailError.textContent = 'Use a valid email format, for example name@domain.co.uk.';
-          emailError.style.color = 'var(--danger)';
-          emailInput.focus();
-          return;
-        }
-
-        waitlistSubmit.disabled = true;
-        waitlistSubmit.textContent = 'Saving…';
-
-        window.setTimeout(function () {
-          waitlistStatus.textContent = 'Thanks — we\'ll be in touch.';
-          waitlistForm.reset();
-          waitlistSubmit.disabled = false;
-          waitlistSubmit.textContent = 'Join Waitlist';
-        }, 350);
-      });
-    }());
+    });
   </script>
 </body>
 </html>
