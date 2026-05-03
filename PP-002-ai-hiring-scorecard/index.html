@@ -34,7 +34,9 @@
     input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; margin-top: 6px; }
     .output { background: var(--muted); border-radius: 12px; padding: 14px; white-space: pre-wrap; font-size: 14px; }
     @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
-  </style>
+      a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+    html { overflow-x: hidden; }
+</style>
 </head>
 <body>
   <div class="container">

@@ -21,7 +21,9 @@
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-family:inherit}
     @media(max-width:900px){.hero,.grid-2,.row{grid-template-columns:1fr}}
-  </style>
+      a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+    html { overflow-x: hidden; }
+</style>
 </head>
 <body>
   <div class="container">
