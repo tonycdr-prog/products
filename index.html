@@ -474,6 +474,7 @@
         const href = card.getAttribute('href').toLowerCase();
         const match = !query || text.includes(query) || href.includes(query);
         card.hidden = !match;
+        card.style.display = match ? '' : 'none';
         if (match) visible += 1;
       });
 
