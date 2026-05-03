@@ -5,432 +5,439 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Products</title>
   <style>
-    :root { color-scheme: dark; --bg:#090b10; --panel:#121722; --text:#eef2ff; --muted:#a8b3cf; --line:#273247; --accent:#7dd3fc; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at top left, #162033, var(--bg) 42rem); color:var(--text); }
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:#07090f; color:#f4f7fb; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at top left,#1f345f 0,#07090f 38rem); }
     main { width:min(1120px, calc(100% - 32px)); margin:0 auto; padding:64px 0; }
     header { margin-bottom:32px; }
-    .eyebrow { color:var(--accent); text-transform:uppercase; letter-spacing:.14em; font-size:12px; font-weight:700; }
-    h1 { margin:8px 0 10px; font-size:clamp(36px, 7vw, 76px); line-height:.95; }
-    .lead { margin:0; max-width:680px; color:var(--muted); font-size:18px; line-height:1.6; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; }
-    .card { display:block; min-height:170px; padding:22px; border:1px solid var(--line); border-radius:22px; background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025)); color:inherit; text-decoration:none; box-shadow:0 20px 70px rgba(0,0,0,.24); transition:transform .18s ease, border-color .18s ease, background .18s ease; }
-    .card:hover { transform:translateY(-3px); border-color:rgba(125,211,252,.65); background:linear-gradient(180deg, rgba(125,211,252,.12), rgba(255,255,255,.03)); }
-    .card h2 { margin:0 0 10px; font-size:22px; }
-    .card p { margin:0; color:var(--muted); line-height:1.5; }
-    footer { margin-top:34px; color:#71809f; font-size:13px; }
+    h1 { font-size:clamp(2.25rem,6vw,4.5rem); line-height:1; margin:0 0 12px; letter-spacing:-0.06em; }
+    .lede { color:#aab6ca; font-size:1.1rem; margin:0; max-width:680px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+    .card { display:block; text-decoration:none; color:inherit; padding:22px; border:1px solid rgba(255,255,255,.11); border-radius:22px; background:rgba(255,255,255,.06); box-shadow:0 18px 70px rgba(0,0,0,.25); backdrop-filter:blur(16px); transition:transform .18s ease,border-color .18s ease,background .18s ease; }
+    .card:hover { transform:translateY(-3px); border-color:rgba(130,180,255,.55); background:rgba(255,255,255,.09); }
+    .card h2 { margin:0 0 10px; font-size:1.25rem; letter-spacing:-0.02em; }
+    .card p { margin:0; color:#b9c4d6; line-height:1.5; }
   </style>
 </head>
 <body>
   <main>
     <header>
-      <div class="eyebrow">Product builds</div>
       <h1>Products</h1>
-      <p class="lead">Freshly deployed experiments and product concepts. Pick a card to open the live build.</p>
+      <p class="lede">A live shelf of deployed product builds.</p>
     </header>
-    <section class="grid" aria-label="Products">
-      <a class="card" href="/products/competency-matrix-app/">
-        <h2>Competency Matrix App</h2>
-        <p>Interactive competency matrix with filters, level selection, sign‑off fields, and CSV export. Saves locally in the browser.</p>
-      </a>
-      <a class="card" href="/products/dns-email-audit/">
-        <h2>DNS Email Audit</h2>
-        <p>A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report.</p>
-      </a>
-      <a class="card" href="/products/ifc-automator/">
-        <h2>IFC Automator</h2>
-        <p>Automatically assembles IFCC/IFC audit‑ready packs (Enquiry &amp; PO, RAMS, Certs/Specs, Reports, IFC Certificate, audit evidence) into a consistent folder structure across all schemes.</p>
-      </a>
+    <section class="grid" aria-label="Product builds">
       <a class="card" href="/products/PP-001-arch-diagram-polish/">
-        <h2>Arch Diagram Polish</h2>
-        <p>Product DiagramPolish — a browser tool that auto‑styles architecture diagrams into presentation‑ready visuals.</p>
+        <h2>Pp 001 Arch Diagram Polish</h2>
+        <p>PP-001-arch-diagram-polish</p>
       </a>
       <a class="card" href="/products/PP-001-bookmarknest/">
-        <h2>Bookmarknest</h2>
+        <h2>Pp 001 Bookmarknest</h2>
         <p>BookmarkNest auto-categorizes bookmarks and generates a concise summary, making saved links searchable and easy to revisit.</p>
       </a>
       <a class="card" href="/products/PP-001-carousel-maker/">
-        <h2>Carousel Maker</h2>
+        <h2>Pp 001 Carousel Maker</h2>
         <p>Creates LinkedIn-ready carousel slides with correct 4:5 sizing, simple themes, and one-click PNG exports.</p>
       </a>
       <a class="card" href="/products/PP-001-chaserflow/">
-        <h2>Chaserflow</h2>
+        <h2>Pp 001 Chaserflow</h2>
         <p>Automates polite invoice reminder sequences (UK‑friendly) so freelancers and SMEs get paid faster without manual chasing.</p>
       </a>
       <a class="card" href="/products/PP-001-cod-commission-tracker/">
-        <h2>COD Commission Tracker</h2>
-        <p>Calculates commissions owed on cash‑on‑delivery orders, flags unpaid commission, and creates a monthly summary for marketplace operators.</p>
+        <h2>Pp 001 Cod Commission Tracker</h2>
+        <p>PP-001-cod-commission-tracker</p>
       </a>
       <a class="card" href="/products/PP-001-competitor-price-tracker/">
-        <h2>Competitor Price Tracker</h2>
+        <h2>Pp 001 Competitor Price Tracker</h2>
         <p>Quickly turns a competitor price list into clear pricing actions and alert-ready exports.</p>
       </a>
       <a class="card" href="/products/PP-001-docstack/">
-        <h2>Docstack</h2>
+        <h2>Pp 001 Docstack</h2>
         <p>DocStack combines proposals, contracts, and invoices into a single workflow for small businesses.</p>
       </a>
       <a class="card" href="/products/PP-001-freelance-invoice-rescue/">
-        <h2>Freelance Invoice Rescue</h2>
-        <p>Invoice Rescue: freelance invoice pricing + late fee clause generator. ICP: solo freelancers/consultants. Pricing: £9/£29/£79 tiers.</p>
+        <h2>Pp 001 Freelance Invoice Rescue</h2>
+        <p>PP-001-freelance-invoice-rescue</p>
       </a>
       <a class="card" href="/products/PP-001-invoice-chaser-copilot/">
-        <h2>Invoice Chaser Copilot</h2>
+        <h2>Pp 001 Invoice Chaser Copilot</h2>
         <p>Invoice Chaser Copilot helps UK freelancers and small businesses turn an overdue invoice into a practical chase plan.</p>
       </a>
       <a class="card" href="/products/PP-001-invoice-chaser-lite/">
-        <h2>Invoice Chaser Lite</h2>
-        <p>Automates polite invoice follow‑ups. Generates reminder emails and keeps a simple log so owners stop losing cash to awkward chasing.</p>
+        <h2>Pp 001 Invoice Chaser Lite</h2>
+        <p>PP-001-invoice-chaser-lite</p>
       </a>
       <a class="card" href="/products/PP-001-invoice-nudge/">
-        <h2>Invoice Nudge</h2>
-        <p>InvoiceNudge automates overdue invoice reminder sequencing for freelancers/SMBs. Target: agencies, freelancers, consultancies with 10 200 invoices/month. Pricing: £9 / £29 / £79 tiers, usage based reminder caps.</p>
+        <h2>Pp 001 Invoice Nudge</h2>
+        <p>PP-001-invoice-nudge</p>
       </a>
       <a class="card" href="/products/PP-001-invoice-preflight/">
-        <h2>Invoice Preflight</h2>
+        <h2>Pp 001 Invoice Preflight</h2>
         <p>Turns messy OCR/pasted invoice text into structured fields (vendor, invoice number, date, subtotal, VAT, total).</p>
       </a>
       <a class="card" href="/products/PP-001-landlord-compliance/">
-        <h2>Landlord Compliance</h2>
-        <p>Landlord Compliance Copilot</p>
+        <h2>Pp 001 Landlord Compliance</h2>
+        <p>PP-001-landlord-compliance</p>
       </a>
       <a class="card" href="/products/PP-001-leasehold-affordability/">
-        <h2>Leasehold Affordability</h2>
-        <p>A UK-focused affordability calculator for leasehold flats that includes service charge, ground rent, insurance, and a buffer when estimating: a safe “all-in</p>
+        <h2>Pp 001 Leasehold Affordability</h2>
+        <p>A UK-focused affordability calculator for leasehold flats that **includes service charge, ground rent, insurance, and a buffer** when estimating:</p>
       </a>
       <a class="card" href="/products/PP-001-leasehold-charge-analyzer/">
-        <h2>Leasehold Charge Analyzer</h2>
+        <h2>Pp 001 Leasehold Charge Analyzer</h2>
         <p>A browser-based UK leasehold affordability tool that models service-charge increases, forecasts cashflow pressure, and generates a challenge-prep note leaseholders can send to managing agents/freeholders.</p>
       </a>
       <a class="card" href="/products/PP-001-lesson-ledger/">
-        <h2>Lesson Ledger</h2>
-        <p>LessonLedger is a lightweight tutor operations tool that tracks: Lesson credits purchased per client Lessons delivered over time Payments received and remaining balance Ready-to-send statement + invoice nudge text It runs as a single offline HTML file with local browser storage, so tutors can use it immediately without setup.</p>
+        <h2>Pp 001 Lesson Ledger</h2>
+        <p>LessonLedger is a lightweight tutor operations tool that tracks:</p>
       </a>
       <a class="card" href="/products/PP-001-maintenance-nagger/">
-        <h2>Maintenance Nagger</h2>
+        <h2>Pp 001 Maintenance Nagger</h2>
         <p>Maintainly is a lightweight maintenance scheduler for small UK landlords.</p>
       </a>
       <a class="card" href="/products/PP-001-noteforge/">
-        <h2>Noteforge</h2>
+        <h2>Pp 001 Noteforge</h2>
         <p>NoteForge is a lightweight, affordable Evernote-style note vault with built‑in OCR search.</p>
       </a>
       <a class="card" href="/products/PP-001-notes-ocr/">
-        <h2>Notes OCR</h2>
+        <h2>Pp 001 Notes Ocr</h2>
         <p>Lightweight notes app with OCR search for images and receipts, designed as an affordable Evernote alternative.</p>
       </a>
       <a class="card" href="/products/PP-001-partial-payment-chaser/">
-        <h2>Partial Payment Chaser</h2>
+        <h2>Pp 001 Partial Payment Chaser</h2>
         <p>A lightweight MVP with a conversion-focused landing page, pricing, waitlist capture, and working interactive core workflow.</p>
       </a>
       <a class="card" href="/products/PP-001-planning-alerts/">
-        <h2>Planning Alerts</h2>
+        <h2>Pp 001 Planning Alerts</h2>
         <p>Planning Alerts Desk helps UK residents, tenants’ groups, and local campaigners track planning applications in one place.</p>
       </a>
+      <a class="card" href="/products/PP-001-repairtrail-uk/">
+        <h2>Pp 001 Repairtrail Uk</h2>
+        <p>RepairTrail UK helps UK renters turn a repair dispute into a dated evidence pack: case details, severity, proof checklist, timeline events, suggested response deadline, and a copy-ready escalation letter.</p>
+      </a>
       <a class="card" href="/products/PP-001-saas-stack-map/">
-        <h2>SaaS Stack Map</h2>
+        <h2>Pp 001 Saas Stack Map</h2>
         <p>Lightweight inventory of all services behind your SaaS: domain registrars, hosting, email, databases, analytics, payments, and renewals.</p>
       </a>
       <a class="card" href="/products/PP-001-seo-visibility/">
-        <h2>SEO Visibility</h2>
+        <h2>Pp 001 Seo Visibility</h2>
         <p>Affordable SEO visibility tracker with a simple visibility score and AI‑mention checks for small sites.</p>
       </a>
       <a class="card" href="/products/PP-001-solo-marketing-planner/">
-        <h2>Solo Marketing Planner</h2>
+        <h2>Pp 001 Solo Marketing Planner</h2>
         <p>SoloSignal turns a solo founder’s marketing goal into a 7‑day execution plan, channel task board, and KPI tracker.</p>
       </a>
       <a class="card" href="/products/PP-001-stackspend-guard/">
-        <h2>Stackspend Guard</h2>
+        <h2>Pp 001 Stackspend Guard</h2>
         <p>StackSpend Guard is a browser-only AI tooling spend audit for small teams.</p>
       </a>
       <a class="card" href="/products/PP-001-uk-seller-tax-tracker/">
-        <h2>UK Seller Tax Tracker</h2>
-        <p>Product A UK tax‑year aware tracker for side‑hustle sellers.</p>
+        <h2>Pp 001 Uk Seller Tax Tracker</h2>
+        <p>PP-001-uk-seller-tax-tracker</p>
       </a>
       <a class="card" href="/products/PP-001-uk-tax-companion/">
-        <h2>UK Tax Companion</h2>
+        <h2>Pp 001 Uk Tax Companion</h2>
         <p>TaxSnap UK is a lightweight self-assessment planning app for UK sole traders.</p>
       </a>
       <a class="card" href="/products/PP-001-vatflow-lite/">
-        <h2>VATFlow Lite</h2>
+        <h2>Pp 001 Vatflow Lite</h2>
         <p>VATFlow Lite is an offline-first UK VAT invoice simplifier for freelancers and small businesses.</p>
       </a>
       <a class="card" href="/products/PP-001-whatsapp-booking-assistant/">
-        <h2>WhatsApp Booking Assistant</h2>
+        <h2>Pp 001 Whatsapp Booking Assistant</h2>
         <p>Lightweight booking workflow for tour and service businesses using WhatsApp.</p>
       </a>
       <a class="card" href="/products/PP-002-ai-hiring-scorecard/">
-        <h2>AI Hiring Scorecard</h2>
+        <h2>Pp 002 Ai Hiring Scorecard</h2>
         <p>Generates AI-aware hiring scorecards with role-specific rubrics, tasks, and policy guidance.</p>
       </a>
       <a class="card" href="/products/PP-002-api-truth-checker/">
-        <h2>API Truth Checker</h2>
-        <p>Validate sample API calls against OpenAPI specs.</p>
+        <h2>Pp 002 Api Truth Checker</h2>
+        <p>PP-002-api-truth-checker</p>
       </a>
       <a class="card" href="/products/PP-002-bsa-checklist/">
-        <h2>BSA Checklist</h2>
+        <h2>Pp 002 Bsa Checklist</h2>
         <p>A UK‑specific Building Safety Act checklist and document tracker for landlords, managing agents, and leaseholders.</p>
       </a>
       <a class="card" href="/products/PP-002-cgt-reporting/">
-        <h2>CGT Reporting</h2>
-        <p>Interactive calculator that handles multiple disposal dates, annual exempt allocation, and basic‑rate band usage for UK CGT.</p>
+        <h2>Pp 002 Cgt Reporting</h2>
+        <p>Interactive calculator that handles **multiple disposal dates**, **annual exempt allocation**, and **basic‑rate band usage** for UK CGT.</p>
       </a>
       <a class="card" href="/products/PP-002-fee-link-optimizer/">
-        <h2>Fee Link Optimizer</h2>
+        <h2>Pp 002 Fee Link Optimizer</h2>
         <p>Calculates true payment fees and generates a payment link + QR so clients can pay with the lowest overhead.</p>
       </a>
       <a class="card" href="/products/PP-002-fieldkit/">
-        <h2>Fieldkit</h2>
+        <h2>Pp 002 Fieldkit</h2>
         <p>FieldKit is a lightweight CRM and job scheduler for local service businesses (plumbers, cleaners, electricians).</p>
       </a>
       <a class="card" href="/products/PP-002-freelance-invoicing/">
-        <h2>Freelance Invoicing</h2>
+        <h2>Pp 002 Freelance Invoicing</h2>
         <p>Lightweight freelancer CRM + invoicing replacement for Fiverr Workspace (AND.CO).</p>
       </a>
       <a class="card" href="/products/PP-002-freelancer-flow-lite/">
-        <h2>Freelancer Flow Lite</h2>
+        <h2>Pp 002 Freelancer Flow Lite</h2>
         <p>Create quote, contract summary, and invoice-ready total in one flow.</p>
       </a>
       <a class="card" href="/products/PP-002-hmrc-pathfinder/">
-        <h2>HMRC Pathfinder</h2>
+        <h2>Pp 002 Hmrc Pathfinder</h2>
         <p>Lightweight MVP delivering core pain-point workflow with real inputs/outputs.</p>
       </a>
       <a class="card" href="/products/PP-002-hmrc-plan-forecaster/">
-        <h2>HMRC Plan Forecaster</h2>
+        <h2>Pp 002 Hmrc Plan Forecaster</h2>
         <p>Forecast UK tax debt repayment scenarios with interest assumptions.</p>
       </a>
       <a class="card" href="/products/PP-002-landlord-compliance-checker/">
-        <h2>Landlord Compliance Checker</h2>
+        <h2>Pp 002 Landlord Compliance Checker</h2>
         <p>Check whether the paperwork stack is ready before a tenancy dispute or Section 21 surprise.</p>
       </a>
       <a class="card" href="/products/PP-002-landlord-compliance-pilot/">
-        <h2>Landlord Compliance Pilot</h2>
-        <p>CertPilot UK tracks landlord document expiries (Gas Safety, EICR, EPC, insurance) and flags risk windows. Target: UK self managing landlords and small letting agents. Pricing: £5 solo / £19 portfolio / £59 agent.</p>
+        <h2>Pp 002 Landlord Compliance Pilot</h2>
+        <p>PP-002-landlord-compliance-pilot</p>
       </a>
       <a class="card" href="/products/PP-002-lean-invoice/">
-        <h2>Lean Invoice</h2>
-        <p>LeanInvoice is a fast invoicing + follow up layer for freelancers. ICP: solo freelancers and 2 10 person studios. Pricing: £8/mo solo, £19/mo studio, +0.2% optional card processing add on.</p>
+        <h2>Pp 002 Lean Invoice</h2>
+        <p>PP-002-lean-invoice</p>
       </a>
       <a class="card" href="/products/PP-002-locked-cms-seo-rescue/">
-        <h2>Locked CMS SEO Rescue</h2>
+        <h2>Pp 002 Locked Cms Seo Rescue</h2>
         <p>Turn a messy “we use Joomla and the vendor controls everything” situation into a clear audit, vendor request, and client priority list.</p>
       </a>
       <a class="card" href="/products/PP-002-micro-automation-layer/">
-        <h2>Micro Automation Layer</h2>
-        <p>Turns manual copy‑paste workflows into a simple automation recipe + checklist that non‑technical owners can implement.</p>
+        <h2>Pp 002 Micro Automation Layer</h2>
+        <p>PP-002-micro-automation-layer</p>
       </a>
       <a class="card" href="/products/PP-002-perma-qr-link/">
-        <h2>Perma QR Link</h2>
+        <h2>Pp 002 Perma Qr Link</h2>
         <p>Generates a QR code and a self‑hosted redirect page so printed QR codes can point to a permanent, editable destination.</p>
       </a>
       <a class="card" href="/products/PP-002-prooflite/">
-        <h2>Prooflite</h2>
+        <h2>Pp 002 Prooflite</h2>
         <p>Generates lightweight social proof widgets (testimonials + logo wall) with clean HTML/CSS, no iFrames.</p>
       </a>
       <a class="card" href="/products/PP-002-proofvault/">
-        <h2>Proofvault</h2>
-        <p>Problem specific MVP for PP 002 proofvault. Audience: SMEs / solo operators. Pricing: £5 starter, £19 pro, £79 team.</p>
+        <h2>Pp 002 Proofvault</h2>
+        <p>PP-002-proofvault</p>
       </a>
       <a class="card" href="/products/PP-002-rentclarity/">
-        <h2>Rentclarity</h2>
+        <h2>Pp 002 Rentclarity</h2>
         <p>Transparent UK rent affordability checker.</p>
       </a>
       <a class="card" href="/products/PP-002-safe-lead-scout/">
-        <h2>Safe Lead Scout</h2>
+        <h2>Pp 002 Safe Lead Scout</h2>
         <p>Builds compliant lead discovery workflows without auto‑DM spam.</p>
       </a>
       <a class="card" href="/products/PP-002-scheduleflow/">
-        <h2>Scheduleflow</h2>
+        <h2>Pp 002 Scheduleflow</h2>
         <p>ScheduleFlow is a lightweight scheduling tool that recalculates delivery dates daily based on real progress.</p>
       </a>
       <a class="card" href="/products/PP-002-smb-competitor-tracker/">
-        <h2>Smb Competitor Tracker</h2>
+        <h2>Pp 002 Smb Competitor Tracker</h2>
         <p>A lightweight, browser‑based tracker for SMB operators to log competitor pricing, feature releases, and hiring signals.</p>
       </a>
       <a class="card" href="/products/PP-002-stackdetect-lite/">
-        <h2>Stackdetect Lite</h2>
-        <p>A best-effort, browser-run tech stack detector: Input: URL (proxy fetch) or pasted HTML/JS Output: categorized detections + confidence score + “why we think this” samples This is the *Lite* (static) version.</p>
+        <h2>Pp 002 Stackdetect Lite</h2>
+        <p>A best-effort, browser-run tech stack detector:</p>
       </a>
       <a class="card" href="/products/PP-002-typeback/">
-        <h2>Typeback</h2>
+        <h2>Pp 002 Typeback</h2>
         <p>TypeBack is a privacy-first typed text recall tool.</p>
       </a>
       <a class="card" href="/products/PP-002-typed-history/">
-        <h2>Typed History</h2>
+        <h2>Pp 002 Typed History</h2>
         <p>Local-first typed text history that captures snippets as you type (not just clipboard) so you can recall lost text.</p>
       </a>
       <a class="card" href="/products/PP-002-typing-recall/">
-        <h2>Typing Recall</h2>
+        <h2>Pp 002 Typing Recall</h2>
         <p>Captures and recalls typed text locally (not just clipboard).</p>
       </a>
       <a class="card" href="/products/PP-002-uk-landlord-compliance-nudge/">
-        <h2>UK Landlord Compliance Nudge</h2>
-        <p>Product Compliance Nudge UK — a lightweight compliance control panel for UK self managing landlords who need a fast way to prevent certificate and tenancy proof misses.</p>
+        <h2>Pp 002 Uk Landlord Compliance Nudge</h2>
+        <p>PP-002-uk-landlord-compliance-nudge</p>
       </a>
       <a class="card" href="/products/PP-002-waitlist-outreach-planner/">
-        <h2>Waitlist Outreach Planner</h2>
-        <p>Generates a compliant, organic outreach plan for founders who can’t post promo content in communities. Includes channel suggestions, messaging angles, and a task checklist.</p>
+        <h2>Pp 002 Waitlist Outreach Planner</h2>
+        <p>PP-002-waitlist-outreach-planner</p>
       </a>
       <a class="card" href="/products/PP-002-whatsapp-booking/">
-        <h2>WhatsApp Booking</h2>
+        <h2>Pp 002 Whatsapp Booking</h2>
         <p>Simple slot manager for small tour operators to prevent overbooking and speed up WhatsApp replies.</p>
       </a>
       <a class="card" href="/products/PP-002-whatsapp-booking-bot/">
-        <h2>WhatsApp Booking Bot</h2>
+        <h2>Pp 002 Whatsapp Booking Bot</h2>
         <p>Turns WhatsApp conversations into a self‑serve appointment flow.</p>
       </a>
       <a class="card" href="/products/PP-003-ai-budget-guard/">
-        <h2>AI Budget Guard</h2>
-        <p>Problem specific MVP for PP 003 ai budget guard. Audience: SMEs / solo operators. Pricing: £5 starter, £19 pro, £79 team.</p>
+        <h2>Pp 003 Ai Budget Guard</h2>
+        <p>PP-003-ai-budget-guard</p>
       </a>
       <a class="card" href="/products/PP-003-ai-credit-guard/">
-        <h2>AI Credit Guard</h2>
+        <h2>Pp 003 Ai Credit Guard</h2>
         <p>Tracks AI API usage errors, estimates refundable credits, and generates dispute-ready summaries for provider support teams.</p>
       </a>
       <a class="card" href="/products/PP-003-arxiv-quality-ranker/">
-        <h2>Arxiv Quality Ranker</h2>
-        <p>Pulls citation data from OpenAlex for arXiv IDs and ranks papers by a simple quality score (citations + recency).</p>
+        <h2>Pp 003 Arxiv Quality Ranker</h2>
+        <p>PP-003-arxiv-quality-ranker</p>
       </a>
       <a class="card" href="/products/PP-003-blockcare-escalator/">
-        <h2>Blockcare Escalator</h2>
+        <h2>Pp 003 Blockcare Escalator</h2>
         <p>Log building outages and generate escalation letters for managing agents.</p>
       </a>
       <a class="card" href="/products/PP-003-cashflow-clarity/">
-        <h2>Cashflow Clarity</h2>
+        <h2>Pp 003 Cashflow Clarity</h2>
         <p>A simple monthly cashflow + P&amp;L tracker built for owners who want clarity without accounting fluff.</p>
       </a>
       <a class="card" href="/products/PP-003-debt-sprint/">
-        <h2>Debt Sprint</h2>
+        <h2>Pp 003 Debt Sprint</h2>
         <p>Lightweight MVP delivering core pain-point workflow with real inputs/outputs.</p>
       </a>
       <a class="card" href="/products/PP-003-flaky-radar/">
-        <h2>Flaky Radar</h2>
-        <p>Upload test results CSV and get flaky score ranking.</p>
+        <h2>Pp 003 Flaky Radar</h2>
+        <p>PP-003-flaky-radar</p>
       </a>
       <a class="card" href="/products/PP-003-flipmargin/">
-        <h2>Flipmargin</h2>
+        <h2>Pp 003 Flipmargin</h2>
         <p>Reseller buy/no-buy profit checker.</p>
       </a>
       <a class="card" href="/products/PP-003-flyerforge/">
-        <h2>Flyerforge</h2>
+        <h2>Pp 003 Flyerforge</h2>
         <p>Simple, web‑based desktop‑publishing replacement for Microsoft Publisher.</p>
       </a>
       <a class="card" href="/products/PP-003-freelance-cashflow-copilot/">
-        <h2>Freelance Cashflow Copilot</h2>
+        <h2>Pp 003 Freelance Cashflow Copilot</h2>
         <p>A lightweight MVP with a conversion-focused landing page, pricing, waitlist capture, and working interactive core workflow.</p>
       </a>
       <a class="card" href="/products/PP-003-gbp-category-fixer/">
-        <h2>GBP Category Fixer</h2>
+        <h2>Pp 003 Gbp Category Fixer</h2>
         <p>Most local businesses describe themselves in Google one way while customers search another.</p>
       </a>
       <a class="card" href="/products/PP-003-hn-monitor/">
-        <h2>HN Monitor</h2>
+        <h2>Pp 003 Hn Monitor</h2>
         <p>SignalHunt monitors new Hacker News posts and scores them against example pains you provide.</p>
       </a>
       <a class="card" href="/products/PP-003-hn-recall/">
-        <h2>HN Recall</h2>
+        <h2>Pp 003 Hn Recall</h2>
         <p>HN Recall is a memory‑friendly search layer for Hacker News.</p>
       </a>
       <a class="card" href="/products/PP-003-invoice-ocr-lite/">
-        <h2>Invoice OCR Lite</h2>
-        <p>In‑browser OCR for invoices. Extracts vendor, date, and total, then exports CSV.</p>
+        <h2>Pp 003 Invoice Ocr Lite</h2>
+        <p>PP-003-invoice-ocr-lite</p>
       </a>
       <a class="card" href="/products/PP-003-leadbeam/">
-        <h2>Leadbeam</h2>
+        <h2>Pp 003 Leadbeam</h2>
         <p>LeadBeam is a lightweight CRM that imports curated leads, tracks follow‑ups with next‑action dates, and generates discovery playbooks to find similar prospects.</p>
       </a>
       <a class="card" href="/products/PP-003-llm-signal-check/">
-        <h2>LLM Signal Check</h2>
+        <h2>Pp 003 Llm Signal Check</h2>
         <p>A lead-gen helper that tries to detect public web signals of LLM usage.</p>
       </a>
       <a class="card" href="/products/PP-003-local-event-aggregator/">
-        <h2>Local Event Aggregator</h2>
+        <h2>Pp 003 Local Event Aggregator</h2>
         <p>Aggregate RSS-style event items and filter by postcode keywords and category.</p>
       </a>
       <a class="card" href="/products/PP-003-memory-vault/">
-        <h2>Memory Vault</h2>
+        <h2>Pp 003 Memory Vault</h2>
         <p>Encrypts/decrypts AI memory files locally in the browser using Web Crypto (AES‑GCM).</p>
       </a>
       <a class="card" href="/products/PP-003-outbound-one/">
-        <h2>Outbound One</h2>
-        <p>OutboundOne simplifies cold outreach into one sequence planner + lightweight forecast dashboard. ICP: bootstrapped B2B founders and agencies. Pricing: £30/mo starter, £79/mo team.</p>
+        <h2>Pp 003 Outbound One</h2>
+        <p>PP-003-outbound-one</p>
       </a>
       <a class="card" href="/products/PP-003-parallel-sessions/">
-        <h2>Parallel Sessions</h2>
+        <h2>Pp 003 Parallel Sessions</h2>
         <p>A lightweight orchestration layer for running multiple coding-agent sessions in parallel without losing context.</p>
       </a>
       <a class="card" href="/products/PP-003-rent-vs-buy-uk-sanity/">
-        <h2>Rent vs Buy UK Sanity</h2>
-        <p>Rent vs Buy UK Sanity provides transparent UK specific housing comparison. Audience: renters, first time buyers, brokers. Pricing: free + £5 pro + £29 broker mode.</p>
+        <h2>Pp 003 Rent Vs Buy Uk Sanity</h2>
+        <p>PP-003-rent-vs-buy-uk-sanity</p>
+      </a>
+      <a class="card" href="/products/PP-003-returnlens/">
+        <h2>Pp 003 Returnlens</h2>
+        <p>PP-003-returnlens</p>
       </a>
       <a class="card" href="/products/PP-003-service-charge-challenge-kit/">
-        <h2>Service Charge Challenge Kit</h2>
+        <h2>Pp 003 Service Charge Challenge Kit</h2>
         <p>Find the red flags, quantify the increase, and generate a calm challenge letter in minutes.</p>
       </a>
       <a class="card" href="/products/PP-003-telemetryguard/">
-        <h2>Telemetryguard</h2>
+        <h2>Pp 003 Telemetryguard</h2>
         <p>TelemetryGuard generates PR-time telemetry checklists and OpenTelemetry starter snippets so teams stop shipping uninstrumented code.</p>
       </a>
       <a class="card" href="/products/PP-003-uk-boundary-checker/">
-        <h2>UK Boundary Checker</h2>
+        <h2>Pp 003 Uk Boundary Checker</h2>
         <p>Estimates boundary discrepancies from title plan vs on‑site measurements, then generates a copy‑ready surveyor brief and evidence checklist.</p>
       </a>
       <a class="card" href="/products/PP-003-uk-cgt-isa/">
-        <h2>UK CGT ISA</h2>
+        <h2>Pp 003 Uk Cgt Isa</h2>
         <p>UK CGT calculator and Bed &amp; ISA planner for GIA investors.</p>
       </a>
       <a class="card" href="/products/PP-003-whatsapp-business-setup/">
-        <h2>WhatsApp Business Setup</h2>
+        <h2>Pp 003 Whatsapp Business Setup</h2>
         <p>Guides SMEs through a setup checklist and generates ready‑to‑paste greeting/away messages and quick replies.</p>
       </a>
       <a class="card" href="/products/PP-003-workflow-health/">
-        <h2>Workflow Health</h2>
+        <h2>Pp 003 Workflow Health</h2>
         <p>Scores automation workflows for breakage risk and generates a self-healing checklist.</p>
       </a>
       <a class="card" href="/products/PP-004-ai-tdd-workbench/">
-        <h2>AI TDD Workbench</h2>
-        <p>AI TDD Workbench converts plain-English product requirements into: Acceptance criteria Test cases (Jest/Vitest or Gherkin) Implementation task checklist Reusable AI prompt for deeper refinement This version is fully static and runs 100% in-browser with no backend.</p>
+        <h2>Pp 004 Ai Tdd Workbench</h2>
+        <p>AI TDD Workbench converts plain-English product requirements into:</p>
       </a>
       <a class="card" href="/products/PP-004-clawconfig-guard/">
-        <h2>Clawconfig Guard</h2>
+        <h2>Pp 004 Clawconfig Guard</h2>
         <p>Schema-aware editor for OpenClaw settings.json with automatic backups, version history, and rollback.</p>
       </a>
       <a class="card" href="/products/PP-004-planpulse/">
-        <h2>Planpulse</h2>
+        <h2>Pp 004 Planpulse</h2>
         <p>PlanPulse tracks AI subscription plans and shows daily comparisons across vendors.</p>
       </a>
+      <a class="card" href="/products/PP-004-spendfuse/">
+        <h2>Pp 004 Spendfuse</h2>
+        <p>PP-004-spendfuse</p>
+      </a>
       <a class="card" href="/products/PP-004-support-triage-desk/">
-        <h2>Support Triage Desk</h2>
+        <h2>Pp 004 Support Triage Desk</h2>
         <p>TriageDesk is an inbox triage tool for B2B SaaS support teams.</p>
       </a>
       <a class="card" href="/products/PP-005-onboardflow-lite/">
-        <h2>Onboardflow Lite</h2>
+        <h2>Pp 005 Onboardflow Lite</h2>
         <p>OnboardFlow Lite is a lightweight embeddable onboarding wizard for B2B SaaS teams.</p>
       </a>
       <a class="card" href="/products/PP-PP-001-repair-log-pack/">
-        <h2>Repair Log Pack</h2>
+        <h2>Pp Pp 001 Repair Log Pack</h2>
         <p>A tenant-controlled repair log and escalation pack generator.</p>
       </a>
       <a class="card" href="/products/PP-PP-001-service-charge-affordability/">
-        <h2>Service Charge Affordability</h2>
-        <p>A UK-focused affordability calculator for leasehold buyers that includes service charges and ground rent (plus a simple stamp duty estimate) so buyers don’t underestimate monthly costs.</p>
+        <h2>Pp Pp 001 Service Charge Affordability</h2>
+        <p>A UK-focused affordability calculator for leasehold buyers that **includes service charges and ground rent** (plus a simple stamp duty estimate) so buyers don’t underestimate monthly costs.</p>
       </a>
       <a class="card" href="/products/PP-PP-002-service-charge-audit/">
-        <h2>Service Charge Audit</h2>
+        <h2>Pp Pp 002 Service Charge Audit</h2>
         <p>A UK-focused service charge audit helper for leaseholders.</p>
       </a>
       <a class="card" href="/products/PP-PP-003-invoice-chase-pack/">
-        <h2>Invoice Chase Pack</h2>
-        <p>Turns an unpaid invoice into a ready-to-send chase bundle: Calculates days late + rough statutory interest estimate Adds B2B fixed compensation bands (optional)</p>
+        <h2>Pp Pp 003 Invoice Chase Pack</h2>
+        <p>Turns an unpaid invoice into a ready-to-send chase bundle:</p>
       </a>
       <a class="card" href="/products/PP-PP-003-section20-toolkit/">
-        <h2>Section20 Toolkit</h2>
-        <p>A UK leaseholder “major works” toolkit: checklist for Section 20 / consultation stages document request checklist (“evidence pack”) letter generator to request</p>
+        <h2>Pp Pp 003 Section20 Toolkit</h2>
+        <p>A UK leaseholder “major works” toolkit:</p>
       </a>
       <a class="card" href="/products/PP-PP-004-lease-clause-checker/">
-        <h2>Lease Clause Checker</h2>
-        <p>A deterministic “first pass” lease clause checker: paste lease text highlights common responsibility keywords (roof/lift/structure/windows/common parts/service</p>
+        <h2>Pp Pp 004 Lease Clause Checker</h2>
+        <p>A deterministic “first pass” lease clause checker:</p>
+      </a>
+      <a class="card" href="/products/competency-matrix-app/">
+        <h2>Competency Matrix App</h2>
+        <p>competency-matrix-app</p>
+      </a>
+      <a class="card" href="/products/dns-email-audit/">
+        <h2>Dns Email Audit</h2>
+        <p>A no‑login, browser‑based audit that checks MX, SPF, DKIM, and DMARC for any domain and produces a clear deliverability score, fix checklist, and downloadable JSON report.</p>
+      </a>
+      <a class="card" href="/products/ifc-automator/">
+        <h2>Ifc Automator</h2>
+        <p>ifc-automator</p>
       </a>
     </section>
-    <footer>Updated automatically by OpenClaw.</footer>
   </main>
 </body>
 </html>
