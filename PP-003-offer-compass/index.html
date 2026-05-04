@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Offer Compass — UK property offer calculator</title>
+  <meta name="description" content="Create an evidence-backed UK property offer range from comparable sales, condition adjustments, stamp duty and affordability checks.">
+  <style>
+    :root{--bg:#f4fbfa;--ink:#103f3b;--muted:#5f756f;--card:#fff;--line:#b9ebe3;--brand:#0f766e;--brand2:#0b5f8a;--good:#0f8a5f;--warn:#b45309;--bad:#b42318;--shadow:0 18px 55px rgba(15,118,110,.13)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at top left,#dffcf6,transparent 36rem),linear-gradient(135deg,#f4fbfa,#e9f6ff);color:var(--ink);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1220px;margin:auto;padding:24px}a{color:inherit}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:38px}.brand{font-weight:900;letter-spacing:-.03em;font-size:22px}.nav{display:flex;gap:10px;flex-wrap:wrap}.pill,.ghost{border:1px solid var(--line);background:rgba(255,255,255,.82);padding:9px 12px;border-radius:999px;text-decoration:none;color:var(--ink)}.hero{display:grid;grid-template-columns:1.04fr .96fr;gap:28px;align-items:start}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:var(--brand);font-weight:800;background:#e5fffa;border:1px solid var(--line);padding:8px 11px;border-radius:999px}h1{font-size:clamp(38px,6vw,72px);line-height:.95;letter-spacing:-.06em;margin:18px 0 16px}h2{font-size:29px;letter-spacing:-.04em;margin:0 0 14px}h3{margin:0 0 8px;font-size:18px}.lead{font-size:20px;color:#315b57;max-width:58ch}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}button,.btn{border:0;border-radius:14px;background:var(--brand);color:white;padding:13px 16px;font-weight:850;text-decoration:none;cursor:pointer;box-shadow:0 8px 22px rgba(15,118,110,.2)}button.secondary,.btn.secondary{background:#0b5f8a}button.light{background:#eefdfa;color:var(--ink);border:1px solid var(--line);box-shadow:none}button.danger{background:#fff1f2;color:#9f1239;border:1px solid #fecdd3;box-shadow:none}.card{background:rgba(255,255,255,.93);border:1px solid var(--line);border-radius:26px;padding:22px;box-shadow:var(--shadow)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.stat{border:1px solid var(--line);background:#fbfffe;border-radius:18px;padding:14px}.stat b{display:block;font-size:26px;letter-spacing:-.04em}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0}.mini{background:white;border:1px solid var(--line);border-radius:21px;padding:18px}.app{display:grid;grid-template-columns:1fr .92fr;gap:20px;align-items:start;margin-top:18px}label{display:block;font-weight:800;margin:12px 0 6px}input,select,textarea{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:white;color:var(--ink);font:inherit}textarea{min-height:112px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.comp-row{display:grid;grid-template-columns:1.1fr .8fr .8fr .7fr 34px;gap:8px;align-items:end;margin:8px 0}.comp-row button{padding:10px;border-radius:12px}.hint{color:var(--muted);font-size:14px}.result{white-space:pre-wrap;background:#f0fdfa;border:1px solid #67e8f9;border-radius:18px;padding:16px;margin-top:12px}.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.kpi{background:#f8fffd;border:1px solid var(--line);border-radius:18px;padding:14px}.kpi span{display:block;color:var(--muted);font-size:13px}.kpi b{font-size:25px;letter-spacing:-.04em}.score{height:12px;background:#e6f4f1;border-radius:999px;overflow:hidden;margin:8px 0}.score i{display:block;height:100%;background:linear-gradient(90deg,var(--warn),var(--good));width:0}.saved{display:grid;gap:9px;margin-top:10px}.saved button{display:flex;justify-content:space-between;text-align:left;background:#f8fffd;color:var(--ink);border:1px solid var(--line);box-shadow:none}.notice{border-left:4px solid var(--brand2);background:#eff8ff;padding:12px;border-radius:12px;color:#17415c}.footer{margin:28px 0;color:var(--muted);font-size:14px}@media(max-width:900px){.hero,.app,.grid{grid-template-columns:1fr}.stats,.three,.two,.kpis{grid-template-columns:1fr}.comp-row{grid-template-columns:1fr 1fr}.comp-row button{grid-column:1/-1}.top{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="top"><div class="brand">Offer Compass</div><div class="nav"><a class="pill" href="#calculator">Calculator</a><a class="pill" href="#saved">Saved reports</a><a class="pill" href="#pricing">Pricing</a></div></div>
+
+  <section class="hero">
+    <div>
+      <span class="eyebrow">UK homebuyers • comparables • negotiation</span>
+      <h1>Make an offer with evidence, not vibes.</h1>
+      <p class="lead">Enter the target property, add comparable sales, adjust for condition and urgency, then generate an offer band, affordability check and agent-ready note.</p>
+      <div class="actions"><a class="btn" href="#calculator">Build offer report</a><button class="light" id="loadSample">Load sample data</button></div>
+      <div class="stats"><div class="stat"><b>5 min</b>from listing to offer band</div><div class="stat"><b>£/sq ft</b>weighted comparable logic</div><div class="stat"><b>Local</b>saved reports in browser</div></div>
+    </div>
+    <div class="card" id="pricing"><h2>Chargeable path</h2><p><b>£10/report</b> for a polished buyer offer pack. <b>£19/mo</b> for saved comparisons, PDF exports and postcode benchmarks.</p><p class="notice">Tonight's iteration turns this from a single textarea calculator into a reusable report builder with stamp duty, mortgage/deposit checks, saved reports and copy-ready negotiation text.</p></div>
+  </section>
+
+  <section class="grid">
+    <div class="mini"><h3>1. Enter target</h3><p>Asking price, square footage, buyer type, deposit and mortgage rate.</p></div>
+    <div class="mini"><h3>2. Add comparables</h3><p>Each comparable gets price, size and adjustment for condition/location.</p></div>
+    <div class="mini"><h3>3. Send note</h3><p>Copy a calm evidence-backed agent note with your chosen anchor offer.</p></div>
+  </section>
+
+  <section class="app" id="calculator">
+    <div class="card">
+      <h2>Offer report builder</h2>
+      <div class="two"><label>Report name<input id="reportName" value="2-bed flat offer"></label><label>Postcode / area<input id="area" value="Bristol BS3"></label></div>
+      <div class="three"><label>Asking price (£)<input id="asking" type="number" value="475000"></label><label>Target size (sq ft)<input id="size" type="number" value="850"></label><label>Buyer type<select id="buyerType"><option value="first">First-time buyer</option><option value="home">Moving home</option><option value="additional">Additional property</option></select></label></div>
+      <div class="three"><label>Deposit (£)<input id="deposit" type="number" value="70000"></label><label>Mortgage rate (%)<input id="rate" type="number" step="0.01" value="4.75"></label><label>Term (years)<input id="term" type="number" value="30"></label></div>
+      <div class="two"><label>Condition adjustment (%)<input id="conditionAdj" type="number" value="-2"><span class="hint">Negative if target needs work.</span></label><label>Market urgency (%)<input id="urgencyAdj" type="number" value="-1"><span class="hint">Negative if slow market / stale listing.</span></label></div>
+      <label>Comparable sales</label>
+      <div id="comps"></div>
+      <div class="actions"><button class="light" id="addComp">Add comparable</button><button id="calculate">Generate report</button><button class="secondary" id="saveReport">Save locally</button></div>
+      <p class="hint">No external data calls. Figures are buyer-side estimates, not financial advice.</p>
+    </div>
+
+    <aside class="card">
+      <h2>Output</h2>
+      <div class="kpis"><div class="kpi"><span>Evidence value</span><b id="evidenceValue">—</b></div><div class="kpi"><span>Offer band</span><b id="offerBand">—</b></div><div class="kpi"><span>Stamp duty estimate</span><b id="stampDuty">—</b></div><div class="kpi"><span>Monthly repayment</span><b id="repayment">—</b></div></div>
+      <div class="score"><i id="scoreBar"></i></div><p id="confidence" class="hint">Add comparables to calculate confidence.</p>
+      <div id="report" class="result">Your report will appear here.</div>
+      <div class="actions"><button class="light" id="copyNote">Copy agent note</button><button class="light" id="printReport">Print / save PDF</button></div>
+    </aside>
+  </section>
+
+  <section class="card" id="saved" style="margin-top:20px"><h2>Saved reports</h2><div id="savedList" class="saved"></div></section>
+  <p class="footer">Offer Compass stores reports in this browser only. Production version needs checkout, PDF generation, postcode sold-price import and compliance review.</p>
+</main>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const storeKey = 'offer-compass-reports-v2';
+  const sampleComps = [
+    {address:'12 Green Street', price:450000, size:820, adj:0},
+    {address:'8 Station Road', price:485000, size:900, adj:-3},
+    {address:'21 Park View', price:430000, size:800, adj:4}
+  ];
+  let lastAgentNote = '';
+  function money(n){ if(!isFinite(n)) return '—'; return '£' + Math.round(n).toLocaleString('en-GB'); }
+  function pct(n){ return (Math.round(n*10)/10) + '%'; }
+  function monthlyPayment(principal, annualRate, years){
+    const months = years * 12, r = annualRate / 100 / 12;
+    if(principal <= 0) return 0;
+    if(!r) return principal / months;
+    return principal * r * Math.pow(1+r, months) / (Math.pow(1+r, months)-1);
+  }
+  function stampDuty(price, type){
+    const bands = type === 'first' ? [[425000,0],[625000,.05],[Infinity,.05]] : [[250000,0],[925000,.05],[1500000,.10],[Infinity,.12]];
+    let tax = 0, lower = 0;
+    for(const [limit, rate] of bands){
+      const taxable = Math.max(0, Math.min(price, limit) - lower);
+      tax += taxable * rate; lower = limit;
+      if(price <= limit) break;
+    }
+    if(type === 'additional') tax += price * .03;
+    return tax;
+  }
+  function compRow(comp={address:'',price:'',size:'',adj:0}){
+    const row = document.createElement('div'); row.className = 'comp-row';
+    row.innerHTML = `<input aria-label="Comparable address" placeholder="Address / note" value="${escapeHtml(comp.address)}"><input aria-label="Sold price" type="number" placeholder="Price" value="${comp.price}"><input aria-label="Size sq ft" type="number" placeholder="Sq ft" value="${comp.size}"><input aria-label="Adjustment percent" type="number" step="0.5" placeholder="Adj %" value="${comp.adj}"><button class="danger" type="button" title="Remove">×</button>`;
+    row.querySelector('button').addEventListener('click',()=>{row.remove(); calculate();});
+    row.querySelectorAll('input').forEach(input=>input.addEventListener('input', calculate));
+    $('comps').appendChild(row);
+  }
+  function escapeHtml(str){return String(str).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+  function readComps(){
+    return [...$('comps').children].map(row=>{
+      const [address, price, size, adj] = row.querySelectorAll('input');
+      return {address:address.value.trim(), price:+price.value, size:+size.value, adj:+adj.value||0};
+    }).filter(c=>c.price>0 && c.size>0);
+  }
+  function getState(){
+    return {reportName:$('reportName').value, area:$('area').value, asking:+$('asking').value, size:+$('size').value, buyerType:$('buyerType').value, deposit:+$('deposit').value, rate:+$('rate').value, term:+$('term').value, conditionAdj:+$('conditionAdj').value||0, urgencyAdj:+$('urgencyAdj').value||0, comps:readComps(), savedAt:new Date().toISOString()};
+  }
+  function setState(s){
+    ['reportName','area','asking','size','buyerType','deposit','rate','term','conditionAdj','urgencyAdj'].forEach(k=>{if(s[k]!==undefined) $(k).value=s[k];});
+    $('comps').innerHTML=''; (s.comps&&s.comps.length?s.comps:sampleComps).forEach(compRow); calculate();
+  }
+  function calculate(){
+    const s = getState(), comps = s.comps;
+    if(!s.asking || !s.size || comps.length === 0){ $('report').textContent = 'Add asking price, target size and at least one comparable.'; return null; }
+    const weighted = comps.map(c=>({ ...c, pps:(c.price/c.size)*(1+c.adj/100) }));
+    const avgPps = weighted.reduce((sum,c)=>sum+c.pps,0)/weighted.length;
+    const adjustedPps = avgPps * (1 + (s.conditionAdj+s.urgencyAdj)/100);
+    const evidence = adjustedPps * s.size;
+    const low = evidence * .97, mid = evidence, high = evidence * 1.015;
+    const anchor = Math.min(low, s.asking * .98);
+    const gap = s.asking - evidence;
+    const mortgage = Math.max(0, anchor - s.deposit);
+    const ltv = mortgage / anchor * 100;
+    const repay = monthlyPayment(mortgage, s.rate, s.term);
+    const duty = stampDuty(anchor, s.buyerType);
+    const confidenceScore = Math.min(92, 38 + comps.length*12 + (Math.abs(s.conditionAdj)+Math.abs(s.urgencyAdj) <= 6 ? 12 : 0));
+    const confidenceLabel = confidenceScore >= 78 ? 'High' : confidenceScore >= 58 ? 'Medium' : 'Low';
+    lastAgentNote = `Hi, thanks for the viewing. Based on comparable sales around ${s.area || 'the area'}, my evidence-backed offer is ${money(anchor)}. The comparable average supports about ${money(evidence)} before negotiation, with adjustments for condition and market urgency. I can move quickly subject to contract and survey if the seller is comfortable proceeding at ${money(anchor)}.`;
+    $('evidenceValue').textContent = money(evidence);
+    $('offerBand').textContent = `${money(low)}–${money(high)}`;
+    $('stampDuty').textContent = money(duty);
+    $('repayment').textContent = money(repay) + '/mo';
+    $('scoreBar').style.width = confidenceScore + '%';
+    $('confidence').textContent = `${confidenceLabel} confidence • ${comps.length} comparable${comps.length===1?'':'s'} • ${money(avgPps)} avg adjusted £/sq ft • LTV ${pct(ltv)}`;
+    $('report').textContent = `Offer Compass report: ${s.reportName}\nArea: ${s.area}\n\nAsking price: ${money(s.asking)}\nEvidence value: ${money(evidence)}\nSuggested offer band: ${money(low)} – ${money(high)}\nRecommended opening offer: ${money(anchor)}\nAsking gap vs evidence: ${gap >= 0 ? money(gap) + ' above evidence' : money(Math.abs(gap)) + ' below evidence'}\n\nBuyer costs at opening offer:\nDeposit: ${money(s.deposit)}\nMortgage: ${money(mortgage)}\nEstimated stamp duty: ${money(duty)}\nEstimated repayment: ${money(repay)}/mo at ${s.rate}% over ${s.term} years\n\nComparable evidence:\n${weighted.map(c=>`• ${c.address || 'Comparable'} — ${money(c.price)} / ${c.size} sq ft / ${pct(c.adj)} adj = ${money(c.pps)} per sq ft`).join('\n')}\n\nAgent note:\n${lastAgentNote}`;
+    return { ...s, evidence, low, high, anchor, duty, repay, confidenceScore };
+  }
+  function reports(){ try{return JSON.parse(localStorage.getItem(storeKey)||'[]')}catch(e){return []} }
+  function saveReport(){ const result = calculate(); if(!result) return; const list = reports().filter(r=>r.reportName !== result.reportName); list.unshift(result); localStorage.setItem(storeKey, JSON.stringify(list.slice(0,12))); renderSaved(); }
+  function renderSaved(){
+    const list = reports(); $('savedList').innerHTML = list.length ? '' : '<p class="hint">No saved reports yet.</p>';
+    list.forEach((r,i)=>{ const b=document.createElement('button'); b.type='button'; b.innerHTML=`<span><b>${escapeHtml(r.reportName)}</b><br><small>${escapeHtml(r.area||'')} • ${money(r.anchor)} opening offer</small></span><span>Load</span>`; b.addEventListener('click',()=>setState(r)); $('savedList').appendChild(b); });
+  }
+  $('addComp').addEventListener('click',()=>compRow({adj:0}));
+  $('calculate').addEventListener('click', calculate);
+  $('saveReport').addEventListener('click', saveReport);
+  $('loadSample').addEventListener('click',()=>setState({reportName:'2-bed flat offer',area:'Bristol BS3',asking:475000,size:850,buyerType:'first',deposit:70000,rate:4.75,term:30,conditionAdj:-2,urgencyAdj:-1,comps:sampleComps}));
+  $('copyNote').addEventListener('click',async()=>{ calculate(); if(!lastAgentNote) return; try{ await navigator.clipboard.writeText(lastAgentNote); $('copyNote').textContent='Copied'; setTimeout(()=>$('copyNote').textContent='Copy agent note',1400); }catch(e){ prompt('Copy agent note', lastAgentNote); }});
+  $('printReport').addEventListener('click',()=>{ calculate(); window.print(); });
+  ['reportName','area','asking','size','buyerType','deposit','rate','term','conditionAdj','urgencyAdj'].forEach(id=>$(id).addEventListener('input', calculate));
+  sampleComps.forEach(compRow); calculate(); renderSaved();
+})();
+</script>
+</body>
+</html>
