@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PetRentShield UK — pet rent checker + response letter</title>
+<meta name="description" content="Check a UK pet rent or pet charge request, see likely Tenant Fees Act risk signals, and generate a calm response letter with an evidence checklist.">
+<style>
+:root{--ink:#101827;--muted:#5b6578;--bg:#f5f0e8;--card:#fffdf8;--line:#d9cdbc;--blue:#193a7a;--amber:#b35a13;--green:#176b4d;--red:#ad2f2f;--shadow:0 18px 50px rgba(26,31,44,.12)}
+*{box-sizing:border-box}body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at top left,#fff9ed,#f5f0e8 42%,#eaf0f8);color:var(--ink);line-height:1.55}button,input,select,textarea{font:inherit}a{color:var(--blue)}.wrap{width:min(1180px,calc(100% - 28px));margin:auto}.nav{position:sticky;top:0;z-index:10;background:rgba(255,253,248,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:13px 0}.brand{font-weight:900;color:var(--blue);letter-spacing:-.03em}.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;color:var(--muted);font-weight:750;font-size:13px}.hero{padding:56px 0 24px}.grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:24px;align-items:start}.eyebrow{color:var(--amber);font-weight:900;text-transform:uppercase;letter-spacing:.12em;font-size:12px}.h1{font-family:Georgia,serif;font-size:clamp(42px,6vw,78px);line-height:.98;letter-spacing:-.06em;margin:12px 0}.lead{font-size:19px;color:var(--muted);max-width:64ch}.card{background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:22px}.btn{border:0;border-radius:16px;background:var(--blue);color:#fff;font-weight:900;padding:13px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px}.btn.alt{background:#fff;color:var(--blue);border:1px solid var(--line)}.btn.warn{background:var(--amber)}.tool{display:grid;gap:16px}.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;cursor:pointer;font-weight:850}.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}label{font-weight:850;font-size:13px;color:#273246;display:block;margin-bottom:5px}input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:11px 12px;color:var(--ink)}textarea{min-height:96px;resize:vertical}.row{display:flex;gap:10px;flex-wrap:wrap}.result{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.score{border-radius:22px;padding:18px;color:#fff;background:var(--blue)}.score.high{background:var(--red)}.score.medium{background:var(--amber)}.score.low{background:var(--green)}.score strong{font-size:42px;display:block;line-height:1}.box{border:1px solid var(--line);background:#fff;border-radius:20px;padding:16px}.box h3{margin:0 0 8px;font-size:17px}.letter{white-space:pre-wrap;min-height:340px}.checklist{display:grid;gap:8px}.check{display:flex;gap:9px;align-items:flex-start;padding:9px;border-radius:12px;background:#fffaf0}.check input{width:auto;margin-top:4px}.mini{font-size:13px;color:var(--muted)}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}.kpi b{display:block;font-size:24px;color:var(--blue)}.section{padding:28px 0}.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.price{background:#fff;border:1px solid var(--line);border-radius:22px;padding:19px}.price.featured{border:2px solid var(--amber);box-shadow:var(--shadow)}.toast{position:fixed;right:16px;bottom:16px;background:#101827;color:#fff;border-radius:16px;padding:12px 14px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:translateY(0)}footer{padding:30px 0;color:var(--muted);font-size:13px}.hide{display:none}@media(max-width:880px){.grid,.result,.pricing,.kpis,.formgrid{grid-template-columns:1fr}.hero{padding-top:34px}.nav .pill{display:none}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap"><div class="brand">PetRentShield UK</div><div class="pill">England & Wales guidance • not legal advice</div></div></nav>
+<main>
+<section class="hero"><div class="wrap grid">
+<div>
+<div class="eyebrow">Tenant fee checker + letter generator</div>
+<h1 class="h1">Push back on pet rent without sounding like you’re starting a war.</h1>
+<p class="lead">Enter the proposed charge and tenancy details. PetRentShield flags risk signals, estimates annual impact, builds an evidence checklist, and drafts a polite email to your landlord or letting agent.</p>
+<div class="row"><a class="btn" href="#checker">Run the checker</a><button class="btn alt" id="sampleBtn" type="button">Load sample dispute</button></div>
+<div class="kpis"><div class="kpi"><b>£0</b>free checker</div><div class="kpi"><b>5 min</b>letter draft</div><div class="kpi"><b>3</b>response tones</div><div class="kpi"><b>Local</b>no data leaves page</div></div>
+</div>
+<div class="card tool" id="checker">
+<div class="tabs" role="tablist" aria-label="Letter tone">
+<button class="tab active" data-tone="polite" type="button">Polite</button>
+<button class="tab" data-tone="firm" type="button">Firm</button>
+<button class="tab" data-tone="negotiate" type="button">Negotiate</button>
+</div>
+<div class="formgrid">
+<div><label for="tenant">Your name</label><input id="tenant" value="Alex Morgan"></div>
+<div><label for="agent">Landlord/agent name</label><input id="agent" value="Oak & Co Lettings"></div>
+<div><label for="rent">Monthly rent (£)</label><input id="rent" type="number" min="0" value="1450"></div>
+<div><label for="charge">Proposed pet charge (£/month)</label><input id="charge" type="number" min="0" value="50"></div>
+<div><label for="deposit">Deposit already held (£)</label><input id="deposit" type="number" min="0" value="1673"></div>
+<div><label for="term">Fixed term length</label><select id="term"><option value="12">12 months</option><option value="6">6 months</option><option value="24">24 months</option><option value="rolling">Rolling / periodic</option></select></div>
+<div><label for="pet">Pet</label><input id="pet" value="one small dog"></div>
+<div><label for="status">Tenancy status</label><select id="status"><option>Existing tenancy</option><option>New tenancy not signed</option><option>Renewal offer</option></select></div>
+</div>
+<div><label for="wording">Exact wording from landlord/agent</label><textarea id="wording">We can approve the dog if you pay an extra £50pcm pet rent to cover additional wear and tear.</textarea></div>
+<div class="row"><button class="btn" id="runBtn" type="button">Generate assessment</button><button class="btn alt" id="copyBtn" type="button">Copy letter</button><button class="btn alt" id="downloadBtn" type="button">Download .txt</button></div>
+</div>
+</div></section>
+<section class="section"><div class="wrap result">
+<div class="score medium" id="riskCard"><span class="mini" style="color:rgba(255,255,255,.8)">Risk score</span><strong id="score">—</strong><div id="scoreText">Run the checker to calculate risk signals.</div></div>
+<div class="box"><h3>Money impact</h3><div id="moneyOut">Annual added cost, deposit-cap comparison and tenancy impact appear here.</div></div>
+<div class="box"><h3>Evidence checklist</h3><div class="checklist" id="checks"></div></div>
+<div class="box"><h3>Next-step timeline</h3><div id="timeline"></div></div>
+<div class="box" style="grid-column:1/-1"><h3>Generated response letter</h3><div class="letter" id="letter" contenteditable="true" aria-label="Generated letter">Run the checker, then edit the letter here before sending.</div></div>
+</div></section>
+<section class="section"><div class="wrap">
+<h2>How it makes money</h2>
+<div class="pricing">
+<div class="price"><h3>Free checker</h3><p>SEO and forum acquisition. Gives a conservative risk read and basic letter.</p><button class="btn alt" type="button" data-plan="free">Save interest</button></div>
+<div class="price featured"><h3>£5 letter pack</h3><p>Paid download with three tones, follow-up chaser, and evidence bundle checklist.</p><button class="btn warn" type="button" data-plan="letter-pack">I’d buy this</button></div>
+<div class="price"><h3>£9/mo renters club</h3><p>Recurring access to repair, deposit, rent-increase and pet-clause templates.</p><button class="btn alt" type="button" data-plan="club">Join waitlist</button></div>
+</div>
+<p class="mini">Waitlist/intent buttons store locally only in this static MVP. Wire to Stripe + Buttondown/ConvertKit before charging.</p>
+</div></section>
+</main>
+<footer><div class="wrap">PetRentShield UK is a practical drafting tool, not legal advice. Check current law and get professional help for high-stakes disputes.</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const $=id=>document.getElementById(id);let tone='polite';
+function gbp(n){return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(Number(n)||0)}
+function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function val(id){return $(id).value.trim()}function num(id){return Number($(id).value)||0}
+function assess(){
+ const rent=num('rent'),charge=num('charge'),deposit=num('deposit'),annual=charge*12,cap5=rent*5/52*12,cap6=rent*6/52*12,word=val('wording').toLowerCase();
+ let risk=0,reasons=[]; if(charge>0){risk+=35;reasons.push('Recurring monthly charge proposed.')} if(/fee|deposit|admin|clean|wear|tear|damage/.test(word)){risk+=20;reasons.push('Wording refers to fee/deposit/admin/cleaning/wear-and-tear language.')} if(deposit>=cap5*.96){risk+=15;reasons.push('Deposit appears near a five-week rent cap, so extra deposit framing is sensitive.')} if(charge/rent>.04){risk+=15;reasons.push('Pet charge is more than 4% of monthly rent.')} if(val('status')!=='New tenancy not signed'){risk+=10;reasons.push('It affects an existing/renewal relationship, so consent and variation wording matter.')} risk=Math.min(95,risk);
+ const level=risk>=70?'high':risk>=40?'medium':'low'; $('riskCard').className='score '+level; $('score').textContent=risk+'/100'; $('scoreText').innerHTML=(level==='high'?'High scrutiny':'medium'===level?'Review carefully':'Lower risk')+'<br>'+reasons.map(r=>'• '+r).join('<br>');
+ $('moneyOut').innerHTML=`<p><b>${gbp(annual)}</b> extra per year for ${val('pet')||'the pet'}.</p><p>That is <b>${rent?((charge/rent)*100).toFixed(1):0}%</b> of monthly rent, paid again every year.</p><p>Deposit held: <b>${gbp(deposit)}</b>. Approx 5-week cap at this rent: <b>${gbp(cap5)}</b>; 6-week cap: <b>${gbp(cap6)}</b>.</p>`;
+ const items=['Ask them to state whether this is rent, a fee, or a deposit.','Ask for the tenancy clause or proposed variation wording.','Keep the original message and screenshots/PDFs.','Offer a written pet clause covering proven damage instead of vague wear-and-tear.','Do not send money until the charge is clearly documented.'];
+ $('checks').innerHTML=items.map((x,i)=>`<label class="check"><input type="checkbox" ${i<2?'checked':''}> <span>${x}</span></label>`).join('');
+ $('timeline').innerHTML='<ol><li>Today: send the clarification letter.</li><li>48 hours: chase for legal basis and wording if no reply.</li><li>Before signing/paying: save the final clause and rent schedule.</li><li>If threatened with refusal/retaliation: seek tenant advice with the evidence bundle.</li></ol>';
+ $('letter').textContent=makeLetter(risk,annual);
+ localStorage.setItem('PetRentShield-last',JSON.stringify({tenant:val('tenant'),agent:val('agent'),rent,charge,deposit,pet:val('pet'),status:val('status'),wording:val('wording'),tone}));
+}
+function makeLetter(risk,annual){const tenant=val('tenant')||'[your name]',agent=val('agent')||'[landlord/agent]',pet=val('pet')||'my pet',charge=gbp(num('charge')),status=val('status').toLowerCase();
+ const open=tone==='firm'?'Please treat this as a request for clarification before I agree to any change.':tone==='negotiate'?'I’d like to find a practical way to make the pet request work for both sides.':'Thanks for considering my request to keep '+pet+'.';
+ const ask=tone==='firm'?'Please confirm in writing whether the proposed charge is rent rather than a prohibited fee or additional deposit, and identify the tenancy clause or proposed variation you rely on.':tone==='negotiate'?'Before I agree to the proposed '+charge+' per month, could you confirm the basis for it and whether you would consider a clear pet clause instead?':'Before I agree to the proposed '+charge+' per month, please could you confirm whether it is intended as rent rather than a pet fee or extra deposit, and share the wording you want added to the tenancy?';
+ const close=tone==='firm'?'I am not refusing reasonable written terms, but I do need the charge to be clearly lawful, documented, and proportionate before paying anything.':tone==='negotiate'?'I’m happy to agree that I remain responsible for any proven damage at the end of the tenancy, and to discuss a reasonable inspection/check-out process.':'I’m happy to discuss a reasonable written pet clause and I understand I remain responsible for any proven damage at the end of the tenancy.';
+ return `Dear ${agent},\n\n${open}\n\n${ask}\n\nThe current proposal would add ${charge} per month, or ${gbp(annual)} per year, to this ${status}. The wording I received was:\n“${val('wording')}”\n\n${close}\n\nPlease reply with the proposed clause/legal basis and an updated rent schedule before I make any payment or sign a variation.\n\nKind regards,\n${tenant}`;}
+function copyLetter(){navigator.clipboard?.writeText($('letter').textContent).then(()=>toast('Letter copied')).catch(()=>toast('Select the letter and copy manually'))}
+function download(){const blob=new Blob([$('letter').textContent],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='petrentshield-letter.txt';a.click();URL.revokeObjectURL(a.href);toast('Downloaded letter')}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');tone=b.dataset.tone;assess()}));
+document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',assess));
+document.querySelectorAll('[data-plan]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('PetRentShield-plan',b.dataset.plan);toast('Saved intent locally: '+b.dataset.plan)}));
+$('runBtn').addEventListener('click',assess);$('copyBtn').addEventListener('click',copyLetter);$('downloadBtn').addEventListener('click',download);$('sampleBtn').addEventListener('click',()=>{tenant.value='Priya Shah';agent.value='Northgate Homes';rent.value=1250;charge.value=75;deposit.value=1440;pet.value='one indoor cat';status.value='Renewal offer';wording.value='The landlord will renew if you accept a £75 monthly pet rent charge for cleaning and possible damage.';assess();location.hash='checker'});
+try{const saved=JSON.parse(localStorage.getItem('PetRentShield-last')||'null');if(saved){for(const k of ['tenant','agent','rent','charge','deposit','pet','status','wording']) if($(k)&&saved[k]!==undefined) $(k).value=saved[k];tone=saved.tone||tone;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tone===tone));}}catch(e){}
+assess();
+</script>
+</body>
+</html>
