@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ServiceCharge Guard — UK leasehold service charge checker</title>
+  <meta name="description" content="A practical UK leasehold service-charge risk scanner that flags suspicious increases, missing evidence, and generates a managing-agent evidence request.">
+  <meta name="theme-color" content="#0f172a">
+  <style>
+    :root{--ink:#0f172a;--muted:#506070;--bg:#f6f8fc;--card:#fff;--line:#d9e2ef;--brand:#2454ff;--brand2:#14b8a6;--danger:#b91c1c;--warn:#b45309;--ok:#047857;--shadow:0 24px 70px rgba(15,23,42,.10)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(circle at top left,#e0f2fe 0,#f8fafc 32%,#eef2ff 100%);color:var(--ink);line-height:1.55}a{color:inherit}.wrap{max-width:1180px;margin:0 auto;padding:26px}.skip{position:absolute;left:-999px;top:10px;background:#fff;border:2px solid var(--brand);padding:10px;border-radius:12px}.skip:focus{left:10px;z-index:20}.nav{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}.logo{font-weight:900;letter-spacing:-.04em;font-size:21px}.logo span{color:var(--brand)}.navlinks{display:flex;gap:10px;flex-wrap:wrap}.pill{border:1px solid var(--line);background:rgba(255,255,255,.82);border-radius:999px;padding:9px 13px;text-decoration:none;font-weight:750;font-size:14px}.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;padding:28px 0 34px}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:#1d4ed8;background:#dbeafe;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.09em}h1{font-family:Georgia,serif;font-size:clamp(42px,7vw,76px);line-height:.95;letter-spacing:-.055em;margin:16px 0 14px;text-wrap:balance}h2{font-size:clamp(25px,3.4vw,42px);line-height:1.05;letter-spacing:-.04em;margin:0 0 14px;text-wrap:balance}h3{margin:18px 0 8px}p{color:var(--muted);font-size:17px}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:28px;padding:24px;box-shadow:var(--shadow)}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:14px}.stat b{display:block;font-size:25px;letter-spacing:-.04em}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.field{display:grid;gap:6px;margin:10px 0}.field label,.checkgroup legend{font-weight:800;color:#172033}.field small{color:var(--muted)}input,textarea,select{width:100%;min-height:46px;border:1px solid #cbd5e1;border-radius:13px;padding:10px 12px;background:#fff;color:var(--ink);font:inherit}textarea{resize:vertical}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:0;border-radius:14px;padding:13px 17px;background:var(--brand);color:#fff;text-decoration:none;font-weight:900;cursor:pointer}.btn.secondary{background:#111827}.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}.btn:disabled{opacity:.55;cursor:not-allowed}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.out{background:#0f172a;color:#e5edf7;border-radius:20px;padding:18px;min-height:240px;white-space:pre-wrap;overflow:auto}.meter{height:14px;background:#e2e8f0;border-radius:999px;overflow:hidden}.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),#f59e0b,var(--danger));transition:width .25s ease}.risk{font-size:45px;font-weight:950;letter-spacing:-.06em}.tag{display:inline-block;border-radius:999px;padding:5px 10px;font-weight:850;font-size:13px;margin:3px 4px 3px 0}.tag.ok{background:#dcfce7;color:#166534}.tag.warn{background:#fef3c7;color:#92400e}.tag.bad{background:#fee2e2;color:#991b1b}.lineitem{display:grid;grid-template-columns:1.2fr .7fr .7fr auto;gap:8px;align-items:end;margin-bottom:8px}.checkgroup{border:1px solid var(--line);border-radius:18px;padding:14px;margin:12px 0;background:#fbfdff}.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.checks label{display:flex;gap:8px;align-items:flex-start;color:#334155;font-weight:650}.checks input{width:auto;min-height:auto;margin-top:5px}.history{display:grid;gap:10px}.history button{text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}.notice{border-left:5px solid var(--brand2);background:#ecfeff;padding:12px 14px;border-radius:14px;color:#164e63}.danger{border-left-color:var(--danger);background:#fff1f2;color:#7f1d1d}.footer{margin:28px 0 8px;color:var(--muted);font-size:14px}.printOnly{display:none}@media(max-width:900px){.hero,.grid,.three{grid-template-columns:1fr}.mini{grid-template-columns:1fr}.lineitem{grid-template-columns:1fr 1fr}.lineitem .remove{grid-column:1/-1}.wrap{padding:18px}.nav{align-items:flex-start;flex-direction:column}h1{font-size:44px}.checks{grid-template-columns:1fr}}@media print{body{background:#fff}.nav,.hero,.actions,#capture,#pricing,#history,.skip{display:none}.card{box-shadow:none;border:0}.printOnly{display:block}.wrap{max-width:none}.out{background:#fff;color:#000;border:1px solid #999}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#tool">Skip to scanner</a>
+<main class="wrap">
+  <nav class="nav" aria-label="Primary">
+    <div class="logo">ServiceCharge <span>Guard</span></div>
+    <div class="navlinks"><a class="pill" href="#tool">Scanner</a><a class="pill" href="#letter">Evidence letter</a><a class="pill" href="#pricing">Pricing</a></div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <span class="eyebrow">UK leasehold MVP</span>
+      <h1>Find weak spots in a service-charge demand before you pay.</h1>
+      <p>Enter the demand, last year’s figure and suspicious line items. The tool scores risk, creates an evidence checklist, and drafts a practical request to your managing agent.</p>
+      <div class="actions"><a class="btn" href="#tool">Run a free scan</a><a class="btn secondary" href="#letter">Generate letter</a></div>
+    </div>
+    <div class="card">
+      <h2>What changed tonight</h2>
+      <p>This iteration adds item-by-item variance checks, evidence checklist scoring, local scan history, copy/print/export actions, and a stronger paid challenge-pack offer.</p>
+      <div class="mini"><div class="stat"><b>5 min</b><span>scan</span></div><div class="stat"><b>£49</b><span>challenge pack</span></div><div class="stat"><b>0</b><span>data sent</span></div></div>
+    </div>
+  </section>
+
+  <section id="tool" class="grid">
+    <form id="scanForm" class="card">
+      <h2>Service-charge scanner</h2>
+      <div class="grid">
+        <div class="field"><label for="property">Building / property</label><input id="property" autocomplete="street-address" value="Flat 12, Example Court"></div>
+        <div class="field"><label for="agent">Managing agent</label><input id="agent" value="Example Managing Agents Ltd"></div>
+      </div>
+      <div class="grid">
+        <div class="field"><label for="annual">Current annual demand (£)</label><input id="annual" type="number" inputmode="decimal" min="0" step="0.01" value="4200"></div>
+        <div class="field"><label for="last">Last year’s demand (£)</label><input id="last" type="number" inputmode="decimal" min="0" step="0.01" value="2800"></div>
+      </div>
+      <div class="grid">
+        <div class="field"><label for="reserve">Reserve fund balance shown (£)</label><input id="reserve" type="number" inputmode="decimal" min="0" step="0.01" value="12000"></div>
+        <div class="field"><label for="flats">Flats covered by budget</label><input id="flats" type="number" inputmode="numeric" min="1" step="1" value="24"></div>
+      </div>
+      <div class="field"><label for="deadline">Payment deadline</label><input id="deadline" type="date"></div>
+
+      <h3>Line items</h3>
+      <p class="notice">Add the biggest or vaguest items. “Budgeted” is this year’s figure; “last year” can be zero if new.</p>
+      <div id="lineItems"></div>
+      <button class="btn ghost" type="button" id="addItem">+ Add line item</button>
+
+      <fieldset class="checkgroup">
+        <legend>Evidence received</legend>
+        <div class="checks">
+          <label><input type="checkbox" id="accounts"> Certified / summary accounts</label>
+          <label><input type="checkbox" id="budget"> Budget breakdown</label>
+          <label><input type="checkbox" id="invoices"> Supplier invoices or quotes</label>
+          <label><input type="checkbox" id="section20"> Section 20 notice where relevant</label>
+          <label><input type="checkbox" id="reservePlan"> Reserve fund plan</label>
+          <label><input type="checkbox" id="insurance"> Insurance schedule</label>
+        </div>
+      </fieldset>
+
+      <div class="field"><label for="notes">Other concerns</label><textarea id="notes" rows="4">Temporary signage fee, concierge increase, vague major works provision and insurance jump.</textarea></div>
+      <div class="actions"><button class="btn" type="submit">Generate risk report</button><button class="btn ghost" type="button" id="saveScan">Save scan locally</button></div>
+    </form>
+
+    <aside class="card" aria-live="polite">
+      <h2>Risk result</h2>
+      <div class="risk"><span id="riskScore">—</span>/100</div>
+      <div class="meter" aria-hidden="true"><span id="riskMeter"></span></div>
+      <p id="riskSummary">Run the scanner to produce a report.</p>
+      <div id="tags"></div>
+      <h3>Report</h3>
+      <pre class="out" id="report">No report yet.</pre>
+      <div class="actions"><button class="btn" type="button" id="copyReport">Copy report</button><button class="btn ghost" type="button" id="printReport">Print / save PDF</button><button class="btn ghost" type="button" id="downloadReport">Download .txt</button></div>
+    </aside>
+  </section>
+
+  <section id="letter" class="grid" style="margin-top:18px">
+    <div class="card">
+      <h2>Evidence request letter</h2>
+      <p>Generated from the scan. Use it to ask for the paper trail without sounding like a forum-warrior with a printer.</p>
+      <pre class="out" id="letterText">Run the scanner first.</pre>
+      <div class="actions"><button class="btn" type="button" id="copyLetter">Copy letter</button></div>
+    </div>
+    <div class="card" id="history">
+      <h2>Local scan history</h2>
+      <p>Saved only in this browser. Useful for returning tomorrow without wiring a backend yet.</p>
+      <div class="history" id="historyList"></div>
+      <button class="btn ghost" type="button" id="clearHistory">Clear history</button>
+    </div>
+  </section>
+
+  <section id="pricing" class="three" style="margin-top:18px">
+    <div class="card"><h2>Free scan</h2><p>One risk report, evidence checklist and draft request.</p><strong>£0</strong></div>
+    <div class="card"><h2>Challenge pack</h2><p>Exportable evidence bundle, follow-up templates, deadline tracker and escalation guide.</p><strong>£49 one-off</strong></div>
+    <div class="card" id="capture"><h2>Join early access</h2><form id="leadForm"><div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></div><button class="btn" type="submit">Send me the pack</button><p id="leadMsg">MVP stores this locally for validation. Wire to Stripe/ConvertKit next.</p></form></div>
+  </section>
+
+  <p class="footer">Not legal advice. Designed to help leaseholders organise questions and evidence before seeking professional support.</p>
+</main>
+<script>
+(function(){
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const money = (n) => '£' + Number(n || 0).toLocaleString('en-GB', {maximumFractionDigits: 0});
+  const today = new Date();
+  $('deadline').value = new Date(today.getTime() + 1000*60*60*24*21).toISOString().slice(0,10);
+  const defaults = [
+    ['Buildings insurance', 18000, 11000],
+    ['Major works provision', 26000, 0],
+    ['Concierge / staffing', 32000, 21000]
+  ];
+  let lastReport = '';
+  let lastLetter = '';
+
+  function addLineItem(name='', current='', previous=''){
+    const row = document.createElement('div');
+    row.className = 'lineitem';
+    row.innerHTML = '<div class="field"><label>Item</label><input class="itemName" value="'+escapeHtml(name)+'"></div>'+
+      '<div class="field"><label>Budgeted (£)</label><input class="itemCurrent" type="number" min="0" step="0.01" value="'+current+'"></div>'+
+      '<div class="field"><label>Last year (£)</label><input class="itemPrevious" type="number" min="0" step="0.01" value="'+previous+'"></div>'+
+      '<button class="btn ghost remove" type="button">Remove</button>';
+    row.querySelector('.remove').addEventListener('click', () => row.remove());
+    $('lineItems').appendChild(row);
+  }
+  function escapeHtml(value){return String(value).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  defaults.forEach((d) => addLineItem(d[0], d[1], d[2]));
+  $('addItem').addEventListener('click', () => addLineItem());
+
+  function getData(){
+    const items = Array.from(document.querySelectorAll('.lineitem')).map((row) => ({
+      name: row.querySelector('.itemName').value.trim() || 'Unnamed item',
+      current: Number(row.querySelector('.itemCurrent').value || 0),
+      previous: Number(row.querySelector('.itemPrevious').value || 0)
+    })).filter((i) => i.current || i.previous || i.name !== 'Unnamed item');
+    const evidence = ['accounts','budget','invoices','section20','reservePlan','insurance'];
+    return {
+      property: $('property').value.trim(), agent: $('agent').value.trim(), annual: Number($('annual').value || 0),
+      last: Number($('last').value || 0), reserve: Number($('reserve').value || 0), flats: Math.max(1, Number($('flats').value || 1)),
+      deadline: $('deadline').value, notes: $('notes').value.trim(), items,
+      missingEvidence: evidence.filter((id) => !$(id).checked).map((id) => ({accounts:'certified/summary accounts',budget:'budget breakdown',invoices:'supplier invoices or quotes',section20:'Section 20 notice where relevant',reservePlan:'reserve fund plan',insurance:'insurance schedule'}[id]))
+    };
+  }
+  function calculate(data){
+    const increase = data.last ? ((data.annual - data.last) / data.last * 100) : (data.annual ? 100 : 0);
+    const perFlat = data.annual / data.flats;
+    const reserveRatio = data.annual ? data.reserve / data.annual : 0;
+    const itemFlags = data.items.map((item) => {
+      const variance = item.previous ? ((item.current - item.previous) / item.previous * 100) : (item.current ? 100 : 0);
+      const vague = /major|works|provision|misc|management|admin|insurance|concierge|sign|reserve/i.test(item.name);
+      return {...item, variance, vague};
+    }).filter((item) => item.variance > 20 || item.vague || item.current > data.annual * .2);
+    let score = 18;
+    if(increase > 10) score += 10;
+    if(increase > 20) score += 16;
+    if(increase > 40) score += 14;
+    if(reserveRatio < 1) score += 12;
+    if(reserveRatio < .5) score += 10;
+    score += Math.min(24, itemFlags.length * 7);
+    score += Math.min(18, data.missingEvidence.length * 3);
+    if(/tribunal|arrears|threat|demand|debt|county court/i.test(data.notes)) score += 8;
+    score = Math.max(5, Math.min(96, Math.round(score)));
+    return {increase, perFlat, reserveRatio, itemFlags, score};
+  }
+  function severity(score){return score >= 70 ? 'High risk' : score >= 45 ? 'Needs evidence' : 'Low/moderate risk';}
+  function buildReport(data, result){
+    const itemLines = result.itemFlags.length ? result.itemFlags.map((item) => '- '+item.name+': '+money(item.current)+' vs '+money(item.previous)+' last year ('+Math.round(item.variance)+'% change)').join('\n') : '- No major item-level red flags from the entered rows.';
+    const evidenceLines = data.missingEvidence.length ? data.missingEvidence.map((e) => '- '+e).join('\n') : '- Core evidence marked as received.';
+    const nextSteps = [
+      'Ask for missing evidence before paying disputed items where appropriate.',
+      'Check whether any major works should have had Section 20 consultation.',
+      'Compare insurance, management and staffing lines against last year.',
+      'Keep all replies and deadlines in one folder before escalating.'
+    ];
+    return 'SERVICECHARGE GUARD REPORT\n'+
+      'Property: '+(data.property || 'Not supplied')+'\nManaging agent: '+(data.agent || 'Not supplied')+'\nGenerated: '+new Date().toLocaleString('en-GB')+'\n\n'+
+      'Risk score: '+result.score+'/100 — '+severity(result.score)+'\n'+
+      'Current demand: '+money(data.annual)+'\nLast year: '+money(data.last)+'\nIncrease: '+Math.round(result.increase)+'%\nReserve fund: '+money(data.reserve)+' ('+result.reserveRatio.toFixed(1)+'x annual demand)\nEstimated per-flat annual share: '+money(result.perFlat)+'\nPayment deadline: '+(data.deadline || 'Not supplied')+'\n\n'+
+      'Flagged line items:\n'+itemLines+'\n\n'+
+      'Missing / requested evidence:\n'+evidenceLines+'\n\n'+
+      'Notes:\n'+(data.notes || 'No extra notes supplied')+'\n\n'+
+      'Suggested next steps:\n- '+nextSteps.join('\n- ');
+  }
+  function buildLetter(data, result){
+    const requested = data.missingEvidence.length ? data.missingEvidence.join(', ') : 'supporting documents for the budget and any unusually increased line items';
+    const flagged = result.itemFlags.length ? result.itemFlags.map((i) => i.name).join(', ') : 'the items that materially changed year on year';
+    return 'Dear '+(data.agent || 'Managing Agent')+',\n\n'+
+      'I am reviewing the service-charge demand for '+(data.property || 'my property')+'. Before I can assess whether the charges are reasonable, please provide '+requested+'.\n\n'+
+      'In particular, please explain and evidence the following line items: '+flagged+'. Please include invoices, quotes/tender records, the basis for any apportionment, the reserve fund plan, and confirmation of any Section 20 consultation where major works or qualifying long-term agreements are involved.\n\n'+
+      'The current demand appears to be '+Math.round(result.increase)+'% different from last year, so I would appreciate a clear reconciliation against the previous budget and accounts. I reserve my rights to challenge unreasonable or insufficiently evidenced costs.\n\n'+
+      'Kind regards';
+  }
+  function render(){
+    const data = getData();
+    const result = calculate(data);
+    lastReport = buildReport(data, result);
+    lastLetter = buildLetter(data, result);
+    $('riskScore').textContent = result.score;
+    $('riskMeter').style.width = result.score + '%';
+    $('riskSummary').textContent = severity(result.score)+' — '+Math.round(result.increase)+'% annual increase, '+data.missingEvidence.length+' missing evidence item(s), '+result.itemFlags.length+' line-item flag(s).';
+    $('tags').innerHTML = '';
+    [severity(result.score), Math.round(result.increase)+'% increase', data.missingEvidence.length+' evidence gaps', result.itemFlags.length+' item flags'].forEach((text, idx) => {
+      const tag = document.createElement('span'); tag.className = 'tag '+(idx===0 && result.score>=70 ? 'bad' : idx===0 && result.score>=45 ? 'warn' : 'ok'); tag.textContent = text; $('tags').appendChild(tag);
+    });
+    $('report').textContent = lastReport;
+    $('letterText').textContent = lastLetter;
+    return {data,result};
+  }
+  $('scanForm').addEventListener('submit', (event) => {event.preventDefault(); render();});
+  ['annual','last','reserve','flats','notes','property','agent'].forEach((id) => $(id).addEventListener('input', () => { if(lastReport) render(); }));
+  $('copyReport').addEventListener('click', () => copyText(lastReport || $('report').textContent, $('copyReport')));
+  $('copyLetter').addEventListener('click', () => copyText(lastLetter || $('letterText').textContent, $('copyLetter')));
+  $('printReport').addEventListener('click', () => window.print());
+  $('downloadReport').addEventListener('click', () => {
+    if(!lastReport) render();
+    const blob = new Blob([lastReport+'\n\n'+lastLetter], {type:'text/plain'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'servicecharge-guard-report.txt'; a.click(); URL.revokeObjectURL(a.href);
+  });
+  function copyText(text, btn){
+    navigator.clipboard.writeText(text).then(() => {const old = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = old, 1200);});
+  }
+  function saveHistory(){
+    const payload = render();
+    const entry = {id: Date.now(), savedAt: new Date().toISOString(), data: payload.data, score: payload.result.score, report: lastReport, letter: lastLetter};
+    const rows = JSON.parse(localStorage.getItem('scg-history') || '[]'); rows.unshift(entry); localStorage.setItem('scg-history', JSON.stringify(rows.slice(0,8))); renderHistory();
+  }
+  function renderHistory(){
+    const rows = JSON.parse(localStorage.getItem('scg-history') || '[]');
+    $('historyList').innerHTML = rows.length ? '' : '<p>No saved scans yet.</p>';
+    rows.forEach((row) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.innerHTML = '<strong>'+escapeHtml(row.data.property || 'Untitled property')+'</strong><br><span>'+new Date(row.savedAt).toLocaleString('en-GB')+' · score '+row.score+'/100</span>';
+      b.addEventListener('click', () => {loadHistory(row);}); $('historyList').appendChild(b);
+    });
+  }
+  function loadHistory(row){
+    $('property').value = row.data.property || ''; $('agent').value = row.data.agent || ''; $('annual').value = row.data.annual || 0; $('last').value = row.data.last || 0; $('reserve').value = row.data.reserve || 0; $('flats').value = row.data.flats || 1; $('deadline').value = row.data.deadline || ''; $('notes').value = row.data.notes || '';
+    $('lineItems').innerHTML = ''; row.data.items.forEach((i) => addLineItem(i.name, i.current, i.previous)); render(); window.location.hash = '#tool';
+  }
+  $('saveScan').addEventListener('click', saveHistory);
+  $('clearHistory').addEventListener('click', () => {localStorage.removeItem('scg-history'); renderHistory();});
+  $('leadForm').addEventListener('submit', (event) => {event.preventDefault(); localStorage.setItem('scg-lead-email', $('email').value); $('leadMsg').textContent = 'Saved locally — next step is wiring this to Stripe/ConvertKit.';});
+  renderHistory(); render();
+})();
+</script>
+</body>
+</html>
