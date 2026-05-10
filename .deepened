@@ -346,3 +346,15 @@ Scores (Market / Completeness / Revenue / UK = Total)
 - PP-003-outbound-one: 3/2/5/1 = 11
 - PP-002-api-truth-checker: 3/3/3/1 = 10
 - PP-003-flaky-radar: 3/3/3/1 = 10
+
+---
+2026-05-10 06:00 Europe/London
+Scores (Market / Completeness / Revenue / UK = Total)
+- PP-001-leasehold-charge-analyzer: 5/5/5/5 = 20
+- PP-001-repairtrail-uk: 5/5/5/5 = 20
+- PP-001-uk-tax-companion: 5/5/5/5 = 20
+- PP-001-vatflow-lite: 5/5/5/5 = 20  <-- chosen
+- PP-002-cgt-reporting: 5/5/5/5 = 20
+- PP-001-cleanbooks-lite: 5/5/5/5 = 20
+Reason: highest-scoring UK revenue-adjacent build, not the most recently deepened build, and closest to a paid freelancer/bookkeeper workflow with a working browser-only core.
+Design intelligence applied: pricing-page CTA layout, light scroll-story sequence, invoice/billing navy + blue + paid-green palette, Roboto/system MD3-inspired type scale.

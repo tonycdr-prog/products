@@ -1,370 +1,440 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VATFlow Lite — UK VAT Invoice Simplifier</title>
-  <meta name="description" content="Create and sanity-check UK VAT invoices, calculate totals, and estimate late-payment charges in one offline page." />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VATFlow Lite — UK VAT invoice checks in minutes</title>
+  <meta name="description" content="Build a UK VAT invoice, check totals, estimate late-payment charges, and generate a client-ready payment note without opening accounting software.">
+  <meta property="og:title" content="VATFlow Lite — UK VAT invoice checks in minutes">
+  <meta property="og:description" content="A browser-only VAT invoice pre-flight tool for UK freelancers and micro-businesses. Free calculator, Pro templates coming soon.">
+  <meta name="theme-color" content="#f8fafc">
   <style>
     :root {
-      --bg: #0b1020;
-      --panel: #121a31;
-      --panel-2: #1b2647;
-      --text: #e8edf7;
-      --muted: #aab6d3;
-      --line: #2a3b6e;
-      --accent: #7dd3fc;
-      --warn: #fbbf24;
-      --danger: #f87171;
-      --ok: #4ade80;
-      --btn: #38bdf8;
-      --btn-text: #0a1020;
+      color-scheme: light;
+      --primary: #1e3a5f;
+      --primary-ink: #ffffff;
+      --secondary: #2563eb;
+      --accent: #059669;
+      --accent-dark: #047857;
+      --background: #f8fafc;
+      --foreground: #0f172a;
+      --card: #ffffff;
+      --muted: #f1f3f5;
+      --muted-ink: #64748b;
+      --border: #e4e7eb;
+      --danger: #dc2626;
+      --warning: #b45309;
+      --ring: #1e3a5f;
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      --radius: 22px;
+      --space-1: 0.5rem;
+      --space-2: 0.75rem;
+      --space-3: 1rem;
+      --space-4: 1.5rem;
+      --space-5: 2rem;
+      --space-6: 3rem;
     }
-{ box-sizing: border-box; }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
     body {
       margin: 0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background: linear-gradient(180deg, #070b18 0%, #0b1020 35%, #0e1730 100%);
-      color: var(--text);
-      line-height: 1.45;
+      overflow-x: hidden;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(30, 58, 95, 0.16);
+      font-family: Roboto, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--foreground);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(37, 99, 235, 0.16), transparent 30rem),
+        radial-gradient(circle at 90% 10%, rgba(5, 150, 105, 0.14), transparent 28rem),
+        var(--background);
+      line-height: 1.5;
     }
 
-    .wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .hero { margin: 10px 0 18px; }
-    h1 { margin: 0 0 8px; font-size: clamp(1.5rem, 3.8vw, 2.4rem); }
-    h2 { margin-top: 0; font-size: 1.15rem; }
-    p { margin: 8px 0; color: var(--muted); }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 14px;
+    a { color: inherit; }
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -4rem;
+      z-index: 20;
+      background: var(--foreground);
+      color: #fff;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
     }
+    .skip-link:focus { top: 1rem; }
 
-    .card {
-      background: rgba(18, 26, 49, 0.95);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    .shell { width: min(1160px, calc(100% - 2rem)); margin: 0 auto; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(248, 250, 252, 0.9);
+      border-bottom: 1px solid rgba(228, 231, 235, 0.8);
     }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem 0; }
+    .brand { display: flex; align-items: center; gap: 0.7rem; font-weight: 800; letter-spacing: -0.02em; }
+    .mark { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 0.8rem; background: var(--primary); color: #fff; }
+    .nav-links { display: flex; align-items: center; gap: 1rem; color: #334155; font-size: 0.95rem; }
+    .nav-links a { text-decoration: none; }
+    .nav-links a:hover { color: var(--secondary); }
 
-    .row {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 8px;
-      margin-bottom: 10px;
+    main { padding-bottom: var(--space-6); }
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.9fr); gap: var(--space-5); align-items: center; padding: var(--space-6) 0 var(--space-5); }
+    .eyebrow { display: inline-flex; align-items: center; gap: 0.45rem; margin: 0 0 var(--space-3); padding: 0.35rem 0.7rem; border: 1px solid rgba(30, 58, 95, 0.18); border-radius: 999px; background: #fff; color: var(--primary); font-weight: 700; font-size: 0.85rem; }
+    h1, h2, h3 { margin: 0; letter-spacing: -0.035em; line-height: 1.08; text-wrap: balance; }
+    h1 { max-width: 12ch; font-size: clamp(2.6rem, 8vw, 5.5rem); font-weight: 800; }
+    h2 { font-size: clamp(2rem, 4vw, 3.25rem); font-weight: 800; }
+    h3 { font-size: 1.25rem; font-weight: 750; }
+    p { margin: 0; color: #475569; }
+    .lede { max-width: 42rem; margin-top: var(--space-4); font-size: clamp(1.1rem, 2vw, 1.35rem); color: #334155; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+
+    .button, button, .btn-pay {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: 2.9rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0.85rem 1.1rem;
+      font: inherit;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
     }
+    .button:hover, button:hover, .btn-pay:hover { transform: translateY(-1px); box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12); }
+    .button-primary, button.primary, .btn-pay { background: var(--accent); color: #fff; }
+    .button-secondary, button.secondary { background: #fff; color: var(--primary); border-color: var(--border); }
+    button.danger { color: var(--danger); background: #fff; border-color: #fecaca; }
 
+    .proof-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-top: var(--space-4); }
+    .benefit-card, .panel, .pricing-card, .tool-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+    .benefit-card { padding: var(--space-4); }
+    .benefit-card strong { display: block; margin-bottom: 0.35rem; color: var(--primary); }
+
+    .hero-panel { position: relative; padding: var(--space-4); background: var(--primary); color: #fff; border-radius: calc(var(--radius) + 8px); box-shadow: var(--shadow); overflow: hidden; }
+    .hero-panel::after { content: ""; position: absolute; inset: auto -5rem -6rem auto; width: 16rem; height: 16rem; border-radius: 50%; background: rgba(5, 150, 105, 0.35); }
+    .invoice-preview { position: relative; display: grid; gap: var(--space-3); padding: var(--space-4); background: rgba(255, 255, 255, 0.97); color: var(--foreground); border-radius: 1.25rem; }
+    .preview-line { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.65rem; }
+    .preview-total { display: flex; justify-content: space-between; align-items: end; margin-top: var(--space-2); color: var(--primary); }
+    .preview-total strong { font-size: 2rem; }
+
+    section { scroll-margin-top: 5rem; }
+    .section-block { padding: var(--space-5) 0; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: var(--space-4); margin-bottom: var(--space-4); }
+    .section-head p { max-width: 42rem; }
+
+    .tool-card { padding: var(--space-4); }
+    .tool-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: var(--space-4); align-items: start; }
+    .form-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--space-3); }
     .field { grid-column: span 12; }
     .span-6 { grid-column: span 6; }
     .span-4 { grid-column: span 4; }
-    .span-3 { grid-column: span 3; }
-    .span-2 { grid-column: span 2; }
-
-    label {
-      display: block;
-      font-size: 0.84rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #c8d4f0;
-    }
-
-    input, select, textarea, button {
-      font: inherit;
-      border-radius: 10px;
-    }
-
+    label { display: block; margin-bottom: 0.35rem; color: #334155; font-weight: 750; font-size: 0.92rem; }
     input, select, textarea {
       width: 100%;
-      border: 1px solid #344a86;
-      background: #0e1630;
-      color: var(--text);
-      padding: 10px 11px;
-      min-height: 40px;
+      min-height: 2.85rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.9rem;
+      background: #fff;
+      color: var(--foreground);
+      padding: 0.75rem 0.9rem;
+      font: inherit;
+    }
+    textarea { min-height: 7rem; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: #94a3b8; }
+    :focus-visible { outline: 3px solid rgba(30, 58, 95, 0.45); outline-offset: 3px; }
+
+    .items { display: grid; gap: var(--space-2); margin-top: var(--space-3); }
+    .item-row { display: grid; grid-template-columns: minmax(10rem, 1.7fr) 0.7fr 0.8fr 0.8fr auto; gap: var(--space-2); align-items: end; padding: var(--space-2); border: 1px solid var(--border); border-radius: 1rem; background: #fff; }
+    .item-row label { font-size: 0.78rem; color: var(--muted-ink); }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+
+    .results { display: grid; gap: var(--space-3); }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+    .metric { padding: var(--space-3); background: var(--muted); border-radius: 1rem; border: 1px solid var(--border); }
+    .metric small { display: block; margin-bottom: 0.25rem; color: var(--muted-ink); font-weight: 700; }
+    .metric strong { font-size: 1.45rem; color: var(--primary); font-variant-numeric: tabular-nums; }
+    .check-list { list-style: none; display: grid; gap: var(--space-2); padding: 0; margin: 0; }
+    .check-list li { display: flex; justify-content: space-between; gap: var(--space-2); padding: 0.85rem 1rem; background: #fff; border: 1px solid var(--border); border-radius: 1rem; }
+    .status-ok { color: var(--accent-dark); font-weight: 800; }
+    .status-warn { color: var(--warning); font-weight: 800; }
+    .status-bad { color: var(--danger); font-weight: 800; }
+    .report { min-height: 12rem; white-space: pre-wrap; padding: var(--space-3); border-radius: 1rem; border: 1px solid var(--border); background: #0f172a; color: #e2e8f0; font-size: 0.95rem; overflow-wrap: anywhere; }
+
+    .story-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+    .panel { padding: var(--space-4); }
+    .chapter { border-top: 5px solid var(--secondary); }
+    .chapter:nth-child(2) { border-top-color: var(--accent); }
+    .chapter:nth-child(3) { border-top-color: var(--primary); }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+    .pricing-card { padding: var(--space-4); position: relative; }
+    .pricing-card.recommended { border: 2px solid var(--accent); box-shadow: var(--shadow); }
+    .badge { display: inline-flex; margin-bottom: var(--space-3); padding: 0.3rem 0.65rem; border-radius: 999px; background: #d1fae5; color: #065f46; font-weight: 800; font-size: 0.8rem; }
+    .price { margin: var(--space-3) 0; color: var(--primary); font-size: 2.5rem; font-weight: 900; letter-spacing: -0.05em; }
+    .price small { color: var(--muted-ink); font-size: 1rem; letter-spacing: 0; }
+    .features { display: grid; gap: 0.65rem; padding-left: 1.15rem; color: #334155; }
+    .note { margin-top: var(--space-2); color: var(--muted-ink); font-size: 0.92rem; }
+
+    .waitlist { display: grid; grid-template-columns: 1fr auto; gap: var(--space-2); margin-top: var(--space-3); }
+    .success { margin-top: var(--space-2); color: var(--accent-dark); font-weight: 800; min-height: 1.5rem; }
+    footer { border-top: 1px solid var(--border); padding: var(--space-4) 0; color: var(--muted-ink); }
+
+    @media (max-width: 900px) {
+      .hero, .tool-grid, .story-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+      .proof-row { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
     }
 
-    textarea { min-height: 80px; resize: vertical; }
-
-    button {
-      border: 1px solid #57c8fa;
-      background: var(--btn);
-      color: var(--btn-text);
-      padding: 9px 12px;
-      font-weight: 700;
-      cursor: pointer;
-      min-height: 40px;
+    @media (max-width: 680px) {
+      .shell { width: min(100% - 1rem, 1160px); }
+      .hero { padding-top: var(--space-5); }
+      .tool-card, .panel, .pricing-card, .benefit-card { padding: var(--space-3); }
+      .span-6, .span-4 { grid-column: span 12; }
+      .item-row { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+      .waitlist { grid-template-columns: 1fr; }
+      .button, button, .btn-pay { width: 100%; }
     }
-
-    button.secondary {
-      background: transparent;
-      color: #bfe9ff;
-      border-color: #4f7da7;
-    }
-
-    button.danger {
-      background: transparent;
-      color: #ffc7c7;
-      border-color: #865252;
-    }
-
-    .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-
-    .items-head,
-    .item-row {
-      display: grid;
-      grid-template-columns: 2fr 0.8fr 1fr 0.9fr 80px;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .items-head {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 6px;
-      padding: 0 2px;
-    }
-
-    .item-row { margin-bottom: 8px; }
-
-    .totals {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .metric {
-      background: var(--panel-2);
-      border: 1px solid #35518e;
-      border-radius: 10px;
-      padding: 10px;
-    }
-
-    .metric small { color: var(--muted); display: block; }
-    .metric strong { font-size: 1.15rem; }
-
-    .checks {
-      list-style: none;
-      margin: 8px 0 0;
-      padding: 0;
-      display: grid;
-      gap: 7px;
-    }
-
-    .checks li {
-      border: 1px solid #314877;
-      border-radius: 10px;
-      padding: 8px 10px;
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .ok { color: var(--ok); font-weight: 700; }
-    .warn { color: var(--warn); font-weight: 700; }
-    .danger-text { color: var(--danger); font-weight: 700; }
-
-    .output {
-      background: #0a1327;
-      border: 1px solid #2f497d;
-      border-radius: 10px;
-      padding: 10px;
-      white-space: pre-wrap;
-      font-size: 0.9rem;
-      min-height: 130px;
-    }
-
-    .footer-note { color: #9fb2de; font-size: 0.85rem; }
-
-    @media (max-width: 980px) {
-      .grid { grid-template-columns: 1fr; }
-      .items-head,
-      .item-row { grid-template-columns: 1.6fr 0.9fr 1fr 0.9fr 70px; }
-    }
-
-    @media (max-width: 640px) {
-      .span-6, .span-4, .span-3, .span-2 { grid-column: span 12; }
-      .items-head { display: none; }
-      .item-row {
-        grid-template-columns: 1fr 1fr;
-        border: 1px solid #2a3f6d;
-        border-radius: 10px;
-        padding: 8px;
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
       }
-      .item-row >:first-child { grid-column: span 2; }
-      .item-row > button { grid-column: span 2; }
-      .totals { grid-template-columns: 1fr; }
     }
-      a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
-    html { overflow-x: hidden; }
-</style>
+  </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <h1>VATFlow Lite</h1>
-      <p>Build a UK VAT invoice in minutes, spot risky omissions, and estimate late-payment interest/compensation instantly.</p>
+  <a class="skip-link" href="#tool">Skip to invoice checker</a>
+  <header>
+    <nav class="shell nav" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="VATFlow Lite home" translate="no"><span class="mark" aria-hidden="true">£</span><span>VATFlow Lite</span></a>
+      <div class="nav-links" aria-label="Page sections">
+        <a href="#benefits">Benefits</a>
+        <a href="#tool">Free checker</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#waitlist">Waitlist</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="shell hero" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow">Offline-first UK VAT invoice pre-flight</p>
+        <h1 id="hero-title">Send VAT Invoices With Fewer Expensive Mistakes.</h1>
+        <p class="lede">VATFlow Lite checks your line items, VAT totals, due date, and late-payment wording before an invoice leaves your desk.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#tool">Check Invoice Free</a>
+          <a class="button button-secondary" href="#pricing">See Pro Pricing</a>
+        </div>
+        <div class="proof-row" id="benefits" aria-label="Key benefits">
+          <div class="benefit-card"><strong>Catch VAT slips early</strong><p>Spot missing VAT numbers, zero-rate mismatches, and line totals that do not add up.</p></div>
+          <div class="benefit-card"><strong>Get paid with cleaner terms</strong><p>Generate a clear payment note with UK late-payment interest and fixed compensation estimates.</p></div>
+          <div class="benefit-card"><strong>Work without setup</strong><p>No login, no upload, no client data leaving the browser. Save drafts locally when needed.</p></div>
+        </div>
+      </div>
+      <aside class="hero-panel" aria-label="Invoice summary preview">
+        <div class="invoice-preview">
+          <div class="preview-line"><span>Consulting day rate</span><strong>£1,600.00</strong></div>
+          <div class="preview-line"><span>VAT at 20%</span><strong>£320.00</strong></div>
+          <div class="preview-line"><span>Sanity checks</span><strong class="status-ok">Passed</strong></div>
+          <div class="preview-total"><span>Total due</span><strong>£1,920.00</strong></div>
+        </div>
+      </aside>
     </section>
 
-    <div class="grid">
-      <section class="card">
-        <h2>Invoice Builder</h2>
-
-        <div class="row">
-          <div class="field span-6">
-            <label for="businessName">Your business name</label>
-            <input id="businessName" placeholder="Acme Studio Ltd" />
-          </div>
-          <div class="field span-6">
-            <label for="vatNumber">Your VAT number</label>
-            <input id="vatNumber" placeholder="GB123456789" />
-          </div>
-
-          <div class="field span-6">
-            <label for="clientName">Client name</label>
-            <input id="clientName" placeholder="Client Co" />
-          </div>
-          <div class="field span-6">
-            <label for="invoiceNumber">Invoice number</label>
-            <input id="invoiceNumber" placeholder="VF-2026-001" />
-          </div>
-
-          <div class="field span-4">
-            <label for="issueDate">Issue date</label>
-            <input id="issueDate" type="date" />
-          </div>
-          <div class="field span-4">
-            <label for="dueDate">Due date</label>
-            <input id="dueDate" type="date" />
-          </div>
-          <div class="field span-4">
-            <label for="asOfDate">As-of date</label>
-            <input id="asOfDate" type="date" />
-          </div>
-
-          <div class="field span-6">
-            <label for="reverseCharge">VAT treatment</label>
-            <select id="reverseCharge">
-              <option value="standard">Standard VAT invoice</option>
-              <option value="reverse">Reverse charge applies</option>
-              <option value="outside">Outside scope / exempt items only</option>
-            </select>
-          </div>
-          <div class="field span-6">
-            <label for="baseRate">Bank of England base rate (%)</label>
-            <input id="baseRate" type="number" min="0" step="0.01" value="5.25" />
-          </div>
+    <section class="shell section-block" aria-labelledby="story-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">A three-step flow</p>
+          <h2 id="story-title">From Messy Draft to Client-Ready Invoice.</h2>
         </div>
+        <p>Borrowing the pricing-page CTA pattern and a light scroll-story structure: problem, check, send.</p>
+      </div>
+      <div class="story-grid">
+        <article class="panel chapter"><h3>1. Add The Basics</h3><p>Business name, VAT number, client, due date, and payment terms live in one compact form.</p></article>
+        <article class="panel chapter"><h3>2. Check Every Line</h3><p>Enter quantities, net prices, and VAT rates. The calculator updates totals and flags common invoice problems.</p></article>
+        <article class="panel chapter"><h3>3. Copy The Note</h3><p>Produce a payment note, late-payment estimate, and audit summary you can paste into your invoice email.</p></article>
+      </div>
+    </section>
 
-        <h3 style="margin-bottom:6px;">Line Items</h3>
-        <div class="items-head">
-          <div>Description</div><div>Qty</div><div>Unit £</div><div>VAT %</div><div>Action</div>
+    <section class="shell section-block" id="tool" aria-labelledby="tool-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Working core feature</p>
+          <h2 id="tool-title">Free VAT Invoice Checker</h2>
         </div>
-        <div id="items"></div>
-        <div class="btns">
-          <button type="button" class="secondary" id="addItemBtn">+ Add line</button>
+        <p>Enter a draft invoice below. Everything runs locally in vanilla JavaScript.</p>
+      </div>
+
+      <div class="tool-card tool-grid">
+        <form id="invoiceForm" aria-label="VAT invoice checker form">
+          <div class="form-grid">
+            <div class="field span-6"><label for="businessName">Your business name</label><input id="businessName" name="businessName" autocomplete="organization" value="Acme Studio Ltd"></div>
+            <div class="field span-6"><label for="vatNumber">VAT number</label><input id="vatNumber" name="vatNumber" value="GB123456789" inputmode="text" autocomplete="off" spellcheck="false"></div>
+            <div class="field span-6"><label for="clientName">Client name</label><input id="clientName" name="clientName" value="Northstar Retail" autocomplete="organization"></div>
+            <div class="field span-6"><label for="invoiceNumber">Invoice number</label><input id="invoiceNumber" name="invoiceNumber" value="INV-1042" autocomplete="off" spellcheck="false"></div>
+            <div class="field span-4"><label for="invoiceDate">Invoice date</label><input id="invoiceDate" name="invoiceDate" type="date" autocomplete="off"></div>
+            <div class="field span-4"><label for="dueDate">Due date</label><input id="dueDate" name="dueDate" type="date" autocomplete="off"></div>
+            <div class="field span-4"><label for="bankRef">Payment reference</label><input id="bankRef" name="bankRef" value="INV-1042" autocomplete="off" spellcheck="false"></div>
+          </div>
+
+          <div class="items" id="items" aria-live="polite"></div>
+          <div class="actions">
+            <button class="secondary" type="button" id="addLine">Add Line Item</button>
+            <button class="primary" type="submit">Calculate Invoice</button>
+            <button class="secondary" type="button" id="saveLocal">Save Locally</button>
+            <button class="secondary" type="button" id="loadLocal">Load Saved</button>
+          </div>
+        </form>
+
+        <aside class="results" aria-label="Invoice results">
+          <div class="metrics" aria-label="Invoice totals">
+            <div class="metric"><small>Net</small><strong id="netTotal">£0.00</strong></div>
+            <div class="metric"><small>VAT</small><strong id="vatTotal">£0.00</strong></div>
+            <div class="metric"><small>Gross</small><strong id="grossTotal">£0.00</strong></div>
+          </div>
+          <ul class="check-list" id="checks" aria-label="Sanity checks"></ul>
+          <div class="report" id="report" tabindex="0" aria-label="Generated invoice report">Add invoice details and calculate to generate a payment note.</div>
+          <div class="actions">
+            <button class="secondary" type="button" id="copyReport">Copy Report</button>
+            <button class="secondary" type="button" id="downloadReport">Download TXT</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="shell section-block" id="pricing" aria-labelledby="pricing-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Simple pricing</p>
+          <h2 id="pricing-title">Start Free. Upgrade When Invoices Become a Habit.</h2>
         </div>
+      </div>
+      <div class="pricing-grid">
+        <article class="pricing-card" aria-labelledby="free-plan">
+          <h3 id="free-plan">Free</h3>
+          <p class="price">£0 <small>/ forever</small></p>
+          <ul class="features">
+            <li>VAT line-item calculator</li>
+            <li>Invoice sanity checks</li>
+            <li>Late-payment estimate</li>
+            <li>Local save and text export</li>
+          </ul>
+          <a class="button button-secondary" href="#tool">Use Free Checker</a>
+        </article>
+        <article class="pricing-card recommended" aria-labelledby="pro-plan">
+          <span class="badge">Recommended for regular invoicing</span>
+          <h3 id="pro-plan">Pro</h3>
+          <p class="price">£9 <small>/ month</small></p>
+          <ul class="features">
+            <li>Reusable client templates</li>
+            <li>Branded PDF export</li>
+            <li>Due-date reminders</li>
+            <li>Bookkeeper-ready audit history</li>
+          </ul>
+          <a href="#stripe-coming-soon" class="btn-pay">Get Pro — £9/mo</a>
+          <p class="note" id="stripe-coming-soon">Payment coming soon — join the waitlist</p>
+        </article>
+      </div>
+    </section>
 
-        <div class="totals" id="totals"></div>
-
-        <div class="btns">
-          <button type="button" id="recalcBtn">Recalculate</button>
-          <button type="button" class="secondary" id="saveBtn">Save draft</button>
-          <button type="button" class="secondary" id="loadBtn">Load draft</button>
-          <button type="button" class="danger" id="resetBtn">Reset</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Sanity Check + Late Fee Preview</h2>
-        <ul class="checks" id="checkList"></ul>
-
-        <h3 style="margin:14px 0 6px;">Invoice summary</h3>
-        <div id="summary" class="output"></div>
-
-        <div class="btns">
-          <button type="button" class="secondary" id="copyBtn">Copy summary</button>
-          <button type="button" class="secondary" id="downloadBtn">Download JSON</button>
-        </div>
-
-        <p class="footer-note">Note: This is an estimate tool, not legal/tax advice. Verify with current HMRC guidance for production use.</p>
-      </section>
-    </div>
+    <section class="shell section-block" id="waitlist" aria-labelledby="waitlist-title">
+      <div class="panel">
+        <p class="eyebrow">Early access</p>
+        <h2 id="waitlist-title">Get Pro Templates When They Ship.</h2>
+        <p>Leave an email to get the first PDF/template build. No spam — this is a tiny waitlist, not a growth-hack swamp.</p>
+        <form class="waitlist" id="waitlistForm" action="mailto:tonycdr@gmail.com" method="post" enctype="text/plain">
+          <label class="sr-only" for="email" style="position:absolute;left:-9999px;">Email address</label>
+          <input id="email" name="email" type="email" required placeholder="you@example.com…" autocomplete="email" spellcheck="false">
+          <button class="primary" type="submit">Join Waitlist</button>
+        </form>
+        <p class="success" id="waitlistMessage" role="status" aria-live="polite"></p>
+      </div>
+    </section>
   </main>
 
+  <footer>
+    <div class="shell">VATFlow Lite is an invoice pre-flight helper, not accounting or legal advice. Check HMRC guidance or your accountant for edge cases.</div>
+  </footer>
+
   <script>
-    const currency = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
-    const storageKey = 'vatflowLiteDraftV2';
+    const money = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+    const itemsEl = document.querySelector('#items');
+    const checksEl = document.querySelector('#checks');
+    const reportEl = document.querySelector('#report');
+    const fields = ['businessName', 'vatNumber', 'clientName', 'invoiceNumber', 'invoiceDate', 'dueDate', 'bankRef'];
+    let hasUnsavedChanges = false;
 
-    const el = {
-      businessName: document.getElementById('businessName'),
-      vatNumber: document.getElementById('vatNumber'),
-      clientName: document.getElementById('clientName'),
-      invoiceNumber: document.getElementById('invoiceNumber'),
-      issueDate: document.getElementById('issueDate'),
-      dueDate: document.getElementById('dueDate'),
-      asOfDate: document.getElementById('asOfDate'),
-      reverseCharge: document.getElementById('reverseCharge'),
-      baseRate: document.getElementById('baseRate'),
-      items: document.getElementById('items'),
-      totals: document.getElementById('totals'),
-      checkList: document.getElementById('checkList'),
-      summary: document.getElementById('summary')
-    };
+    function markDirty() { hasUnsavedChanges = true; }
 
-    const todayIso = new Date().toISOString().slice(0, 10);
-    el.issueDate.value = todayIso;
-    el.asOfDate.value = todayIso;
-    const due = new Date();
-    due.setDate(due.getDate() + 14);
-    el.dueDate.value = due.toISOString().slice(0, 10);
+    function today(offsetDays = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      return d.toISOString().slice(0, 10);
+    }
 
-    function createItemRow(item = { description: '', qty: 1, unit: 0, vat: 20 }) {
+    document.querySelector('#invoiceDate').value = today();
+    document.querySelector('#dueDate').value = today(30);
+
+    function addLine(item = { description: 'Consulting services', quantity: 2, unit: 800, vatRate: 20 }) {
       const row = document.createElement('div');
       row.className = 'item-row';
       row.innerHTML = `
-        <input placeholder="Service or product" value="${escapeHtml(item.description)}" data-k="description">
-        <input type="number" min="0" step="0.01" value="${Number(item.qty)}" data-k="qty">
-        <input type="number" min="0" step="0.01" value="${Number(item.unit)}" data-k="unit">
-        <select data-k="vat">
-          <option value="20">20%</option>
-          <option value="5">5%</option>
-          <option value="0">0%</option>
-        </select>
-        <button type="button" class="danger" data-remove="1">Remove</button>
-      `;
-      row.querySelector('select').value = String(item.vat ?? 20);
-      row.querySelector('[data-remove]').addEventListener('click', () => {
-        row.remove();
-        if (!el.items.children.length) addItem();
-        recalc();
+        <div><label>Description</label><input class="description" name="lineDescription" value="${escapeHtml(item.description)}" aria-label="Line description" autocomplete="off"></div>
+        <div><label>Qty</label><input class="quantity" name="lineQuantity" type="number" min="0" step="0.01" value="${Number(item.quantity)}" aria-label="Quantity" autocomplete="off" inputmode="decimal"></div>
+        <div><label>Net Price</label><input class="unit" name="lineUnit" type="number" min="0" step="0.01" value="${Number(item.unit)}" aria-label="Net unit price" autocomplete="off" inputmode="decimal"></div>
+        <div><label>VAT</label><select class="vatRate" name="lineVatRate" aria-label="VAT rate"><option value="20">20%</option><option value="5">5%</option><option value="0">0%</option></select></div>
+        <button class="danger" type="button" aria-label="Remove line item">Remove</button>`;
+      row.querySelector('.vatRate').value = String(item.vatRate);
+      row.querySelector('button').addEventListener('click', () => { if (confirm('Remove this line item?')) { row.remove(); calculate(); markDirty(); } });
+      row.querySelectorAll('input, select').forEach(input => input.addEventListener('input', () => { markDirty(); calculate(); }));
+      itemsEl.append(row);
+      calculate();
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+    }
+
+    function getLines() {
+      return [...itemsEl.querySelectorAll('.item-row')].map(row => {
+        const quantity = Number(row.querySelector('.quantity').value) || 0;
+        const unit = Number(row.querySelector('.unit').value) || 0;
+        const vatRate = Number(row.querySelector('.vatRate').value) || 0;
+        const net = quantity * unit;
+        const vat = net * vatRate / 100;
+        return {
+          description: row.querySelector('.description').value.trim(),
+          quantity,
+          unit,
+          vatRate,
+          net,
+          vat,
+          gross: net + vat
+        };
       });
-      [...row.querySelectorAll('input,select')].forEach(node => node.addEventListener('input', recalc));
-      return row;
     }
 
-    function addItem(item) {
-      el.items.appendChild(createItemRow(item));
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
-    }
-
-    function parseDate(v) {
-      const d = new Date(v + 'T00:00:00');
-      return Number.isNaN(d.getTime()) ? null : d;
-    }
-
-    function daysBetween(a, b) {
-      const ms = b.getTime() - a.getTime();
-      return Math.floor(ms / (1000 * 60 * 60 * 24));
+    function getDaysLate(dueDate) {
+      if (!dueDate) return 0;
+      const due = new Date(dueDate + 'T00:00:00');
+      const now = new Date(today() + 'T00:00:00');
+      return Math.max(0, Math.round((now - due) / 86400000));
     }
 
     function fixedCompensation(gross) {
@@ -373,215 +443,84 @@
       return 100;
     }
 
-    function collectItems() {
-      return [...el.items.children].map(row => {
-        const get = k => row.querySelector(`[data-k="${k}"]`).value;
-        return {
-          description: get('description').trim(),
-          qty: Number(get('qty')) || 0,
-          unit: Number(get('unit')) || 0,
-          vat: Number(get('vat')) || 0
-        };
-      });
+    function setCheck(label, status, tone) {
+      const li = document.createElement('li');
+      const className = tone === 'bad' ? 'status-bad' : tone === 'warn' ? 'status-warn' : 'status-ok';
+      li.innerHTML = `<span>${label}</span><strong class="${className}">${status}</strong>`;
+      checksEl.append(li);
     }
 
-    function recalc() {
-      const items = collectItems();
-      const treatment = el.reverseCharge.value;
+    function calculate() {
+      const lines = getLines();
+      const net = lines.reduce((sum, line) => sum + line.net, 0);
+      const vat = lines.reduce((sum, line) => sum + line.vat, 0);
+      const gross = net + vat;
+      const vatNumber = document.querySelector('#vatNumber').value.trim();
+      const dueDate = document.querySelector('#dueDate').value;
+      const daysLate = getDaysLate(dueDate);
+      const annualInterest = gross * 0.13;
+      const lateInterest = daysLate > 0 ? annualInterest / 365 * daysLate : 0;
+      const compensation = daysLate > 0 ? fixedCompensation(gross) : 0;
 
-      const itemTotals = items.map(item => {
-        const net = item.qty * item.unit;
-        const vat = treatment === 'standard' ? net * (item.vat / 100) : 0;
-        return { ...item, net, vat, gross: net + vat };
-      });
+      document.querySelector('#netTotal').textContent = money.format(net);
+      document.querySelector('#vatTotal').textContent = money.format(vat);
+      document.querySelector('#grossTotal').textContent = money.format(gross);
 
-      const netTotal = itemTotals.reduce((s, i) => s + i.net, 0);
-      const vatTotal = itemTotals.reduce((s, i) => s + i.vat, 0);
-      const grossTotal = netTotal + vatTotal;
+      checksEl.replaceChildren();
+      setCheck('VAT number present', /^GB\d{9}$|^XI\d{9}$/i.test(vatNumber) ? 'OK' : 'Check', /^GB\d{9}$|^XI\d{9}$/i.test(vatNumber) ? 'ok' : 'warn');
+      setCheck('At least one invoice line', lines.length && net > 0 ? 'OK' : 'Missing', lines.length && net > 0 ? 'ok' : 'bad');
+      setCheck('Due date set', dueDate ? 'OK' : 'Missing', dueDate ? 'ok' : 'bad');
+      setCheck('Zero-rate lines reviewed', lines.some(line => line.vatRate === 0) ? 'Review' : 'OK', lines.some(line => line.vatRate === 0) ? 'warn' : 'ok');
+      setCheck('Late payment position', daysLate > 0 ? `${daysLate} days late` : 'Not overdue', daysLate > 0 ? 'warn' : 'ok');
 
-      const dueDate = parseDate(el.dueDate.value);
-      const asOfDate = parseDate(el.asOfDate.value);
-      let overdueDays = 0;
-      if (dueDate && asOfDate && asOfDate > dueDate) overdueDays = daysBetween(dueDate, asOfDate);
+      const business = document.querySelector('#businessName').value.trim() || 'Your business';
+      const client = document.querySelector('#clientName').value.trim() || 'Client';
+      const invoiceNumber = document.querySelector('#invoiceNumber').value.trim() || 'Invoice';
+      const bankRef = document.querySelector('#bankRef').value.trim() || invoiceNumber;
+      const lineText = lines.map(line => `- ${line.description || 'Untitled line'}: ${line.quantity} × ${money.format(line.unit)} net, VAT ${line.vatRate}% = ${money.format(line.gross)} gross`).join('\n');
 
-      const annualRate = ((Number(el.baseRate.value) || 0) + 8) / 100;
-      const lateInterest = overdueDays > 0 ? grossTotal * annualRate * (overdueDays / 365) : 0;
-      const comp = overdueDays > 0 ? fixedCompensation(grossTotal) : 0;
-
-      renderTotals(netTotal, vatTotal, grossTotal);
-      renderChecks({ items, netTotal, vatTotal, grossTotal, overdueDays, lateInterest, comp, treatment });
-      renderSummary({ itemTotals, netTotal, vatTotal, grossTotal, overdueDays, lateInterest, comp, treatment });
-    }
-
-    function renderTotals(net, vat, gross) {
-      el.totals.innerHTML = `
-        <div class="metric"><small>Net total</small><strong>${currency.format(net)}</strong></div>
-        <div class="metric"><small>VAT total</small><strong>${currency.format(vat)}</strong></div>
-        <div class="metric"><small>Gross total</small><strong>${currency.format(gross)}</strong></div>
-      `;
-    }
-
-    function renderChecks(ctx) {
-      const checks = [
-        {
-          label: 'Invoice number present',
-          ok: !!el.invoiceNumber.value.trim(),
-          failText: 'Missing',
-          okText: 'OK'
-        },
-        {
-          label: 'Client name present',
-          ok: !!el.clientName.value.trim(),
-          failText: 'Missing',
-          okText: 'OK'
-        },
-        {
-          label: 'VAT number provided (standard invoices)',
-          ok: ctx.treatment !== 'standard' || !!el.vatNumber.value.trim(),
-          failText: 'Check required',
-          okText: 'OK'
-        },
-        {
-          label: 'At least one priced line item',
-          ok: ctx.items.some(i => i.qty > 0 && i.unit > 0),
-          failText: 'Needs line item',
-          okText: 'OK'
-        },
-        {
-          label: 'Due date is set',
-          ok: !!el.dueDate.value,
-          failText: 'Missing',
-          okText: 'OK'
-        },
-        {
-          label: 'Reverse charge notice',
-          ok: ctx.treatment !== 'reverse' || true,
-          failText: 'Check wording',
-          okText: ctx.treatment === 'reverse' ? 'Remember to add reverse-charge wording' : 'Not needed'
-        },
-        {
-          label: 'Overdue status',
-          ok: ctx.overdueDays === 0,
-          failText: `${ctx.overdueDays} day(s) overdue`,
-          okText: 'Not overdue'
-        }
-      ];
-
-      el.checkList.innerHTML = checks.map(c => {
-        const statusClass = c.ok ? 'ok' : (c.label === 'Overdue status' ? 'warn' : 'danger-text');
-        return `<li><span>${escapeHtml(c.label)}</span><span class="${statusClass}">${escapeHtml(c.ok ? c.okText : c.failText)}</span></li>`;
-      }).join('');
-    }
-
-    function renderSummary(ctx) {
-      const reverseNotice = ctx.treatment === 'reverse'
-        ? 'Reverse charge selected: VAT charged at 0 on this invoice. Ensure legal wording is included on the final invoice.'
-        : ctx.treatment === 'outside'
-          ? 'Outside scope/exempt selected: VAT set to 0 for this estimate.'
-          : 'Standard VAT invoice mode.';
-
-      const lines = [
-        `VATFlow Lite summary`,
-        `Business: ${el.businessName.value || '(not set)'}`,
-        `Client: ${el.clientName.value || '(not set)'}`,
-        `Invoice #: ${el.invoiceNumber.value || '(not set)'}`,
-        `Issue date: ${el.issueDate.value || '(not set)'}`,
-        `Due date: ${el.dueDate.value || '(not set)'}`,
-        '',
-        `Net total: ${currency.format(ctx.netTotal)}`,
-        `VAT total: ${currency.format(ctx.vatTotal)}`,
-        `Gross total: ${currency.format(ctx.grossTotal)}`,
-        '',
-        reverseNotice,
-        `Overdue days: ${ctx.overdueDays}`,
-        `Late interest estimate: ${currency.format(ctx.lateInterest)}`,
-        `Fixed compensation estimate: ${currency.format(ctx.comp)}`,
-        `Total with late charges: ${currency.format(ctx.grossTotal + ctx.lateInterest + ctx.comp)}`
-      ];
-
-      el.summary.textContent = lines.join('\n');
+      reportEl.textContent = `${invoiceNumber} — VAT pre-flight report\n\nBusiness: ${business}\nClient: ${client}\nVAT number: ${vatNumber || 'Missing'}\nDue date: ${dueDate || 'Missing'}\nPayment reference: ${bankRef}\n\nLine items:\n${lineText || '- No line items yet'}\n\nTotals:\nNet: ${money.format(net)}\nVAT: ${money.format(vat)}\nGross due: ${money.format(gross)}\n\nLate-payment estimate:\nDays overdue: ${daysLate}\nInterest estimate at 13% annual simple rate: ${money.format(lateInterest)}\nFixed compensation estimate: ${money.format(compensation)}\n\nClient note:\nPlease use reference ${bankRef} when paying ${money.format(gross)}. If this invoice becomes overdue, statutory interest and fixed compensation may be added under UK late payment rules.`;
     }
 
     function snapshot() {
-      return {
-        businessName: el.businessName.value,
-        vatNumber: el.vatNumber.value,
-        clientName: el.clientName.value,
-        invoiceNumber: el.invoiceNumber.value,
-        issueDate: el.issueDate.value,
-        dueDate: el.dueDate.value,
-        asOfDate: el.asOfDate.value,
-        reverseCharge: el.reverseCharge.value,
-        baseRate: el.baseRate.value,
-        items: collectItems()
-      };
+      const data = Object.fromEntries(fields.map(id => [id, document.querySelector('#' + id).value]));
+      data.lines = getLines().map(({ description, quantity, unit, vatRate }) => ({ description, quantity, unit, vatRate }));
+      return data;
     }
 
-    function loadSnapshot(data) {
-      el.businessName.value = data.businessName || '';
-      el.vatNumber.value = data.vatNumber || '';
-      el.clientName.value = data.clientName || '';
-      el.invoiceNumber.value = data.invoiceNumber || '';
-      el.issueDate.value = data.issueDate || todayIso;
-      el.dueDate.value = data.dueDate || todayIso;
-      el.asOfDate.value = data.asOfDate || todayIso;
-      el.reverseCharge.value = data.reverseCharge || 'standard';
-      el.baseRate.value = data.baseRate || '5.25';
-      el.items.innerHTML = '';
-      const items = Array.isArray(data.items) && data.items.length ? data.items : [{ description: '', qty: 1, unit: 0, vat: 20 }];
-      items.forEach(addItem);
-      recalc();
+    function restore(data) {
+      fields.forEach(id => { if (data[id] !== undefined) document.querySelector('#' + id).value = data[id]; });
+      itemsEl.replaceChildren();
+      (data.lines && data.lines.length ? data.lines : undefined)?.forEach(addLine);
+      if (!itemsEl.children.length) addLine();
+      calculate();
     }
 
-    function downloadJson() {
-      const blob = new Blob([JSON.stringify(snapshot(), null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `vatflow-lite-${(el.invoiceNumber.value || 'draft').replace(/[^a-z0-9-_]/gi, '-')}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
+    document.querySelector('#invoiceForm').addEventListener('submit', event => { event.preventDefault(); calculate(); });
+    document.querySelector('#invoiceForm').addEventListener('input', markDirty);
+    window.addEventListener('beforeunload', event => { if (hasUnsavedChanges) { event.preventDefault(); event.returnValue = ''; } });
+    document.querySelector('#addLine').addEventListener('click', () => addLine({ description: '', quantity: 1, unit: 0, vatRate: 20 }));
+    document.querySelector('#saveLocal').addEventListener('click', () => { localStorage.setItem('vatflow-lite-draft', JSON.stringify(snapshot())); hasUnsavedChanges = false; reportEl.textContent += '\n\nSaved locally in this browser.'; });
+    document.querySelector('#loadLocal').addEventListener('click', () => { const saved = localStorage.getItem('vatflow-lite-draft'); if (saved) restore(JSON.parse(saved)); });
+    document.querySelector('#copyReport').addEventListener('click', async () => { await navigator.clipboard.writeText(reportEl.textContent); reportEl.textContent += '\n\nCopied to clipboard.'; });
+    document.querySelector('#downloadReport').addEventListener('click', () => {
+      const blob = new Blob([reportEl.textContent], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'vatflow-lite-report.txt';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+    document.querySelector('#waitlistForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const email = document.querySelector('#email').value.trim();
+      localStorage.setItem('vatflow-lite-waitlist-email', email);
+      document.querySelector('#waitlistMessage').textContent = 'Thanks — you’ll be in touch soon.';
+      event.target.reset();
+    });
 
-    document.getElementById('addItemBtn').addEventListener('click', () => { addItem(); recalc(); });
-    document.getElementById('recalcBtn').addEventListener('click', recalc);
-    document.getElementById('saveBtn').addEventListener('click', () => {
-      localStorage.setItem(storageKey, JSON.stringify(snapshot()));
-      alert('Draft saved locally in this browser.');
-    });
-    document.getElementById('loadBtn').addEventListener('click', () => {
-      const raw = localStorage.getItem(storageKey);
-      if (!raw) return alert('No saved draft found.');
-      try {
-        loadSnapshot(JSON.parse(raw));
-        alert('Draft loaded.');
-      } catch {
-        alert('Saved draft could not be parsed.');
-      }
-    });
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      if (!confirm('Reset all fields and line items?')) return;
-      localStorage.removeItem(storageKey);
-      loadSnapshot({ items: [{ description: '', qty: 1, unit: 0, vat: 20 }] });
-    });
-    document.getElementById('copyBtn').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(el.summary.textContent);
-        alert('Summary copied.');
-      } catch {
-        alert('Clipboard unavailable in this browser context.');
-      }
-    });
-    document.getElementById('downloadBtn').addEventListener('click', downloadJson);
-
-    ['businessName', 'vatNumber', 'clientName', 'invoiceNumber', 'issueDate', 'dueDate', 'asOfDate', 'reverseCharge', 'baseRate']
-      .forEach(k => el[k].addEventListener('input', recalc));
-
-    addItem({ description: 'Consulting services', qty: 1, unit: 1200, vat: 20 });
-    addItem({ description: 'Support retainer', qty: 1, unit: 300, vat: 20 });
-    recalc();
+    addLine();
+    addLine({ description: 'Expenses recharge', quantity: 1, unit: 120, vatRate: 20 });
   </script>
 </body>
 </html>
