@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChargeLens UK — service charge and Section 20 checker</title>
+  <meta name="description" content="UK leasehold service charge and Section 20 triage tool for leaseholders and resident groups.">
+  <style>
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f6f8fb;color:#102033;line-height:1.55}button,input,select,textarea{font:inherit}a{color:#075985}.wrap{max-width:1180px;margin:auto;padding:28px}.hero{display:grid;grid-template-columns:1.02fr .98fr;gap:28px;align-items:start;padding:44px 0 24px}.badge{display:inline-flex;gap:8px;align-items:center;background:#e0f2fe;color:#075985;border:1px solid #bae6fd;border-radius:999px;padding:7px 12px;font-weight:800;font-size:14px}.badge.warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}h1{font-size:clamp(38px,6.5vw,72px);line-height:.95;margin:16px 0 14px;letter-spacing:-.055em}h2{font-size:28px;line-height:1.12;margin:0 0 12px;letter-spacing:-.025em}h3{font-size:18px;margin:18px 0 8px}.lead{font-size:20px;color:#42526a;max-width:68ch}.card,.panel{background:#fff;border:1px solid #dbe4ef;border-radius:24px;box-shadow:0 20px 50px rgba(15,23,42,.08);padding:22px}.panel{box-shadow:none}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.grid.two{grid-template-columns:1fr 1fr}.grid.four{grid-template-columns:repeat(4,1fr)}label{display:block;font-weight:800;margin:13px 0 6px;color:#243449}input,select,textarea{width:100%;min-height:44px;border:1px solid #cbd5e1;border-radius:13px;padding:10px 12px;background:#fff;color:#102033}textarea{min-height:96px;resize:vertical}.row{display:grid;grid-template-columns:1.2fr .75fr .75fr .6fr 38px;gap:8px;align-items:end;margin:8px 0}.btn,button{border:0;border-radius:14px;background:#0369a1;color:#fff;font-weight:900;padding:13px 17px;min-height:46px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn.secondary,button.secondary{background:#e2e8f0;color:#172033}.btn.ghost,button.ghost{background:#fff;color:#075985;border:1px solid #bae6fd}.danger{background:#fee2e2!important;color:#991b1b!important}.muted{color:#64748b}.small{font-size:13px}.price{font-size:38px;font-weight:950;letter-spacing:-.04em}.metric{font-size:30px;font-weight:950}.stack{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.out{background:#0f172a;color:#fff;border-radius:22px;padding:20px;margin-top:16px}.out .muted{color:#cbd5e1}.score{font-size:58px;font-weight:950;letter-spacing:-.06em}.pill{display:inline-flex;border-radius:999px;padding:5px 10px;background:#e2e8f0;color:#334155;font-weight:800;font-size:12px;margin:4px 5px 4px 0}.pill.high{background:#fee2e2;color:#991b1b}.pill.med{background:#fef3c7;color:#92400e}.pill.low{background:#dcfce7;color:#166534}.checklist label{font-weight:650;display:flex;gap:10px;align-items:flex-start;margin:9px 0}.checklist input{width:auto;min-height:auto;margin-top:5px}.letter{white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:16px;min-height:210px}.table{width:100%;border-collapse:collapse;margin-top:10px}.table th,.table td{border-bottom:1px solid #e2e8f0;text-align:left;padding:10px 8px}.table th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#64748b}.sticky{position:sticky;top:14px}.toast{position:fixed;right:18px;bottom:18px;background:#102033;color:white;border-radius:16px;padding:12px 14px;box-shadow:0 14px 35px rgba(15,23,42,.24);opacity:0;transform:translateY(10px);transition:.2s}.toast.show{opacity:1;transform:none}@media(max-width:920px){.hero,.grid,.grid.two,.grid.four{grid-template-columns:1fr}.wrap{padding:18px}.row{grid-template-columns:1fr 1fr}.row input:first-child{grid-column:1/-1}.sticky{position:static}h1{font-size:42px}}@media print{body{background:white}.no-print,.hero>div:first-child,.btn,button{display:none!important}.wrap{max-width:none;padding:0}.card,.panel{box-shadow:none;border-color:#ddd}.hero,.grid.two{display:block}.sticky{position:static}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <span class="badge">UK leasehold audit assistant</span>
+        <h1>Turn a scary service charge into an evidence-backed action plan.</h1>
+        <p class="lead">ChargeLens UK scores annual service-charge increases and Section 20 works, builds a missing-document checklist, and drafts a managing-agent email leaseholders can send today.</p>
+        <div class="stack no-print"><a class="btn" href="#checker">Run the checker</a><button class="secondary" onclick="loadExample()">Load example case</button></div>
+        <p class="small muted">Triage tool only — not legal advice. Built for leaseholders, RTM directors, and resident associations preparing better questions.</p>
+      </div>
+      <aside class="card sticky">
+        <span class="badge warn">Validation offer</span>
+        <h2>£29 sample report</h2>
+        <p class="price">Free score → paid pack</p>
+        <p class="muted">The chargeable version should produce a branded PDF report with source evidence, letter wording, and a 7-day response tracker.</p>
+        <div class="grid two">
+          <div><div class="metric" id="savedCases">0</div><div class="small muted">saved demo cases</div></div>
+          <div><div class="metric">15 min</div><div class="small muted">triage workflow</div></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid four">
+      <div class="panel"><h2>1. Score</h2><p>Weighted risk score from annual increase, large works, evidence quality, and consultation status.</p></div>
+      <div class="panel"><h2>2. Analyse</h2><p>Add budget line items and highlight unusually large changes or vague categories.</p></div>
+      <div class="panel"><h2>3. Ask</h2><p>Generate a targeted managing-agent email with the documents to request.</p></div>
+      <div class="panel"><h2>4. Save</h2><p>Keep cases in local storage and print/export the report for a resident group.</p></div>
+    </section>
+
+    <section id="checker" class="hero">
+      <div class="card">
+        <h2>Case details</h2>
+        <div class="grid two">
+          <div><label for="property">Building / estate</label><input id="property" placeholder="e.g. Riverside Court"></div>
+          <div><label for="agent">Managing agent</label><input id="agent" placeholder="e.g. Acme Property Management"></div>
+          <div><label for="annual">This year service charge (£)</label><input id="annual" type="number" value="3200" min="0"></div>
+          <div><label for="lastYear">Last year service charge (£)</label><input id="lastYear" type="number" value="2320" min="0"></div>
+          <div><label for="works">Major works / Section 20 amount (£)</label><input id="works" type="number" value="12000" min="0"></div>
+          <div><label for="leaseholders">No. of affected leaseholders</label><input id="leaseholders" type="number" value="24" min="1"></div>
+        </div>
+        <label for="docs">Evidence received</label>
+        <select id="docs">
+          <option value="15">Detailed accounts, invoices, and apportionment notes</option>
+          <option value="32" selected>Annual summary and budget narrative only</option>
+          <option value="52">Vague headings, no invoice support</option>
+          <option value="65">Demand only — no meaningful breakdown</option>
+        </select>
+        <label for="consultation">Section 20 consultation status</label>
+        <select id="consultation">
+          <option value="0">Not applicable / no qualifying works</option>
+          <option value="10">Notice received and dates look clear</option>
+          <option value="24" selected>Notice received but wording/dates unclear</option>
+          <option value="38">No consultation notice found</option>
+        </select>
+        <label for="notes">Anything that feels off?</label>
+        <textarea id="notes" placeholder="e.g. Lift repairs doubled, reserve fund transfer unexplained, insurance premium jumped"></textarea>
+      </div>
+
+      <div class="card">
+        <h2>Budget line analyser</h2>
+        <p class="muted">Add the biggest lines from the demand. ChargeLens flags jumps and categories that need invoices or procurement evidence.</p>
+        <div id="lines"></div>
+        <div class="stack no-print"><button class="secondary" onclick="addLine()">+ Add line</button><button onclick="runAudit()">Generate report</button></div>
+        <table class="table" aria-label="line item flags"><thead><tr><th>Line</th><th>Change</th><th>Flag</th></tr></thead><tbody id="flags"><tr><td colspan="3" class="muted">Run the checker to see flags.</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Report</h2>
+        <div class="out" id="result" aria-live="polite"><p class="muted">Enter details, add line items, then generate a report.</p></div>
+        <div class="stack no-print" style="margin-top:12px"><button onclick="saveCase()">Save case locally</button><button class="secondary" onclick="window.print()">Print / save PDF</button><button class="ghost" onclick="copyReport()">Copy report</button></div>
+      </div>
+      <div class="card checklist">
+        <h2>Evidence checklist</h2>
+        <label><input type="checkbox" data-doc="itemised accounts"> Itemised service-charge accounts</label>
+        <label><input type="checkbox" data-doc="top invoices"> Invoices for the top five spend lines</label>
+        <label><input type="checkbox" data-doc="reserve movement"> Reserve / sinking fund opening, closing and transfers</label>
+        <label><input type="checkbox" data-doc="apportionment schedule"> Apportionment schedule showing your share</label>
+        <label><input type="checkbox" data-doc="Section 20 notices"> Section 20 notice of intention, estimates and award notice</label>
+        <label><input type="checkbox" data-doc="procurement evidence"> Tender/procurement evidence for major works</label>
+        <label><input type="checkbox" data-doc="insurance schedule"> Insurance schedule and commission disclosure</label>
+        <p class="small muted">Tick items you already have. Unticked items are pulled into the email draft.</p>
+      </div>
+    </section>
+
+    <section class="hero">
+      <div class="card">
+        <h2>Managing-agent email draft</h2>
+        <div id="letter" class="letter">Generate a report to create the letter.</div>
+        <div class="stack no-print" style="margin-top:12px"><button onclick="copyLetter()">Copy email</button><button class="secondary" onclick="downloadJSON()">Export JSON</button></div>
+      </div>
+      <div class="card no-print">
+        <h2>Early-access lead capture</h2>
+        <p class="muted">Demo capture stores locally so Tony can test the funnel without a backend.</p>
+        <form onsubmit="return captureLead(this)">
+          <label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" required>
+          <label for="role">I am a…</label><select id="role"><option>Leaseholder</option><option>Resident association / RTM director</option><option>Property consultant</option><option>Solicitor / adviser</option></select>
+          <button>Send me a sample £29 report</button>
+          <p class="form-msg muted" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const money = n => '£' + Math.round(Number(n)||0).toLocaleString('en-GB');
+const pct = n => (Number.isFinite(n)? n : 0).toFixed(1) + '%';
+let lastReport = '';
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+function updateSavedCount(){ $('savedCases').textContent = Object.keys(localStorage).filter(k=>k.startsWith('chargelens:case:')).length; }
+
+function addLine(name='', current='', previous=''){
+  const id = 'line_' + Math.random().toString(36).slice(2);
+  const row = document.createElement('div'); row.className='row'; row.id=id;
+  row.innerHTML = `<input aria-label="Budget line name" placeholder="Line item e.g. insurance" value="${escapeAttr(name)}"><input aria-label="Current cost" type="number" min="0" placeholder="This year" value="${escapeAttr(current)}"><input aria-label="Previous cost" type="number" min="0" placeholder="Last year" value="${escapeAttr(previous)}"><select aria-label="Evidence"><option value="ok">evidence</option><option value="missing" selected>missing</option><option value="vague">vague</option></select><button class="danger" type="button" aria-label="Remove line" onclick="this.parentElement.remove()">×</button>`;
+  $('lines').appendChild(row);
+}
+function escapeAttr(v){ return String(v).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;'); }
+function getLines(){ return Array.from(document.querySelectorAll('#lines .row')).map(r=>{ const [name,current,previous,evidence]=r.querySelectorAll('input,select'); const c=+current.value||0,p=+previous.value||0; return {name:name.value.trim()||'Unnamed line', current:c, previous:p, evidence:evidence.value, change:p?((c-p)/p)*100:(c>0?100:0)}; }); }
+function missingDocs(){ return Array.from(document.querySelectorAll('[data-doc]')).filter(c=>!c.checked).map(c=>c.dataset.doc); }
+function band(score){ return score>=74?'High':score>=48?'Medium':'Low'; }
+function bandClass(score){ return score>=74?'high':score>=48?'med':'low'; }
+
+function runAudit(){
+  const annual=+$('annual').value||0, last=+$('lastYear').value||0, works=+$('works').value||0, holders=Math.max(1,+$('leaseholders').value||1);
+  const increase = last ? ((annual-last)/last)*100 : 0;
+  const docs=+$('docs').value, consult=+$('consultation').value;
+  const worksPerHead = works/holders;
+  const lines=getLines();
+  const lineRisk = lines.reduce((sum,l)=>sum + (l.change>35?8:l.change>15?4:0) + (l.evidence==='missing'?5:l.evidence==='vague'?3:0),0);
+  const score = Math.min(100, Math.round((increase>0?increase*.55:0) + docs + consult + Math.min(22, worksPerHead/450) + Math.min(24,lineRisk)));
+  const priority = band(score);
+  const flags = [];
+  if(increase>25) flags.push(`Overall charge is up ${pct(increase)} — ask for a variance explanation.`);
+  if(works>10000) flags.push(`Major works total ${money(works)} (${money(worksPerHead)} each if split evenly) — check Section 20 consultation and apportionment.`);
+  if(docs>=52) flags.push('Documentation is weak — request invoices, contracts and account certification before accepting the demand.');
+  if(consult>=24) flags.push('Section 20 trail looks incomplete or unclear — verify notices, dates, estimates and final award.');
+  const lineFlags = lines.map(l=>({line:l, flag:(l.change>35?'Large jump':l.change>15?'Moderate jump':l.evidence!=='ok'?'Evidence gap':'Looks normal')}));
+  $('flags').innerHTML = lineFlags.length ? lineFlags.map(({line,flag})=>`<tr><td>${safe(line.name)}</td><td>${pct(line.change)}</td><td><span class="pill ${flag==='Large jump'?'high':flag==='Moderate jump'?'med':flag==='Evidence gap'?'med':'low'}">${flag}</span></td></tr>`).join('') : '<tr><td colspan="3" class="muted">No line items added.</td></tr>';
+  const topLinePrompts = lineFlags.filter(x=>x.flag!=='Looks normal').slice(0,5).map(x=>`${x.line.name} (${pct(x.line.change)}, ${x.line.evidence} evidence)`).join('; ');
+  const missing = missingDocs();
+  const report = `<div class="score">${score}/100</div><p><span class="pill ${bandClass(score)}">${priority} review priority</span></p><h3>Immediate read</h3><p>${safe($('property').value||'This building')} needs ${priority.toLowerCase()}-priority review before residents accept the charge. ${flags.length?flags.map(safe).join(' '):'No severe headline issue, but basic supporting evidence should still be retained.'}</p><h3>Ask next</h3><ul><li>Request missing evidence: ${missing.length?safe(missing.join(', ')):'none ticked as missing'}.</li><li>Ask for written variance explanations for changed lines${topLinePrompts?': '+safe(topLinePrompts):'.'}.</li><li>Confirm whether the works are recoverable under the lease and how costs are apportioned.</li></ul><p class="small muted">Generated ${new Date().toLocaleString('en-GB')}. Triage only — not legal advice.</p>`;
+  $('result').innerHTML = report; lastReport = $('result').innerText;
+  buildLetter(score, increase, missing, topLinePrompts);
+}
+function safe(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+function buildLetter(score, increase, missing, topLinePrompts){
+  const property = $('property').value.trim() || '[building / estate]'; const agent = $('agent').value.trim() || '[managing agent]';
+  const letter = `Subject: Request for service charge supporting evidence — ${property}\n\nDear ${agent},\n\nI am reviewing the latest service charge demand for ${property}. Before residents can properly assess the reasonableness and recoverability of the charges, please provide the supporting material below.\n\nHeadline concerns:\n- Overall year-on-year change: ${pct(increase)}\n- ChargeLens triage score: ${score}/100 (${band(score)} review priority)\n${topLinePrompts?'- Lines needing explanation: '+topLinePrompts+'\n':''}\nPlease provide:\n${(missing.length?missing:['itemised accounts','relevant invoices','apportionment schedule']).map(d=>'- '+d).join('\n')}\n\nFor any major works or qualifying long-term agreements, please also confirm the Section 20 notice dates, estimates received, chosen contractor and how leaseholder observations were considered.\n\nPlease treat this as a request for clarification and supporting evidence, not a refusal to pay any properly due sum.\n\nKind regards,\n[Name]`;
+  $('letter').textContent = letter;
+}
+
+function saveCase(){ runAudit(); const data={property:$('property').value,agent:$('agent').value,annual:$('annual').value,lastYear:$('lastYear').value,works:$('works').value,leaseholders:$('leaseholders').value,docs:$('docs').value,consultation:$('consultation').value,notes:$('notes').value,lines:getLines(),letter:$('letter').textContent,created:new Date().toISOString()}; const key='chargelens:case:'+Date.now(); localStorage.setItem(key, JSON.stringify(data)); updateSavedCount(); toast('Case saved locally'); }
+function copyReport(){ if(!lastReport) runAudit(); navigator.clipboard.writeText(lastReport).then(()=>toast('Report copied')); }
+function copyLetter(){ navigator.clipboard.writeText($('letter').textContent).then(()=>toast('Email copied')); }
+function downloadJSON(){ runAudit(); const blob=new Blob([JSON.stringify({report:lastReport,letter:$('letter').textContent,lines:getLines()},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='chargelens-case.json'; a.click(); URL.revokeObjectURL(a.href); }
+function captureLead(form){ const email=$('email').value.trim(); const role=$('role').value; localStorage.setItem('chargelens:lead:'+Date.now(), JSON.stringify({email,role,created:new Date().toISOString()})); form.querySelector('.form-msg').textContent='Saved locally. Wire this to Stripe + email capture for launch.'; toast('Lead captured locally'); return false; }
+function loadExample(){ $('property').value='Riverside Court'; $('agent').value='Northbank Property Management'; $('annual').value=3860; $('lastYear').value=2550; $('works').value=18400; $('leaseholders').value=18; $('docs').value=52; $('consultation').value=38; $('notes').value='Insurance and lift works both increased; residents cannot find consultation notices.'; $('lines').innerHTML=''; addLine('Buildings insurance',960,510); addLine('Lift repairs',1180,420); addLine('Cleaning contract',680,620); addLine('Reserve fund transfer',750,0); runAudit(); toast('Example loaded'); }
+
+addLine('Insurance', 960, 510); addLine('Lift maintenance', 1180, 780); addLine('Reserve fund', 750, 300); updateSavedCount(); runAudit();
+</script>
+</body>
+</html>
