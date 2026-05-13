@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>HeatWise Claim Check — communal heat bill challenge pack</title>
+  <meta name="description" content="Check whether a UK communal heat network bill has challenge signals and generate an evidence request letter for your managing agent.">
+  <style>
+    :root{--ink:#102033;--muted:#607084;--line:#d8e2ec;--bg:#f5fbfa;--card:#fff;--teal:#0f766e;--teal2:#115e59;--amber:#b45309;--red:#b91c1c;--green:#047857;--blue:#1d4ed8;--shadow:0 22px 70px rgba(15,23,42,.10)}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(135deg,#ecfeff 0,#fff 42%,#f8fafc 100%);color:var(--ink);line-height:1.55} a{color:var(--teal)}
+    .wrap{width:min(1180px,calc(100% - 32px));margin:auto}.nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0}.brand{font-weight:950;font-size:1.25rem;letter-spacing:-.04em}.tag{border:1px solid #99f6e4;background:#f0fdfa;color:var(--teal2);padding:7px 11px;border-radius:999px;font-weight:800;font-size:.86rem}
+    .hero{display:grid;grid-template-columns:1fr .88fr;gap:34px;align-items:center;padding:42px 0}.eyebrow{color:var(--teal);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:900} h1{font-size:clamp(2.4rem,6vw,4.9rem);line-height:.94;letter-spacing:-.075em;margin:12px 0 18px;text-wrap:balance} h2{font-size:clamp(1.5rem,3vw,2.35rem);line-height:1.05;letter-spacing:-.045em;margin:0 0 12px}.lead{font-size:1.16rem;color:#44566b;max-width:66ch}.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.btn{border:0;border-radius:14px;min-height:46px;padding:12px 16px;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}.primary{background:var(--teal);color:#fff;box-shadow:0 14px 32px rgba(15,118,110,.22)}.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}.danger{background:#fff1f2;color:var(--red);border:1px solid #fecdd3}.btn:hover{filter:brightness(.98);transform:translateY(-1px)}.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #5eead4;outline-offset:2px}
+    .panel,.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow)}.panel{padding:24px}.card{padding:18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.stat strong{display:block;font-size:1.55rem;letter-spacing:-.05em}.fine{color:var(--muted);font-size:.91rem}.tool{display:grid;grid-template-columns:.9fr 1.1fr;gap:20px;align-items:start;padding:32px 0 48px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:13px} label{font-weight:850;font-size:.92rem} input,select,textarea{width:100%;font:inherit;margin-top:5px;border:1px solid #cbd5e1;border-radius:13px;padding:11px 12px;background:#fff;color:var(--ink)} textarea{min-height:80px;resize:vertical}.span2{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.output{background:#0f172a;color:#e5eef7;border-radius:20px;padding:20px;min-height:360px;white-space:pre-wrap;overflow:auto}.scoreline{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;margin-bottom:18px}.score{font-size:3.25rem;line-height:1;font-weight:950;letter-spacing:-.08em}.bar{height:14px;border-radius:999px;background:#e2e8f0;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));width:0}.badge{display:inline-flex;border-radius:999px;padding:6px 10px;font-size:.82rem;font-weight:900;background:#eef2ff;color:#3730a3;margin:2px 5px 5px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 44px}.saved{display:grid;gap:10px;margin-top:12px}.saved button{text-align:left;justify-content:flex-start}.letter{width:100%;min-height:260px;margin-top:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.pricing{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:44px}.price{font-size:1.75rem;font-weight:950;letter-spacing:-.05em}.footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--muted);font-size:.9rem}.skip{position:absolute;left:-999px;top:8px;background:#fff;color:var(--ink);padding:10px 12px;border-radius:10px}.skip:focus{left:8px;z-index:9}
+    @media(max-width:880px){.hero,.tool,.pricing{grid-template-columns:1fr}.fields,.grid,.stats{grid-template-columns:1fr}.scoreline{grid-template-columns:1fr}.nav{align-items:flex-start;gap:10px}.panel{padding:18px}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#checker">Skip to checker</a>
+<div class="wrap">
+  <nav class="nav"><div class="brand">HeatWise Claim Check</div><a class="tag" href="#checker">Working dispute triage</a></nav>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">For UK resident groups and leaseholders</div>
+      <h1>Turn a confusing communal heat bill into a challenge-ready evidence pack.</h1>
+      <p class="lead">Enter block details, costs and billing issues. HeatWise scores the dispute, estimates recoverable exposure, builds an evidence checklist, and drafts the first managing-agent letter.</p>
+      <div class="cta"><a class="btn primary" href="#checker">Run the claim check</a><a class="btn secondary" href="#pricing">See £29 triage offer</a></div>
+    </div>
+    <div class="panel">
+      <h2>What shipped tonight</h2>
+      <div class="stats">
+        <div class="stat"><strong>1</strong><span class="fine">risk score</span></div>
+        <div class="stat"><strong>9</strong><span class="fine">evidence checks</span></div>
+        <div class="stat"><strong>PDF-ish</strong><span class="fine">print/export flow</span></div>
+      </div>
+      <p class="fine">No account, no backend. Cases save in this browser only so Tony can demo it from a static URL tomorrow.</p>
+    </div>
+  </section>
+
+  <section id="checker" class="tool">
+    <div class="panel">
+      <h2>Claim check inputs</h2>
+      <div class="fields">
+        <label>Block / building name<input id="blockName" value="Riverside Court"></label>
+        <label>Resident contact<input id="contactName" value="Residents Association"></label>
+        <label>Number of flats<input id="flats" type="number" min="1" value="130"></label>
+        <label>Monthly communal heat charge per flat (£)<input id="monthlyCharge" type="number" min="0" value="38"></label>
+        <label>Annual block gas / heat-network cost (£)<input id="annualGas" type="number" min="0" value="87000"></label>
+        <label>Annual admin / standing charges (£)<input id="standing" type="number" min="0" value="24000"></label>
+        <label>Years affected<input id="years" type="number" min="1" max="6" value="3"></label>
+        <label>VAT shown on bills<select id="vat"><option value="18">Unclear / not shown</option><option value="10">20% VAT charged</option><option value="4">5% VAT charged</option><option value="0">No issue spotted</option></select></label>
+        <label>Tariff evidence<select id="tariff"><option value="22">No wholesale tariff evidence</option><option value="14">Partial screenshots only</option><option value="4">Full contract supplied</option></select></label>
+        <label>Metering and HIU readings<select id="metering"><option value="18">Estimated / unclear</option><option value="10">Mixed actual and estimated</option><option value="2">Actual readings supplied</option></select></label>
+        <label>Accounts / Section 20 evidence<select id="accounts"><option value="20">Missing or late accounts</option><option value="12">Supplied but hard to reconcile</option><option value="2">Clear accounts supplied</option></select></label>
+        <label>Group size ready to challenge<select id="group"><option value="14">10+ residents organised</option><option value="8">3-9 residents</option><option value="2">Just one resident so far</option></select></label>
+        <label class="span2">Notes / facts to include<textarea id="notes">Residents have asked for a breakdown of standing charges and whether domestic-rate treatment was applied. Managing agent has not supplied contract evidence.</textarea></label>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="runCheck()">Generate claim pack</button>
+        <button class="btn secondary" onclick="saveCase()">Save case locally</button>
+        <button class="btn secondary" onclick="copyReport()">Copy report</button>
+        <button class="btn secondary" onclick="window.print()">Print / save PDF</button>
+        <button class="btn danger" onclick="clearCases()">Clear saved</button>
+      </div>
+      <div class="saved" id="savedCases"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Output</h2>
+      <div class="scoreline"><div class="score" id="score">—</div><div><div class="bar"><span id="bar"></span></div><p id="verdict" class="fine">Run the checker to generate a dispute score.</p></div></div>
+      <div id="badges"></div>
+      <div id="report" class="output">Your challenge-ready summary will appear here.</div>
+      <h2 style="margin-top:22px">Managing-agent letter</h2>
+      <textarea id="letter" class="letter" readonly>Generate a claim pack to draft the letter.</textarea>
+    </div>
+  </section>
+
+  <section>
+    <h2>What the paid triage adds</h2>
+    <div class="grid">
+      <div class="card"><strong>Evidence review</strong><p class="fine">Convert messy PDFs, bills and emails into a single chronology and issue list.</p></div>
+      <div class="card"><strong>Challenge route</strong><p class="fine">Pick the right next step: informal request, LTA-style evidence pack, tribunal prep, or collective escalation.</p></div>
+      <div class="card"><strong>Resident pack</strong><p class="fine">Shareable one-page summary for getting 5-10 neighbours aligned before spending legal money.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing" class="pricing">
+    <div class="card"><div class="price">Free checker</div><p>Public triage, local case saves, copyable letter.</p><a class="btn secondary" href="#checker">Use free</a></div>
+    <div class="card"><div class="price">£29 block triage</div><p>Manual review of one heat-network dispute pack. Upgrade path: £25/mo resident group monitoring.</p><label>Email for beta access<input id="email" type="email" placeholder="you@example.com"></label><div class="actions"><button class="btn primary" onclick="joinWaitlist()">Save beta request</button><span id="emailMsg" class="fine"></span></div></div>
+  </section>
+  <footer class="footer">© 2026 HeatWise Claim Check. Informational tool, not legal advice. Demo stores data locally only; wire Stripe + email capture before paid launch.</footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const money = n => '£' + Math.round(n).toLocaleString('en-GB');
+function values(){return {blockName:$('blockName').value.trim()||'Unnamed block',contactName:$('contactName').value.trim()||'Resident',flats:+$('flats').value||1,monthlyCharge:+$('monthlyCharge').value||0,annualGas:+$('annualGas').value||0,standing:+$('standing').value||0,years:+$('years').value||1,vat:+$('vat').value||0,tariff:+$('tariff').value||0,metering:+$('metering').value||0,accounts:+$('accounts').value||0,group:+$('group').value||0,notes:$('notes').value.trim()};}
+function grade(score){if(score>=78)return ['High priority','Paid triage is justified before the next service charge demand.', 'var(--red)']; if(score>=58)return ['Medium priority','Gather missing evidence, then decide whether to escalate collectively.', 'var(--amber)']; return ['Monitor','Some signals exist, but the pack needs more facts before a strong challenge.', 'var(--green)'];}
+function runCheck(){const v=values(); const annualResidentCharges=v.flats*v.monthlyCharge*12; const standingShare=v.standing/Math.max(1,annualResidentCharges+v.annualGas); const issueScore=v.vat+v.tariff+v.metering+v.accounts+v.group; const exposureBase=annualResidentCharges+v.annualGas+v.standing; const standingPenalty=standingShare>.12?12:standingShare>.07?7:2; const scale=v.flats>80?8:v.flats>30?5:2; const score=Math.min(98,Math.round(16+issueScore+standingPenalty+scale)); const recoverable=exposureBase*(score>=78?.11:score>=58?.075:.04)*Math.min(4,v.years); const [label,verdict,color]=grade(score); const flags=[]; if(v.vat>=10)flags.push('VAT evidence'); if(v.tariff>=14)flags.push('Tariff proof'); if(v.metering>=10)flags.push('Metering'); if(v.accounts>=12)flags.push('Accounts'); if(v.group>=8)flags.push('Collective action'); if(standingShare>.07)flags.push('Standing charge'); $('score').textContent=score; $('bar').style.width=score+'%'; $('bar').style.background=color; $('verdict').textContent=label+' — '+verdict; $('badges').innerHTML=flags.map(f=>`<span class="badge">${f}</span>`).join(''); const checklist=[
+'Wholesale heat/gas tariff contract and unit-rate history for the affected years',
+'VAT treatment for communal heating and whether domestic-rate treatment was considered',
+'Standing/common heat charge calculation, supplier margin and admin fee breakdown',
+'Metering basis: actual readings, estimates, HIU faults and adjustment policy',
+'Block-level consumption by month and reconciliation to resident bills',
+'Verified accounts/service charge schedules for the affected years',
+'Details of heat-network operator, managing agent and any broker/third-party fees',
+'Comparable resident bills from at least five flats',
+'Timeline of prior requests, replies and unresolved questions'
+]; const report=`${v.blockName} — HeatWise claim check\n\nChallenge readiness: ${score}/100 (${label})\nEstimated annual resident charges: ${money(annualResidentCharges)}\nAnnual block heat/gas cost entered: ${money(v.annualGas)}\nAnnual standing/admin charges entered: ${money(v.standing)}\nEstimated multi-year recovery / avoided overcharge signal: ${money(recoverable)}\n\nMain challenge angles:\n${flags.map(f=>'• '+f).join('\n')||'• No strong issue selected yet'}\n\nEvidence request checklist:\n${checklist.map(x=>'• '+x).join('\n')}\n\nResident next steps:\n• Share this summary with at least 5 neighbours and collect bill examples.\n• Send the evidence request below to the managing agent.\n• If evidence is incomplete after 14 days, consider a paid triage pack before formal escalation.\n\nNotes supplied:\n${v.notes||'None.'}`; $('report').textContent=report; const letter=`Subject: Request for communal heating charge evidence — ${v.blockName}\n\nDear Managing Agent,\n\nI am writing on behalf of ${v.contactName} regarding the communal heating and heat-network charges at ${v.blockName}. We are reviewing whether the current and historic charges are properly evidenced and fairly recoverable through the service charge.\n\nPlease provide the following within 14 days:\n\n${checklist.map((x,i)=>(i+1)+'. '+x).join('\n')}\n\nFor context, residents are currently seeing approximately ${money(annualResidentCharges)} per year in communal heat charges across ${v.flats} flats, with additional block heat/gas costs of ${money(v.annualGas)} and standing/admin charges of ${money(v.standing)} entered into our initial review.\n\n${v.notes ? 'Additional context: '+v.notes+'\n\n' : ''}Please confirm if any requested documents are unavailable, and explain why. We are trying to resolve this constructively before considering further advice or escalation.\n\nKind regards,\n${v.contactName}`; $('letter').value=letter; return {v,score,label,report,letter};}
+function saveCase(){const r=runCheck(); const cases=JSON.parse(localStorage.getItem('heatwiseCases')||'[]'); cases.unshift({date:new Date().toISOString(),data:r.v,score:r.score,label:r.label}); localStorage.setItem('heatwiseCases',JSON.stringify(cases.slice(0,8))); renderCases();}
+function loadCase(i){const cases=JSON.parse(localStorage.getItem('heatwiseCases')||'[]'); const c=cases[i]; if(!c)return; Object.keys(c.data).forEach(k=>{if($(k))$(k).value=c.data[k]}); runCheck();}
+function clearCases(){localStorage.removeItem('heatwiseCases'); renderCases();}
+function renderCases(){const cases=JSON.parse(localStorage.getItem('heatwiseCases')||'[]'); $('savedCases').innerHTML=cases.length?'<strong>Saved cases</strong>'+cases.map((c,i)=>`<button class="btn secondary" onclick="loadCase(${i})">${c.data.blockName} — ${c.score}/100 — ${new Date(c.date).toLocaleDateString('en-GB')}</button>`).join(''):'<span class="fine">No saved cases yet.</span>';}
+async function copyReport(){const r=runCheck(); const text=r.report+'\n\n--- Letter ---\n'+r.letter; try{await navigator.clipboard.writeText(text); $('verdict').textContent='Copied report and letter to clipboard.';}catch(e){$('verdict').textContent='Clipboard blocked; select and copy manually.';}}
+function joinWaitlist(){const e=$('email').value.trim(); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){$('emailMsg').textContent='Enter a valid email.';return;} localStorage.setItem('heatwiseBetaEmail',e); $('emailMsg').textContent='Saved locally. Replace with Stripe/ConvertKit next.';}
+renderCases(); runCheck();
+</script>
+</body>
+</html>
