@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlockReady Check — Leasehold takeover risk checker</title>
+  <meta name="description" content="A browser-based due diligence checker for UK leaseholders being asked to take over a freehold or block management company.">
+  <meta name="theme-color" content="#10233f">
+  <style>
+    :root{--ink:#102033;--muted:#64748b;--bg:#f5f7fb;--card:#fff;--line:#dbe3ef;--blue:#174a7c;--blue2:#2765a7;--teal:#0f766e;--amber:#b45309;--red:#b91c1c;--green:#15803d;--shadow:0 20px 55px rgba(15,32,51,.10);--radius:20px}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(135deg,#f5f7fb 0%,#eef6ff 52%,#fff 100%);color:var(--ink);line-height:1.5} a{color:inherit} .wrap{width:min(1160px,92vw);margin:auto}.skip{position:absolute;left:-999px;top:10px;background:white;padding:10px 14px;border-radius:12px;z-index:99}.skip:focus{left:10px}
+    nav{position:sticky;top:0;z-index:20;background:rgba(245,247,251,.86);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0}.brand{font-weight:900;letter-spacing:-.045em}.navlinks{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;background:var(--blue);color:white;text-decoration:none;font-weight:850;padding:12px 18px;cursor:pointer;box-shadow:0 14px 30px rgba(23,74,124,.18)}.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}.btn.secondary{background:white;color:var(--blue);border:1px solid var(--line);box-shadow:none}.btn.small{padding:9px 13px;font-size:14px}.btn.teal{background:var(--teal)}button:disabled{opacity:.55;cursor:not-allowed;transform:none!important}.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--blue);font-weight:800;font-size:14px}
+    header{padding:66px 0 34px}.hero{display:grid;grid-template-columns:1.04fr .96fr;gap:40px;align-items:center}h1,h2,h3{text-wrap:balance}h1{font-size:clamp(40px,6vw,74px);line-height:.94;letter-spacing:-.07em;margin:16px 0}h2{font-size:clamp(28px,4vw,46px);line-height:1;letter-spacing:-.055em;margin:0 0 14px}h3{margin:0 0 8px;font-size:21px}.lead{font-size:clamp(18px,2vw,22px);color:var(--muted);max-width:66ch}.panel,.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.panel{padding:24px}.card{padding:20px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}section{padding:38px 0}.tool{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.88fr);gap:20px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}label{font-weight:820;font-size:14px;display:block;margin:0 0 6px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 13px;font:inherit;background:white;color:var(--ink)}textarea{min-height:92px;resize:vertical}.full{grid-column:1/-1}.hint{font-size:13px;color:var(--muted);margin:5px 0 0}.checklist{display:grid;gap:10px;margin-top:10px}.check{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:11px;background:#fff}.check input{width:auto;margin-top:4px}.result{background:#0f172a;color:#e2e8f0;border-radius:18px;padding:18px;min-height:260px;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:14px}.score{display:grid;grid-template-columns:112px 1fr;gap:16px;align-items:center;margin-bottom:14px}.dial{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) 0deg,#e5e7eb 0deg);font-size:27px;font-weight:950;color:#0f172a}.status{font-size:22px;font-weight:950}.muted{color:var(--muted)}.price{font-size:42px;font-weight:950;letter-spacing:-.055em}.highlight{border:2px solid var(--teal)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.mini{font-size:13px;color:var(--muted)}.banner{display:none;margin-top:12px;padding:12px 14px;border-radius:14px;background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0;font-weight:780}.leadlist{margin:0;padding-left:18px}.leadrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px;background:#fff;margin-top:8px}.danger{color:var(--red)}.amber{color:var(--amber)}.green{color:var(--green)}footer{padding:34px 0;color:var(--muted);font-size:14px}.printOnly{display:none}
+    @media(max-width:880px){.hero,.tool,.grid,.fields{grid-template-columns:1fr}.navlinks .hide-sm{display:none}header{padding-top:42px}.score{grid-template-columns:1fr}.dial{width:96px;height:96px}}
+    @media print{nav,.noPrint,.actions,#leadCapture,#pricing{display:none!important}body{background:#fff}.panel,.card{box-shadow:none}.printOnly{display:block}.wrap{width:100%}section{padding:12px 0}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<nav>
+  <div class="wrap">
+    <div class="brand">BlockReady Check</div>
+    <div class="navlinks"><a class="btn secondary small hide-sm" href="#tool">Run check</a><a class="btn small" href="#pricing">Get £29 report</a></div>
+  </div>
+</nav>
+<header>
+  <div class="wrap hero">
+    <div>
+      <span class="pill">UK leasehold handover due diligence</span>
+      <h1>Do not inherit a mystery block.</h1>
+      <p class="lead">Score the risk before leaseholders accept a freehold, RTM, RMC or block management handover. Build a clear evidence request in minutes — accounts, liabilities, insurance, contracts and safety files.</p>
+      <p class="actions"><a class="btn" href="#tool">Try the checker</a><a class="btn secondary" href="#leadCapture">Save my result</a></p>
+    </div>
+    <div class="panel">
+      <h3>Tonight's upgrade</h3>
+      <ul class="leadlist">
+        <li>Evidence checklist now affects risk score.</li>
+        <li>Generates a handover email and paid-report summary.</li>
+        <li>Captures email + block details locally for follow-up export.</li>
+        <li>Stripe Payment Link slot ready for the £29 report.</li>
+      </ul>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <section>
+    <div class="wrap grid">
+      <div class="card"><h3>For resident groups</h3><p class="muted">Get one shared view of what is missing before anyone signs takeover papers.</p></div>
+      <div class="card"><h3>For directors</h3><p class="muted">Turn vague concerns into a board-ready evidence request and risk log.</p></div>
+      <div class="card"><h3>For advisers</h3><p class="muted">Collect structured facts before a solicitor, accountant or managing agent review.</p></div>
+    </div>
+  </section>
+
+  <section id="tool">
+    <div class="wrap">
+      <h2>Working takeover risk checker</h2>
+      <p class="muted">This static MVP runs entirely in the browser. No legal advice — it produces a structured triage report and evidence request.</p>
+      <div class="tool panel">
+        <form id="riskForm">
+          <div class="fields">
+            <div><label for="blockName">Block / building name</label><input id="blockName" value="Example Court"></div>
+            <div><label for="handoverType">Handover type</label><select id="handoverType"><option>Freehold transfer</option><option>Right to Manage / RTM</option><option>Resident Management Company / RMC</option><option>Managing agent handover</option><option>Unsure</option></select></div>
+            <div><label for="flats">Number of flats</label><input id="flats" inputmode="numeric" type="number" min="1" value="8"></div>
+            <div><label for="accounts">Years of accounts supplied</label><input id="accounts" inputmode="numeric" type="number" min="0" max="10" value="0"></div>
+            <div><label for="liability">Known arrears / liabilities (£)</label><input id="liability" inputmode="decimal" type="number" min="0" value="0"></div>
+            <div><label for="reserve">Reserve fund balance (£)</label><input id="reserve" inputmode="decimal" type="number" min="0" value="0"></div>
+            <div><label for="deadline">Decision deadline</label><select id="deadline"><option value="30">Over 30 days</option><option value="14">15-30 days</option><option value="7">8-14 days</option><option value="3">Under 7 days</option></select></div>
+            <div><label for="pressure">Pressure level</label><select id="pressure"><option value="0">Low — cooperative</option><option value="8">Medium — chasing for agreement</option><option value="16">High — sign now / limited answers</option></select></div>
+            <div class="full"><label for="concern">Main concern</label><textarea id="concern">Freeholder wants us to take over but has not provided accounts.</textarea></div>
+          </div>
+          <h3 style="margin-top:18px">Evidence received</h3>
+          <div class="checklist" id="evidenceList">
+            <label class="check"><input type="checkbox" value="accounts" data-weight="16"> Three years accounts and service charge statements</label>
+            <label class="check"><input type="checkbox" value="bank" data-weight="12"> Bank statements and reserve fund proof</label>
+            <label class="check"><input type="checkbox" value="insurance" data-weight="12"> Building insurance schedule and claims history</label>
+            <label class="check"><input type="checkbox" value="contracts" data-weight="10"> Contractor list, contracts and open disputes</label>
+            <label class="check"><input type="checkbox" value="safety" data-weight="16"> Fire/building safety file and planned works</label>
+            <label class="check"><input type="checkbox" value="arrears" data-weight="10"> Arrears schedule and known liabilities</label>
+          </div>
+          <div class="actions"><button class="btn" type="submit">Generate report</button><button class="btn secondary" type="button" id="resetBtn">Reset</button></div>
+        </form>
+        <aside>
+          <div class="score">
+            <div id="dial" class="dial">—</div>
+            <div><div id="status" class="status">Run the check</div><div id="statusCopy" class="muted">Your risk level and next action will appear here.</div></div>
+          </div>
+          <output id="result" class="result">Fill the form and generate your result.</output>
+          <div class="actions noPrint"><button class="btn teal" type="button" id="copyBtn">Copy report</button><button class="btn secondary" type="button" id="printBtn">Print / save PDF</button></div>
+          <div id="copied" class="banner" role="status" aria-live="polite">Copied to clipboard.</div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="leadCapture">
+    <div class="wrap panel">
+      <h2>Save result for follow-up</h2>
+      <p class="muted">Static email-capture demo: saves leads in this browser and exports CSV for manual outreach. Production can wire the same fields to Loops, ConvertKit, Airtable or Supabase.</p>
+      <form id="leadForm" class="fields">
+        <div><label for="email">Email</label><input id="email" type="email" autocomplete="email" required placeholder="chair@example.com"></div>
+        <div><label for="role">Role</label><select id="role"><option>Leaseholder</option><option>Resident association chair</option><option>RMC/RTM director</option><option>Solicitor/accountant</option><option>Managing agent</option></select></div>
+        <div class="full"><label for="notes">Follow-up note</label><textarea id="notes" placeholder="e.g. Need paid £29 review before Friday meeting"></textarea></div>
+        <div class="full actions"><button class="btn" type="submit">Save lead locally</button><button class="btn secondary" type="button" id="exportBtn">Export leads CSV</button><button class="btn secondary" type="button" id="clearLeadsBtn">Clear demo leads</button></div>
+      </form>
+      <div id="leadSaved" class="banner" role="status" aria-live="polite">Lead saved locally.</div>
+      <div id="leadList" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <h2>Charge path</h2>
+      <div class="grid">
+        <div class="card"><h3>Free checker</h3><div class="price">£0</div><p class="muted">Browser triage, copyable evidence request, local PDF print.</p></div>
+        <div class="card highlight"><h3>Paid triage report</h3><div class="price">£29</div><p class="muted">One block, reviewed checklist, exportable report, email template pack.</p><a class="btn" id="payLink" href="mailto:tony@example.com?subject=BlockReady%20%C2%A329%20report%20request&body=Please%20send%20me%20the%20Stripe%20Payment%20Link%20for%20a%20BlockReady%20Check%20report.">Request £29 report</a><p class="mini">Replace this mailto with a live Stripe Payment Link when ready.</p></div>
+        <div class="card"><h3>Resident group pack</h3><div class="price">£99</div><p class="muted">Up to 3 checks, shared evidence tracker, meeting-ready summary.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">© 2026 BlockReady Check. Information tool only — not legal, accounting or financial advice.</div></footer>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const money = n => new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(Number(n)||0);
+  const form = $('riskForm'), result = $('result'), dial = $('dial'), statusEl = $('status'), statusCopy = $('statusCopy');
+  const leadKey = 'blockready_leads_v1';
+  let lastReport = '';
+
+  function checkedEvidence(){
+    return [...document.querySelectorAll('#evidenceList input:checked')];
+  }
+  function missingEvidence(){
+    return [...document.querySelectorAll('#evidenceList input:not(:checked)')].map(i => i.parentElement.textContent.trim());
+  }
+  function calculate(){
+    const flats = Math.max(1, Number($('flats').value)||1);
+    const accounts = Math.max(0, Number($('accounts').value)||0);
+    const liability = Math.max(0, Number($('liability').value)||0);
+    const reserve = Math.max(0, Number($('reserve').value)||0);
+    const deadline = Number($('deadline').value)||30;
+    const pressure = Number($('pressure').value)||0;
+    const evidenceCredit = checkedEvidence().reduce((sum, item) => sum + Number(item.dataset.weight||0), 0);
+    const liabilityPerFlat = liability / flats;
+    const reservePerFlat = reserve / flats;
+    let risk = 78 - evidenceCredit;
+    risk += accounts === 0 ? 18 : accounts < 2 ? 9 : -4;
+    risk += liabilityPerFlat > 1000 ? 18 : liabilityPerFlat > 500 ? 12 : liability > 0 ? 7 : 0;
+    risk += reservePerFlat < 250 ? 8 : reservePerFlat > 1000 ? -5 : 0;
+    risk += deadline <= 3 ? 14 : deadline <= 7 ? 10 : deadline <= 14 ? 5 : 0;
+    risk += pressure;
+    risk = Math.max(5, Math.min(100, Math.round(risk)));
+    const level = risk >= 76 ? 'RED' : risk >= 46 ? 'AMBER' : 'GREEN';
+    const action = level === 'RED' ? 'Pause handover until the missing pack is supplied and reviewed.' : level === 'AMBER' ? 'Proceed only with written conditions and a dated evidence chase.' : 'Evidence is broadly present; confirm adviser review before signing.';
+    return {flats, accounts, liability, reserve, deadline, pressure, risk, level, action, missing: missingEvidence(), liabilityPerFlat, reservePerFlat};
+  }
+  function render(){
+    const c = calculate();
+    const colour = c.level === 'RED' ? 'var(--red)' : c.level === 'AMBER' ? 'var(--amber)' : 'var(--green)';
+    dial.style.background = `conic-gradient(${colour} ${c.risk*3.6}deg,#e5e7eb 0deg)`;
+    dial.textContent = c.risk + '/100';
+    statusEl.textContent = `${c.level} risk`;
+    statusEl.className = 'status ' + (c.level === 'RED' ? 'danger' : c.level === 'AMBER' ? 'amber' : 'green');
+    statusCopy.textContent = c.action;
+    const missingLines = c.missing.length ? c.missing.map(x => '• ' + x).join('\n') : '• None marked missing in this check';
+    const concern = $('concern').value.trim() || 'No concern entered.';
+    const block = $('blockName').value.trim() || 'Unnamed block';
+    lastReport = `BlockReady Check report\n\nBlock: ${block}\nHandover type: ${$('handoverType').value}\nRisk score: ${c.risk}/100 (${c.level})\nRecommended next action: ${c.action}\n\nSnapshot\n• Flats: ${c.flats}\n• Accounts supplied: ${c.accounts} year(s)\n• Known arrears/liabilities: ${money(c.liability)} (${money(c.liabilityPerFlat)} per flat)\n• Reserve fund: ${money(c.reserve)} (${money(c.reservePerFlat)} per flat)\n• Decision deadline: ${$('deadline').selectedOptions[0].textContent}\n• Pressure level: ${$('pressure').selectedOptions[0].textContent}\n\nMain concern\n${concern}\n\nMissing evidence to request\n${missingLines}\n\nSuggested email\nBefore leaseholders accept the ${$('handoverType').value.toLowerCase()}, please provide the missing management pack items listed above and confirm in writing whether any arrears, contractor disputes, insurance claims, safety works, loans or other liabilities would pass to the leaseholders/new company. We cannot assess handover risk or recommend approval without this evidence.\n\nPaid report upsell\nFor £29, BlockReady can turn this into a clean PDF triage report and email pack for the resident group.`;
+    result.textContent = lastReport;
+    return c;
+  }
+  form.addEventListener('submit', e => { e.preventDefault(); render(); });
+  form.addEventListener('input', () => { if(lastReport) render(); });
+  $('resetBtn').addEventListener('click', () => { form.reset(); lastReport=''; result.textContent='Fill the form and generate your result.'; dial.textContent='—'; dial.style.background='conic-gradient(var(--green) 0deg,#e5e7eb 0deg)'; statusEl.textContent='Run the check'; statusEl.className='status'; statusCopy.textContent='Your risk level and next action will appear here.'; });
+  $('copyBtn').addEventListener('click', async () => { if(!lastReport) render(); await navigator.clipboard.writeText(lastReport); $('copied').style.display='block'; setTimeout(()=>$('copied').style.display='none',2200); });
+  $('printBtn').addEventListener('click', () => { if(!lastReport) render(); window.print(); });
+
+  function getLeads(){ try{return JSON.parse(localStorage.getItem(leadKey)||'[]')}catch{return []} }
+  function setLeads(leads){ localStorage.setItem(leadKey, JSON.stringify(leads)); drawLeads(); }
+  function drawLeads(){
+    const leads = getLeads();
+    $('leadList').innerHTML = leads.length ? `<h3>Saved demo leads (${leads.length})</h3>` + leads.slice().reverse().map(l => `<div class="leadrow"><div><strong>${escapeHtml(l.email)}</strong><div class="mini">${escapeHtml(l.block)} • ${escapeHtml(l.role)} • ${l.risk}/100 ${escapeHtml(l.level)}</div></div><span class="pill">${escapeHtml(l.date)}</span></div>`).join('') : '<p class="muted">No local leads saved yet.</p>';
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  $('leadForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const c = render();
+    const leads = getLeads();
+    leads.push({date:new Date().toISOString().slice(0,10), email:$('email').value.trim(), role:$('role').value, block:$('blockName').value.trim()||'Unnamed block', risk:c.risk, level:c.level, notes:$('notes').value.trim(), report:lastReport});
+    setLeads(leads);
+    $('leadSaved').style.display='block'; setTimeout(()=>$('leadSaved').style.display='none',2200);
+    $('leadForm').reset();
+  });
+  $('exportBtn').addEventListener('click', () => {
+    const rows = [['date','email','role','block','risk','level','notes'], ...getLeads().map(l => [l.date,l.email,l.role,l.block,l.risk,l.level,l.notes])];
+    const csv = rows.map(r => r.map(v => '"' + String(v??'').replace(/"/g,'""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'}); const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'blockready-leads.csv'; a.click(); URL.revokeObjectURL(a.href);
+  });
+  $('clearLeadsBtn').addEventListener('click', () => { if(confirm('Clear locally saved demo leads?')) setLeads([]); });
+  drawLeads(); render();
+})();
+</script>
+</body>
+</html>
