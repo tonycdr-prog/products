@@ -105,7 +105,7 @@
         <h2>Early-access lead capture</h2>
         <p class="muted">Demo capture stores locally so Tony can test the funnel without a backend.</p>
         <form onsubmit="return captureLead(this)">
-          <label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" required>
+          <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com…" required>
           <label for="role">I am a…</label><select id="role"><option>Leaseholder</option><option>Resident association / RTM director</option><option>Property consultant</option><option>Solicitor / adviser</option></select>
           <button>Send me a sample £29 report</button>
           <p class="form-msg muted" aria-live="polite"></p>
