@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChangeOrder Shield — Scope creep change-order generator</title>
+<meta name="description" content="Turn scope creep into a priced change order, client email, approval checklist, and margin-safe fee in under two minutes.">
+<style>
+:root{--bg:#fbf7ff;--panel:#fff;--ink:#111827;--muted:#64748b;--line:#eadff7;--brand:#6d28d9;--brand2:#a855f7;--good:#047857;--warn:#b45309;--bad:#b91c1c;--soft:#f3e8ff;--shadow:0 24px 70px rgba(69,35,120,.13)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top left,#f1ddff 0,#fbf7ff 42%,#fff 100%);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}button,input,textarea,select{font:inherit}a{color:inherit}.wrap{max-width:1180px;margin:auto;padding:26px}.nav{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px}.brand{font-weight:900;letter-spacing:-.04em;font-size:1.15rem}.tag{border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:999px;padding:7px 12px;color:#5b21b6;font-weight:800;font-size:.85rem}.hero{display:grid;grid-template-columns:.92fr 1.08fr;gap:28px;align-items:start}.eyebrow{text-transform:uppercase;letter-spacing:.12em;color:var(--brand);font-weight:900;font-size:.78rem}.hero h1{font-size:clamp(2.25rem,5.8vw,5rem);line-height:.98;margin:10px 0 16px;letter-spacing:-.075em}.lead{font-size:1.15rem;color:var(--muted);max-width:58ch}.panel{background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:22px}.tool{display:grid;gap:16px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}label{display:grid;gap:7px;font-weight:850;font-size:.9rem}input,textarea,select{width:100%;border:1px solid var(--line);border-radius:15px;background:#fff;color:var(--ink);padding:12px 13px;outline:none}textarea{min-height:88px;resize:vertical}.hint{font-weight:600;color:var(--muted);font-size:.78rem}.btns{display:flex;flex-wrap:wrap;gap:10px}.btn{border:0;border-radius:999px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:white;font-weight:900;padding:12px 16px;cursor:pointer;box-shadow:0 12px 28px rgba(109,40,217,.24)}.btn.secondary{background:#111827}.btn.ghost{background:white;color:var(--brand);border:1px solid var(--line);box-shadow:none}.btn:active{transform:translateY(1px)}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.metric{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px}.metric b{display:block;font-size:1.45rem;letter-spacing:-.04em}.metric span{color:var(--muted);font-size:.82rem;font-weight:750}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 10px}.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-weight:900;color:var(--muted);cursor:pointer}.tab.active{background:var(--brand);border-color:var(--brand);color:white}.output{white-space:pre-wrap;background:#111827;color:#f8fafc;border-radius:22px;padding:18px;min-height:310px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}.checklist{display:grid;gap:10px}.check{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px}.check input{width:auto;margin-top:4px}.saved{display:grid;gap:8px;max-height:210px;overflow:auto}.saved button{text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px;cursor:pointer}.price{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}.price .panel{box-shadow:none}.price strong{font-size:2rem;letter-spacing:-.05em}.notice{background:#fffbeb;border:1px solid #fde68a;color:#78350f;border-radius:18px;padding:14px;font-weight:700}.footer{padding:30px 0;color:var(--muted);font-size:.9rem}@media(max-width:900px){.hero,.split,.price{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.row,.row3{grid-template-columns:1fr}.wrap{padding:18px}.panel{border-radius:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav"><div class="brand">ChangeOrder Shield</div><div class="tag">£29 Change Order Pack MVP</div></nav>
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Scope creep → signed variation</div>
+        <h1>Stop doing “one small extra” for free.</h1>
+        <p class="lead">Enter the original scope, the new ask, and your rate. The tool calculates a margin-safe fee, flags risk, and drafts a client-ready change order plus approval email.</p>
+        <div class="btns"><button class="btn" onclick="document.getElementById('project').focus()">Generate one now</button><button class="btn ghost" onclick="loadExample()">Load example</button></div>
+        <div class="metrics" aria-label="tool summary">
+          <div class="metric"><b id="feeMetric">£0</b><span>Suggested fee</span></div>
+          <div class="metric"><b id="marginMetric">0%</b><span>Margin buffer</span></div>
+          <div class="metric"><b id="daysMetric">0</b><span>Days impact</span></div>
+          <div class="metric"><b id="riskMetric">—</b><span>Risk level</span></div>
+        </div>
+        <p class="notice">Not legal advice. It is a practical commercial template for freelancers and agencies to avoid unpaid extras.</p>
+      </div>
+      <section class="panel" aria-label="Change order generator">
+        <form id="tool" class="tool">
+          <div class="row"><label>Project name<input id="project" name="project" placeholder="Acme website refresh" required></label><label>Client name<input name="client" placeholder="Acme Ltd"></label></div>
+          <label>Original agreed scope<textarea name="scope" placeholder="Homepage redesign, 3 template pages, contact form setup" required></textarea></label>
+          <label>New client request<textarea name="request" placeholder="Add booking flow, migrate 40 legacy pages, write new SEO copy" required></textarea></label>
+          <div class="row3"><label>Extra hours<input name="hours" type="number" min="1" value="8"></label><label>Hourly rate (£)<input name="rate" type="number" min="1" value="85"></label><label>Complexity<select name="complexity"><option value="1">Normal</option><option value="1.15">Some unknowns (+15%)</option><option value="1.3">High uncertainty (+30%)</option></select></label></div>
+          <div class="row3"><label>Rush premium<select name="rush"><option value="0">No rush</option><option value="0.25">Rush +25%</option><option value="0.5">Emergency +50%</option></select></label><label>VAT<select name="vat"><option value="0">No VAT shown</option><option value="0.2">Add 20% VAT line</option></select></label><label>Payment terms<select name="terms"><option>Payment due before work starts</option><option>50% upfront, 50% on delivery</option><option>Added to next invoice</option></select></label></div>
+          <label>Acceptance deadline<input name="deadline" type="date"></label>
+          <div class="btns"><button class="btn" type="button" onclick="generate()">Generate change order</button><button class="btn secondary" type="button" onclick="copyCurrent()">Copy current output</button><button class="btn ghost" type="button" onclick="saveProject()">Save locally</button></div>
+          <span class="hint">Saves in this browser only. No data leaves the page.</span>
+        </form>
+      </section>
+    </section>
+
+    <section class="split">
+      <div>
+        <div class="tabs"><button class="tab active" data-tab="order" onclick="showTab('order')">Change order</button><button class="tab" data-tab="email" onclick="showTab('email')">Client email</button><button class="tab" data-tab="script" onclick="showTab('script')">Call script</button></div>
+        <div id="output" class="output" aria-live="polite">Fill in the form and click Generate. Your change order will appear here.</div>
+      </div>
+      <aside class="panel">
+        <h2>Approval readiness</h2>
+        <p class="hint">Tick these before sending to reduce back-and-forth.</p>
+        <div class="checklist" id="checklist">
+          <label class="check"><input type="checkbox"> The original scope is quoted or attached.</label>
+          <label class="check"><input type="checkbox"> The extra work is described as a separate deliverable.</label>
+          <label class="check"><input type="checkbox"> Fee, VAT, and payment terms are explicit.</label>
+          <label class="check"><input type="checkbox"> Timeline impact is stated before approval.</label>
+          <label class="check"><input type="checkbox"> Client can approve by replying in writing.</label>
+        </div>
+        <h3>Saved change orders</h3>
+        <div id="saved" class="saved"><span class="hint">None saved yet.</span></div>
+      </aside>
+    </section>
+
+    <section class="price" id="pricing">
+      <div class="panel"><h3>Free generator</h3><strong>£0</strong><p class="hint">One change order at a time. Local saves only.</p></div>
+      <div class="panel" style="border:2px solid var(--brand)"><h3>Change Order Pack</h3><strong>£29</strong><p class="hint">PDF export, 6 templates, approval tracker, and reusable clause library.</p><button class="btn" onclick="alert('MVP note: wire this to Stripe Payment Links for launch.')">Buy pack</button></div>
+      <div class="panel"><h3>Agency Pro</h3><strong>£79/mo</strong><p class="hint">Team templates, client history, branded approvals, and analytics.</p></div>
+    </section>
+  </main>
+  <footer class="footer">Static MVP. Works without a build step, external scripts, or network access. © ChangeOrder Shield</footer>
+</div>
+<script>
+const state={order:'',email:'',script:'',active:'order'};
+function money(n){return '£'+Math.round(n).toLocaleString('en-GB')}
+function val(name){return new FormData(document.getElementById('tool')).get(name)||''}
+function calc(){const hours=Math.max(0,Number(val('hours'))||0);const rate=Math.max(0,Number(val('rate'))||0);const complexity=Number(val('complexity'))||1;const rush=Number(val('rush'))||0;const vat=Number(val('vat'))||0;const base=hours*rate;const subtotal=base*complexity*(1+rush);const contingency=Math.max(50,subtotal*.12);const fee=Math.ceil((subtotal+contingency)/10)*10;const vatAmount=fee*vat;const days=Math.max(1,Math.ceil(hours/5)+(complexity>1.1?1:0)+(rush?0:1));const risk=complexity>=1.3||hours>=16?'High':complexity>1||hours>=8?'Medium':'Low';return{hours,rate,complexity,rush,vat,base,fee,vatAmount,total:fee+vatAmount,days,risk,buffer:base?Math.round(((fee-base)/base)*100):0}}
+function generate(){const c=calc();const project=val('project')||'Untitled project';const client=val('client')||'the client';const deadline=val('deadline');const deadlineLine=deadline?'Approval needed by: '+deadline:'Approval needed by: before this work is scheduled';const vatLine=c.vat?`VAT: ${money(c.vatAmount)}\nTotal inc. VAT: ${money(c.total)}`:'VAT: not shown / confirm if applicable';state.order=`CHANGE ORDER — ${project}\n\nClient: ${client}\n\n1. Original agreed scope\n${val('scope')}\n\n2. Requested change\n${val('request')}\n\n3. Commercial impact\nEstimated additional effort: ${c.hours} hours\nChange-order fee: ${money(c.fee)}\n${vatLine}\nPayment terms: ${val('terms')}\nTimeline impact: +${c.days} working day(s) after approval\nRisk level: ${c.risk}\nMargin buffer over raw hours: ${c.buffer}%\n\n4. Assumptions\n• This price covers only the requested change above.\n• Further revisions, new integrations, or missing assets may require a separate change order.\n• Existing milestones move by the timeline impact unless agreed otherwise.\n\n5. Approval\n${deadlineLine}\nReply “Approved — ${project} change order at ${money(c.fee)}” to authorise the work.`;state.email=`Subject: Change order for ${project}\n\nHi ${client},\n\nThanks — I can take this on. It sits outside the agreed scope, so I have separated it into a change order to keep the current project clean.\n\nThe additional work is:\n${val('request')}\n\nEstimated impact:\n• Fee: ${money(c.fee)}${c.vat?' + VAT':''}\n• Timeline: +${c.days} working day(s) after approval\n• Terms: ${val('terms')}\n\nIf you are happy to proceed, please reply:\n“Approved — ${project} change order at ${money(c.fee)}.”\n\nBest,\n[Your name]`;state.script=`CALL SCRIPT\n\n1. Acknowledge\n“I can see why this would be useful, and I can help.”\n\n2. Boundary\n“It is outside the original scope, so I need to treat it as a separate change rather than absorbing it into the current budget.”\n\n3. Price\n“The extra effort is about ${c.hours} hours. With uncertainty and scheduling impact included, the change-order fee is ${money(c.fee)}${c.vat?' plus VAT':''}.”\n\n4. Timeline\n“It adds roughly ${c.days} working day(s) after approval.”\n\n5. Close\n“If you reply approving the change order, I’ll schedule it in. If not, I’ll keep the project on the original scope.”`;updateMetrics(c);showTab(state.active)}
+function updateMetrics(c){document.getElementById('feeMetric').textContent=money(c.fee);document.getElementById('marginMetric').textContent=c.buffer+'%';document.getElementById('daysMetric').textContent='+'+c.days;const r=document.getElementById('riskMetric');r.textContent=c.risk;r.style.color=c.risk==='High'?'var(--bad)':c.risk==='Medium'?'var(--warn)':'var(--good)'}
+function showTab(tab){state.active=tab;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.getElementById('output').textContent=state[tab]||'Generate first, then this tab will populate.'}
+async function copyCurrent(){const text=state[state.active]||document.getElementById('output').textContent;try{await navigator.clipboard.writeText(text);alert('Copied.')}catch(e){prompt('Copy manually:',text)}}
+function saveProject(){if(!state.order)generate();const items=JSON.parse(localStorage.getItem('cos_projects')||'[]');items.unshift({date:new Date().toISOString(),project:val('project')||'Untitled project',client:val('client')||'',order:state.order,email:state.email,script:state.script});localStorage.setItem('cos_projects',JSON.stringify(items.slice(0,8)));renderSaved();}
+function renderSaved(){const box=document.getElementById('saved');const items=JSON.parse(localStorage.getItem('cos_projects')||'[]');if(!items.length){box.innerHTML='<span class="hint">None saved yet.</span>';return}box.innerHTML='';items.forEach((it,i)=>{const b=document.createElement('button');b.textContent=`${it.project} — ${new Date(it.date).toLocaleDateString('en-GB')}`;b.onclick=()=>{state.order=it.order;state.email=it.email;state.script=it.script;showTab('order')};box.appendChild(b)})}
+function loadExample(){const f=document.getElementById('tool');f.project.value='Acme website refresh';f.client.value='Acme Ltd';f.scope.value='Redesign homepage, build 3 reusable page templates, configure contact form, and launch on existing hosting.';f.request.value='Add Calendly-style booking flow, migrate 40 old blog posts, and write SEO titles/descriptions for each page.';f.hours.value=14;f.rate.value=95;f.complexity.value='1.15';f.rush.value='0.25';f.vat.value='0.2';f.terms.value='50% upfront, 50% on delivery';generate()}
+document.getElementById('tool').addEventListener('input',()=>{if(state.order)generate()});renderSaved();
+</script>
+</body>
+</html>
