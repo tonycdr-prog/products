@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeaseFee Lens UK — service charge triage pack</title>
+  <meta name="description" content="A browser-only UK leasehold service-charge checker that creates a risk score, evidence request letter, issue log and triage pack export.">
+  <style>
+    :root{--ink:#0f172a;--muted:#64748b;--line:#dbe4ef;--bg:#f8fafc;--card:#fff;--blue:#0369a1;--blue2:#075985;--amber:#b45309;--red:#b91c1c;--green:#047857;--soft:#e0f2fe}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}a,button,input,select,textarea{font:inherit}button,a.btn{border:0;border-radius:999px;padding:.78rem 1rem;font-weight:800;background:var(--ink);color:white;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem}button.secondary,a.secondary{background:white;color:var(--ink);border:1px solid var(--line)}button.blue{background:var(--blue)}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #38bdf8;outline-offset:2px}.wrap{max-width:1180px;margin:0 auto;padding:22px}.nav{position:sticky;top:0;z-index:5;background:rgba(248,250,252,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.nav .wrap{display:flex;justify-content:space-between;gap:16px;align-items:center}.brand{font-weight:950;color:var(--ink);text-decoration:none}.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;padding:56px 0}.kicker{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);font-weight:900}.h1{font-size:clamp(2.25rem,6vw,4.9rem);line-height:.94;letter-spacing:-.06em;margin:.1em 0}.lead{font-size:1.15rem;color:var(--muted);max-width:65ch}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 18px 50px rgba(15,23,42,.07)}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.mini div{background:#f1f5f9;border:1px solid var(--line);border-radius:18px;padding:14px}.app{display:grid;grid-template-columns:390px 1fr;gap:18px;align-items:start}.panel{position:sticky;top:88px}.field{display:grid;gap:6px;margin-bottom:13px}.field span,.label{font-weight:800;font-size:.94rem}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:14px;padding:.75rem;background:white;color:var(--ink)}textarea{min-height:120px;resize:vertical}.checks{display:grid;gap:8px;margin:8px 0 14px}.checks label{display:flex;gap:9px;align-items:flex-start}.checks input{width:auto;margin-top:.35rem}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.tabs button{padding:.58rem .82rem;background:white;color:var(--ink);border:1px solid var(--line)}.tabs button.active{background:var(--ink);color:#fff}.score{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center}.dial{width:150px;height:150px;border-radius:999px;display:grid;place-items:center;background:conic-gradient(var(--blue) var(--deg),#e2e8f0 0);position:relative}.dial:before{content:"";position:absolute;inset:13px;border-radius:999px;background:white}.dial strong{position:relative;font-size:2rem}.pill{display:inline-flex;border-radius:999px;padding:.25rem .65rem;font-weight:900;font-size:.82rem}.low{background:#dcfce7;color:#166534}.medium{background:#fef3c7;color:#92400e}.high{background:#fee2e2;color:#991b1b}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.issue{border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;background:#fff}.issue b{display:block}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.muted{color:var(--muted)}.outbox{background:#f8fafc;border:1px dashed #94a3b8;border-radius:18px;padding:15px;white-space:pre-wrap}.price{font-size:2.3rem;font-weight:950;letter-spacing:-.04em}.section{padding:34px 0}.notice{background:#eff6ff;border:1px solid #bfdbfe;border-radius:18px;padding:14px}.danger{color:var(--red)}footer{border-top:1px solid var(--line);color:var(--muted);padding:28px 0;margin-top:28px}@media(max-width:900px){.hero,.app,.grid,.mini,.score{grid-template-columns:1fr}.panel{position:static}.nav .wrap{align-items:flex-start;flex-direction:column}.wrap{padding:16px}.card{border-radius:18px}}
+  </style>
+</head>
+<body>
+<nav class="nav"><div class="wrap"><a class="brand" href="#top">LeaseFee Lens UK</a><div class="row"><a class="btn secondary" href="#pricing">£29 triage pack</a><a class="btn" href="#checker">Run free check</a></div></div></nav>
+<main class="wrap" id="top">
+  <section class="hero">
+    <div>
+      <p class="kicker">UK leasehold service-charge triage</p>
+      <h1 class="h1">Know what to ask before you challenge the bill.</h1>
+      <p class="lead">Paste the numbers from your demand, tick the warning signs, and get a browser-only risk score, evidence checklist, issue log, and a ready-to-send managing-agent letter.</p>
+      <div class="row"><a class="btn blue" href="#checker">Start the 4-minute check</a><a class="btn secondary" href="#sample">See outputs</a></div>
+      <div class="mini"><div><b>Private</b><br><span class="muted">No data leaves this page.</span></div><div><b>Actionable</b><br><span class="muted">Letter + evidence list included.</span></div><div><b>Paid path</b><br><span class="muted">£29 manual review pack.</span></div></div>
+    </div>
+    <div class="card">
+      <p class="kicker">Tonight's iteration</p>
+      <h2>From score toy to triage pack generator.</h2>
+      <p>This build now stores cases locally, produces a structured issue log, exports the pack as a text file, and copies a tailored evidence request letter.</p>
+      <div class="notice"><b>Not legal advice.</b> It helps leaseholders organise questions and documents before taking advice or contacting the managing agent.</div>
+    </div>
+  </section>
+
+  <section class="section" id="checker">
+    <p class="kicker">Working prototype</p>
+    <h2>Build your service-charge triage pack</h2>
+    <div class="app">
+      <form class="card panel" id="caseForm">
+        <label class="field"><span>Property / block name</span><input id="block" value="Example Court" autocomplete="organization"></label>
+        <label class="field"><span>Annual service charge (£)</span><input id="annual" type="number" value="2800" min="0" step="1"></label>
+        <label class="field"><span>Previous annual charge (£)</span><input id="previous" type="number" value="2370" min="0" step="1"></label>
+        <label class="field"><span>Reserve fund shown per flat (£)</span><input id="reserve" type="number" value="350" min="0" step="1"></label>
+        <label class="field"><span>Largest single line item</span><select id="lineItem"><option>Insurance</option><option>Communal heating</option><option>Major works</option><option>Management fee</option><option>Cleaning / gardening</option><option>Other</option></select></label>
+        <label class="field"><span>Demand due date</span><input id="due" type="date"></label>
+        <div class="label">Warning signs</div>
+        <div class="checks">
+          <label><input id="communalHeat" type="checkbox"> Communal heating / energy costs are pooled</label>
+          <label><input id="section20" type="checkbox"> Major works mentioned but no Section 20 paperwork seen</label>
+          <label><input id="accountsMissing" type="checkbox"> Accounts or budget notes are missing / vague</label>
+          <label><input id="agentComplaints" type="checkbox"> Other residents report managing-agent problems</label>
+          <label><input id="arrears" type="checkbox"> Demand includes arrears/admin fees I don't recognise</label>
+        </div>
+        <label class="field"><span>Notes from demand / resident chat</span><textarea id="notes" placeholder="e.g. insurance doubled, no tender details, reserve fund unclear">Insurance increased sharply and budget notes do not explain the reserve fund position.</textarea></label>
+        <div class="row"><button type="submit" class="blue">Generate pack</button><button type="button" class="secondary" id="saveCase">Save locally</button><button type="button" class="secondary" id="resetDemo">Reset demo</button></div>
+      </form>
+
+      <div class="card" id="sample">
+        <div class="tabs" role="tablist" aria-label="Pack sections">
+          <button class="active" type="button" data-tab="summary">Summary</button><button type="button" data-tab="issues">Issue log</button><button type="button" data-tab="letter">Letter</button><button type="button" data-tab="saved">Saved cases</button>
+        </div>
+        <section id="tab-summary" class="tab"><div id="summaryOut" class="muted">Generate a pack to see your score.</div></section>
+        <section id="tab-issues" class="tab" hidden><div id="issuesOut" class="muted">Issue log will appear here.</div></section>
+        <section id="tab-letter" class="tab" hidden><div class="row"><button type="button" id="copyLetter" class="secondary">Copy letter</button><button type="button" id="downloadPack" class="secondary">Download pack.txt</button></div><br><textarea id="letterOut" aria-label="Generated letter"></textarea></section>
+        <section id="tab-saved" class="tab" hidden><div id="savedOut" class="muted">No saved cases yet.</div></section>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pricing">
+    <p class="kicker">Validation offer</p>
+    <h2>Upgrade path for a chargeable v1</h2>
+    <div class="grid">
+      <div class="card"><h3>Free checker</h3><p class="price">£0</p><p>Risk score, checklist, generated letter, and local export.</p><a class="btn secondary" href="#checker">Use now</a></div>
+      <div class="card" style="border:2px solid var(--blue)"><h3>Service Charge Triage Pack</h3><p class="price">£29</p><p>Manual review of one demand, personalised evidence request, and 48-hour next-step note.</p><a class="btn blue" href="mailto:tony@example.com?subject=LeaseFee%20Lens%20UK%20Triage%20Pack&body=I%20want%20the%20%C2%A329%20triage%20pack.%20My%20service%20charge%20issue%20is%3A">Request pack</a></div>
+      <div class="card"><h3>Resident group batch</h3><p class="price">£99</p><p>Up to 10 flats in one block with consolidated issue log and meeting questions.</p><a class="btn secondary" href="mailto:tony@example.com?subject=LeaseFee%20Lens%20resident%20group">Ask about group review</a></div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">© 2026 LeaseFee Lens UK. Browser-only prototype. It does not replace legal advice, tribunal guidance, or a lease review.</div></footer>
+<script>
+const $=id=>document.getElementById(id); const fmt=n=>'£'+Math.round(n).toLocaleString('en-GB');
+const today=new Date(); today.setDate(today.getDate()+21); $('due').value=today.toISOString().slice(0,10);
+let currentPack='';
+function data(){const annual=+$('annual').value||0, previous=+$('previous').value||0; return {block:$('block').value.trim()||'your block',annual,previous,reserve:+$('reserve').value||0,lineItem:$('lineItem').value,due:$('due').value,communalHeat:$('communalHeat').checked,section20:$('section20').checked,accountsMissing:$('accountsMissing').checked,agentComplaints:$('agentComplaints').checked,arrears:$('arrears').checked,notes:$('notes').value.trim(),increase:previous?((annual-previous)/previous)*100:0};}
+function assess(d){let points=[]; if(d.annual>3500)points.push(['High annual charge','Annual demand is above £3,500.',18]); if(d.increase>15)points.push(['Sharp year-on-year increase','Increase is '+d.increase.toFixed(1)+'%; ask for itemised variance.',22]); if(d.reserve<500)points.push(['Thin reserve fund','Reserve shown per flat is under £500; check planned works exposure.',14]); if(d.communalHeat)points.push(['Communal heat exposure','Pooled energy costs need apportionment and usage basis.',12]); if(d.section20)points.push(['Section 20 paperwork gap','Major works may need consultation evidence.',18]); if(d.accountsMissing)points.push(['Missing accounts / budget notes','Reasonableness is hard to assess without supporting documents.',12]); if(d.agentComplaints)points.push(['Managing-agent confidence issue','Resident complaints make a paper trail more important.',7]); if(d.arrears)points.push(['Unrecognised arrears/admin fees','Separate disputed admin fees from current service charge.',10]); if(d.lineItem==='Insurance')points.push(['Insurance line item focus','Ask for schedule, commission disclosure and comparable renewal rationale.',8]); if(d.lineItem==='Major works')points.push(['Major works focus','Ask for scope, tenders, consultation dates and reserve drawdown.',10]); let score=Math.min(100,points.reduce((a,p)=>a+p[2],0)); let level=score>=62?'High':score>=32?'Medium':'Low'; return {score,level,points};}
+function letter(d,a){let due=d.due?new Date(d.due).toLocaleDateString('en-GB'):'the stated due date'; let issues=a.points.map(p=>'- '+p[0]+': '+p[1]).join('\n'); return `Dear Managing Agent,\n\nI am reviewing the service-charge demand for ${d.block}. Before payment is finalised, please provide the evidence needed to understand the reasonableness and apportionment of the charge.\n\nDemand reviewed:\n- Current annual service charge: ${fmt(d.annual)}\n- Previous annual service charge: ${fmt(d.previous)}\n- Change: ${d.increase.toFixed(1)}%\n- Main line item: ${d.lineItem}\n- Due date shown: ${due}\n\nIssues I need clarified:\n${issues || '- No major warning signs identified, but I still need the standard supporting documents.'}\n\nPlease send:\n1. The current budget and itemised service-charge schedule.\n2. The last three years of certified accounts / actual expenditure.\n3. Reserve fund balance, planned drawdowns, and major works plan.\n4. Invoices or tender summaries for the largest changed items.\n5. Insurance schedule, premium history, broker commission disclosure, and renewal rationale where relevant.\n6. Any Section 20 notices, estimates, observations, and award notices for qualifying works or agreements.\n7. The lease clause relied on for apportionment and any administration charges.\n\nI reserve my position while this evidence is outstanding. Please confirm whether recovery action, admin fees, or late-payment steps will be paused while the requested documents are supplied.\n\nRegards,\n[Your name]`;}
+function render(){const d=data(), a=assess(d), deg=Math.round(a.score*3.6); const cls=a.level==='High'?'high':a.level==='Medium'?'medium':'low'; $('summaryOut').innerHTML=`<div class="score"><div class="dial" style="--deg:${deg}deg"><strong>${a.score}</strong></div><div><span class="pill ${cls}">${a.level} priority</span><h3>${d.block}: ${fmt(d.annual)} demand</h3><p>Change from previous charge: <b>${d.increase.toFixed(1)}%</b>. Main focus: <b>${d.lineItem}</b>.</p><p class="muted">Recommended next step: ${a.level==='High'?'request documents before paying disputed elements and consider advice if deadlines are tight.':a.level==='Medium'?'send the evidence request and compare replies against the issue log.':'keep a paper trail and request standard documents if the demand is unclear.'}</p></div></div>`; $('issuesOut').innerHTML=a.points.length?a.points.map((p,i)=>`<div class="issue"><b>${i+1}. ${p[0]}</b><span>${p[1]}</span><br><span class="muted">Weight: ${p[2]} risk points</span></div>`).join(''):'<p>No major warning signs from the current inputs. Still keep the generated document request for your records.</p>'; $('letterOut').value=letter(d,a); currentPack=`LeaseFee Lens UK triage pack\nGenerated: ${new Date().toLocaleString('en-GB')}\n\nSUMMARY\nBlock: ${d.block}\nAnnual charge: ${fmt(d.annual)}\nPrevious charge: ${fmt(d.previous)}\nIncrease: ${d.increase.toFixed(1)}%\nPriority: ${a.level} (${a.score}/100)\nNotes: ${d.notes||'None'}\n\nISSUE LOG\n${a.points.map((p,i)=>`${i+1}. ${p[0]} — ${p[1]}`).join('\n')||'No major warning signs identified.'}\n\nLETTER\n${$('letterOut').value}`; return {d,a};}
+function saved(){return JSON.parse(localStorage.getItem('leasefee_cases')||'[]')} function putSaved(items){localStorage.setItem('leasefee_cases',JSON.stringify(items)); drawSaved()}
+function drawSaved(){const items=saved(); $('savedOut').innerHTML=items.length?items.map((x,i)=>`<div class="issue"><b>${x.block}</b><span>${x.when} — ${x.level} (${x.score}/100), ${fmt(x.annual)}</span><br><button type="button" class="secondary" onclick="loadCase(${i})">Load</button> <button type="button" class="secondary" onclick="deleteCase(${i})">Delete</button></div>`).join(''):'No saved cases yet.'}
+window.loadCase=i=>{const x=saved()[i]; Object.keys(x.form).forEach(k=>{if($(k).type==='checkbox')$(k).checked=x.form[k]; else $(k).value=x.form[k]}); render(); document.querySelector('[data-tab="summary"]').click()}; window.deleteCase=i=>{const s=saved(); s.splice(i,1); putSaved(s)};
+$('caseForm').addEventListener('submit',e=>{e.preventDefault();render()}); $('saveCase').addEventListener('click',()=>{const r=render(), d=data(); const form={}; ['block','annual','previous','reserve','lineItem','due','communalHeat','section20','accountsMissing','agentComplaints','arrears','notes'].forEach(k=>form[k]=$(k).type==='checkbox'?$(k).checked:$(k).value); putSaved([{block:d.block,annual:d.annual,score:r.a.score,level:r.a.level,when:new Date().toLocaleString('en-GB'),form},...saved()].slice(0,12)); alert('Saved locally in this browser.');});
+$('copyLetter').addEventListener('click',async()=>{await navigator.clipboard.writeText($('letterOut').value); $('copyLetter').textContent='Copied'; setTimeout(()=>$('copyLetter').textContent='Copy letter',1200)}); $('downloadPack').addEventListener('click',()=>{render(); const blob=new Blob([currentPack],{type:'text/plain'}), a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='leasefee-lens-triage-pack.txt'; a.click(); URL.revokeObjectURL(a.href)});
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.tab').forEach(t=>t.hidden=true); $('tab-'+b.dataset.tab).hidden=false; if(b.dataset.tab==='saved')drawSaved()})); $('resetDemo').addEventListener('click',()=>{localStorage.removeItem('leasefee_cases'); location.reload()});
+render(); drawSaved();
+</script>
+</body>
+</html>
