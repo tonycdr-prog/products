@@ -358,3 +358,14 @@ Scores (Market / Completeness / Revenue / UK = Total)
 - PP-001-cleanbooks-lite: 5/5/5/5 = 20
 Reason: highest-scoring UK revenue-adjacent build, not the most recently deepened build, and closest to a paid freelancer/bookkeeper workflow with a working browser-only core.
 Design intelligence applied: pricing-page CTA layout, light scroll-story sequence, invoice/billing navy + blue + paid-green palette, Roboto/system MD3-inspired type scale.
+---
+2026-05-17 06:00 Europe/London
+Scores (Market / Completeness / Revenue / UK = Total)
+- PP-001-leasehold-charge-analyzer: 5/5/5/5 = 20
+- PP-001-repairtrail-uk: 5/5/5/5 = 20
+- PP-001-uk-tax-companion: 5/5/5/5 = 20
+- PP-002-cgt-reporting: 5/5/5/5 = 20
+- PP-002-uk-landlord-compliance-nudge: 5/5/5/5 = 20
+- PP-003-offer-compass: 5/5/5/5 = 20  <-- chosen
+Reason: highest-scoring UK revenue-adjacent build, not the most recently deepened build (PP-001-vatflow-lite), and close to paid validation because a £49 manually reviewed offer report can be sold before account/PDF automation.
+Design intelligence applied: Before-After Transformation + Lead Magnet form landing patterns, operation-orange calculator palette (#EA580C/#F97316 on dark stone), Real Estate Luxury serif/sans pairing with system fallbacks.
