@@ -10,7 +10,15 @@
     main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 72px 0; }
     .eyebrow { color: #38bdf8; letter-spacing: .16em; text-transform: uppercase; font-size: 12px; font-weight: 700; }
     h1 { font-size: clamp(42px, 7vw, 84px); line-height: .92; margin: 14px 0 18px; }
-    .lede { color: #cbd5e1; max-width: 680px; font-size: 18px; line-height: 1.65; margin-bottom: 42px; }
+    .lede { color: #cbd5e1; max-width: 680px; font-size: 18px; line-height: 1.65; margin-bottom: 24px; }
+    .search { margin: 0 0 14px; display: grid; gap: 8px; max-width: 680px; }
+    .search label { color: #e2e8f0; font-size: 14px; font-weight: 800; }
+    .search input { width: 100%; box-sizing: border-box; border: 1px solid rgba(148,163,184,.28); border-radius: 18px; background: rgba(15,23,42,.78); color: #f8fafc; font: inherit; padding: 15px 17px; outline: none; box-shadow: 0 18px 50px rgba(0,0,0,.22); }
+    .search input:focus { border-color: rgba(56,189,248,.78); box-shadow: 0 0 0 4px rgba(56,189,248,.16), 0 18px 50px rgba(0,0,0,.22); }
+    .search input::placeholder { color: #64748b; }
+    .result-count { color: #94a3b8; font-size: 14px; margin: 0 0 24px; min-height: 1.4em; }
+    .empty { display: none; margin-top: 20px; border: 1px dashed rgba(148,163,184,.32); border-radius: 22px; padding: 28px; color: #cbd5e1; background: rgba(15,23,42,.56); }
+    .empty.visible { display: block; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
     .card { display: block; text-decoration: none; color: inherit; padding: 24px; border: 1px solid rgba(148,163,184,.22); border-radius: 24px; background: rgba(15,23,42,.72); box-shadow: 0 20px 60px rgba(0,0,0,.24); transition: transform .18s ease, border-color .18s ease, background .18s ease; }
     .card:hover { transform: translateY(-4px); border-color: rgba(56,189,248,.75); background: rgba(15,23,42,.92); }
@@ -23,7 +31,12 @@
     <div class="eyebrow">Tony CDR Products</div>
     <h1>Live builds</h1>
     <p class="lede">A running shelf of product experiments, prototypes, and launch pages deployed automatically from local builds.</p>
-    <section class="grid">
+    <div class="search" role="search">
+      <label for="product-search">Search products</label>
+      <input id="product-search" type="search" placeholder="Try “invoice”, “leasehold”, “AI”…" autocomplete="off">
+    </div>
+    <p class="result-count" id="result-count" aria-live="polite"></p>
+    <section class="grid" aria-label="Product builds">
       <a class="card" href="/products/PP-001-ai-spend-guard/">
         <h2>AI Spend Guard</h2>
         <p>AI Spend Guard is a browser-only AI FinOps audit tool for small teams.</p>
@@ -713,6 +726,40 @@
         <p>Automatically assembles IFCC/IFC audit‑ready packs (Enquiry &amp;amp;amp; PO, RAMS, Certs/Specs, Reports, IFC Certificate, audit evidence) into a consistent folder structure across all schemes.</p>
       </a>
     </section>
+    <p class="empty" id="empty-state">No products match that search. Try a broader keyword.</p>
   </main>
+  <script>
+    const searchInput = document.getElementById('product-search');
+    const resultCount = document.getElementById('result-count');
+    const emptyState = document.getElementById('empty-state');
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const total = cards.length;
+
+    function pluralise(count) {
+      return count === 1 ? 'product' : 'products';
+    }
+
+    function updateResults() {
+      const rawQuery = searchInput.value.trim();
+      const query = rawQuery.toLowerCase();
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const text = card.textContent.toLowerCase();
+        const href = (card.getAttribute('href') || '').toLowerCase();
+        const match = !query || text.includes(query) || href.includes(query);
+        card.hidden = !match;
+        if (match) visible += 1;
+      });
+
+      resultCount.textContent = rawQuery
+        ? `${visible} ${pluralise(visible)} found for “${rawQuery}”`
+        : `${total} ${pluralise(total)}`;
+      emptyState.classList.toggle('visible', visible === 0);
+    }
+
+    searchInput.addEventListener('input', updateResults);
+    updateResults();
+  </script>
 </body>
 </html>
